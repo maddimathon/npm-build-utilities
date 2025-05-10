@@ -1,0 +1,36 @@
+.cache/**/*
+.github/**/*
+.scripts/**/*
+.snapshots/**/*
+.vscode/**/*
+@releases/**/*
+src/**/*
+
+
+# DIST
+# ==== #
+dist/**/*.css.map
+dist/**/*.js.map
+dist/**/*.ts.map
+dist/**/*.test.d.ts
+dist/**/*.test.js
+
+
+# ROOT
+# ==== #
+.scripts/commit.sh
+.gitcommit.md
+.releasenotes.md
+TODO
+jest.config.js
+
+
+# JUNK
+# ==== #
+**/._*
+**/._**/*
+**/.DS_Store
+**/.smbdelete*
+**/.smbdelete**/*
+
+**/node_modules/**/*

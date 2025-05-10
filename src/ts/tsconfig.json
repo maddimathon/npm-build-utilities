@@ -1,0 +1,23 @@
+{
+    "extends": [
+        "@tsconfig/node20/tsconfig.json",
+        "../../tsconfig.base.json"
+    ],
+    "include": [
+        "../../src/ts/**/*",
+        "./src/ts/**/*"
+    ],
+    "exclude": [
+        "./node_modules/**/*"
+    ],
+    "compilerOptions": {
+        "baseUrl": "../../",
+        "declaration": true,
+        "declarationMap": true,
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "outDir": "../../dist/js/",
+        "sourceMap": true,
+        "target": "ES2018"
+    }
+}

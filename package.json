@@ -1,0 +1,131 @@
+{
+    "name": "@maddimathon/template-npm-library",
+    "version": "1.2.1+tmpl",
+
+    "author": "Maddi Mathon (www.maddimathon.com)",
+    "description": "A template for building npm packages published on GitHub with typescript, versioning, basic compile scripts, and template setup script.",
+    "keywords": [
+        "npm-package-template",
+        "npm-package-typescript",
+        "npm-template",
+        "npm-template-typescript"
+    ],
+
+    "homepage": "https://maddimathon.github.io/template-npm-library",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/maddimathon/template-npm-library.git"
+    },
+
+    "config": {
+        "title": "NPM Library Template",
+        "paths": {
+            "releases": "@releases",
+            "snapshots": ".snapshots"
+        }
+    },
+
+    "type": "module",
+
+    "files": [
+        "./dist/**/*",
+        "./LICENSE.md",
+        "./package.json",
+        "./README.md"
+    ],
+
+    "main": "./dist/js/index.js",
+    "types": "./dist/js/index.d.ts",
+
+    "bin": {
+        "template-npm-library": "./dist/js/bin/index.js"
+    },
+
+    "exports": {
+        ".": "./dist/js/index.js",
+        "./*": [
+            "./dist/js/*.js",
+            "./dist/js/*/index.js"
+        ],
+        "./*.js": "./dist/js/*.js",
+
+        "./classes": "./dist/classes/index.js",
+        "./classes/*": [
+            "./dist/js/classes/*.js",
+            "./dist/js/classes/*/index.js"
+        ],
+        "./classes/*.js": "./dist/classes/*.js",
+
+        "./functions": "./dist/functions/index.js",
+        "./functions/*": [
+            "./dist/js/functions/*.js",
+            "./dist/js/functions/*/index.js"
+        ],
+        "./functions/*.js": "./dist/functions/*.js",
+
+        "./types": "./dist/types/index.d.ts",
+        "./types/*": [
+            "./dist/types/*.d.ts",
+            "./dist/types/*/index.d.ts"
+        ],
+        "./types/*.d.ts": "./dist/types/*.d.ts",
+
+        "./scss": "./dist/scss/index.scss",
+        "./scss/*": "./dist/scss/*/index.scss",
+        "./scss/*.scss": "./dist/scss/*.scss"
+    },
+
+    "scripts": {
+        "commit": "sh .scripts/commit.sh",
+        
+        "snap":     "tsx --tsconfig .scripts/tsconfig.json .scripts/snapshot.ts",
+        "snapshot": "tsx --tsconfig .scripts/tsconfig.json .scripts/snapshot.ts",
+       
+        "compile": "tsx --tsconfig .scripts/tsconfig.json .scripts/compile.ts",
+        
+        "build": "tsx --tsconfig .scripts/tsconfig.json .scripts/build.ts",
+        "quick-build": "tsx --tsconfig .scripts/tsconfig.json .scripts/build.ts --without minimize,prettify",
+        
+        "doc": "tsx --tsconfig .scripts/tsconfig.json .scripts/doc.ts",
+        "test": "tsx --tsconfig .scripts/tsconfig.json .scripts/test.ts",
+        
+        
+        "prewatch": "npm run --silent compile -- --starting",
+        
+        "watch": "run-p --silent watch:*",
+            "watch:js": "watch -p 'src/ts/**/*' -c 'npm run --silent quick-build -- --compile-only js --watchedWatcher \"watch:js\" --watchedChange --watchedFilename \"$FILENAME\" --watchedEvent \"$EVENT\"'",
+        
+        
+        "package": "tsx --tsconfig .scripts/tsconfig.json .scripts/package.ts",
+        
+        "dryrun":  "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts --dryrun",
+        "release": "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts"
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+        "@maddimathon/utility-typescript": "1.0.0",
+        "@tsconfig/node20": "20.1.5",
+        "@types/jest": "29.5.14",
+        "@types/luxon": "3.6.2",
+        "@types/minify": "9.1.4",
+        "@types/minimist": "1.2.5",
+        "@types/node": "22.15.17",
+        "glob": "11.0.2",
+        "jest": "29.7.0",
+        "luxon": "3.6.1",
+        "minimist": "1.2.8",
+        "npm-run-all": "4.1.5",
+        "tsx": "4.19.4",
+        "typedoc": "0.28.4",
+        "typedoc-plugin-inline-sources": "1.3.0",
+        "typescript": "5.8.3",
+        "watch-cli": "0.2.3"
+    },
+    "browserslist": [
+        "last 3 major versions",
+        "> 0.5%",
+        "not dead"
+    ]
+}

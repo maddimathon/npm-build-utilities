@@ -1,0 +1,13 @@
+{
+    "todo.embedded.exclude": [
+        "**/._*",
+        "**/._*/**",
+        "**/node_modules/*",
+        "node_modules/**",
+        "@releases/**",
+        ".vscode/**",
+        "dist/**",
+        "docs/**",
+        "public/**",
+    ],
+}

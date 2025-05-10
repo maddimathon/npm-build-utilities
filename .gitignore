@@ -1,0 +1,50 @@
+.archive
+.cache
+.snapshots
+
+
+# SCRIPTS
+# ======= #
+.scripts/classes/doc
+
+
+# RELEASES
+# ======== #
+@releases/**/*
+!@releases/**/*.zip
+
+
+# DIST
+# ==== #
+dist/**/*.css.map
+dist/**/*.js.map
+dist/**/*.ts.map
+dist/**/*.test.d.ts
+dist/**/*.test.js
+dist/docs/javascript.TypeDoc.json
+
+
+# DOCS
+# ==== #
+
+
+# SRC
+# === #
+src/docs/content/js
+src/docs/content/scss
+
+
+# ROOT
+# ==== #
+.gitcommit.md
+.releasenotes.md
+TODO
+
+
+# MISC
+# ==== #
+._*
+.DS_Store
+.smbdelete**
+
+node_modules/
