@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 'use strict';
 /**
- * @package @maddimathon/template-npm-library
+ * @package @maddimathon/npm-build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT
@@ -14,7 +14,7 @@ import { AbstractStage } from './abstracts/AbstractStage.js';
 import { Package } from './Package.js';
 
 import {
-    newPkgReplacements,
+    pkgReplacements,
 } from '../vars/replacements.js';
 
 
@@ -274,7 +274,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 2,
             );
 
-            for ( const o of newPkgReplacements( this ) ) {
+            for ( const o of pkgReplacements( this ) ) {
 
                 this.replaceInFiles(
                     globs,

@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 'use strict';
 /**
- * @package @maddimathon/template-npm-library
+ * @package @maddimathon/npm-build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT
@@ -17,8 +17,8 @@ import { Snapshot } from './Snapshot.js';
 import { Build } from './Build.js';
 
 import {
-    newCurrentReplacements,
-    newPkgReplacements,
+    currentReplacements,
+    pkgReplacements,
 } from '../vars/replacements.js';
 
 
@@ -201,7 +201,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
 
 
         this.verboseLog( 'replacing placeholders in package...', 3 );
-        for ( const o of newCurrentReplacements( this ).concat( newPkgReplacements( this ) ) ) {
+        for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
             this.replaceInFiles(
                 [
                     this.releasePath.replace( /\/*$/g, '/**' ),

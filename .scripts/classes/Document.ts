@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 'use strict';
 /**
- * @package @maddimathon/template-npm-library
+ * @package @maddimathon/npm-build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT
@@ -13,8 +13,8 @@ import * as typeDoc from "typedoc";
 import { AbstractStage } from './abstracts/AbstractStage.js';
 
 import {
-    newCurrentReplacements,
-    newPkgReplacements,
+    currentReplacements,
+    pkgReplacements,
 } from '../vars/replacements.js';
 
 
@@ -76,7 +76,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
     protected async replace() {
         this.progressLog( 'replacing placeholders...', 1 );
 
-        for ( const o of newCurrentReplacements( this ).concat( newPkgReplacements( this ) ) ) {
+        for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
             this.replaceInFiles(
                 [
                     './docs/**/*',
@@ -112,16 +112,16 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                 '@source',
             ],
 
-            categorizeByGroup: true,
+            // categorizeByGroup: true,
 
             categoryOrder: [
                 '*',
+                // 'Functions',
+                // 'Classes',
+                // 'Namespaces',
+                // 'Modules',
+                // 'Entry Points',
                 'Misc.',
-                'Functions',
-                'Classes',
-                'Namespaces',
-                'Modules',
-                'Entry Points',
             ],
 
             // compilerOptions,
@@ -135,12 +135,10 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
             disableSources: false,
 
             entryPoints: [
-                'src/ts/classes/index.ts',
-                'src/ts/functions/index.ts',
-                'src/ts/types/index.ts',
+                'src/ts/index.ts',
             ],
 
-            excludeInternal: true,
+            excludeInternal: false,
             excludeNotDocumented: false,
             excludePrivate: false,
             excludeProtected: false,
@@ -148,14 +146,14 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
 
             githubPages: true,
 
-            groupOrder: [
-                '*',
-                'Functions',
-                'Classes',
-                'Namespaces',
-                'Modules',
-            ],
-            groupReferencesByType: true,
+            // groupOrder: [
+            //     '*',
+            //     'Functions',
+            //     'Classes',
+            //     'Namespaces',
+            //     'Modules',
+            // ],
+            // groupReferencesByType: true,
 
             headings: {
                 readme: false,
@@ -173,6 +171,14 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                 this.pkgVersion,
             ].filter( v => v ).join( ' @ ' ),
 
+            // navigation: {
+            //     includeCategories: true,
+            //     includeGroups: false,
+            //     includeFolders: true,
+            //     compactFolders: false,
+            //     excludeReferences: true,
+            // },
+
             navigationLinks: {
                 'About': `${ homepage }/ReadMe.html`,
                 'GitHub': repository,
@@ -186,22 +192,30 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
 
             projectDocuments: [
                 'README.md',
-                'CHANGELOG.md',
-                'LICENSE.md',
+                'src/docs/*.md',
+                // 'CHANGELOG.md',
+                // 'LICENSE.md',
             ],
 
             readme: 'none',
-            // router: 'structure',
-
+            router: 'structure',
 
             searchInComments: true,
             searchInDocuments: true,
 
-            sidebarLinks: {
-                // 'Class Hierarchy': `${ homepage }/hierarchy.html`,
-            },
+            // sidebarLinks: {
+            //     // 'Class Hierarchy': `${ homepage }/hierarchy.html`,
+            // },
 
             sourceLinkTemplate: `${ repository }/blob/main/${ ( this.args.packaging && !this.args.dryrun ) ? this.pkg.version + '/' : '' }{path}#L{line}`,
+
+            sort: [
+                'documents-first',
+                'static-first',
+                'kind',
+                'visibility',
+                'alphabetical',
+            ],
             sortEntryPoints: false,
 
             useFirstParagraphOfCommentAsSummary: true,

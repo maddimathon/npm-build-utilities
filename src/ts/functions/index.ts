@@ -1,26 +1,14 @@
 /**
- * Exports only the included functions.
+ * @since ___PKG_VERSION___
  * 
- * @module functions
- * 
- * @since 0.1.1+tmpl
- * 
- * @example
- * ```ts
- * import { functions } from '@maddimathon/template-npm-library';
- * import { ... } from '@maddimathon/template-npm-library/functions';
- * ```
+ * @packageDocumentation
  */
 /**
- * @package @maddimathon/template-npm-library@___CURRENT_VERSION___
- * @author Maddi Mathon (www.maddimathon.com)
- * @homepage ___CURRENT_URL___
- * 
- * @license MIT
+ * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  */
 /*!
- * @maddimathon/template-npm-library@___CURRENT_VERSION___
+ * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-export * from './exampleFunction.js';
+export * from './buildConfig.js';

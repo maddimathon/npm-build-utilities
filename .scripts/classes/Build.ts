@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 'use strict';
 /**
- * @package @maddimathon/template-npm-library
+ * @package @maddimathon/npm-build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT
@@ -16,8 +16,8 @@ import { Document } from './Document.js';
 import { Test } from './Test.js';
 
 import {
-    newCurrentReplacements,
-    newPkgReplacements,
+    currentReplacements,
+    pkgReplacements,
 } from '../vars/replacements.js';
 import { softWrapText } from '@maddimathon/utility-typescript/functions';
 
@@ -127,7 +127,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
 
 
         this.verboseLog( 'replacing in dist...', 2 );
-        for ( const o of newCurrentReplacements( this ).concat( newPkgReplacements( this ) ) ) {
+        for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
             this.replaceInFiles(
                 [
                     './dist/**/*',
@@ -151,7 +151,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
             this.fns.fs.readFile( 'README.md' )
                 .replace( headerRegex, '$1\n' + utils.functions.escRegExpReplace( `# ${ this.pkg.config.title } @ ${ this.pkgVersion }` ) + '\n$2' )
                 .replace( descRegex, '$1\n' + utils.functions.escRegExpReplace( softWrapText( this.pkg.description, 80 ) ) + '\n$2' )
-                .replace( ctaRegex, '$1\n' + utils.functions.escRegExpReplace( `<a href="${ this.pkg.homepage }" class="button" target="_blank">Read Documentation</a>` ) + '\n$2' )
+                .replace( ctaRegex, '$1\n' + utils.functions.escRegExpReplace( `<a href="${ this.pkg.homepage }" class="button">Read Documentation</a>` ) + '\n$2' )
         ), { force: true } );
 
         if ( this.args.releasing ) {
@@ -162,8 +162,8 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
                 this.fns.fs.readFile( 'README.md' )
                     .replace( installRegex, '$1\n' + utils.functions.escRegExpReplace( [
                         '```bash',
-                        // 'npm i -D @maddimathon/template-npm-library@' + this.pkg.version,
-                        'npm i -D github:maddimathon/template-npm-library#' + this.pkg.version,
+                        'npm i -D @maddimathon/npm-build-utilities@' + this.pkg.version,
+                        'npm i -D github:maddimathon/npm-build-utilities#' + this.pkg.version,
                         '```',
                     ].join( '\n' ) ) + '\n$2' )
             ), { force: true } );

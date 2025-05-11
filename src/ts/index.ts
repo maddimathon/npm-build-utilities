@@ -1,31 +1,25 @@
 /**
- * Exports all javascript content, including types.
+ * NPM Build Utilities
  * 
  * @module .
- * @category Exports
  * 
  * @mergeModuleWith <project>
  * 
- * @since 0.1.1+tmpl
- * 
- * @example
- * ```ts
- * import { ... } from '@maddimathon/template-npm-library';
- * ```
+ * @since ___PKG_VERSION___
  */
 /**
- * @package @maddimathon/template-npm-library@___CURRENT_VERSION___
+ * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  * @author Maddi Mathon (www.maddimathon.com)
  * @homepage ___CURRENT_URL___
  * 
  * @license MIT
  */
 /*!
- * @maddimathon/template-npm-library@___CURRENT_VERSION___
+ * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-export type * as Types from './types/index.js';
+export type * from './types/index.js';
 
-export * as classes from './classes/index.js';
-export * as functions from './functions/index.js';
+export * from './classes/index.js';
+export * from './functions/index.js';

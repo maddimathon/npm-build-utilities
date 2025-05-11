@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 'use strict';
 /**
- * @package @maddimathon/template-npm-library
+ * @package @maddimathon/npm-build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT

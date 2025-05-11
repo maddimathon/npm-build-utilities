@@ -1,26 +1,14 @@
 /**
- * Exports utility types only.
+ * @since ___PKG_VERSION___
  * 
- * @module types
- * 
- * @since 0.1.1+tmpl
- * 
- * @example
- * ```ts
- * import type { Types } from '@maddimathon/template-npm-library';
- * import type { ... } from '@maddimathon/template-npm-library/types';
- * ```
+ * @packageDocumentation
  */
 /**
- * @package @maddimathon/template-npm-library@___CURRENT_VERSION___
- * @author Maddi Mathon (www.maddimathon.com)
- * @homepage ___CURRENT_URL___
- * 
- * @license MIT
+ * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  */
 /*!
- * @maddimathon/template-npm-library@___CURRENT_VERSION___
+ * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-export type * from './examples.ts';
+export type * from './ProjectConfig.js';

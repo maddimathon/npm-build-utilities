@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * NPM Library Template (Node CLI)
+ * NPM Build Utilities (CLI)
  * 
- * @package @maddimathon/template-npm-library@___CURRENT_VERSION___
+ * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  * @author Maddi Mathon (www.maddimathon.com)
  * @homepage ___CURRENT_URL___
  * 
@@ -13,13 +13,15 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/template-npm-library@___CURRENT_VERSION___
+ * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
 import minimist from 'minimist';
 
-import sayHello from './sayHello.js';
+import { NodeFunctions } from '@maddimathon/utility-typescript/classes/node';
+
+// import { Project } from '../index.js';
 
 
 type BinArgs = {
@@ -28,12 +30,16 @@ type BinArgs = {
 
 const args: BinArgs = minimist( process.argv.slice( 2 ) );
 
+const F = new NodeFunctions();
+
+
+// const project = new Project();
 
 const scriptName = args._[ 0 ] ?? '';
 
 switch ( scriptName ) {
 
     default:
-        sayHello( args );
+        F.nc.log( 'The cli for this package is not yet implemented.', { clr: 'purple' } );
         break;
 }

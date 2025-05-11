@@ -9,6 +9,7 @@ src/**/*
 
 # DIST
 # ==== #
+examples/**/*
 dist/**/*.css.map
 dist/**/*.js.map
 dist/**/*.ts.map

@@ -1,45 +1,30 @@
 ---
-title: ReadMe
+title: About
+children: 
+  - ./CHANGELOG.md
+  - ./LICENSE.md
 ---
 
 <!--README_HEADER-->
-# NPM Library Template @ 1.2.1+tmpl
+# NPM Build Utilities @ 0.1.0-draft
 <!--/README_HEADER-->
 
 <!--README_DESC-->
-A template for building npm packages published on GitHub with typescript,
-versioning, basic compile scripts, and template setup script.
+Opinionated utilities for easy build systems for npm projects.
 <!--/README_DESC-->
 
-This README includes information relevant to this template, but it’s intended to
-be used as a template for the end library’s README rather than a resource about
-this template.  The only exception is this paragraph and the 
-[Search \& Replace](#template-setup--search--replace)
-section below, which is used to set up the template. If you’re a developer who
-isn’t me and wants to use this template, you probably want to fork it first and
-tailor it more to your tastes and needs. **Don’t forget to review and edit this
-file as you set up the template.**
+Not meant for use in production/client-side, only during development/build.
 
-
-## Template Setup — Search & Replace
-
-Assume all those below are case-sensitive unless otherwise stated. Best replaced
-in the order listed.
-
-| Search                                                    | Replace                 | Notes                                         |
-| :-------------------------------------------------------- | :---------------------- | :-------------------------------------------- |
-| `https://github.com/maddimathon/template-npm-library.git` | *git repo url*          |                                               |
-| `@maddimathon/template-npm-library`                       | *package name*          | lower-case letters, numbers, and hyphens only |
-| `template-npm-library`                                    | *git repo name*         | check as you go; used in urls                 |
-| `NPM Library Template`                                    | *readable package name* | title case                                    |
-
+This library is fairly opinionated and targeted entirely towards my personal
+needs/preferences rather than to (web) developers in general.
 
 
 ## Install
 
 <!--README_INSTALL-->
 ```bash
-npm i -D github:maddimathon/template-npm-library#1.2.1+tmpl
+npm i -D @maddimathon/npm-build-utilities@0.1.0
+npm i -D github:maddimathon/npm-build-utilities#0.1.0
 ```
 <!--/README_INSTALL-->
 
@@ -50,38 +35,31 @@ For an overview of all exported items, including types, see the documentation
 below.
 
 <!--README_DOCS_CTA-->
-<a href="https://maddimathon.github.io/template-npm-library" class="button" target="_blank">Read Documentation</a>
+<a href="https://maddimathon.github.io/npm-build-utilities" class="button">Read Documentation</a>
 <!--/README_DOCS_CTA-->
 
 
 ### Exports & Entry Points
 
-There are four defined entry points, including the root, though it should be
-possible to target individual files (carefully and at your own risk, paths may
-change without being considered a breaking change). The root entry point exports
-the other entry points as modules.
+There is only one defined entry point (the root, plus one for types only) though
+it should be possible to target individual files (carefully and at your own
+risk, paths may change without being considered a breaking change).
 
 ```ts
-import {
-    type Types,
-    classes,
-    functions,
-} from '@maddimathon/template-npm-library';
+import type { ... } from '@maddimathon/npm-build-utilities';
+import type { ... } from '@maddimathon/npm-build-utilities/types';
 
-import type { ... } from '@maddimathon/template-npm-library/types';
-
-import { ... } from '@maddimathon/template-npm-library/classes';
-import { ... } from '@maddimathon/template-npm-library/functions';
+import { ... } from '@maddimathon/npm-build-utilities';
 ```
 
 
 ### Command Line
 
-#### template-npm-library
-
 ```sh
-template-npm-library [bin-function]
+build-utils [bin-function]
 ```
+
+See <a href="https://maddimathon.github.io/npm-build-utilities/cli.html">documentation</a> for details.
 
 
 ## Development & Coding Practices
@@ -101,6 +79,8 @@ should be in `src/`.
 
 Files compiled in order to be included in the published package should be
 written to `dist/`.
+
+Files compiled in order to be demo the package should be written to `examples/`.
 
 Documentation should be a valid HTML static site (for use with GitHub Pages)
 with a home page at `docs/index.html`.
@@ -149,7 +129,7 @@ of its files.  **Types should also be tested** using the utility types in
 
 
 
-## LICENSE
+## License
 
 This mini-library uses the [MIT license](LICENSE.md).  Please read and understand
 the license — I promise it’s short!

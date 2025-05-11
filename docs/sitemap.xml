@@ -1,55 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/index.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/index.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/hierarchy.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/hierarchy.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/documents/ReadMe.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/About.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/documents/Changelog.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/About/Changelog.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/documents/MIT_License.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/About/MIT_License.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/modules/classes.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/Using_the_Library.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/classes/classes.ExampleClass.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/Using_the_Library/Using_the_CLI.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/modules/functions.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/AbstractStage.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/functions/functions.exampleFunction.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/Project.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/modules/types.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/ProjectConfig.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/interfaces/types.ExampleInterface.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/ProjectConfigDefault.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/interfaces/types.ExampleObjectType.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
-	</url>
-	<url>
-		<loc>https://maddimathon.github.io/template-npm-library/types/types.ExampleType.html</loc>
-		<lastmod>2025-05-10T23:22:27.228Z</lastmod>
+		<loc>https://maddimathon.github.io/npm-build-utilities/buildConfig.html</loc>
+		<lastmod>2025-05-11T03:28:10.646Z</lastmod>
 	</url>
 </urlset>

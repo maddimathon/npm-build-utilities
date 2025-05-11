@@ -16,7 +16,7 @@
         "declarationMap": true,
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "outDir": "../../dist/js/",
+        "outDir": "../../dist/",
         "sourceMap": true,
         "target": "ES2018"
     }

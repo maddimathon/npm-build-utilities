@@ -3,7 +3,7 @@
 /**
  * Exports some utilities to use in scripts.
  * 
- * @package @maddimathon/template-npm-library
+ * @package @maddimathon/npm-build-utilities
  * @since ___PKG_VERSION___
  */
 

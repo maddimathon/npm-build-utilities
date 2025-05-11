@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 'use strict';
 /**
- * @package @maddimathon/template-npm-library
+ * @package @maddimathon/npm-build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT
@@ -85,6 +85,7 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
 
         const typescriptFiles = [
             'src/ts/tsconfig.json',
+            'src/examples/ts/tsconfig.json',
         ];
 
         for ( const path of typescriptFiles ) {
@@ -95,10 +96,10 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
 
             this.verboseLog( 'deleting type-only javascript files...', 2 );
             this.fns.fs.deleteFiles( this.glob( [
-                'dist/js/types/**/*.js',
-                'dist/js/types/**/*.js.map',
-                'dist/js/types/**/*.test.d.ts',
-                'dist/js/types/**/*.test.d.ts.map',
+                'dist/types/**/*.js',
+                'dist/types/**/*.js.map',
+                'dist/types/**/*.test.d.ts',
+                'dist/types/**/*.test.d.ts.map',
             ] ) );
         }
     }

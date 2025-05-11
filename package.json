@@ -1,25 +1,25 @@
 {
-    "name": "@maddimathon/template-npm-library",
-    "version": "1.2.1+tmpl",
+    "name": "@maddimathon/npm-build-utilities",
+    "version": "0.1.0",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
-    "description": "A template for building npm packages published on GitHub with typescript, versioning, basic compile scripts, and template setup script.",
+    "description": "Opinionated utilities for easy build systems for npm projects.",
     "keywords": [
-        "npm-package-template",
+        "javascript-build-utilities",
+        "npm-package",
         "npm-package-typescript",
-        "npm-template",
-        "npm-template-typescript"
+        "typescript-build-utilities"
     ],
 
-    "homepage": "https://maddimathon.github.io/template-npm-library",
+    "homepage": "https://maddimathon.github.io/npm-build-utilities",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/maddimathon/template-npm-library.git"
+        "url": "https://github.com/maddimathon/npm-build-utilities.git"
     },
 
     "config": {
-        "title": "NPM Library Template",
+        "title": "NPM Build Utilities",
         "paths": {
             "releases": "@releases",
             "snapshots": ".snapshots"
@@ -35,45 +35,27 @@
         "./README.md"
     ],
 
-    "main": "./dist/js/index.js",
-    "types": "./dist/js/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
 
     "bin": {
-        "template-npm-library": "./dist/js/bin/index.js"
+        "build-utils": "./dist/bin/index.js"
     },
 
     "exports": {
-        ".": "./dist/js/index.js",
+        ".": "./dist/index.js",
         "./*": [
-            "./dist/js/*.js",
-            "./dist/js/*/index.js"
+            "./dist/*.js",
+            "./dist/*/index.js"
         ],
-        "./*.js": "./dist/js/*.js",
+        "./*.js": "./dist/*.js",
 
-        "./classes": "./dist/classes/index.js",
-        "./classes/*": [
-            "./dist/js/classes/*.js",
-            "./dist/js/classes/*/index.js"
-        ],
-        "./classes/*.js": "./dist/classes/*.js",
-
-        "./functions": "./dist/functions/index.js",
-        "./functions/*": [
-            "./dist/js/functions/*.js",
-            "./dist/js/functions/*/index.js"
-        ],
-        "./functions/*.js": "./dist/functions/*.js",
-
-        "./types": "./dist/types/index.d.ts",
+        "./types": "./dist/js/types/index.d.ts",
         "./types/*": [
-            "./dist/types/*.d.ts",
-            "./dist/types/*/index.d.ts"
+            "./dist/js/types/*.d.ts",
+            "./dist/js/types/*/index.d.ts"
         ],
-        "./types/*.d.ts": "./dist/types/*.d.ts",
-
-        "./scss": "./dist/scss/index.scss",
-        "./scss/*": "./dist/scss/*/index.scss",
-        "./scss/*.scss": "./dist/scss/*.scss"
+        "./types/*.d.ts": "./dist/js/types/*.d.ts"
     },
 
     "scripts": {
