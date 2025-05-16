@@ -237,8 +237,8 @@ export class _Stage_Console_VarInspect {
     /**
      * Gets a simple, unformatted inspection string.
      */
-    varString(variable) {
-        return VariableInspector.stringify(variable).replace(/\n\s*\n/gi, '\n');
+    varString(variable, args) {
+        return VariableInspector.stringify(variable, args).replace(/\n\s*\n/gi, '\n');
     }
     /**
      * Prints a timestamped log message to the console.

@@ -11,7 +11,10 @@
  * @license MIT
  */
 
-import { VariableInspector } from '@maddimathon/utility-typescript/classes/VariableInspector';
+import type { Json } from '@maddimathon/utility-typescript/types';
+
+import { mergeArgs } from '@maddimathon/utility-typescript/functions';
+import { VariableInspector } from '@maddimathon/utility-typescript/classes';
 
 import type { CLI, Config, Stage } from '../../types/index.js';
 
@@ -42,6 +45,17 @@ function _internalConfig( _config: Config | Config & Partial<Config.Internal> | 
         stages: {
             ...def.stages,
             ..._config.stages,
+        },
+
+        compiler: {
+            ...def.compiler,
+            ..._config.compiler ?? {},
+
+            tsConfig: mergeArgs(
+                def.compiler.tsConfig as Json.TsConfig,
+                _config.compiler?.tsConfig ?? {},
+                true
+            ),
         },
     };
 
@@ -94,6 +108,7 @@ function _internalConfig( _config: Config | Config & Partial<Config.Internal> | 
                         stages[ stage ] = false;
                     }
                     continue;
+                    break;
 
                 case 'object':
                     // is an args object
@@ -101,10 +116,12 @@ function _internalConfig( _config: Config | Config & Partial<Config.Internal> | 
                         stages[ stage ] = [ stageClass, stageConfig ];
                     }
                     continue;
+                    break;
 
                 default:
                     stages[ stage ] = stageConfig;
                     continue;
+                    break;
             }
         }
     }
@@ -125,7 +142,7 @@ function _internalConfig( _config: Config | Config & Partial<Config.Internal> | 
                     _: 'dist',
                     docs: 'docs',
                     scss: 'dist/scss',
-                    ts: 'dist/ts',
+                    ts: 'dist/js',
 
                     ...config.paths.dist,
                 }
@@ -400,30 +417,7 @@ export async function getConfig(
 
     params.debug && console.varDump.progress( { configFileContent }, level );
 
-    const isInScriptsDir = configPath.match( /^\.scripts\//gi ) !== null;
-
     fs.writeFile( configPath, configFileContent, { force } );
-
-    if ( await console.nc.prompt.bool( {
-        message: 'Do you want to create a tsconfig file too?',
-        msgArgs,
-    } ) ) {
-        const tsConfigFile = fs.pathResolve( configPath, '../tsconfig.json' );
-
-        params.debug && console.varDump.progress( { tsConfigFile }, 1 + level );
-
-        fs.writeFile( tsConfigFile, JSON.stringify( {
-            extends: '@maddimathon/npm-build-utilities/tsconfig',
-            include: [
-                isInScriptsDir ? '../.scripts/**/*' : '.scripts/**/*',
-                'build-utils.config.js',
-            ],
-            compilerOptions: {
-                baseUrl: isInScriptsDir ? '../' : './',
-                noEmit: true,
-            }
-        }, null, 4 ), { force: true } );
-    }
 
     return configInstance;
 }

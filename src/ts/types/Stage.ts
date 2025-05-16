@@ -16,8 +16,10 @@
  */
 
 import * as sass from 'sass';
+import typescript from 'typescript';
 
 import type {
+    Json,
     Objects,
 } from '@maddimathon/utility-typescript/types';
 
@@ -370,9 +372,19 @@ export namespace Compiler {
     export interface Args {
 
         /**
-         * Optional default configuration to use when running sass.
+         * Optional default configuration to use when compiling sass.
          */
         sass: sass.Options<"sync">;
+
+        /**
+         * Optional default configuration to use when compiling typescript.
+         */
+        ts: typescript.CompilerOptions,
+
+        /**
+         * Optional default configuration for a tsConfig file.
+         */
+        tsConfig: Json.TsConfig;
     };
 };
 

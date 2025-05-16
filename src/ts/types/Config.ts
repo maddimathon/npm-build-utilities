@@ -124,20 +124,6 @@ export namespace Config {
          * A version of {@link Config.Stages} with more predictable options.
          */
         stages: Internal.Stages;
-        // stages: {
-        //     // [ K in keyof Config.Stages ]-?:
-        //     // | false
-        //     // | Stage.ClassType
-        //     // | [
-        //     //     Stage.ClassType,
-        //     //     undefined | Partial<Stage.Args.All[ K ]>,
-        //     // ];
-        //     // [ K in keyof Config.Stages ]-?: Extract<Required<Config.Stages>[ K ], false | Stage.ClassType | any[]>;
-        //     [ K in Stage.Name ]-?:
-        //     | false
-        //     | Stage.ClassType.All[ K ]
-        //     | [ Stage.ClassType.All[ K ], undefined | Partial<Stage.Args.All[ K ]> ];
-        // };
     };
 
     export namespace Internal {
@@ -171,7 +157,7 @@ export namespace Config {
          *     _: 'dist',
          *     docs: 'docs',
          *     scss: 'dist/scss',
-         *     ts: 'dist/ts',
+         *     ts: 'dist/js',
          * }
          * ```
          */

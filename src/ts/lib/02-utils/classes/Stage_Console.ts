@@ -364,10 +364,11 @@ export class _Stage_Console_VarInspect implements Stage.Console.VarInspect {
     /**
      * Gets a simple, unformatted inspection string.
      */
-    protected varString(
+    public varString(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+        args?: ConstructorParameters<typeof VariableInspector>[ 1 ],
     ): string {
-        return VariableInspector.stringify( variable ).replace( /\n\s*\n/gi, '\n' );
+        return VariableInspector.stringify( variable, args ).replace( /\n\s*\n/gi, '\n' );
     }
 
     /**

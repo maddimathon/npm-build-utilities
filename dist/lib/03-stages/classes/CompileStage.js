@@ -65,7 +65,7 @@ export class CompileStage extends AbstractStage {
         const scssPaths = scssSrcDir.map((path) => {
             // returns
             if (!this.fs.exists(path)) {
-                this.log.verbose('ⅹ configured scss source path not found: ' + path, 2);
+                this.log.verbose('ⅹ configured scss source path not found: ' + path, 2, { italic: true });
                 return [];
             }
             // returns
@@ -73,7 +73,7 @@ export class CompileStage extends AbstractStage {
                 this.log.verbose('✓ configured scss source path found: ' + path, 2, { italic: true });
                 return path;
             }
-            this.log.verbose('configured scss source path is a directory: ' + path, 2);
+            this.log.verbose('configured scss source path is a directory: ' + path, 2, { italic: true });
             const testSubPaths = [
                 'index.scss',
                 'main.scss',
@@ -115,12 +115,101 @@ export class CompileStage extends AbstractStage {
         });
         this.params.debug && this.log.varDump.progress({ scssPathArgs }, (this.params.verbose ? 3 : 2));
         this.log.verbose('compiling to css...', 2);
-        for await (const { in: input, out: output } of scssPathArgs) {
-            this.cpl.scss(input, output, (this.params.verbose ? 3 : 2));
-        }
+        return Promise.all(scssPathArgs.map(({ in: input, out: output }) => this.cpl.scss(input, output, (this.params.verbose ? 3 : 2))));
     }
     async ts() {
-        this.log.progress('(NOT IMPLEMENTED) running ts sub-stage...', 1);
+        var _a, _b, _c;
+        this.log.progress('compiling typescript files...', 1);
+        const tsSrcDir = this.getSrcDir('ts');
+        const tsPaths = tsSrcDir.map((path) => {
+            // returns
+            if (!this.fs.exists(path)) {
+                this.log.verbose('ⅹ configured ts source path not found: ' + path, 2, { italic: true });
+                return [];
+            }
+            // returns
+            if (!this.fs.isDirectory(path)) {
+                this.log.verbose('✓ configured ts source path found: ' + path, 2, { italic: true });
+                return path;
+            }
+            this.log.verbose('configured ts source path is a directory: ' + path, 2, { italic: true });
+            const testSubPaths = [
+                'tsConfig.json',
+                'tsconfig.json',
+                '../tsConfig.json',
+                '../tsconfig.json',
+            ];
+            for (const subPath of testSubPaths) {
+                const fullPath = this.fs.pathResolve(path, subPath);
+                // returns
+                if (this.fs.exists(fullPath) && this.fs.isFile(fullPath)) {
+                    const relativePath = this.fs.pathRelative(fullPath);
+                    this.log.verbose('✓ default sub-file found: ' + relativePath, 3, { italic: true });
+                    return relativePath;
+                }
+            }
+            this.log.verbose('ⅹ no default files found', 3);
+            return [];
+        }).flat();
+        const tsDistDir = this.getDistDir('ts');
+        // returns if no tsconfig.json is created
+        if (!tsPaths.length) {
+            const msgArgs = {
+                depth: 2 + this.params['log-base-level'],
+            };
+            // returns
+            if (!await this.log.nc.prompt.bool({
+                message: 'No tsconfig.json files found, do you want to create one?',
+                default: true,
+                msgArgs: {
+                    ...msgArgs,
+                    linesIn: 1,
+                },
+            })) {
+                return;
+            }
+            const tsSrcDir = this.getSrcDir('ts')[0];
+            const _tsConfigDefault = this.fs.pathRelative(this.fs.pathResolve(tsSrcDir, './tsconfig.json'));
+            const tsConfigFile = await this.log.nc.prompt.input({
+                message: 'Where should the tsconfig.json be written?',
+                default: _tsConfigDefault,
+                msgArgs: {
+                    ...msgArgs,
+                    linesOut: 1,
+                },
+                required: true,
+            });
+            this.params.debug && this.log.varDump.progress({ tsConfigFile }, 3);
+            // returns
+            if (!tsConfigFile) {
+                return;
+            }
+            const baseUrl = tsSrcDir.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
+            this.params.debug && this.log.varDump.progress({ baseUrl }, 2);
+            const outDir = this.fs.pathRelative(this.fs.pathResolve(baseUrl, tsDistDir));
+            this.params.debug && this.log.varDump.progress({ outDir }, 2);
+            this.fs.writeFile(this.fs.pathResolve(tsConfigFile), JSON.stringify({
+                extends: '@maddimathon/npm-build-utilities/tsconfig',
+                include: [
+                    './**/*',
+                ],
+                ...(_a = this.config.compiler.tsConfig) !== null && _a !== void 0 ? _a : {},
+                compilerOptions: {
+                    ...(_c = (_b = this.config.compiler.tsConfig) === null || _b === void 0 ? void 0 : _b.compilerOptions) !== null && _c !== void 0 ? _c : {},
+                    outDir,
+                    baseUrl,
+                }
+            }, null, 4), { force: true });
+            tsPaths.push(tsConfigFile);
+        }
+        this.log.verbose('deleting existing files...', 2);
+        this.fs.deleteFiles([tsDistDir]);
+        this.params.debug && this.log.varDump.progress({ tsPaths }, (this.params.verbose ? 3 : 2));
+        this.log.verbose('compiling to javascript...', 2);
+        return Promise.all(tsPaths.map(tsc => {
+            this.log.verbose('compiling project: ' + tsc, (this.params.verbose ? 3 : 2));
+            return this.cpl.typescript(tsc, (this.params.verbose ? 4 : 2));
+        }));
     }
     async files() {
         this.log.progress('(NOT IMPLEMENTED) running files sub-stage...', 1);

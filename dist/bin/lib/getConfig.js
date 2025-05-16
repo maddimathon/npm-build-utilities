@@ -10,9 +10,11 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-import { VariableInspector } from '@maddimathon/utility-typescript/classes/VariableInspector';
+import { mergeArgs } from '@maddimathon/utility-typescript/functions';
+import { VariableInspector } from '@maddimathon/utility-typescript/classes';
 import { defaultConfig, getFileSystem, getPackageJson, isConfigValid, Project, ProjectConfig, } from '../../index.js';
 function _internalConfig(_config) {
+    var _a, _b, _c;
     const def = defaultConfig();
     const config = {
         ...def,
@@ -24,6 +26,11 @@ function _internalConfig(_config) {
         stages: {
             ...def.stages,
             ..._config.stages,
+        },
+        compiler: {
+            ...def.compiler,
+            ...(_a = _config.compiler) !== null && _a !== void 0 ? _a : {},
+            tsConfig: mergeArgs(def.compiler.tsConfig, (_c = (_b = _config.compiler) === null || _b === void 0 ? void 0 : _b.tsConfig) !== null && _c !== void 0 ? _c : {}, true),
         },
     };
     const stages = def.stages;
@@ -62,15 +69,18 @@ function _internalConfig(_config) {
                         stages[stage] = false;
                     }
                     continue;
+                    break;
                 case 'object':
                     // is an args object
                     if (stageClass) {
                         stages[stage] = [stageClass, stageConfig];
                     }
                     continue;
+                    break;
                 default:
                     stages[stage] = stageConfig;
                     continue;
+                    break;
             }
         }
     }
@@ -88,7 +98,7 @@ function _internalConfig(_config) {
                     _: 'dist',
                     docs: 'docs',
                     scss: 'dist/scss',
-                    ts: 'dist/ts',
+                    ts: 'dist/js',
                     ...config.paths.dist,
                 }
                 : config.paths.dist),
@@ -307,26 +317,7 @@ export async function getConfig(params, console, level = 0) {
         `export default config;`,
     ].join('\n');
     params.debug && console.varDump.progress({ configFileContent }, level);
-    const isInScriptsDir = configPath.match(/^\.scripts\//gi) !== null;
     fs.writeFile(configPath, configFileContent, { force });
-    if (await console.nc.prompt.bool({
-        message: 'Do you want to create a tsconfig file too?',
-        msgArgs,
-    })) {
-        const tsConfigFile = fs.pathResolve(configPath, '../tsconfig.json');
-        params.debug && console.varDump.progress({ tsConfigFile }, 1 + level);
-        fs.writeFile(tsConfigFile, JSON.stringify({
-            extends: '@maddimathon/npm-build-utilities/tsconfig',
-            include: [
-                isInScriptsDir ? '../.scripts/**/*' : '.scripts/**/*',
-                'build-utils.config.js',
-            ],
-            compilerOptions: {
-                baseUrl: isInScriptsDir ? '../' : './',
-                noEmit: true,
-            }
-        }, null, 4), { force: true });
-    }
     return configInstance;
 }
 //# sourceMappingURL=getConfig.js.map

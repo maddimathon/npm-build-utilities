@@ -25,6 +25,35 @@ export declare function defaultConfig(pkg?: Node.PackageJson): {
             readonly sourceMapIncludeSources: true;
             readonly style: "expanded";
         };
+        readonly tsConfig: {
+            readonly extends: ["@tsconfig/node20/tsconfig.json"];
+            readonly exclude: ["**/node_modules/**/*"];
+            readonly compilerOptions: {
+                readonly allowJs: true;
+                readonly checkJs: true;
+                readonly declaration: true;
+                readonly declarationMap: true;
+                readonly esModuleInterop: true;
+                readonly exactOptionalPropertyTypes: false;
+                readonly forceConsistentCasingInFileNames: true;
+                readonly module: "node18";
+                readonly moduleResolution: "node16";
+                readonly noFallthroughCasesInSwitch: true;
+                readonly noImplicitAny: true;
+                readonly noImplicitOverride: true;
+                readonly noImplicitReturns: true;
+                readonly noImplicitThis: true;
+                readonly noUnusedLocals: true;
+                readonly pretty: true;
+                readonly removeComments: false;
+                readonly resolveJsonModule: true;
+                readonly skipLibCheck: true;
+                readonly sourceMap: true;
+                readonly strict: true;
+                readonly strictBindCallApply: true;
+                readonly target: "es2018";
+            };
+        };
     };
     readonly fs: {};
     readonly paths: {
@@ -34,7 +63,7 @@ export declare function defaultConfig(pkg?: Node.PackageJson): {
             readonly _: "dist";
             readonly docs: "docs";
             readonly scss: "dist/css";
-            readonly ts: "dist/ts";
+            readonly ts: "dist/js";
         };
         readonly src: {
             readonly docs: "src/docs";

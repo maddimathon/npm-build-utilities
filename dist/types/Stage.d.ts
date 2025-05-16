@@ -15,7 +15,8 @@
  * @license MIT
  */
 import * as sass from 'sass';
-import type { Objects } from '@maddimathon/utility-typescript/types';
+import typescript from 'typescript';
+import type { Json, Objects } from '@maddimathon/utility-typescript/types';
 import { node, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
 import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
@@ -292,9 +293,17 @@ export declare namespace Compiler {
      */
     interface Args {
         /**
-         * Optional default configuration to use when running sass.
+         * Optional default configuration to use when compiling sass.
          */
         sass: sass.Options<"sync">;
+        /**
+         * Optional default configuration to use when compiling typescript.
+         */
+        ts: typescript.CompilerOptions;
+        /**
+         * Optional default configuration for a tsConfig file.
+         */
+        tsConfig: Json.TsConfig;
     }
 }
 /**

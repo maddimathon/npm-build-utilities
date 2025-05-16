@@ -37,8 +37,8 @@ export declare class CompileStage extends AbstractStage<Stage.SubStage.Compile, 
      */
     startEndNotice(which: "start" | "end" | null): void;
     protected runSubStage(stage: Stage.SubStage.Compile): Promise<void>;
-    protected scss(): Promise<void>;
-    protected ts(): Promise<void>;
+    protected scss(): Promise<void[] | undefined>;
+    protected ts(): Promise<void[] | undefined>;
     protected files(): Promise<void>;
 }
 //# sourceMappingURL=CompileStage.d.ts.map

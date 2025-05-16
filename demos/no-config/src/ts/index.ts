@@ -19,7 +19,5 @@
  * @license MIT
  */
 
-export type * as Types from './types/index.js';
-
 export * as classes from './classes/index.js';
 export * as functions from './functions/index.js';

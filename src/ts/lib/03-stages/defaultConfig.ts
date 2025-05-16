@@ -11,7 +11,7 @@
  * @license MIT
  */
 
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type { Json, Node } from '@maddimathon/utility-typescript/types';
 
 import type {
     Config,
@@ -56,7 +56,7 @@ export function defaultConfig( pkg?: Node.PackageJson ) {
             _: 'dist',
             docs: 'docs',
             scss: 'dist/css',
-            ts: 'dist/ts',
+            ts: 'dist/js',
         },
 
         src: {
@@ -65,6 +65,44 @@ export function defaultConfig( pkg?: Node.PackageJson ) {
             ts: 'src/ts',
         },
     } as const satisfies Config.Internal[ 'paths' ];
+
+
+    const tsConfig = {
+
+        extends: [
+            '@tsconfig/node20/tsconfig.json',
+        ],
+        exclude: [
+            '**/node_modules/**/*',
+        ],
+
+        compilerOptions: {
+            allowJs: true,
+            checkJs: true,
+            declaration: true,
+            declarationMap: true,
+            esModuleInterop: true,
+            exactOptionalPropertyTypes: false,
+            forceConsistentCasingInFileNames: true,
+            module: 'node18',
+            moduleResolution: 'node16',
+            noFallthroughCasesInSwitch: true,
+            noImplicitAny: true,
+            noImplicitOverride: true,
+            noImplicitReturns: true,
+            noImplicitThis: true,
+            noUnusedLocals: true,
+            pretty: true,
+            removeComments: false,
+            resolveJsonModule: true,
+            skipLibCheck: true,
+            sourceMap: true,
+            strict: true,
+            strictBindCallApply: true,
+            target: 'es2018',
+        },
+    } as const satisfies Json.TsConfig;
+
 
     return {
 
@@ -79,6 +117,8 @@ export function defaultConfig( pkg?: Node.PackageJson ) {
                 sourceMapIncludeSources: true,
                 style: 'expanded',
             },
+
+            tsConfig,
         },
 
         fs: {},

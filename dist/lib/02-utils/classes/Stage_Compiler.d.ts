@@ -62,6 +62,15 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *                {@link Stage.Args['log-base-level']}).
      */
     scss(input: string, output: string, level: number, sassOpts?: sass.Options<"sync">): Promise<void>;
+    /**
+     * Compiles typescript using the
+     * {@link https://www.npmjs.com/package/sass | sass npm package}.
+     *
+     * @param tsConfig  TS config json file path.
+     * @param level     Depth level for this message (above the value of
+     *                  {@link Stage.Args['log-base-level']}).
+     */
+    typescript(tsConfig: string, level: number): Promise<void>;
 }
 /**
  * Used only for {@link Stage_Compiler}.

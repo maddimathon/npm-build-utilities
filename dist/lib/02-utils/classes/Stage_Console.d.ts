@@ -167,7 +167,7 @@ export declare class _Stage_Console_VarInspect implements Stage.Console.VarInspe
     /**
      * Gets a simple, unformatted inspection string.
      */
-    protected varString(variable: ConstructorParameters<typeof VariableInspector>[0]): string;
+    varString(variable: ConstructorParameters<typeof VariableInspector>[0], args?: ConstructorParameters<typeof VariableInspector>[1]): string;
     /**
      * Prints a timestamped log message to the console.
      *

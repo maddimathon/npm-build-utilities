@@ -115,7 +115,7 @@ export declare namespace Config {
          *     _: 'dist',
          *     docs: 'docs',
          *     scss: 'dist/scss',
-         *     ts: 'dist/ts',
+         *     ts: 'dist/js',
          * }
          * ```
          */

@@ -25,7 +25,7 @@
         "package": "build-utils package",
         "release": "build-utils release",
 
-        "reset": "rm -f .scripts/build.config.js .scripts/tsconfig.json build-utils.config.js tsconfig.json"
+        "reset": "rm -f .scripts/build.config.js .scripts/tsconfig.json build-utils.config.js tsconfig.json src/tsconfig.json src/ts/tsconfig.json"
     },
 
     "dependencies": {
