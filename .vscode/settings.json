@@ -10,4 +10,5 @@
         "docs/**",
         "public/**",
     ],
+    "markdown.extension.toc.updateOnSave": false,
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 'use strict';
 /**
  * @package @maddimathon/npm-build-utilities
@@ -61,7 +61,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
     /* LOCAL METHODS
      * ====================================================================== */
 
-    protected async runStage( stage: Release.Stages ) {
+    protected async runSubStage( stage: Release.Stages ) {
         await this[ stage ]();
     }
 
@@ -131,7 +131,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 },
             };
 
-            this.args.dryrun = await this.fns.nc.prompt( 'bool', {
+            this.args.dryrun = await this.fns.nc.prompt.bool( {
                 ...promptArgs,
 
                 message: `Is this a dry run?`,
@@ -147,7 +147,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 + 11
             );
 
-            const inputVersion = ( await this.fns.nc.prompt( 'input', {
+            const inputVersion = ( await this.fns.nc.prompt.input( {
                 ...promptArgs,
                 message: inputVersionMessage,
 
@@ -183,7 +183,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
 
                 // returns
                 if (
-                    ! await this.fns.nc.prompt( 'bool', {
+                    ! await this.fns.nc.prompt.bool( {
                         ...promptArgs,
                         message: `Is .releasenotes.md updated?`,
                     } )

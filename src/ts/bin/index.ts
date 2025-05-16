@@ -8,7 +8,7 @@
  * 
  * @license MIT
  * 
- * @since 1.1.0+tmpl
+ * @since ___PKG_VERSION___
  * 
  * @packageDocumentation
  */
@@ -19,27 +19,51 @@
 
 import minimist from 'minimist';
 
-import { NodeFunctions } from '@maddimathon/utility-typescript/classes/node';
+import type {
+    CLI,
+} from '../types/index.js';
 
-// import { Project } from '../index.js';
+import help from './help.js';
+
+import {
+    parseParamsCLI,
+    Project,
+} from '../index.js';
+
+import { getConfig } from './lib/index.js';
 
 
-type BinArgs = {
-    _: string[];
-};
+const params = minimist( process.argv.slice( 2 ) ) as Partial<CLI.Params>;
 
-const args: BinArgs = minimist( process.argv.slice( 2 ) );
-
-const F = new NodeFunctions();
-
-
-// const project = new Project();
-
-const scriptName = args._[ 0 ] ?? '';
+const scriptName = ( params._?.[ 0 ] ) as CLI.Command | undefined;
 
 switch ( scriptName ) {
 
+    case 'debug':
+    case 'snapshot':
+    case 'compile':
+    case 'test':
+    case 'document':
+    case 'build':
+    case 'package':
+    case 'release':
+        const fullParams = parseParamsCLI( params );
+        const project = new Project(
+            await getConfig(
+                fullParams,
+                await Project.getConsole( {
+                    name: 'Project',
+                    params: fullParams,
+                } ),
+            ),
+            fullParams
+        );
+
+        await project.run( scriptName );
+        break;
+
+    case 'help':
     default:
-        F.nc.log( 'The cli for this package is not yet implemented.', { clr: 'purple' } );
+        await help( params );
         break;
 }

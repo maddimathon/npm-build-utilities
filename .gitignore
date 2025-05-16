@@ -24,6 +24,14 @@ dist/**/*.test.js
 dist/docs/javascript.TypeDoc.json
 
 
+# DEMOS
+# ===== #
+demos/*/@releases
+demos/*/.snapshots
+demos/*/dist
+demos/*/package-lock.json
+
+
 # DOCS
 # ==== #
 

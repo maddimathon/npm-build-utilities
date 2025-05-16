@@ -74,7 +74,7 @@
         "scope": "javascript,typescript",
         "prefix": [ "npm", "scripts", "start" ],
         "body": [
-            "#!/usr/bin/env ${1:tsx}",
+            "#!/usr/bin/env ${1:-S npx tsx}",
             "'use strict';",
             "/**",
             " * @package @maddimathon/npm-build-utilities",

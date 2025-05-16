@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 'use strict';
 /**
  * Exports some utilities to use in scripts.
@@ -15,8 +15,6 @@ export * from './classes/Functions.js';
 import { Functions } from './classes/Functions.js';
 
 
-const args: Functions.Opts
-    //@ts-expect-error
-    = minimist( process.argv.slice( 2 ) ) as Functions.Opts;
+const args = minimist( process.argv.slice( 2 ) ) as unknown as Functions.Opts;
 
 export const F = new Functions( args );

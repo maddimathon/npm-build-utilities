@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 'use strict';
 /**
  * @package @maddimathon/npm-build-utilities
@@ -38,7 +38,7 @@ export class Snapshot extends AbstractStage<Snapshot.Stages, Snapshot.Args> {
      * ====================================================================== */
 
     constructor ( args: Snapshot.Args ) {
-        super( args, 'orange' );
+        super( args, 'pink' );
     }
 
 
@@ -46,7 +46,7 @@ export class Snapshot extends AbstractStage<Snapshot.Stages, Snapshot.Args> {
     /* LOCAL METHODS
      * ====================================================================== */
 
-    protected async runStage( stage: Snapshot.Stages ) {
+    protected async runSubStage( stage: Snapshot.Stages ) {
         await this[ stage ]();
     }
 

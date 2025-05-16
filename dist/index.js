@@ -18,6 +18,5 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-export * from './classes/index.js';
-export * from './functions/index.js';
+export * from './lib/index.js';
 //# sourceMappingURL=index.js.map

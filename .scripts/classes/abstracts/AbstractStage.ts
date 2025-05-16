@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 'use strict';
 /**
  * @package @maddimathon/npm-build-utilities
@@ -33,8 +33,6 @@ import {
 
 
 type CmdArgs = Parameters<cls.node.NodeConsole[ 'cmdArgs' ]>[ 0 ];
-
-type GlobArgs = fns.mergeArgs.Obj & GlobOptions;
 
 
 export abstract class AbstractStage<
@@ -452,10 +450,10 @@ export abstract class AbstractStage<
      */
     public glob(
         globs: string | string[],
-        args: GlobArgs & { filesOnly?: boolean; } = {},
+        args: GlobOptions & { filesOnly?: boolean; } = {},
         relative: boolean = false,
     ): string[] {
-        const DEFAULT_GlobOptions: GlobArgs = {
+        const DEFAULT_GlobOptions: GlobOptions = {
             absolute: true,
             dot: true,
             ignore: [
@@ -472,7 +470,7 @@ export abstract class AbstractStage<
             DEFAULT_GlobOptions,
             args,
             false
-        ) as GlobArgs ) as string | string[];
+        ) as GlobOptions ) as string | string[];
 
         let filepaths: string[] = (
             Array.isArray( globResult )

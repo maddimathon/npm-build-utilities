@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 'use strict';
 /**
  * @package @maddimathon/npm-build-utilities
@@ -54,7 +54,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
     /* LOCAL METHODS
      * ====================================================================== */
 
-    protected async runStage( stage: Document.Stages ) {
+    protected async runSubStage( stage: Document.Stages ) {
         await this[ stage ]();
     }
 
@@ -100,7 +100,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
         // TODO - generate entryPoints from pkg.main and pkg.exports
         const config: Partial<typeDoc.TypeDocOptions> = {
 
-            tsconfig: 'src/ts/tsconfig.json',
+            // alwaysCreateEntryPointModule: true,
 
             basePath: 'src/ts',
 
@@ -112,7 +112,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                 '@source',
             ],
 
-            // categorizeByGroup: true,
+            categorizeByGroup: true,
 
             categoryOrder: [
                 '*',
@@ -121,15 +121,14 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                 // 'Namespaces',
                 // 'Modules',
                 // 'Entry Points',
+                'Other',
                 'Misc.',
             ],
-
-            // compilerOptions,
 
             customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com" target="_blank">Maddi Mathon</a>, 2025. <a href="${ homepage }/MIT_License.html">MIT license</a>.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`,
             customFooterHtmlDisableWrapper: true,
 
-            defaultCategory: 'Misc.',
+            // defaultCategory: 'Misc.',
 
             disableGit: false,
             disableSources: false,
@@ -138,31 +137,99 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                 'src/ts/index.ts',
             ],
 
+            // entryPointStrategy: 'expand',
+
             excludeInternal: false,
             excludeNotDocumented: false,
             excludePrivate: false,
             excludeProtected: false,
             excludeReferences: false,
 
+            externalSymbolLinkMappings: {
+
+                '@maddimathon/utility-typescript': {
+                    'mergeArgs': 'https://maddimathon.github.io/utility-typescript/functions/mergeArgs.html',
+
+                    'node': 'https://maddimathon.github.io/utility-typescript/classes/node.html',
+                    'NodeConsole': 'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
+                    'node.NodeConsole': 'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
+                    'NodeFiles': 'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles-1.html',
+                    'node.NodeFiles': 'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles-1.html',
+                    'NodeFiles.Args': 'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
+                    'node.NodeFiles.Args': 'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
+
+                    'MessageMaker': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker.html',
+                    'MessageMaker.Colour': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/Colour.html',
+                    'VariableInspector': 'https://maddimathon.github.io/utility-typescript/classes/VariableInspector.html',
+
+                    'Node': 'https://maddimathon.github.io/utility-typescript/Types/Node.html',
+                    'PackageJson': 'https://maddimathon.github.io/utility-typescript/Types/Node/PackageJson.html',
+                    'Node.PackageJson': 'https://maddimathon.github.io/utility-typescript/Types/Node/PackageJson.html',
+
+                    'Objects': 'https://maddimathon.github.io/utility-typescript/Types/Objects.html',
+                    'Classify': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
+                    'Objects.Classify': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
+                    'RecursivePartial': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
+                    'Objects.RecursivePartial': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
+                    'RecursiveRequired': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
+                    'Objects.RecursiveRequired': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
+                },
+            },
+
             githubPages: true,
 
-            // groupOrder: [
-            //     '*',
-            //     'Functions',
-            //     'Classes',
-            //     'Namespaces',
-            //     'Modules',
-            // ],
-            // groupReferencesByType: true,
+            groupOrder: [
+                '*',
+                'Documents',
+                'Constructors',
+                'Properties',
+                'Accessors',
+                'Functions',
+                'Methods',
+                'Classes',
+                'Interfaces',
+                'Type Aliases',
+                'Namespaces',
+                'Modules',
+            ],
+            groupReferencesByType: true,
 
-            headings: {
-                readme: false,
-            },
+            // headings: {
+            //     readme: false,
+            // },
             hideGenerator: true,
             hostedBaseUrl: homepage,
 
-            includeHierarchySummary: true,
+            // includeHierarchySummary: true,
             includeVersion: false,
+
+            kindSortOrder: [
+                'Module',
+                'Constructor',
+                'Property',
+                'Variable',
+                'Function',
+                'Accessor',
+                'Method',
+                'Enum',
+                'EnumMember',
+                'Class',
+                'Interface',
+                'TypeAlias',
+                'TypeLiteral',
+                'Namespace',
+
+                'Reference',
+                'Project',
+
+                'Parameter',
+                'TypeParameter',
+                'CallSignature',
+                'ConstructorSignature',
+                'IndexSignature',
+                'GetSignature',
+                'SetSignature',
+            ],
 
             markdownLinkExternal: true,
 
@@ -180,7 +247,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
             // },
 
             navigationLinks: {
-                'About': `${ homepage }/ReadMe.html`,
+                // 'About': `${ homepage }/ReadMe.html`,
                 'GitHub': repository,
                 'by Maddi Mathon': 'https://www.maddimathon.com',
             },
@@ -203,20 +270,19 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
             searchInComments: true,
             searchInDocuments: true,
 
-            // sidebarLinks: {
-            //     // 'Class Hierarchy': `${ homepage }/hierarchy.html`,
-            // },
-
-            sourceLinkTemplate: `${ repository }/blob/main/${ ( this.args.packaging && !this.args.dryrun ) ? this.pkg.version + '/' : '' }{path}#L{line}`,
+            sourceLinkExternal: true,
+            sourceLinkTemplate: `${ repository }/blob/main/${ this.args.packaging ? encodeURI( this.pkg.version.replace( /-draft(\+|$)/gi, '$1' ) ) + '/' : '' }{path}#L{line}`,
 
             sort: [
                 'documents-first',
                 'static-first',
+                'required-first',
                 'kind',
                 'visibility',
                 'alphabetical',
             ],
-            sortEntryPoints: false,
+
+            tsconfig: 'src/ts/tsconfig.json',
 
             useFirstParagraphOfCommentAsSummary: true,
 

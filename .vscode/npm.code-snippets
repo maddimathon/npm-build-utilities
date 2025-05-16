@@ -44,7 +44,7 @@
             "    /* LOCAL METHODS",
             "     * ====================================================================== */",
             "",
-            "    protected async runStage( stage: ${2:CamelCaseStageName}.Stages ) {",
+            "    protected async runSubStage( stage: ${2:CamelCaseStageName}.Stages ) {",
             "        await this[ stage ]();",
             "    }",
             "",

@@ -1,8 +1,5 @@
 {
-    "extends": [
-        "@tsconfig/node20/tsconfig.json",
-        "../tsconfig.base.json",
-    ],
+    "extends": "../tsconfig.base.json",
     "include": [
         "./**/*",
         ".scripts/**/*",
@@ -11,9 +8,9 @@
         "baseUrl": "../",
 
         "declaration": false,
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "declarationMap": false,
         "noEmit": true,
+        "sourceMap": false,
         "target": "ESNext"
     }
 }

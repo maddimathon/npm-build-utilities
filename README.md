@@ -9,6 +9,9 @@ children:
 # NPM Build Utilities @ 0.1.0-draft
 <!--/README_HEADER-->
 
+**Not yet finished and still weird.**  This site is only public because I don't
+want to pay even more for GitHub.
+
 <!--README_DESC-->
 Opinionated utilities for easy build systems for npm projects.
 <!--/README_DESC-->
@@ -19,10 +22,19 @@ This library is fairly opinionated and targeted entirely towards my personal
 needs/preferences rather than to (web) developers in general.
 
 
+## Changelog
+
+<!--README_DOCS_CHANGELOG-->
+Read it from [the source](https://github.com/maddimathon/npm-build-utilities/blob/main/CHANGELOG.md) 
+or 
+[the docs site](https://maddimathon.github.io/npm-build-utilities/Changelog.html).
+<!--/README_DOCS_CHANGELOG-->
+
+
 ## Install
 
 <!--README_INSTALL-->
-```bash
+```sh
 npm i -D @maddimathon/npm-build-utilities@0.1.0
 npm i -D github:maddimathon/npm-build-utilities#0.1.0
 ```
@@ -52,6 +64,8 @@ import type { ... } from '@maddimathon/npm-build-utilities/types';
 import { ... } from '@maddimathon/npm-build-utilities';
 ```
 
+A basic tsconfig to extend is available at `@maddimathon/npm-build-utilities/tsconfig`.
+
 
 ### Command Line
 
@@ -80,7 +94,7 @@ should be in `src/`.
 Files compiled in order to be included in the published package should be
 written to `dist/`.
 
-Files compiled in order to be demo the package should be written to `examples/`.
+Files created in order to demo the package should be written as subdirectories in `demos/`.
 
 Documentation should be a valid HTML static site (for use with GitHub Pages)
 with a home page at `docs/index.html`.

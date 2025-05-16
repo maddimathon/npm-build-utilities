@@ -8,7 +8,7 @@
  *
  * @license MIT
  *
- * @since 1.1.0+tmpl
+ * @since 0.1.0-draft
  *
  * @packageDocumentation
  */
@@ -18,14 +18,30 @@
  */
 var _a;
 import minimist from 'minimist';
-import { NodeFunctions } from '@maddimathon/utility-typescript/classes/node';
-const args = minimist(process.argv.slice(2));
-const F = new NodeFunctions();
-// const project = new Project();
-const scriptName = (_a = args._[0]) !== null && _a !== void 0 ? _a : '';
+import help from './help.js';
+import { parseParamsCLI, Project, } from '../index.js';
+import { getConfig } from './lib/index.js';
+const params = minimist(process.argv.slice(2));
+const scriptName = ((_a = params._) === null || _a === void 0 ? void 0 : _a[0]);
 switch (scriptName) {
+    case 'debug':
+    case 'snapshot':
+    case 'compile':
+    case 'test':
+    case 'document':
+    case 'build':
+    case 'package':
+    case 'release':
+        const fullParams = parseParamsCLI(params);
+        const project = new Project(await getConfig(fullParams, await Project.getConsole({
+            name: 'Project',
+            params: fullParams,
+        })), fullParams);
+        await project.run(scriptName);
+        break;
+    case 'help':
     default:
-        F.nc.log('The cli for this package is not yet implemented.', { clr: 'purple' });
+        await help(params);
         break;
 }
 //# sourceMappingURL=index.js.map

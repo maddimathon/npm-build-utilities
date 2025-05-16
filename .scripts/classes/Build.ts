@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 'use strict';
 /**
  * @package @maddimathon/npm-build-utilities
@@ -63,18 +63,29 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
     /* LOCAL METHODS
      * ====================================================================== */
 
-    protected async runStage( stage: Build.Stages ) {
+    protected async runSubStage( stage: Build.Stages ) {
         await this[ stage ]();
     }
 
     public async startEndNotice( which: "start" | "end" ): Promise<void> {
 
-        this.startEndNoticeLog(
-            which,
-            `BUILD ${ which.toUpperCase() }ING`,
-            `BUILD FINISHED`,
-            `${ which.toUpperCase() }ING BUILD`,
-        );
+        const emoji = which == 'end' ? '✅' : '🚨';
+
+        if (
+            this.args.watchedWatcher
+            || this.args.watchedFilename
+            || this.args.watchedEvent
+        ) {
+            this.progressLog( `${ emoji } [watch-change-${ which }] file ${ this.args.watchedEvent }: ${ this.args.watchedFilename }`, 0 );
+        } else {
+
+            this.startEndNoticeLog(
+                which,
+                `BUILD ${ which.toUpperCase() }ING`,
+                `BUILD FINISHED`,
+                `${ which.toUpperCase() }ING BUILD`,
+            );
+        }
     }
 
 
@@ -147,11 +158,14 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
 
         const ctaRegex = /(<!--README_DOCS_CTA-->).*?(<!--\/README_DOCS_CTA-->)/gs;
 
+        const changelogRegex = /(<!--README_DOCS_CHANGELOG-->).*?(<!--\/README_DOCS_CHANGELOG-->)/gs;
+
         this.fns.fs.writeFile( 'README.md', (
             this.fns.fs.readFile( 'README.md' )
                 .replace( headerRegex, '$1\n' + utils.functions.escRegExpReplace( `# ${ this.pkg.config.title } @ ${ this.pkgVersion }` ) + '\n$2' )
                 .replace( descRegex, '$1\n' + utils.functions.escRegExpReplace( softWrapText( this.pkg.description, 80 ) ) + '\n$2' )
                 .replace( ctaRegex, '$1\n' + utils.functions.escRegExpReplace( `<a href="${ this.pkg.homepage }" class="button">Read Documentation</a>` ) + '\n$2' )
+                .replace( changelogRegex, '$1\n' + this.fns.fns.escRegExpReplace( `Read it from [the source](${ this.pkg.repository.url.replace( /(\/+|\.git)$/gi, '' ) }/blob/main/CHANGELOG.md) \nor \n[the docs site](${ this.pkg.homepage }/Changelog.html).` ) + '\n$2' )
         ), { force: true } );
 
         if ( this.args.releasing ) {
@@ -161,7 +175,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
             this.fns.fs.writeFile( 'README.md', (
                 this.fns.fs.readFile( 'README.md' )
                     .replace( installRegex, '$1\n' + utils.functions.escRegExpReplace( [
-                        '```bash',
+                        '```sh',
                         'npm i -D @maddimathon/npm-build-utilities@' + this.pkg.version,
                         'npm i -D github:maddimathon/npm-build-utilities#' + this.pkg.version,
                         '```',

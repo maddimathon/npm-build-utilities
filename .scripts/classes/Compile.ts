@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 'use strict';
 /**
  * @package @maddimathon/npm-build-utilities
@@ -13,6 +13,7 @@ import { AbstractStage } from './abstracts/AbstractStage.js';
 const compileSubStages = [
     'js',
     'css',
+    'files',
 ] as const;
 
 
@@ -46,7 +47,7 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
     /* LOCAL METHODS
      * ====================================================================== */
 
-    protected async runStage( stage: Compile.Stages ) {
+    protected async runSubStage( stage: Compile.Stages ) {
         await this[ stage ]();
     }
 
@@ -54,11 +55,11 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
 
         const emoji = which == 'end' ? '✅' : '🚨';
 
-        if (
+        if ( !this.args.building && (
             this.args.watchedWatcher
             || this.args.watchedFilename
             || this.args.watchedEvent
-        ) {
+        ) ) {
             this.progressLog( `${ emoji } [watch-change-${ which }] file ${ this.args.watchedEvent }: ${ this.args.watchedFilename }`, 0 );
         } else {
 
@@ -80,12 +81,24 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
         this.progressLog( '(NOT IMPLEMENTED) compiling scss...', 1 );
     }
 
+    protected async files() {
+        this.progressLog( 'copying misc. files...', 1 );
+
+        const srcPaths: string[] = [
+        ];
+
+        const rootPaths: string[] = [
+        ];
+
+        rootPaths.length && this.copyFiles( rootPaths, 'dist' );
+        srcPaths.length && this.copyFiles( srcPaths, 'dist', 'src' );
+    }
+
     protected async js() {
         this.progressLog( 'compiling typescript files...', 1 );
 
         const typescriptFiles = [
             'src/ts/tsconfig.json',
-            'src/examples/ts/tsconfig.json',
         ];
 
         for ( const path of typescriptFiles ) {

@@ -1,0 +1,40 @@
+{
+    "name": "@maddimathon/npm-build-utilities--demos--complete",
+    "version": "0.1.0",
+
+    "config": {
+        "title": "NPM Build Utilities Complete Demo"
+    },
+    
+    "type": "module",
+
+    "scripts": {
+        "_": "build-utils",
+        "help": "build-utils help",
+        "debug": "build-utils debug",
+
+        "snapshot": "build-utils snapshot",
+
+        "compile": "build-utils compile",
+
+        "test": "build-utils test",
+        "document": "build-utils document",
+
+        "build": "build-utils build",
+        
+        "package": "build-utils package",
+        "release": "build-utils release"
+    },
+
+    "dependencies": {
+    },
+    "devDependencies": {
+        "@maddimathon/npm-build-utilities": "file:../.."
+    },
+
+    "browserslist": [
+        "last 3 major versions",
+        "> 0.5%",
+        "not dead"
+    ]
+}

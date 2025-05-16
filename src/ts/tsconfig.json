@@ -8,16 +8,12 @@
         "./src/ts/**/*"
     ],
     "exclude": [
-        "./node_modules/**/*"
+        "./node_modules/**/*",
+        "../../src/ts/classes/**/*",
+        "./src/ts/classes/**/*"
     ],
     "compilerOptions": {
         "baseUrl": "../../",
-        "declaration": true,
-        "declarationMap": true,
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "outDir": "../../dist/",
-        "sourceMap": true,
-        "target": "ES2018"
+        "outDir": "../../dist/"
     }
 }

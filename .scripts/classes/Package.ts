@@ -1,4 +1,4 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env -S npx tsx
 'use strict';
 /**
  * @package @maddimathon/npm-build-utilities
@@ -54,7 +54,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
      * ====================================================================== */
 
     constructor ( args: Package.Args ) {
-        super( args, args.releasing ? 'yellow' : 'purple' );
+        super( args, args.releasing ? 'orange' : 'purple' );
     }
 
 
@@ -62,7 +62,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
     /* LOCAL METHODS
      * ====================================================================== */
 
-    protected async runStage( stage: Package.Stages ) {
+    protected async runSubStage( stage: Package.Stages ) {
         await this[ stage ]();
     }
 
@@ -107,7 +107,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
 
             const depth = this.args[ 'log-base-level' ] ?? 0;
 
-            const promptArgs: Omit<Parameters<typeof this.fns.nc.prompt>[ 1 ], "message"> = {
+            const promptArgs: Omit<Parameters<typeof this.fns.nc.prompt.bool>[ 0 ], "message"> = {
 
                 default: false,
 
@@ -122,7 +122,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
                 },
             };
 
-            this.args.dryrun = await this.fns.nc.prompt( 'bool', {
+            this.args.dryrun = await this.fns.nc.prompt.bool( {
                 ...promptArgs,
                 message: `Is this a dry run?`,
                 default: !!this.args.dryrun,
@@ -186,6 +186,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
                 'package-lock.json',
                 'LICENSE.md',
                 'README.md',
+                'tsconfig.base.json',
             ],
             this.releasePath,
             './',

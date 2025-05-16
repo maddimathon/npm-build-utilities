@@ -8,7 +8,7 @@
  *
  * @license MIT
  *
- * @since 1.1.0+tmpl
+ * @since 0.1.0-draft
  *
  * @packageDocumentation
  */

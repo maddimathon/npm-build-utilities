@@ -1,0 +1,11 @@
+{
+    "extends": "@maddimathon/npm-build-utilities/tsconfig",
+    "include": [
+        "../.scripts/**/*",
+        ".scripts/**/*"
+    ],
+    "compilerOptions": {
+        "baseUrl": "../",
+        "noEmit": true
+    }
+}

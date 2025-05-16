@@ -19,6 +19,5 @@
  * @license MIT
  */
 export type * from './types/index.js';
-export * from './classes/index.js';
-export * from './functions/index.js';
+export * from './lib/index.js';
 //# sourceMappingURL=index.d.ts.map
