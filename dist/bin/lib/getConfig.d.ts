@@ -11,7 +11,7 @@
  * @license MIT
  */
 import type { CLI, Stage } from '../../types/index.js';
-import { ProjectConfig } from '../../index.js';
+import { ProjectConfig } from '../../lib/index.js';
 /**
  * Gets the configuration object for the current node package.
  *

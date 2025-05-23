@@ -21,19 +21,62 @@ import { globSync } from 'glob';
 
 
 import {
-    currentReplacements,
-    pkgReplacements,
-} from '../../vars/replacements.js';
-
-import {
     // Types as TS,
     classes as cls,
     functions as fns,
 } from '@maddimathon/utility-typescript';
 
+import type {
+    Config,
+    LocalError,
+} from '../../../src/ts/index.js';
+
+import {
+    currentReplacements,
+    pkgReplacements,
+} from '../../vars/replacements.js';
+
+import {
+    Internal,
+
+    defaultConfig,
+    parseParamsCLI,
+
+    ProjectConfig,
+    Stage_Console,
+} from '../../../src/ts/index.js';
+
 
 type CmdArgs = Parameters<cls.node.NodeConsole[ 'cmdArgs' ]>[ 0 ];
 
+
+function getStageConsole(
+    name: string,
+    clr: cls.MessageMaker.Colour,
+    args: Partial<AbstractStage.Args<string>>,
+) {
+
+    const fs = new cls.node.NodeFiles( {}, {
+        nc: new cls.node.NodeConsole( {
+            // cmdErrorHandler: ( error: any ) => { throw error; },
+            msgMaker: {
+                msg: { clr },
+            }
+        } ),
+    } );
+
+    const pkg = JSON.parse( fs.readFile( 'package.json' ) ) as TU.PackageJson;
+
+    const config: Config.Internal = defaultConfig( { pkg } );
+
+    return new Stage_Console(
+        name,
+        clr,
+        new ProjectConfig( config ),
+        parseParamsCLI( args ),
+        {}
+    );
+}
 
 export abstract class AbstractStage<
     SubStage extends string | never,
@@ -142,17 +185,111 @@ export abstract class AbstractStage<
     /* CONSTRUCTOR
      * ====================================================================== */
 
-    // constructor (
-    //     args: Args,
-    //     clr: cls.MessageMaker.Colour = 'black',
-    // ) {
-    //     super( args, clr );
-    // }
+    public constructor (
+        name: string,
+        args: Partial<Args>,
+        clr: cls.MessageMaker.Colour,
+        utils: ConstructorParameters<typeof cls.node.AbstractBuildStage>[ 2 ] = {},
+        public readonly console: Stage_Console = getStageConsole( name, clr, args ),
+    ) {
+        super( args, clr, {
+            ...utils,
+            nc: utils.nc ?? console.nc,
+        } );
+    }
 
 
 
     /* LOCAL METHODS
      * ====================================================================== */
+
+    protected handleError(
+        error: any,
+        level: number,
+        args?: Partial<LocalError.Handler.Args>,
+    ): void {
+        Internal.errorHandler( error, level, this.console, args );
+    }
+
+
+    protected try<
+        Params extends never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params?: Params,
+        callback?: (
+            | null
+            | LocalError.Handler
+            | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
+        ),
+    ): Return;
+
+    protected try<
+        Params extends unknown[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params: Params,
+        callback?: (
+            | null
+            | LocalError.Handler
+            | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
+        ),
+    ): Return;
+
+    /**
+     * Runs a function, with parameters as applicable, and catches (& handles)
+     * anything thrown.
+     * 
+     * Overloaded for better function param typing.
+     */
+    protected try<
+        Params extends unknown[] | never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params?: Params,
+        callback: (
+            | null
+            | LocalError.Handler
+            | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
+        ) = null,
+    ): Return {
+
+        try {
+
+            return (
+                params
+                    ? tryer( ...params )
+                    // @ts-expect-error
+                    : tryer()
+            );
+
+        } catch ( error ) {
+
+            let callbackArgs: Partial<LocalError.Handler.Args> = {};
+
+            if ( !callback ) {
+                callback = Internal.errorHandler;
+            } else if ( Array.isArray( callback ) ) {
+                callbackArgs = callback[ 1 ];
+                callback = callback[ 0 ];
+            }
+
+            callback(
+                error as LocalError.Input,
+                level,
+                this.console,
+                callbackArgs
+            );
+
+            throw error;
+        }
+    }
 
 
     /* MESSAGES ===================================== */
@@ -255,7 +392,11 @@ export abstract class AbstractStage<
         };
 
         this.verboseLog( `compiling ${ input } to ${ output }...`, 0 + logBaseLevel );
-        this.fns.nc.cmd( `sass ${ input }:${ output }`, args );
+        this.try(
+            this.fns.nc.cmd,
+            0 + logBaseLevel,
+            [ `sass ${ input }:${ output }`, args ]
+        );
 
         for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
             this.replaceInFiles(
@@ -311,7 +452,11 @@ export abstract class AbstractStage<
         const tscCmd = `tsc ${ this.fns.nc.cmdArgs( cmdParams, true, false ) }`;
 
         this.args.debug && this.progressLog( tscCmd, ( this.args.verbose ? 3 : 2 ) + logBaseLevel );
-        this.fns.nc.cmd( tscCmd );
+        this.try(
+            this.fns.nc.cmd,
+            ( this.args.verbose ? 3 : 2 ) + logBaseLevel,
+            [ tscCmd ]
+        );
     }
 
     protected replaceInFiles(

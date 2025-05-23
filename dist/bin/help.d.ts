@@ -12,6 +12,6 @@
  * @license MIT
  */
 import type { CLI } from '../types/index.js';
-import { Stage_Console } from '../index.js';
+import { Stage_Console } from '../lib/index.js';
 export default function (_params?: Partial<CLI.Params>, level?: number, console?: Stage_Console): Promise<void>;
 //# sourceMappingURL=help.d.ts.map

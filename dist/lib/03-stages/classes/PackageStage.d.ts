@@ -1,15 +1,3 @@
-/**
- * @since 0.1.0-draft
- *
- * @packageDocumentation
- */
-/**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
- */
-/*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
- * @license MIT
- */
 import type { CLI, Stage } from '../../../types/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
@@ -28,7 +16,7 @@ export declare class PackageStage extends AbstractStage<Stage.SubStage.Package, 
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, args?: Partial<Stage.Args.Package>);
+    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Package>);
     /**
      * Prints a message to the console signalling the start or end of this
      * build stage.

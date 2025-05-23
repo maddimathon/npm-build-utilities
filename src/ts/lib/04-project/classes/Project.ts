@@ -17,6 +17,8 @@ import type {
     Stage,
 } from '../../../types/index.js';
 
+import { DummyConsole } from '../../@internal/index.js';
+
 import {
     parseParamsCLI,
     ProjectConfig,
@@ -50,7 +52,7 @@ export class Project {
     ): Promise<Stage_Console> {
 
         const params = opts.params ?? parseParamsCLI( {} );
-        const config = opts.config ?? new ProjectConfig( defaultConfig() );
+        const config = opts.config ?? new ProjectConfig( defaultConfig( new DummyConsole() ) );
 
         return new Stage_Console(
             opts.name ?? 'Package',

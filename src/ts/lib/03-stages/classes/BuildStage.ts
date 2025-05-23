@@ -11,8 +11,6 @@
  * @license MIT
  */
 
-import type { Test } from '@maddimathon/utility-typescript/types';
-
 import type {
     CLI,
     Stage,
@@ -73,7 +71,7 @@ export class BuildStage extends AbstractStage<
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
-        args?: Partial<Stage.Args.Build>,
+        args: Partial<Stage.Args.Build>,
     ) {
         super( 'build', 'blue', config, params, args );
     }
@@ -117,15 +115,15 @@ export class BuildStage extends AbstractStage<
     }
 
     protected async minimize() {
-        this.log.progress( '(NOT IMPLEMENTED) running minimize sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running minimize sub-stage...', 1 );
     }
 
     protected async prettify() {
-        this.log.progress( '(NOT IMPLEMENTED) running prettify sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running prettify sub-stage...', 1 );
     }
 
     protected async replace() {
-        this.log.progress( '(NOT IMPLEMENTED) running replace sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running replace sub-stage...', 1 );
     }
 
     /**
@@ -135,18 +133,3 @@ export class BuildStage extends AbstractStage<
         await this.runStage( 'test', 1 );
     }
 }
-
-
-/*
- * TYPE TESTING 
- */
-
-type BuildClassType = Stage.ClassType.All[ 'build' ];
-
-const typeTest: BuildClassType = BuildStage;
-
-type TypeTest = Test.Expect<Test.Satisfies<typeof BuildStage, BuildClassType>>;
-
-// only so that these are used
-true as TypeTest;
-typeTest;

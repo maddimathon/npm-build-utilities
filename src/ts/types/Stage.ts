@@ -33,6 +33,7 @@ import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
 
 import type {
+    FileSystem,
     ProjectConfig,
     Stage_Compiler,
 } from '../lib/index.js';
@@ -57,7 +58,7 @@ export interface Args<
      */
     objs: {
         cpl?: Stage_Compiler,
-        fs?: node.NodeFiles,
+        fs?: FileSystem,
     };
 };
 
@@ -98,7 +99,45 @@ export namespace Args {
      */
     export interface Compile<
         SubStage extends string = string,
-    > extends Args<SubStage> { };
+    > extends Args<SubStage> {
+
+        /**
+         * Whether to include this sub-stage.
+         *
+         * If an object, paths to files copied to the dist directory during
+         * compile.
+         * 
+         * @default false
+         */
+        files: false | {
+
+            /**
+             * Paths relative to the project root — to copy to the dist
+             * directory.
+             */
+            root?: string[];
+
+            /**
+             * Paths relative to the source directory — to copy to the dist
+             * directory.
+             */
+            src?: string[];
+        };
+
+        /**
+         * Whether to include this sub-stage.
+         * 
+         * @default true
+         */
+        scss: boolean;
+
+        /**
+         * Whether to include this sub-stage.
+         * 
+         * @default true
+         */
+        ts: boolean;
+    };
 
     /**
      * The required shape for a document stage.
@@ -247,7 +286,7 @@ export interface Class<
      * 
      * @param subDir  Sub-path to get.
      */
-    getDistDir( subDir?: Config.SourceDirectory ): string;
+    getDistDir( subDir?: Config.Paths.SourceDirectory ): string;
 
     /**
      * Gets the paths from the config for the given src sub directory.
@@ -256,7 +295,7 @@ export interface Class<
      * 
      * @param subDir  Sub-path to get.
      */
-    getSrcDir( subDir: Config.SourceDirectory ): string[];
+    getSrcDir( subDir?: Config.Paths.SourceDirectory ): string | string[];
 
     /**
      * Prints a message to the console signalling the start or end of this build
@@ -310,13 +349,25 @@ export namespace Class {
  * 
  * @expand
  */
-export type ClassType<
-    C extends Class = Class,
-    A extends Args = Args,
+export type ClassType = ( new (
+    config: ProjectConfig,
+    params: CLI.Params,
+    args: Partial<Args>,
+) => Class );
+
+/**
+ * Any stage class compatible with this package.
+ * 
+ * @expand
+ */
+export type ClassTypeGeneric<
+    SubStage extends string = string,
+    A extends Args<SubStage> = Args<SubStage>,
+    C extends Class<SubStage, A> = Class<SubStage, A>,
 > = ( new (
     config: ProjectConfig,
     params: CLI.Params,
-    args?: Partial<A>,
+    args: Partial<A>,
 ) => C );
 
 /**
@@ -330,9 +381,6 @@ export namespace ClassType {
 
     /**
      * An object with an instance of each stage's class.
-     *
-     * Those that are optional only have abstract classes included in this
-     * package (test, document).
      * 
      * @interface
      */
@@ -340,13 +388,13 @@ export namespace ClassType {
         [ K in keyof Class.All ]: ClassType;
     };
 
-    export type Build = ClassType<Class<SubStage.Build, Args.Build>, Args.Build>;
-    export type Compile = ClassType<Class<SubStage.Compile, Args.Compile>, Args.Compile>;
-    export type Document = ClassType<Class<SubStage.Document, Args.Document>, Args.Document>;
-    export type Package = ClassType<Class<SubStage.Package, Args.Package>, Args.Package>;
-    export type Release = ClassType<Class<SubStage.Release, Args.Release>, Args.Release>;
-    export type Snapshot = ClassType<Class<SubStage.Snapshot, Args.Snapshot>, Args.Snapshot>;
-    export type Test = ClassType<Class<SubStage.Test, Args.Test>, Args.Test>;
+    export type Build = ClassTypeGeneric<SubStage.Build, Args.Build, Class.Build>;
+    export type Compile = ClassTypeGeneric<SubStage.Compile, Args.Compile, Class.Compile>;
+    export type Document = ClassTypeGeneric<SubStage.Document, Args.Document, Class.Document>;
+    export type Package = ClassTypeGeneric<SubStage.Package, Args.Package, Class.Package>;
+    export type Release = ClassTypeGeneric<SubStage.Release, Args.Release, Class.Release>;
+    export type Snapshot = ClassTypeGeneric<SubStage.Snapshot, Args.Snapshot, Class.Snapshot>;
+    export type Test = ClassTypeGeneric<SubStage.Test, Args.Test, Class.Test>;
 }
 
 /**
@@ -390,6 +438,8 @@ export namespace Compiler {
 
 /**
  * Shape of the console utility class to be available in each stage.
+ * 
+ * @since ___PKG_VERSION___
  */
 export interface Console {
 
@@ -404,24 +454,41 @@ export interface Console {
     readonly varDump: Console.VarInspect;
 
     /**
-     * Prints a timestamped log message to the console. Only if 
-     * `{@link Stage.Args}.notice` is truthy.
+     * Outputs the given error message to the console.
      * 
-     * @category Messagers
+     * @category Errors
      * 
-     * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-     * 
-     * @param msg       The message(s) to print to the console.
+     * @param msg       Error message(s).
      * @param level     Depth level for this message (above the value of 
      *                  {@link Stage.Args['log-base-level']}).
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
-    notice(
-        msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
+    error(
+        msg: MessageMaker.BulkMsgs,
         level: number,
-        msgArgs?: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 1 ],
-        timeArgs?: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 2 ],
+        msgArgs?: Partial<MessageMaker.MsgArgs>,
+        timeArgs?: Partial<MessageMaker.MsgArgs>,
+    ): void;
+
+    /**
+     * Prints a timestamped log message to the console.
+     * 
+     * @category Messagers
+     * 
+     * @see {@link AbstractStage.msgArgs}  Generates default arguments.
+     * 
+     * @param msg       The message(s) to print to the console.
+     * @param level     Depth level for this message (above the value of 
+     *                  {@link Args.log-base-level}).
+     * @param msgArgs   Optional. Argument overrides for the message.
+     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     */
+    log(
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        msgArgs?: Partial<MessageMaker.MsgArgs>,
+        timeArgs?: Partial<MessageMaker.MsgArgs>,
     ): void;
 
     /**
@@ -431,18 +498,37 @@ export interface Console {
      * @category Messagers
      * 
      * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-     * 
-     * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
+    //  * 
+    //  * @param msg       The message(s) to print to the console.
+    //  * @param level     Depth level for this message (above the value of 
+    //  *                  {@link Stage.Args['log-base-level']}).
+    //  * @param msgArgs   Optional. Argument overrides for the message.
+    //  * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+    notice(
+        msg: Parameters<Console[ 'log' ]>[ 0 ],
+        level: Parameters<Console[ 'log' ]>[ 1 ],
+        msgArgs?: Parameters<Console[ 'log' ]>[ 2 ],
+        timeArgs?: Parameters<Console[ 'log' ]>[ 3 ],
+    ): void;
+
+    /**
+     * Prints a timestamped log message to the console. Only if 
+     * `{@link Stage.Args}.notice` is truthy.
+     * 
+     * @category Messagers
+     */
+    //  * 
+    //  * @param msg       The message(s) to print to the console.
+    //  * @param level     Depth level for this message (above the value of 
+    //  *                  {@link Stage.Args['log-base-level']}).
+    //  * @param msgArgs   Optional. Argument overrides for the message.
+    //  * @param timeArgs  Optional. Argument overrides for the message's timestamp.
     progress(
-        msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
-        level: number,
-        msgArgs?: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 1 ],
-        timeArgs?: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 2 ],
+        msg: Parameters<Console[ 'log' ]>[ 0 ],
+        level: Parameters<Console[ 'log' ]>[ 1 ],
+        msgArgs?: Parameters<Console[ 'log' ]>[ 2 ],
+        timeArgs?: Parameters<Console[ 'log' ]>[ 3 ],
     ): void;
 
     /**
@@ -452,18 +538,18 @@ export interface Console {
      * Alias for {@link AbstractStage.progressLog}.
      * 
      * @category Messagers
-     * 
-     * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
+    //  * 
+    //  * @param msg       The message(s) to print to the console.
+    //  * @param level     Depth level for this message (above the value of 
+    //  *                  {@link Stage.Args['log-base-level']}).
+    //  * @param msgArgs   Optional. Argument overrides for the message.
+    //  * @param timeArgs  Optional. Argument overrides for the message's timestamp.
     verbose(
-        msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
-        level: number,
-        msgArgs?: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 1 ],
-        timeArgs?: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 2 ],
+        msg: Parameters<Console[ 'log' ]>[ 0 ],
+        level: Parameters<Console[ 'log' ]>[ 1 ],
+        msgArgs?: Parameters<Console[ 'log' ]>[ 2 ],
+        timeArgs?: Parameters<Console[ 'log' ]>[ 3 ],
     ): void;
 };
 
@@ -501,24 +587,23 @@ export namespace Console {
     export interface VarInspect {
 
         /**
-         * Prints a timestamped log message to the console. Only if 
-         * `{@link Stage.Args}.notice` is truthy.
+         * Prints a timestamped log message to the console.
          * 
          * @category Messagers
          * 
          * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
          * 
          * @param variable  Variable to inspect.
+         */
         //  * @param level     Depth level for this message (above the value of 
         //  *                  {@link Stage.Args['log-base-level']}).
         //  * @param msgArgs   Optional. Argument overrides for the message.
         //  * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-         */
-        notice(
+        log(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-            level: Parameters<Console[ 'notice' ]>[ 1 ],
-            msgArgs?: Parameters<Console[ 'notice' ]>[ 2 ],
-            timeArgs?: Parameters<Console[ 'notice' ]>[ 3 ],
+            level: Parameters<Console[ 'log' ]>[ 1 ],
+            msgArgs?: Parameters<Console[ 'log' ]>[ 2 ],
+            timeArgs?: Parameters<Console[ 'log' ]>[ 3 ],
         ): void;
 
         /**
@@ -528,18 +613,39 @@ export namespace Console {
          * @category Messagers
          * 
          * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-         * 
-         * @param variable  Variable to inspect.
+         */
+        //  * 
+        //  * @param variable  Variable to inspect.
         //  * @param level     Depth level for this message (above the value of 
         //  *                  {@link Stage.Args['log-base-level']}).
         //  * @param msgArgs   Optional. Argument overrides for the message.
         //  * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+        notice(
+            variable: Parameters<Console.VarInspect[ 'log' ]>[ 0 ],
+            level: Parameters<Console.VarInspect[ 'log' ]>[ 1 ],
+            msgArgs?: Parameters<Console.VarInspect[ 'log' ]>[ 2 ],
+            timeArgs?: Parameters<Console.VarInspect[ 'log' ]>[ 3 ],
+        ): void;
+
+        /**
+         * Prints a timestamped log message to the console. Only if 
+         * `{@link Stage.Args}.notice` is truthy.
+         * 
+         * @category Messagers
+         * 
+         * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
          */
+        //  * 
+        //  * @param variable  Variable to inspect.
+        //  * @param level     Depth level for this message (above the value of 
+        //  *                  {@link Stage.Args['log-base-level']}).
+        //  * @param msgArgs   Optional. Argument overrides for the message.
+        //  * @param timeArgs  Optional. Argument overrides for the message's timestamp.
         progress(
-            variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-            level: Parameters<Console[ 'progress' ]>[ 1 ],
-            msgArgs?: Parameters<Console[ 'progress' ]>[ 2 ],
-            timeArgs?: Parameters<Console[ 'progress' ]>[ 3 ],
+            variable: Parameters<Console.VarInspect[ 'log' ]>[ 0 ],
+            level: Parameters<Console.VarInspect[ 'log' ]>[ 1 ],
+            msgArgs?: Parameters<Console.VarInspect[ 'log' ]>[ 2 ],
+            timeArgs?: Parameters<Console.VarInspect[ 'log' ]>[ 3 ],
         ): void;
 
         /**
@@ -549,18 +655,18 @@ export namespace Console {
          * Alias for {@link AbstractStage.progressLog}.
          * 
          * @category Messagers
-         * 
-         * @param variable  Variable to inspect.
+         */
+        //  * 
+        //  * @param variable  Variable to inspect.
         //  * @param level     Depth level for this message (above the value of 
         //  *                  {@link Stage.Args['log-base-level']}).
         //  * @param msgArgs   Optional. Argument overrides for the message.
         //  * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-         */
         verbose(
-            variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-            level: Parameters<Console[ 'verbose' ]>[ 1 ],
-            msgArgs?: Parameters<Console[ 'verbose' ]>[ 2 ],
-            timeArgs?: Parameters<Console[ 'verbose' ]>[ 3 ],
+            variable: Parameters<Console.VarInspect[ 'log' ]>[ 0 ],
+            level: Parameters<Console.VarInspect[ 'log' ]>[ 1 ],
+            msgArgs?: Parameters<Console.VarInspect[ 'log' ]>[ 2 ],
+            timeArgs?: Parameters<Console.VarInspect[ 'log' ]>[ 3 ],
         ): void;
     };
 };

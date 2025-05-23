@@ -22,15 +22,37 @@ import { typeOf } from '@maddimathon/utility-typescript/functions/typeOf';
  * @since 0.1.0-draft
  */
 export class ProjectConfig {
+    clr;
+    compiler;
+    console;
+    fs;
+    paths;
+    stages;
+    title;
     constructor(config) {
-        var _a, _b;
         this.clr = config.clr;
-        this.compiler = (_a = config.compiler) !== null && _a !== void 0 ? _a : {};
-        this.console = (_b = config.console) !== null && _b !== void 0 ? _b : {};
+        this.compiler = config.compiler ?? {};
+        this.console = config.console ?? {};
         this.fs = config.fs;
         this.paths = config.paths;
         this.stages = config.stages;
         this.title = config.title;
+        if (this.stages.compile
+            && Array.isArray(this.stages.compile)) {
+            // const _compileArgs = this.stages.compile[ 1 ] ?? {};
+            if (!this.stages.compile[1]) {
+                this.stages.compile[1] = {};
+            }
+            if (this.stages.compile[1].files
+                && typeof this.stages.compile[1].files === 'object') {
+                const totalPathCount = Object.values(this.stages.compile[1].files)
+                    .map(arr => arr.length)
+                    .reduce((runningTotal = 0, current = 0) => runningTotal + current);
+                if (totalPathCount < 1) {
+                    this.stages.compile[1].files = false;
+                }
+            }
+        }
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -38,10 +60,12 @@ export class ProjectConfig {
      * Gets the instance for the given stage.
      *
      * @param stage  Stage to get.
+     *
+     * @return  An array with first the stage’s class and then the configured
+     *          arguments for that class, if any.
      */
     async getStage(stage, console, params) {
         const stageConfig = this.stages[stage];
-        // const level = 0;
         // returns
         if (!stageConfig) {
             params.debug && console.progress(`no ${stage} stage config found, skipping...`, 0, { italic: true });
@@ -50,33 +74,23 @@ export class ProjectConfig {
         let stageClass;
         let stageArgs;
         if (Array.isArray(stageConfig)) {
-            const [_stageClass, _subArgs,] = stageConfig;
+            const [_stageClass, _stageArgs,] = stageConfig;
             if (_stageClass && typeOf(_stageClass) === 'class') {
                 stageClass = _stageClass;
             }
-            if (_subArgs && typeof _subArgs === 'object') {
-                stageArgs = _subArgs;
+            if (_stageArgs && typeof _stageArgs === 'object') {
+                stageArgs = _stageArgs;
             }
         }
         else if (stageConfig) {
-            const tmp_type = typeOf(stageConfig);
-            switch (tmp_type) {
-                case 'boolean':
-                    break;
-                case 'class':
-                    stageClass = stageConfig;
-                    break;
-                case 'object':
-                    stageArgs = stageConfig;
-                    break;
-            }
+            stageClass = stageConfig;
         }
         // returns
         if (!stageClass) {
             console.progress(`no valid ${stage} stage class found, skipping...`, 0, { italic: true });
             return undefined;
         }
-        return [stageClass, stageArgs !== null && stageArgs !== void 0 ? stageArgs : {}];
+        return [stageClass, stageArgs ?? {}];
     }
     /**
      * Returns the minimum required properties of this config.

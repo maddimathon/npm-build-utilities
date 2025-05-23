@@ -28,7 +28,7 @@ import help from './help.js';
 import {
     parseParamsCLI,
     Project,
-} from '../index.js';
+} from '../lib/index.js';
 
 import { getConfig } from './lib/index.js';
 

@@ -39,7 +39,7 @@ export class Test extends AbstractStage<Test.Stages, Test.Args> {
      * ====================================================================== */
 
     constructor ( args: Test.Args ) {
-        super( args, 'red' );
+        super( 'test', args, 'red' );
     }
 
 
@@ -69,7 +69,11 @@ export class Test extends AbstractStage<Test.Stages, Test.Args> {
     protected async js() {
         this.progressLog( 'running jest...', 1 );
 
-        this.fns.nc.cmd( 'node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --passWithNoTests' );
+        this.try(
+            this.fns.nc.cmd,
+            2,
+            [ 'node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js' ]
+        );
 
         if ( this.args.packaging && !this.args.dryrun ) {
 

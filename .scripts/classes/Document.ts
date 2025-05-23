@@ -46,7 +46,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
      * ====================================================================== */
 
     constructor ( args: Document.Args ) {
-        super( args, 'turquoise' );
+        super( 'document', args, 'turquoise' );
     }
 
 

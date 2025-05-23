@@ -11,8 +11,6 @@
  * @license MIT
  */
 
-import type { Test } from '@maddimathon/utility-typescript/types';
-
 import type {
     CLI,
     Stage,
@@ -73,7 +71,7 @@ export class ReleaseStage extends AbstractStage<
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
-        args?: Partial<Stage.Args.Release>,
+        args: Partial<Stage.Args.Release>,
     ) {
         super( 'release', 'purple', config, params, args );
     }
@@ -103,15 +101,15 @@ export class ReleaseStage extends AbstractStage<
     }
 
     protected async changelog() {
-        this.log.progress( '(NOT IMPLEMENTED) running changelog sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running changelog sub-stage...', 1 );
     }
 
     protected async commit() {
-        this.log.progress( '(NOT IMPLEMENTED) running commit sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running commit sub-stage...', 1 );
     }
 
     protected async github() {
-        this.log.progress( '(NOT IMPLEMENTED) running github sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running github sub-stage...', 1 );
     }
 
     /**
@@ -122,25 +120,10 @@ export class ReleaseStage extends AbstractStage<
     }
 
     protected async replace() {
-        this.log.progress( '(NOT IMPLEMENTED) running replace sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running replace sub-stage...', 1 );
     }
 
     protected async tidy() {
-        this.log.progress( '(NOT IMPLEMENTED) running tidy sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running tidy sub-stage...', 1 );
     }
 }
-
-
-/*
- * TYPE TESTING 
- */
-
-type ReleaseClassType = Stage.ClassType.All[ 'release' ];
-
-const typeTest: ReleaseClassType = ReleaseStage;
-
-type TypeTest = Test.Expect<Test.Satisfies<typeof ReleaseStage, ReleaseClassType>>;
-
-// only so that these are used
-true as TypeTest;
-typeTest;

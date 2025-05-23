@@ -11,4 +11,4 @@
  * @license MIT
  */
 
-export { };
+export * from './FileSystem.js';

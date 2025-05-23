@@ -28,7 +28,7 @@ export declare class CompileStage extends AbstractStage<Stage.SubStage.Compile, 
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, args?: Partial<Stage.Args.Compile>);
+    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Compile>);
     /**
      * Prints a message to the console signalling the start or end of this
      * build stage.

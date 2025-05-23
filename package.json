@@ -26,6 +26,10 @@
         }
     },
 
+    "engines": {
+        "node": ">=22"
+    },
+
     "type": "module",
 
     "files": [
@@ -67,6 +71,9 @@
     },
 
     "scripts": {
+        "test-utils": "node dist/bin/index.js --verbose --config .new-scripts/build.config.js",
+        "test-utils-ts": "tsx --tsconfig src/ts/tsconfig.json src/ts/bin/index.ts --verbose --config .new-scripts/build.config.js",
+
         "commit": "sh .scripts/commit.sh",
         
         "snap":     "tsx --tsconfig .scripts/tsconfig.json .scripts/snapshot.ts",
@@ -74,10 +81,11 @@
        
         "compile": "tsx --tsconfig .scripts/tsconfig.json .scripts/compile.ts",
         
-        "build": "tsx --tsconfig .scripts/tsconfig.json .scripts/build.ts",
+        "build":       "tsx --tsconfig .scripts/tsconfig.json .scripts/build.ts",
         "quick-build": "tsx --tsconfig .scripts/tsconfig.json .scripts/build.ts --without minimize,prettify",
         
         "doc": "tsx --tsconfig .scripts/tsconfig.json .scripts/doc.ts",
+
         "test": "tsx --tsconfig .scripts/tsconfig.json .scripts/test.ts",
         
         
@@ -97,6 +105,7 @@
         "@maddimathon/utility-typescript": "file:../utility-typescript",
         "@tsconfig/node20": "20.1.5",
         "@types/minimist": "1.2.5",
+        "glob": "11.0.2",
         "minimist": "1.2.8",
         "sass": "1.89.0",
         "typescript": "5.8.3"
@@ -106,7 +115,6 @@
         "@types/luxon": "3.6.2",
         "@types/minify": "9.1.4",
         "@types/node": "22.15.17",
-        "glob": "11.0.2",
         "jest": "29.7.0",
         "luxon": "3.6.1",
         "npm-run-all": "4.1.5",

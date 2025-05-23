@@ -19,6 +19,16 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since 0.1.0-draft
  */
 export class BuildStage extends AbstractStage {
+    /* PROPERTIES
+     * ====================================================================== */
+    subStages = [
+        'compile',
+        'minimize',
+        'replace',
+        'prettify',
+        'test',
+        'document',
+    ];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
@@ -34,16 +44,6 @@ export class BuildStage extends AbstractStage {
      */
     constructor(config, params, args) {
         super('build', 'blue', config, params, args);
-        /* PROPERTIES
-         * ====================================================================== */
-        this.subStages = [
-            'compile',
-            'minimize',
-            'replace',
-            'prettify',
-            'test',
-            'document',
-        ];
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -74,13 +74,13 @@ export class BuildStage extends AbstractStage {
         await this.runStage('document', 1);
     }
     async minimize() {
-        this.log.progress('(NOT IMPLEMENTED) running minimize sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running minimize sub-stage...', 1);
     }
     async prettify() {
-        this.log.progress('(NOT IMPLEMENTED) running prettify sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running prettify sub-stage...', 1);
     }
     async replace() {
-        this.log.progress('(NOT IMPLEMENTED) running replace sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running replace sub-stage...', 1);
     }
     /**
      * Runs the project's test class.
@@ -89,8 +89,4 @@ export class BuildStage extends AbstractStage {
         await this.runStage('test', 1);
     }
 }
-const typeTest = BuildStage;
-// only so that these are used
-true;
-typeTest;
 //# sourceMappingURL=BuildStage.js.map

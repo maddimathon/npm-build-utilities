@@ -11,8 +11,6 @@
  * @license MIT
  */
 
-import type { Test } from '@maddimathon/utility-typescript/types';
-
 import type {
     CLI,
     Stage,
@@ -68,7 +66,7 @@ export class SnapshotStage extends AbstractStage<
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
-        args?: Partial<Stage.Args.Snapshot>,
+        args: Partial<Stage.Args.Snapshot>,
     ) {
         super( 'snapshot', 'pink', config, params, args );
     }
@@ -98,21 +96,6 @@ export class SnapshotStage extends AbstractStage<
     }
 
     protected async snap() {
-        this.log.progress( '(NOT IMPLEMENTED) running snap sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running snap sub-stage...', 1 );
     }
 }
-
-
-/*
- * TYPE TESTING 
- */
-
-type SnapshotClassType = Stage.ClassType.All[ 'snapshot' ];
-
-const typeTest: SnapshotClassType = SnapshotStage;
-
-type TypeTest = Test.Expect<Test.Satisfies<typeof SnapshotStage, SnapshotClassType>>;
-
-// only so that these are used
-true as TypeTest;
-typeTest;

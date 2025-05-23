@@ -16,13 +16,12 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-var _a;
 import minimist from 'minimist';
 import help from './help.js';
-import { parseParamsCLI, Project, } from '../index.js';
+import { parseParamsCLI, Project, } from '../lib/index.js';
 import { getConfig } from './lib/index.js';
 const params = minimist(process.argv.slice(2));
-const scriptName = ((_a = params._) === null || _a === void 0 ? void 0 : _a[0]);
+const scriptName = (params._?.[0]);
 switch (scriptName) {
     case 'debug':
     case 'snapshot':

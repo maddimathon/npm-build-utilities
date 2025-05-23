@@ -1,0 +1,42 @@
+/**
+ * @since 0.1.0-draft
+ *
+ * @packageDocumentation
+ */
+/**
+ * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ */
+/*!
+ * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @license MIT
+ */
+import { AbstractError } from './abstract/AbstractError.js';
+/**
+ * An extension of the utilities error for catching errors, mainly ones that are
+ * not (Error) objects already.
+ */
+export class UnknownCaughtError extends AbstractError {
+    /* LOCAL PROPERTIES
+     * ====================================================================== */
+    /* Args ===================================== */
+    name = 'Unknown Caught Error';
+    get ARGS_DEFAULT() {
+        return {
+            ...AbstractError.prototype.ARGS_DEFAULT,
+        };
+    }
+    /* CONSTRUCTOR
+     * ====================================================================== */
+    constructor(message, args) {
+        super(message, args?.context ?? null, args);
+    }
+}
+/**
+ * Used only for {@link UnknownCaughtError}.
+ *
+ * @since 0.1.0-draft
+ */
+(function (UnknownCaughtError) {
+    ;
+})(UnknownCaughtError || (UnknownCaughtError = {}));
+//# sourceMappingURL=UnknownCaughtError.js.map

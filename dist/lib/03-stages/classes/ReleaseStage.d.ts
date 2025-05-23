@@ -28,7 +28,7 @@ export declare class ReleaseStage extends AbstractStage<Stage.SubStage.Release, 
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, args?: Partial<Stage.Args.Release>);
+    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Release>);
     /**
      * Prints a message to the console signalling the start or end of this
      * build stage.

@@ -11,8 +11,6 @@
  * @license MIT
  */
 
-import type { Test } from '@maddimathon/utility-typescript/types';
-
 import { escRegExp, escRegExpReplace } from '@maddimathon/utility-typescript/functions';
 
 import type {
@@ -56,6 +54,10 @@ export class CompileStage extends AbstractStage<
 
         return {
             ...AbstractStage.ARGS_DEFAULT,
+
+            files: false,
+            scss: true,
+            ts: true,
         };
     }
 
@@ -72,7 +74,7 @@ export class CompileStage extends AbstractStage<
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
-        args?: Partial<Stage.Args.Compile>,
+        args: Partial<Stage.Args.Compile>,
     ) {
         super( 'compile', 'green', config, params, args );
     }
@@ -98,28 +100,32 @@ export class CompileStage extends AbstractStage<
      * ====================================================================== */
 
     protected async runSubStage( stage: Stage.SubStage.Compile ) {
+        // returns
+        if ( !this.args[ stage ] ) {
+            return;
+        }
         await this[ stage ]();
     }
 
     protected async scss() {
-        this.log.progress( 'compiling scss files...', 1 );
+        this.console.progress( 'compiling scss files...', 1 );
 
         const scssSrcDir = this.getSrcDir( 'scss' );
 
         const scssPaths = scssSrcDir.map( ( path ) => {
             // returns
             if ( !this.fs.exists( path ) ) {
-                this.log.verbose( 'ⅹ configured scss source path not found: ' + path, 2, { italic: true } );
+                this.console.verbose( 'ⅹ configured scss source path not found: ' + path, 2, { italic: true } );
                 return [];
             }
 
             // returns
             if ( !this.fs.isDirectory( path ) ) {
-                this.log.verbose( '✓ configured scss source path found: ' + path, 2, { italic: true } );
+                this.console.verbose( '✓ configured scss source path found: ' + path, 2, { italic: true } );
                 return path;
             }
 
-            this.log.verbose( 'configured scss source path is a directory: ' + path, 2, { italic: true } );
+            this.console.verbose( 'configured scss source path is a directory: ' + path, 2, { italic: true } );
 
             const testSubPaths = [
                 'index.scss',
@@ -139,27 +145,27 @@ export class CompileStage extends AbstractStage<
                 // returns
                 if ( this.fs.exists( fullPath ) && this.fs.isFile( fullPath ) ) {
                     const relativePath = this.fs.pathRelative( fullPath );
-                    this.log.verbose( '✓ default sub-file found: ' + relativePath, 3, { italic: true } );
+                    this.console.verbose( '✓ default sub-file found: ' + relativePath, 3, { italic: true } );
                     return relativePath;
                 }
             }
 
-            this.log.verbose( 'ⅹ no default files found', 3 );
+            this.console.verbose( 'ⅹ no default files found', 3 );
             return [];
         } ).flat();
 
         // returns
         if ( !scssPaths.length ) {
-            this.log.progress( 'no valid scss input files found, exiting...', 2, { italic: true } );
+            this.console.progress( 'no valid scss input files found, exiting...', 2, { italic: true } );
             return;
         }
 
         const scssDistDir = this.getDistDir( 'scss' );
 
-        this.log.verbose( 'deleting existing files...', 2 );
+        this.console.verbose( 'deleting existing files...', 2 );
         this.fs.deleteFiles( [ scssDistDir ] );
 
-        this.log.verbose( 'building path arguments...', 2 );
+        this.console.verbose( 'building path arguments...', 2 );
 
         const scssPathArgs = scssPaths.map( ( path ) => {
 
@@ -183,39 +189,39 @@ export class CompileStage extends AbstractStage<
             };
         } );
 
-        this.params.debug && this.log.varDump.progress( { scssPathArgs }, ( this.params.verbose ? 3 : 2 ) );
+        this.params.debug && this.console.varDump.progress( { scssPathArgs }, ( this.params.verbose ? 3 : 2 ) );
 
-        this.log.verbose( 'compiling to css...', 2 );
+        this.console.verbose( 'compiling to css...', 2 );
         return Promise.all( scssPathArgs.map(
             ( { in: input, out: output } ) => this.cpl.scss( input, output, ( this.params.verbose ? 3 : 2 ) )
         ) );
     }
 
     protected async ts() {
-        this.log.progress( 'compiling typescript files...', 1 );
+        this.console.progress( 'compiling typescript files...', 1 );
 
         const tsSrcDir = this.getSrcDir( 'ts' );
 
         const tsPaths = tsSrcDir.map( ( path ) => {
             // returns
             if ( !this.fs.exists( path ) ) {
-                this.log.verbose( 'ⅹ configured ts source path not found: ' + path, 2, { italic: true } );
+                this.console.verbose( 'ⅹ configured ts source path not found: ' + path, 2, { italic: true } );
                 return [];
             }
 
             // returns
             if ( !this.fs.isDirectory( path ) ) {
-                this.log.verbose( '✓ configured ts source path found: ' + path, 2, { italic: true } );
+                this.console.verbose( '✓ configured ts source path found: ' + path, 2, { italic: true } );
                 return path;
             }
 
-            this.log.verbose( 'configured ts source path is a directory: ' + path, 2, { italic: true } );
+            this.console.verbose( 'configured ts source path is a directory: ' + path, 2, { italic: true } );
 
             const testSubPaths = [
-                'tsConfig.json',
                 'tsconfig.json',
-                '../tsConfig.json',
+                'tsConfig.json',
                 '../tsconfig.json',
+                '../tsConfig.json',
             ];
 
             for ( const subPath of testSubPaths ) {
@@ -225,12 +231,12 @@ export class CompileStage extends AbstractStage<
                 // returns
                 if ( this.fs.exists( fullPath ) && this.fs.isFile( fullPath ) ) {
                     const relativePath = this.fs.pathRelative( fullPath );
-                    this.log.verbose( '✓ default sub-file found: ' + relativePath, 3, { italic: true } );
+                    this.console.verbose( '✓ default sub-file found: ' + relativePath, 3, { italic: true } );
                     return relativePath;
                 }
             }
 
-            this.log.verbose( 'ⅹ no default files found', 3 );
+            this.console.verbose( 'ⅹ no default files found', 3 );
             return [];
         } ).flat();
 
@@ -244,7 +250,7 @@ export class CompileStage extends AbstractStage<
             };
 
             // returns
-            if ( !await this.log.nc.prompt.bool( {
+            if ( !await this.console.nc.prompt.bool( {
                 message: 'No tsconfig.json files found, do you want to create one?',
 
                 default: true,
@@ -263,7 +269,7 @@ export class CompileStage extends AbstractStage<
                 './tsconfig.json'
             ) );
 
-            const tsConfigFile = await this.log.nc.prompt.input( {
+            const tsConfigFile = await this.console.nc.prompt.input( {
                 message: 'Where should the tsconfig.json be written?',
 
                 default: _tsConfigDefault,
@@ -274,7 +280,7 @@ export class CompileStage extends AbstractStage<
                 required: true,
             } );
 
-            this.params.debug && this.log.varDump.progress( { tsConfigFile }, 3 );
+            this.params.debug && this.console.varDump.progress( { tsConfigFile }, 3 );
 
             // returns
             if ( !tsConfigFile ) {
@@ -283,11 +289,11 @@ export class CompileStage extends AbstractStage<
 
             const baseUrl = tsSrcDir.replace( /(?<=^|\/)[^\/]+(\/|$)/g, '..\/' );
 
-            this.params.debug && this.log.varDump.progress( { baseUrl }, 2 );
+            this.params.debug && this.console.varDump.progress( { baseUrl }, 2 );
 
             const outDir = this.fs.pathRelative( this.fs.pathResolve( baseUrl, tsDistDir ) );
 
-            this.params.debug && this.log.varDump.progress( { outDir }, 2 );
+            this.params.debug && this.console.varDump.progress( { outDir }, 2 );
 
             this.fs.writeFile( this.fs.pathResolve( tsConfigFile ), JSON.stringify( {
                 extends: '@maddimathon/npm-build-utilities/tsconfig',
@@ -307,36 +313,58 @@ export class CompileStage extends AbstractStage<
             tsPaths.push( tsConfigFile );
         }
 
-        this.log.verbose( 'deleting existing files...', 2 );
-        this.fs.deleteFiles( [ tsDistDir ] );
+        this.console.verbose( 'deleting existing files...', 2 );
+        this.fs.deleteFiles( [ tsDistDir ], false, ( this.params.verbose ? 3 : 2 ) );
 
-        this.params.debug && this.log.varDump.progress( { tsPaths }, ( this.params.verbose ? 3 : 2 ) );
+        this.params.debug && this.console.varDump.progress( { tsPaths }, ( this.params.verbose ? 3 : 2 ) );
 
-        this.log.verbose( 'compiling to javascript...', 2 );
+        this.console.verbose( 'compiling to javascript...', 2 );
         return Promise.all( tsPaths.map(
             tsc => {
-                this.log.verbose( 'compiling project: ' + tsc, ( this.params.verbose ? 3 : 2 ) );
-                return this.cpl.typescript( tsc, ( this.params.verbose ? 4 : 2 ) );
+                this.console.verbose( 'compiling project: ' + tsc, ( this.params.verbose ? 3 : 2 ) );
+                return this.cpl.typescript( tsc, ( this.params.verbose ? 4 : 1 ) );
             }
         ) );
     }
 
     protected async files() {
-        this.log.progress( '(NOT IMPLEMENTED) running files sub-stage...', 1 );
+        if ( !this.args.files ) { return; }
+
+        const distDir = this.getDistDir().trim().replace( /\/$/g, '' );
+        this.console.progress( `copying files to ${ distDir }...`, 1 );
+
+        const rootPaths = this.args.files.root;
+
+        if ( !rootPaths?.length ) {
+            this.console.verbose( `no files to copy from the root directory`, 2 );
+        } else {
+
+            for ( const path of rootPaths ) {
+                this.console.verbose( `(NOT IMPLEMENTED) ${ path } → ${ distDir }/${ path }`, 2 );
+            }
+        }
+
+        const srcPaths = this.args.files.src;
+
+        if ( !srcPaths?.length ) {
+            this.console.verbose( `no files to copy from the source directory`, 2 );
+        } else {
+
+            const srcDir = this.getSrcDir().trim().replace( /\/$/g, '' );
+
+            for ( const path of srcPaths ) {
+                this.console.verbose( `(NOT IMPLEMENTED) ${ srcDir }/${ path } → ${ distDir }/${ path }`, 2 );
+            }
+        }
     }
+
+    // TODO add replacement sub-stage
+    // for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
+    //     this.replaceInFiles(
+    //         output,
+    //         o.find,
+    //         o.replace,
+    //         1 + logBaseLevel,
+    //     );
+    // }
 }
-
-
-/*
- * TYPE TESTING 
- */
-
-type CompileClassType = Stage.ClassType.All[ 'compile' ];
-
-const typeTest: CompileClassType = CompileStage;
-
-type TypeTest = Test.Expect<Test.Satisfies<typeof CompileStage, CompileClassType>>;
-
-// only so that these are used
-true as TypeTest;
-typeTest;

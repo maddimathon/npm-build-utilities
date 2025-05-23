@@ -13,5 +13,5 @@
 
 export * from './classes/index.js';
 
-export * from './getFileSystem.js';
+export * from './catchOrReturn.js';
 export * from './getPackageJson.js';

@@ -19,6 +19,11 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since 0.1.0-draft
  */
 export class SnapshotStage extends AbstractStage {
+    /* PROPERTIES
+     * ====================================================================== */
+    subStages = [
+        'snap',
+    ];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
@@ -34,11 +39,6 @@ export class SnapshotStage extends AbstractStage {
      */
     constructor(config, params, args) {
         super('snapshot', 'pink', config, params, args);
-        /* PROPERTIES
-         * ====================================================================== */
-        this.subStages = [
-            'snap',
-        ];
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -57,11 +57,7 @@ export class SnapshotStage extends AbstractStage {
         await this[stage]();
     }
     async snap() {
-        this.log.progress('(NOT IMPLEMENTED) running snap sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running snap sub-stage...', 1);
     }
 }
-const typeTest = SnapshotStage;
-// only so that these are used
-true;
-typeTest;
 //# sourceMappingURL=SnapshotStage.js.map

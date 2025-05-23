@@ -15,10 +15,18 @@ import type { Json, Node } from '@maddimathon/utility-typescript/types';
 
 import type {
     Config,
-    // Stage,
+    Stage,
 } from '../../types/index.js';
 
-import { getPackageJson } from '../00-universal/getPackageJson.js';
+// import {
+// } from '../@internal/index.js';
+
+import {
+    catchOrReturn,
+    getPackageJson,
+
+    FileSystem,
+} from '../00-universal/index.js';
 
 import {
     BuildStage,
@@ -28,14 +36,21 @@ import {
     SnapshotStage,
 } from './index.js';
 
+
 /**
  * Complete, default configuration for the library.
  */
-export function defaultConfig( pkg?: Node.PackageJson ) {
-
-    if ( !pkg ) {
-        pkg = getPackageJson();
-    }
+export function defaultConfig(
+    args: { pkg: Node.PackageJson; } | Stage.Console,
+) {
+    const pkg = 'pkg' in args
+        ? args.pkg
+        : catchOrReturn(
+            getPackageJson,
+            0,
+            args,
+            [ new FileSystem( args ) ],
+        );
 
     const stages = {
         compile: CompileStage,
@@ -45,7 +60,7 @@ export function defaultConfig( pkg?: Node.PackageJson ) {
         release: ReleaseStage,
         snapshot: SnapshotStage,
         test: false,
-    } as const satisfies Config.Internal[ 'stages' ];
+    } as const satisfies Config.Internal.Stages;
 
     const paths = {
 
@@ -60,6 +75,7 @@ export function defaultConfig( pkg?: Node.PackageJson ) {
         },
 
         src: {
+            _: 'src',
             docs: 'src/docs',
             scss: 'src/scss',
             ts: 'src/ts',
@@ -84,6 +100,7 @@ export function defaultConfig( pkg?: Node.PackageJson ) {
             esModuleInterop: true,
             exactOptionalPropertyTypes: false,
             forceConsistentCasingInFileNames: true,
+            lib: [ 'ES2022' ],
             module: 'node18',
             moduleResolution: 'node16',
             noFallthroughCasesInSwitch: true,
@@ -99,9 +116,16 @@ export function defaultConfig( pkg?: Node.PackageJson ) {
             sourceMap: true,
             strict: true,
             strictBindCallApply: true,
-            target: 'es2018',
+            target: 'es2022',
         },
     } as const satisfies Json.TsConfig;
+
+    const sass = {
+        charset: true,
+        sourceMap: true,
+        sourceMapIncludeSources: true,
+        style: 'expanded',
+    } as const satisfies Required<Required<Config.Internal>[ 'compiler' ]>[ 'sass' ];
 
 
     return {
@@ -111,13 +135,7 @@ export function defaultConfig( pkg?: Node.PackageJson ) {
         clr: 'purple',
 
         compiler: {
-            sass: {
-                charset: true,
-                sourceMap: true,
-                sourceMapIncludeSources: true,
-                style: 'expanded',
-            },
-
+            sass,
             tsConfig,
         },
 

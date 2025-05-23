@@ -9,14 +9,10 @@
 /*!
  * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
  * @license MIT
- */
-
-import type { Test } from '@maddimathon/utility-typescript/types';
-// import { typeOf } from '@maddimathon/utility-typescript/functions';
+ */;
 
 import type {
     CLI,
-    // Config,
     Stage,
 } from '../../../types/index.js';
 
@@ -73,7 +69,7 @@ export class PackageStage extends AbstractStage<
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
-        args?: Partial<Stage.Args.Package>,
+        args: Partial<Stage.Args.Package>,
     ) {
         super( 'package', params?.releasing ? 'orange' : 'purple', config, params, args );
     }
@@ -90,7 +86,11 @@ export class PackageStage extends AbstractStage<
      * @param which  Whether we are starting or ending.
      */
     public override startEndNotice( which: "start" | "end" | null ) {
-        super.startEndNotice( which, !this.params.building );
+        super.startEndNotice(
+            which,
+            !this.params.building,
+            this.params.dryrun ? 'dryrun' : 'package',
+        );
     }
 
 
@@ -110,7 +110,7 @@ export class PackageStage extends AbstractStage<
     }
 
     protected async copy() {
-        this.log.progress( '(NOT IMPLEMENTED) running copy sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running copy sub-stage...', 1 );
     }
 
     /**
@@ -121,21 +121,6 @@ export class PackageStage extends AbstractStage<
     }
 
     protected async zip() {
-        this.log.progress( '(NOT IMPLEMENTED) running zip sub-stage...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) running zip sub-stage...', 1 );
     }
 }
-
-
-/*
- * TYPE TESTING 
- */
-
-type PackageClassType = Stage.ClassType.All[ 'package' ];
-
-const typeTest: PackageClassType = PackageStage;
-
-type TypeTest = Test.Expect<Test.Satisfies<typeof PackageStage, PackageClassType>>;
-
-// only so that these are used
-true as TypeTest;
-typeTest;

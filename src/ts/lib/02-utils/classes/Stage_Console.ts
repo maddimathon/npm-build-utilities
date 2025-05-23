@@ -20,6 +20,7 @@ import {
 } from '@maddimathon/utility-typescript/functions';
 
 import {
+    MessageMaker,
     node,
     VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
@@ -30,8 +31,14 @@ import type {
     Stage,
 } from '../../../types/index.js';
 
+// import {
+// } from '../../@internal/index.js';
+
+// import {
+// } from '../../00-universal/index.js';
+
 import {
-    ProjectConfig
+    ProjectConfig,
 } from '../../01-config/index.js';
 
 
@@ -68,7 +75,7 @@ export class Stage_Console implements Stage.Console {
 
     /**
      * @param name    Name for this stage used for notices.
-     * @param clr     {@inheritDoc Stage.Class.clr}
+     * @param clr     Colour slug for this colour-coding this class.
      * @param config  Current project config.
      * @param params  Current CLI params.
      * @param utils   Optional. Partial argument overrides for classes used 
@@ -184,6 +191,16 @@ export class Stage_Console implements Stage.Console {
         return { msg, time };
     }
 
+    public error(
+        msg: MessageMaker.BulkMsgs,
+        level: number,
+        msgArgs: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 1 ] = {},
+        timeArgs: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 2 ] = {},
+    ) {
+        const args = this.msgArgs( level, msgArgs, timeArgs );
+        this.nc.timestampLog( msg, args.msg, args.time );
+    }
+
     /**
      * Prints a timestamped log message to the console.
      * 
@@ -197,7 +214,7 @@ export class Stage_Console implements Stage.Console {
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
-    protected log(
+    public log(
         msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
         level: number,
         msgArgs?: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 1 ],
@@ -384,7 +401,7 @@ export class _Stage_Console_VarInspect implements Stage.Console.VarInspect {
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
-    protected log(
+    public log(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
         level: Parameters<Stage_Console[ 'notice' ]>[ 1 ],
         msgArgs?: Parameters<Stage_Console[ 'notice' ]>[ 2 ],

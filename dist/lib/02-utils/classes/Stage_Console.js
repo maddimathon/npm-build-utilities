@@ -24,30 +24,41 @@ import { node, VariableInspector, } from '@maddimathon/utility-typescript/classe
  * @internal
  */
 export class Stage_Console {
+    name;
+    clr;
+    config;
+    params;
+    /* LOCAL PROPERTIES
+     * ====================================================================== */
+    /** {@inheritDoc Stage.Console.nc} */
+    nc;
+    /**
+     * Instance to use within the class.
+     */
+    varDump;
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
      * @param name    Name for this stage used for notices.
-     * @param clr     {@inheritDoc Stage.Class.clr}
+     * @param clr     Colour slug for this colour-coding this class.
      * @param config  Current project config.
      * @param params  Current CLI params.
      * @param utils   Optional. Partial argument overrides for classes used
      *                within this one.
      */
     constructor(name, clr, config, params, utils) {
-        var _a, _b, _c, _d, _e;
         this.name = name;
         this.clr = clr;
         this.config = config;
         this.params = params;
-        const ncInputArgs = mergeArgs((_a = this.config.console.nc) !== null && _a !== void 0 ? _a : {}, (_b = utils === null || utils === void 0 ? void 0 : utils.nc) !== null && _b !== void 0 ? _b : {}, true);
+        const ncInputArgs = mergeArgs(this.config.console.nc ?? {}, utils?.nc ?? {}, true);
         this.nc = new node.NodeConsole({
             ...ncInputArgs,
             msgMaker: {
-                ...(_c = ncInputArgs.msgMaker) !== null && _c !== void 0 ? _c : {},
+                ...ncInputArgs.msgMaker ?? {},
                 msg: {
                     clr: this.clr,
-                    ...(_e = (_d = ncInputArgs.msgMaker) === null || _d === void 0 ? void 0 : _d.msg) !== null && _e !== void 0 ? _e : {},
+                    ...ncInputArgs.msgMaker?.msg ?? {},
                 },
             },
         });
@@ -73,7 +84,6 @@ export class Stage_Console {
      * @return  An object with arguments separated by message (`msg`) and time.
      */
     msgArgs(level = 0, msgArgs = {}, timeArgs = {}) {
-        var _a, _b, _c, _d, _e;
         const depth = level + Number(this.params['log-base-level']);
         const msg = {
             bold: depth == 0 || level <= 1,
@@ -87,21 +97,25 @@ export class Stage_Console {
             ...timeArgs,
         };
         if (level <= 0) {
-            msg.linesIn = (_a = msgArgs.linesIn) !== null && _a !== void 0 ? _a : 2;
+            msg.linesIn = msgArgs.linesIn ?? 2;
         }
         if (level > 0) {
-            msg.linesIn = (_b = msgArgs.linesIn) !== null && _b !== void 0 ? _b : 1;
+            msg.linesIn = msgArgs.linesIn ?? 1;
         }
         // if ( level > 1 ) {
         // }
         if (level > 2) {
-            msg.italic = (_c = msgArgs.italic) !== null && _c !== void 0 ? _c : true;
-            msg.linesIn = (_d = msgArgs.linesIn) !== null && _d !== void 0 ? _d : 0;
+            msg.italic = msgArgs.italic ?? true;
+            msg.linesIn = msgArgs.linesIn ?? 0;
         }
         if (level > 3) {
-            msg.clr = (_e = msgArgs.clr) !== null && _e !== void 0 ? _e : 'grey';
+            msg.clr = msgArgs.clr ?? 'grey';
         }
         return { msg, time };
+    }
+    error(msg, level, msgArgs = {}, timeArgs = {}) {
+        const args = this.msgArgs(level, msgArgs, timeArgs);
+        this.nc.timestampLog(msg, args.msg, args.time);
     }
     /**
      * Prints a timestamped log message to the console.
@@ -203,6 +217,16 @@ export class Stage_Console {
  * @internal
  */
 export class _Stage_Console_VarInspect {
+    name;
+    config;
+    params;
+    msgArgs;
+    /* LOCAL PROPERTIES
+     * ====================================================================== */
+    /**
+     * Instance to use within the class.
+     */
+    nc;
     /* Args ===================================== */
     /**
      * Default values for the args property.

@@ -53,7 +53,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
      * ====================================================================== */
 
     constructor ( args: Release.Args ) {
-        super( args, 'purple' );
+        super( 'release', args, 'purple' );
     }
 
 
@@ -116,7 +116,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
 
         if ( which === 'start' ) {
 
-            const promptArgs: Omit<Parameters<typeof this.fns.nc.prompt>[ 1 ], "message"> = {
+            const promptArgs = {
 
                 default: false,
 
@@ -148,7 +148,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
             );
 
             const inputVersion = ( await this.fns.nc.prompt.input( {
-                ...promptArgs,
+                ...promptArgs ?? {},
                 message: inputVersionMessage,
 
                 default: this.pkg.version,
@@ -160,7 +160,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                             Math.max( 20, ( this.fns.nc.msg.args.msg.maxWidth ?? 80 ) - inputVersionIndent.length )
                         ).split( /\n/g ).join( '\n' + inputVersionIndent )
                 ),
-            } ) ).trim();
+            } ) ?? '' ).trim();
 
             if ( inputVersion !== this.pkg.version ) {
 
@@ -308,12 +308,24 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 maxWidth: null,
             } );
 
-            this.fns.nc.cmd( gitCmd );
-            this.fns.nc.cmd( `git tag -a -f ${ this.pkg.version } -m "release: ${ this.pkgVersion }"` );
-            this.fns.nc.cmd( `git push --tags || echo ''` );
+            for ( const _cmd of [
+                gitCmd,
+                `git tag -a -f ${ this.pkg.version } -m "release: ${ this.pkgVersion }"`,
+                `git push --tags || echo ''`,
+            ] ) {
+                this.try(
+                    this.fns.nc.cmd,
+                    2,
+                    [ _cmd ]
+                );
+            }
 
             this.verboseLog( 'pushing to origin...', 2 );
-            this.fns.nc.cmd( 'git push' );
+            this.try(
+                this.fns.nc.cmd,
+                2,
+                [ 'git push' ]
+            );
         }
     }
 
@@ -337,7 +349,12 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
             } );
 
         } else {
-            this.fns.nc.cmd( repoUpdateCmd );
+
+            this.try(
+                this.fns.nc.cmd,
+                2,
+                [ repoUpdateCmd ]
+            );
         }
 
 
@@ -368,7 +385,11 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 maxWidth: null,
             } );
 
-            this.fns.nc.cmd( releaseCmd );
+            this.try(
+                this.fns.nc.cmd,
+                2,
+                [ releaseCmd ]
+            );
         }
     }
 

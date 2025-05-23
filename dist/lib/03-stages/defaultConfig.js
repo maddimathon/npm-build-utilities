@@ -10,16 +10,17 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-import { getPackageJson } from '../00-universal/getPackageJson.js';
+// import {
+// } from '../@internal/index.js';
+import { catchOrReturn, getPackageJson, FileSystem, } from '../00-universal/index.js';
 import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage, } from './index.js';
 /**
  * Complete, default configuration for the library.
  */
-export function defaultConfig(pkg) {
-    var _a, _b;
-    if (!pkg) {
-        pkg = getPackageJson();
-    }
+export function defaultConfig(args) {
+    const pkg = 'pkg' in args
+        ? args.pkg
+        : catchOrReturn(getPackageJson, 0, args, [new FileSystem(args)]);
     const stages = {
         compile: CompileStage,
         build: BuildStage,
@@ -39,6 +40,7 @@ export function defaultConfig(pkg) {
             ts: 'dist/js',
         },
         src: {
+            _: 'src',
             docs: 'src/docs',
             scss: 'src/scss',
             ts: 'src/ts',
@@ -59,6 +61,7 @@ export function defaultConfig(pkg) {
             esModuleInterop: true,
             exactOptionalPropertyTypes: false,
             forceConsistentCasingInFileNames: true,
+            lib: ['ES2022'],
             module: 'node18',
             moduleResolution: 'node16',
             noFallthroughCasesInSwitch: true,
@@ -74,19 +77,20 @@ export function defaultConfig(pkg) {
             sourceMap: true,
             strict: true,
             strictBindCallApply: true,
-            target: 'es2018',
+            target: 'es2022',
         },
     };
+    const sass = {
+        charset: true,
+        sourceMap: true,
+        sourceMapIncludeSources: true,
+        style: 'expanded',
+    };
     return {
-        title: (_b = (_a = pkg.config) === null || _a === void 0 ? void 0 : _a.title) !== null && _b !== void 0 ? _b : pkg.name,
+        title: pkg.config?.title ?? pkg.name,
         clr: 'purple',
         compiler: {
-            sass: {
-                charset: true,
-                sourceMap: true,
-                sourceMapIncludeSources: true,
-                style: 'expanded',
-            },
+            sass,
             tsConfig,
         },
         fs: {},

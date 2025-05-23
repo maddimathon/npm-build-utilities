@@ -11,11 +11,16 @@
  * @license MIT
  */
 
+export type * from './FileSystemType.js';
+
 /** @module CLI */
 export type * as CLI from './CLI.js';
 
 /** @module Config */
 export type * from './Config.js';
+
+/** @module LocalError */
+export type * from './LocalError.js';
 
 /** @module Stage */
 export type * as Stage from './Stage.js';

@@ -38,7 +38,7 @@ export class Snapshot extends AbstractStage<Snapshot.Stages, Snapshot.Args> {
      * ====================================================================== */
 
     constructor ( args: Snapshot.Args ) {
-        super( args, 'pink' );
+        super( 'snapshot', args, 'pink' );
     }
 
 
@@ -99,7 +99,11 @@ export class Snapshot extends AbstractStage<Snapshot.Stages, Snapshot.Args> {
 
 
         this.verboseLog( 'zipping snapshot...', 1 );
-        this.fns.nc.cmd( `cd ${ snapdir }/ && zip -r ${ exportName }.zip ${ exportName }` );
+        this.try(
+            this.fns.nc.cmd,
+            2,
+            [ `cd ${ snapdir }/ && zip -r ${ exportName }.zip ${ exportName }` ]
+        );
 
 
         this.verboseLog( 'tidying up...', 1 );

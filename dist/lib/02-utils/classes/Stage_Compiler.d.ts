@@ -11,8 +11,8 @@
  * @license MIT
  */
 import * as sass from 'sass';
-import { node } from '@maddimathon/utility-typescript/classes';
 import type { CLI, Stage } from '../../../types/index.js';
+import { FileSystem } from '../../00-universal/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 import type { Stage_Console } from './Stage_Console.js';
 /**
@@ -30,8 +30,8 @@ import type { Stage_Console } from './Stage_Console.js';
 export declare class Stage_Compiler implements Stage.Compiler {
     readonly config: ProjectConfig;
     readonly params: CLI.Params;
-    readonly log: Stage_Console;
-    readonly fs: node.NodeFiles;
+    readonly console: Stage_Console;
+    readonly fs: FileSystem;
     /**
      * Default values for the args property.
      *
@@ -45,13 +45,13 @@ export declare class Stage_Compiler implements Stage.Compiler {
      */
     readonly args: Stage_Compiler.Args;
     /**
-     * @param config  Current project config.
-     * @param params  Current CLI params.
-     * @param log     Instance used to send messages to the console.
-     * @param fs
-     * @param args    Partial overrides for the default args.
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param console  Instance used to send messages to the console.
+     * @param fs       Instance used to work with paths and files.
+     * @param args     Partial overrides for the default args.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, log: Stage_Console, fs: node.NodeFiles, args?: Partial<Stage_Compiler.Args>);
+    constructor(config: ProjectConfig, params: CLI.Params, console: Stage_Console, fs: FileSystem, args?: Partial<Stage_Compiler.Args>);
     /**
      * Compiles scss using the
      * {@link https://www.npmjs.com/package/sass | sass npm package}.
@@ -66,7 +66,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * Compiles typescript using the
      * {@link https://www.npmjs.com/package/sass | sass npm package}.
      *
-     * @param tsConfig  TS config json file path.
+     * @param tsConfig  Path to TS config json used to compile the project.
      * @param level     Depth level for this message (above the value of
      *                  {@link Stage.Args['log-base-level']}).
      */

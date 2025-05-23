@@ -10,6 +10,7 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
+import { DummyConsole } from '../../@internal/index.js';
 import { parseParamsCLI, ProjectConfig, } from '../../01-config/index.js';
 import { Stage_Console, } from '../../02-utils/index.js';
 import { defaultConfig } from '../../03-stages/defaultConfig.js';
@@ -21,17 +22,23 @@ import { defaultConfig } from '../../03-stages/defaultConfig.js';
  * @since 0.1.0-draft
  */
 export class Project {
+    params;
     /* STATIC METHODS
      * ====================================================================== */
     static async getConsole(opts = {}) {
-        var _a, _b, _c, _d;
-        const params = (_a = opts.params) !== null && _a !== void 0 ? _a : parseParamsCLI({});
-        const config = (_b = opts.config) !== null && _b !== void 0 ? _b : new ProjectConfig(defaultConfig());
-        return new Stage_Console((_c = opts.name) !== null && _c !== void 0 ? _c : 'Package', config.clr, config, params, {
-            clr: (_d = config.clr) !== null && _d !== void 0 ? _d : 'purple',
+        const params = opts.params ?? parseParamsCLI({});
+        const config = opts.config ?? new ProjectConfig(defaultConfig(new DummyConsole()));
+        return new Stage_Console(opts.name ?? 'Package', config.clr, config, params, {
+            clr: config.clr ?? 'purple',
             ...config.console,
         });
     }
+    /* LOCAL PROPERTIES
+     * ====================================================================== */
+    /**
+     * The configuration for this project.
+     */
+    config;
     /* CONSTRUCUTOR
      * ====================================================================== */
     /**
@@ -68,7 +75,6 @@ export class Project {
      * Runs the given stage with the params.
      */
     async run(stage) {
-        var _a;
         const console = await Project.getConsole({
             name: stage,
             config: this.config,
@@ -78,17 +84,17 @@ export class Project {
         if (stage === 'debug') {
             return this.debug(console, null, null, null);
         }
-        const [stageClass, stageArgs = {},] = (_a = await this.config.getStage(stage, console, this.params)) !== null && _a !== void 0 ? _a : [];
+        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, console, this.params) ?? [];
         // returns
         if (!stageClass) {
             if (this.params.debug) {
-                await this.debug(console, stageClass, stageArgs !== null && stageArgs !== void 0 ? stageArgs : null, null);
+                await this.debug(console, stageClass, stageArgs ?? null, null);
             }
             return;
         }
         const inst = new stageClass(this.config, this.params, stageArgs);
         if (this.params.debug) {
-            await this.debug(console, stageClass, stageArgs !== null && stageArgs !== void 0 ? stageArgs : null, inst);
+            await this.debug(console, stageClass, stageArgs ?? null, inst);
         }
         return inst.run();
     }

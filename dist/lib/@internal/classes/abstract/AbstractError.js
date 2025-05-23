@@ -1,0 +1,122 @@
+/**
+ * @since 0.1.0-draft
+ *
+ * @packageDocumentation
+ */
+/**
+ * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ */
+/*!
+ * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @license MIT
+ */
+import { CustomError, VariableInspector } from '@maddimathon/utility-typescript/classes';
+// import { DummyConsole } from '../DummyConsole.js';
+// import {
+//     errorHandler,
+//     _errorStringify,
+//     DummyConsole,
+// } from '../../index.js';
+// const _dummyConsole = new DummyConsole();
+/**
+ * An extension of the utilities error for use within the library.
+ */
+export class AbstractError extends CustomError {
+    /* STATIC
+     * ====================================================================== */
+    /**
+     * Adds this error information to a log file according to the project
+     * configuration.
+     *
+     * @return  If false, writing a log file failed. Else, this is the path to
+     *          the log file.
+     */
+    static log(error, fs, args) {
+        return String(error);
+    }
+    /* LOCAL PROPERTIES
+     * ====================================================================== */
+    // protected readonly console: Stage.Console;
+    context;
+    /* CONSTRUCTOR
+     * ====================================================================== */
+    constructor(message, context, args) {
+        super(message, args?.cause, args);
+        this.context = context;
+    }
+    /* LOCAL METHODS
+     * ====================================================================== */
+    /**
+     * Gets a detailed output message for error handlers.
+     */
+    getOutput() {
+        const msgs = [];
+        if (this.context) {
+            msgs.push([VariableInspector.stringify({ context: this.context })]);
+        }
+        return msgs;
+    }
+    /* DEFAULT METHODS
+     * ====================================================================== */
+    /**
+     * The object shape used when converting to JSON.
+     *
+     * @category Exporters
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
+     */
+    toJSON() {
+        return {
+            name: this.name,
+            message: this.message,
+            context: this.context,
+            cause: this.cause,
+            stack: this.stack,
+            string: this.toString(),
+        };
+    }
+    /**
+     * Overrides the default function to return a string representation of this
+     * object.
+     *
+     * @category Exporters
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString | Object.prototype.toString()}
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/toString | Error.prototype.toString()}
+     */
+    toString() {
+        // returns
+        if (!this.stack) {
+            // returns
+            if (!this.name) {
+                return this.message;
+            }
+            // returns
+            if (!this.message) {
+                return this.name;
+            }
+            return `${this.name}: ${this.message}`;
+        }
+        return this.stack;
+    }
+    /**
+     * Overrides the default function to return an object representation of this
+     * object.
+     *
+     * @category Exporters
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
+     * @see {@link NodeConsole_Error.toJSON | NodeConsole_Error.toJSON()}
+     */
+    valueOf() { return this.toJSON(); }
+}
+/**
+ * Used only for {@link AbstractError}.
+ *
+ * @since 0.1.0-draft
+ */
+(function (AbstractError) {
+    ;
+    ;
+})(AbstractError || (AbstractError = {}));
+//# sourceMappingURL=AbstractError.js.map

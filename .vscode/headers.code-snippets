@@ -218,7 +218,7 @@
             " * @license MIT",
             " */",
             "",
-            "import type { Test } from '../types/index.js';",
+            "import type { Test } from '@maddimathon/utility-typescript/types';",
             "import { describe, expect, test } from '@jest/globals';",
             "$0",
         ]

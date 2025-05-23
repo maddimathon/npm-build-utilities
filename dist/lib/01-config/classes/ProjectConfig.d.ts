@@ -26,18 +26,20 @@ export declare class ProjectConfig implements Config.Class {
     readonly clr: import("@maddimathon/utility-typescript/classes/MessageMaker").MessageMaker.Colour;
     readonly compiler: Partial<Stage.Compiler.Args>;
     readonly console: Partial<Stage.Console.Args>;
-    readonly fs: Partial<import("@maddimathon/utility-typescript/classes/node/NodeFiles").NodeFiles.Args>;
+    readonly fs: Partial<import("../../index.js").FileSystem.Args>;
     readonly paths: {
         dist: string | Required<{
-            docs?: string | undefined;
-            scss?: string | undefined;
-            ts?: string | undefined;
             _?: string | undefined;
+            ts?: string | undefined;
+            scss?: string | undefined;
+            docs?: string | undefined;
         }>;
         src: Required<{
-            docs?: string | string[] | undefined;
-            scss?: string | string[] | undefined;
+            _?: string;
+        } & {
             ts?: string | string[] | undefined;
+            scss?: string | string[] | undefined;
+            docs?: string | string[] | undefined;
         }>;
         release: string;
         snapshot: string;
@@ -49,8 +51,11 @@ export declare class ProjectConfig implements Config.Class {
      * Gets the instance for the given stage.
      *
      * @param stage  Stage to get.
+     *
+     * @return  An array with first the stage’s class and then the configured
+     *          arguments for that class, if any.
      */
-    getStage<S extends Stage.Name, C extends NonNullable<Stage.ClassType.All[S]>, A extends Stage.Args.All[S]>(stage: S, console: Stage.Console, params: CLI.Params): Promise<undefined | [C, Partial<A>]>;
+    getStage(stage: Stage.Name, console: Stage.Console, params: CLI.Params): Promise<undefined | [Stage.ClassType, Partial<Stage.Args>]>;
     /**
      * Returns the minimum required properties of this config.
      *

@@ -11,17 +11,22 @@
  * @license MIT
  */
 
-import { MessageMaker, node } from '@maddimathon/utility-typescript/classes';
+import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 
 import type {
     CLI,
     Config,
+    LocalError,
     Stage,
 } from '../../../../types/index.js';
 
 import {
-    getFileSystem,
+    errorHandler,
+} from '../../../@internal/index.js';
+
+import {
+    FileSystem,
 } from '../../../00-universal/index.js';
 
 import {
@@ -89,6 +94,13 @@ export abstract class AbstractStage<
      */
     public readonly config: ProjectConfig;
 
+    /** 
+     * {@inheritDoc Stage.Class.log}
+     * 
+     * @category Utilities
+     */
+    public readonly console: Stage_Console;
+
     /**
      * Instance used to compile from the src directory.
      * 
@@ -101,7 +113,7 @@ export abstract class AbstractStage<
      * 
      * @category Utilities
      */
-    protected readonly fs: node.NodeFiles;
+    protected readonly fs: FileSystem;
 
     /** 
      * {@inheritDoc Stage.Class.log}
@@ -177,7 +189,7 @@ export abstract class AbstractStage<
         clr: MessageMaker.Colour,
         config: ProjectConfig,
         params: CLI.Params,
-        args?: Partial<Args>,
+        args: Partial<Args>,
     ) {
         this.name = name;
         this.clr = clr;
@@ -186,19 +198,21 @@ export abstract class AbstractStage<
 
         this.args = this.buildArgs( args );
 
-        this.log = new Stage_Console(
+        this.console = new Stage_Console(
             this.name,
             this.clr,
             this.config,
             this.params,
         );
 
-        this.fs = this.args.objs.fs ?? getFileSystem( this.log.nc );
+        this.log = this.console;
+
+        this.fs = this.args.objs.fs ?? new FileSystem( this.console, this.config.fs );
 
         this.cpl = this.args.objs.cpl ?? new Stage_Compiler(
             this.config,
             this.params,
-            this.log,
+            this.console,
             this.fs,
             this.config.compiler,
         );
@@ -209,19 +223,22 @@ export abstract class AbstractStage<
     /* METHODS
      * ====================================================================== */
 
+
+    /* CONFIG & ARGS ===================================== */
+
     /** {@inheritDoc Stage.Class.isSubStageIncluded} */
     public isSubStageIncluded(
         subStage: SubStage,
         level: number,
     ): boolean {
-        this.params.debug && this.log.progress( `isSubStageIncluded( '${ subStage }' )`, level, { italic: true } );
+        this.params.debug && this.console.progress( `isSubStageIncluded( '${ subStage }' )`, level, { italic: true } );
 
         // returns
         if ( !this.subStages.includes( subStage ) ) {
             return false;
         }
 
-        this.params.debug && this.log.varDump.verbose( { 'this.params.only': this.params.only }, 1 + level, { italic: true } );
+        this.params.debug && this.console.varDump.verbose( { 'this.params.only': this.params.only }, 1 + level, { italic: true } );
 
         const only = {
             isUndefined: !this.params.only || !this.params.only.length,
@@ -232,10 +249,10 @@ export abstract class AbstractStage<
             || this.params.only == subStage
             || this.params.only.includes( subStage )
         );
-        this.params.debug && this.log.varDump.progress( { include }, 1 + level, { italic: true } );
+        this.params.debug && this.console.varDump.progress( { include }, 1 + level, { italic: true } );
 
         if ( this.params.verbose && !include ) {
-            this.log.varDump.progress( {
+            this.console.varDump.progress( {
                 include: {
                     isUndefined: only.isUndefined,
                     'this.params.only == subStage': this.params.only == subStage,
@@ -244,7 +261,7 @@ export abstract class AbstractStage<
             }, 2 + level, { italic: true } );
         }
 
-        this.params.debug && this.log.varDump.verbose( { 'this.params.without': this.params.without }, 1 + level, { italic: true } );
+        this.params.debug && this.console.varDump.verbose( { 'this.params.without': this.params.without }, 1 + level, { italic: true } );
 
         const without = {
             isDefined: this.params.without || this.params.without.length,
@@ -257,10 +274,10 @@ export abstract class AbstractStage<
                 || this.params.without.includes( subStage )
             )
         );
-        this.params.debug && this.log.varDump.progress( { exclude }, 1 + level, { italic: true } );
+        this.params.debug && this.console.varDump.progress( { exclude }, 1 + level, { italic: true } );
 
         if ( this.params.verbose && exclude ) {
-            this.log.varDump.progress( {
+            this.console.varDump.progress( {
                 exclude: {
                     isDefined: without.isDefined,
                     'this.params.without == subStage': this.params.without == subStage,
@@ -275,10 +292,10 @@ export abstract class AbstractStage<
             && this[ subStage as keyof typeof this ]
         );
 
-        this.params.debug && this.log.varDump.progress( { 'isSubStageIncluded() return': result }, 1 + level, { italic: true } );
+        this.params.debug && this.console.varDump.progress( { 'isSubStageIncluded() return': result }, 1 + level, { italic: true } );
 
         if ( this.params.verbose && !result ) {
-            this.log.varDump.progress( {
+            this.console.varDump.progress( {
                 include: {
                     include,
                     exclude,
@@ -291,15 +308,20 @@ export abstract class AbstractStage<
     }
 
     /** {@inheritDoc Stage.Class.getDistDir} */
-    public getDistDir( subDir?: Config.SourceDirectory ): string {
+    public getDistDir( subDir?: Config.Paths.SourceDirectory ): string {
 
         let result;
 
         switch ( typeof this.config.paths.dist ) {
 
             case 'string':
-                result = this.config.paths.dist.trim().replace( /\/$/g, '' ) + '/' + subDir;
-                break;
+                const distDir = this.config.paths.dist.trim().replace( /\/$/g, '' );
+
+                // returns
+                if ( !subDir ) {
+                    return distDir;
+                }
+                return distDir + '/' + subDir;
 
             case 'object':
                 result = this.config.paths.dist[ subDir ?? '_' ];
@@ -309,13 +331,112 @@ export abstract class AbstractStage<
         return result;
     }
 
-    /** {@inheritDoc Stage.Class.getSrcDir} */
-    public getSrcDir( subDir: Config.SourceDirectory ): string[] {
+    public getSrcDir( subDir: Config.Paths.SourceDirectory ): string[];
+    public getSrcDir( subDir?: undefined ): string;
 
-        const result = this.config.paths.src[ subDir ] ?? [];
+    /** {@inheritDoc Stage.Class.getSrcDir} */
+    public getSrcDir( subDir?: Config.Paths.SourceDirectory ): string | string[] {
+
+        if ( !subDir ) {
+            const result: string = this.config.paths.src._;
+            return result;
+        }
+
+        const result = this.config.paths.src[ subDir ?? '_' ] ?? [];
 
         return Array.isArray( result ) ? result : [ result ];
     }
+
+
+    /* ERRORS ===================================== */
+
+    protected handleError(
+        error: any,
+        level: number,
+        args?: Partial<LocalError.Handler.Args>,
+    ): void {
+        errorHandler( error, level, this.console, args );
+    }
+
+
+    // protected try<
+    //     Params extends never[],
+    //     Return extends unknown,
+    // >(
+    //     tryer: ( ...params: Params ) => Return,
+    //     level: number,
+    //     params?: Params,
+    //     callback?: (
+    //         | null
+    //         | LocalError.Handler
+    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
+    //     ),
+    // ): Return;
+
+    // protected try<
+    //     Params extends unknown[],
+    //     Return extends unknown,
+    // >(
+    //     tryer: ( ...params: Params ) => Return,
+    //     level: number,
+    //     params: Params,
+    //     callback?: (
+    //         | null
+    //         | LocalError.Handler
+    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
+    //     ),
+    // ): Return;
+
+    // /**
+    //  * Runs a function, with parameters as applicable, and catches (& handles)
+    //  * anything thrown.
+    //  * 
+    //  * Overloaded for better function param typing.
+    //  */
+    // protected try<
+    //     Params extends unknown[] | never[],
+    //     Return extends unknown,
+    // >(
+    //     tryer: ( ...params: Params ) => Return,
+    //     level: number,
+    //     params?: Params,
+    //     callback: (
+    //         | null
+    //         | LocalError.Handler
+    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
+    //     ) = null,
+    // ): Return {
+
+    //     try {
+
+    //         return (
+    //             params
+    //                 ? tryer( ...params )
+    //                 // @ts-expect-error
+    //                 : tryer()
+    //         );
+
+    //     } catch ( error ) {
+
+    //         let callbackArgs: Partial<LocalError.Handler.Args> = {};
+
+    //         if ( !callback ) {
+    //             callback = errorHandler;
+    //         } else if ( Array.isArray( callback ) ) {
+    //             callbackArgs = callback[ 1 ];
+    //             callback = callback[ 0 ];
+    //         }
+
+    //         callback(
+    //             error as LocalError.Input,
+    //             level,
+    //             this.console,
+    //             callbackArgs
+    //         );
+
+    //         throw error;
+    //     }
+    // }
 
 
     /* MESSAGES ===================================== */
@@ -324,6 +445,7 @@ export abstract class AbstractStage<
     public startEndNotice(
         which: "start" | "end" | null,
         watcherVersion: boolean = false,
+        stageNameOverride: null | string = null,
     ): void | Promise<void> {
         if ( this.params.notice === false ) { return; }
 
@@ -333,7 +455,7 @@ export abstract class AbstractStage<
         let linesOut = 1;
 
         const uppercase = {
-            name: this.name.toUpperCase(),
+            name: ( stageNameOverride ?? this.name ).toUpperCase(),
             which: ( which ?? '' ).toUpperCase(),
         };
 
@@ -373,7 +495,7 @@ export abstract class AbstractStage<
                 break;
         }
 
-        this.log.notice(
+        this.console.notice(
             [ [
                 msg,
                 { flag: true },
@@ -401,23 +523,17 @@ export abstract class AbstractStage<
      * Cycles through each substage and runs {@link AbstractStage.runSubStage}
      * if {@link AbstractStage.isSubStageIncluded} returns true.
      */
-    //  *
-    //  * @param config  Complete project configuration.
-    //  * @param params  Current CLI params.
-    public async run(
-        // config: Config.Internal,
-        // params: CLI.Params,
-    ): Promise<void> {
+    public async run(): Promise<void> {
 
         /* start */
         await this.startEndNotice( 'start' );
 
-        this.params.debug && this.log.varDump.progress( { subStages: this.subStages }, 1 );
+        this.params.debug && this.console.varDump.progress( { subStages: this.subStages }, 1 );
 
         /* loop through the steps in order */
         for ( const method of this.subStages ) {
 
-            this.params.debug && this.log.verbose( `testing method: ${ method }`, 1, { italic: true } );
+            this.params.debug && this.console.verbose( `testing method: ${ method }`, 1, { italic: true } );
 
             if ( this.isSubStageIncluded( method, (
                 ( this.params.debug && this.params.verbose ) ? 2 : 1
@@ -478,7 +594,7 @@ export abstract class AbstractStage<
             return;
         }
 
-        this.params.debug && this.log.varDump.verbose( { subParams }, level );
+        this.params.debug && this.console.varDump.verbose( { subParams }, level );
 
         return ( new stageClass(
             this.config,

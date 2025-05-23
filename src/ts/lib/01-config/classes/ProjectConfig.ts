@@ -50,6 +50,30 @@ export class ProjectConfig implements Config.Class {
         this.paths = config.paths;
         this.stages = config.stages;
         this.title = config.title;
+
+        if (
+            this.stages.compile
+            && Array.isArray( this.stages.compile )
+        ) {
+
+            // const _compileArgs = this.stages.compile[ 1 ] ?? {};
+            if ( !this.stages.compile[ 1 ] ) {
+                this.stages.compile[ 1 ] = {};
+            }
+
+            if (
+                this.stages.compile[ 1 ].files
+                && typeof this.stages.compile[ 1 ].files === 'object'
+            ) {
+                const totalPathCount = Object.values( this.stages.compile[ 1 ].files )
+                    .map( arr => arr.length )
+                    .reduce( ( runningTotal = 0, current = 0 ) => runningTotal + current );
+
+                if ( totalPathCount < 1 ) {
+                    this.stages.compile[ 1 ].files = false;
+                }
+            }
+        }
     }
 
 
@@ -59,21 +83,19 @@ export class ProjectConfig implements Config.Class {
 
     /**
      * Gets the instance for the given stage.
-     * 
+     *
      * @param stage  Stage to get.
+     *
+     * @return  An array with first the stage’s class and then the configured
+     *          arguments for that class, if any.
      */
-    public async getStage<
-        S extends Stage.Name,
-        C extends NonNullable<Stage.ClassType.All[ S ]>,
-        A extends Stage.Args.All[ S ],
-    >(
-        stage: S,
+    public async getStage(
+        stage: Stage.Name,
         console: Stage.Console,
         params: CLI.Params,
-    ): Promise<undefined | [ C, Partial<A> ]> {
+    ): Promise<undefined | [ Stage.ClassType, Partial<Stage.Args> ]> {
 
         const stageConfig = this.stages[ stage ];
-        // const level = 0;
 
         // returns
         if ( !stageConfig ) {
@@ -81,40 +103,25 @@ export class ProjectConfig implements Config.Class {
             return undefined;
         }
 
-        let stageClass: C | undefined;
-        let stageArgs: Partial<A> | undefined;
+        let stageClass: Stage.ClassType | undefined;
+        let stageArgs: Partial<Stage.Args> | undefined;
 
         if ( Array.isArray( stageConfig ) ) {
 
             const [
                 _stageClass,
-                _subArgs,
+                _stageArgs,
             ] = stageConfig;
 
             if ( _stageClass && typeOf( _stageClass ) === 'class' ) {
-                stageClass = _stageClass as typeof _stageClass & C;
+                stageClass = _stageClass;
             }
 
-            if ( _subArgs && typeof _subArgs === 'object' ) {
-                stageArgs = _subArgs as typeof _subArgs & Partial<A>;
+            if ( _stageArgs && typeof _stageArgs === 'object' ) {
+                stageArgs = _stageArgs;
             }
         } else if ( stageConfig ) {
-
-            const tmp_type = typeOf( stageConfig );
-
-            switch ( tmp_type ) {
-
-                case 'boolean':
-                    break;
-
-                case 'class':
-                    stageClass = stageConfig as typeof stageConfig & C;
-                    break;
-
-                case 'object':
-                    stageArgs = stageConfig as typeof stageConfig & Partial<A>;
-                    break;
-            }
+            stageClass = stageConfig;
         }
 
         // returns

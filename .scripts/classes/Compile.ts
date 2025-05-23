@@ -39,7 +39,7 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
      * ====================================================================== */
 
     constructor ( args: Compile.Args ) {
-        super( args, 'green' );
+        super( 'compile', args, 'green' );
     }
 
 
@@ -105,16 +105,16 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
             await this.compileTypescript( path, 2 );
         }
 
-        if ( !this.args.watchedEvent ) {
+        // if ( !this.args.watchedEvent ) {
 
-            this.verboseLog( 'deleting type-only javascript files...', 2 );
-            this.fns.fs.deleteFiles( this.glob( [
-                'dist/types/**/*.js',
-                'dist/types/**/*.js.map',
-                'dist/types/**/*.test.d.ts',
-                'dist/types/**/*.test.d.ts.map',
-            ] ) );
-        }
+        //     this.verboseLog( 'deleting type-only javascript files...', 2 );
+        //     this.fns.fs.deleteFiles( this.glob( [
+        //         'dist/types/**/*.js',
+        //         'dist/types/**/*.js.map',
+        //         'dist/types/**/*.test.d.ts',
+        //         'dist/types/**/*.test.d.ts.map',
+        //     ] ) );
+        // }
     }
 }
 

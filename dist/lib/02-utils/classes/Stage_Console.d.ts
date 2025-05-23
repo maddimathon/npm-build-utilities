@@ -11,7 +11,7 @@
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
-import { node, VariableInspector } from '@maddimathon/utility-typescript/classes';
+import { MessageMaker, node, VariableInspector } from '@maddimathon/utility-typescript/classes';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 /**
@@ -38,7 +38,7 @@ export declare class Stage_Console implements Stage.Console {
     readonly varDump: _Stage_Console_VarInspect;
     /**
      * @param name    Name for this stage used for notices.
-     * @param clr     {@inheritDoc Stage.Class.clr}
+     * @param clr     Colour slug for this colour-coding this class.
      * @param config  Current project config.
      * @param params  Current CLI params.
      * @param utils   Optional. Partial argument overrides for classes used
@@ -66,6 +66,7 @@ export declare class Stage_Console implements Stage.Console {
         msg: Parameters<node.NodeConsole['timestampLog']>[1];
         time: Parameters<node.NodeConsole['timestampLog']>[2];
     };
+    error(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Parameters<node.NodeConsole['timestampLog']>[1], timeArgs?: Parameters<node.NodeConsole['timestampLog']>[2]): void;
     /**
      * Prints a timestamped log message to the console.
      *
@@ -79,7 +80,7 @@ export declare class Stage_Console implements Stage.Console {
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
-    protected log(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: number, msgArgs?: Parameters<node.NodeConsole['timestampLog']>[1], timeArgs?: Parameters<node.NodeConsole['timestampLog']>[2]): void;
+    log(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: number, msgArgs?: Parameters<node.NodeConsole['timestampLog']>[1], timeArgs?: Parameters<node.NodeConsole['timestampLog']>[2]): void;
     /**
      * Prints a timestamped log message to the console. Only if
      * `{@link Stage.Args}.notice` is truthy.
@@ -181,7 +182,7 @@ export declare class _Stage_Console_VarInspect implements Stage.Console.VarInspe
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
-    protected log(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<Stage_Console['notice']>[1], msgArgs?: Parameters<Stage_Console['notice']>[2], timeArgs?: Parameters<Stage_Console['notice']>[3]): void;
+    log(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<Stage_Console['notice']>[1], msgArgs?: Parameters<Stage_Console['notice']>[2], timeArgs?: Parameters<Stage_Console['notice']>[3]): void;
     /**
      * Prints a timestamped log message to the console. Only if
      * `{@link Stage.Args}.notice` is truthy.

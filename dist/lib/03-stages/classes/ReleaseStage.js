@@ -19,6 +19,16 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since 0.1.0-draft
  */
 export class ReleaseStage extends AbstractStage {
+    /* PROPERTIES
+     * ====================================================================== */
+    subStages = [
+        'changelog',
+        'package',
+        'replace',
+        'commit',
+        'github',
+        'tidy',
+    ];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
@@ -34,16 +44,6 @@ export class ReleaseStage extends AbstractStage {
      */
     constructor(config, params, args) {
         super('release', 'purple', config, params, args);
-        /* PROPERTIES
-         * ====================================================================== */
-        this.subStages = [
-            'changelog',
-            'package',
-            'replace',
-            'commit',
-            'github',
-            'tidy',
-        ];
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -62,13 +62,13 @@ export class ReleaseStage extends AbstractStage {
         await this[stage]();
     }
     async changelog() {
-        this.log.progress('(NOT IMPLEMENTED) running changelog sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running changelog sub-stage...', 1);
     }
     async commit() {
-        this.log.progress('(NOT IMPLEMENTED) running commit sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running commit sub-stage...', 1);
     }
     async github() {
-        this.log.progress('(NOT IMPLEMENTED) running github sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running github sub-stage...', 1);
     }
     /**
      * Runs the project's package class.
@@ -77,14 +77,10 @@ export class ReleaseStage extends AbstractStage {
         await this.runStage('package', 1);
     }
     async replace() {
-        this.log.progress('(NOT IMPLEMENTED) running replace sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running replace sub-stage...', 1);
     }
     async tidy() {
-        this.log.progress('(NOT IMPLEMENTED) running tidy sub-stage...', 1);
+        this.console.progress('(NOT IMPLEMENTED) running tidy sub-stage...', 1);
     }
 }
-const typeTest = ReleaseStage;
-// only so that these are used
-true;
-typeTest;
 //# sourceMappingURL=ReleaseStage.js.map

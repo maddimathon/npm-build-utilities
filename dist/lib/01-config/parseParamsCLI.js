@@ -20,8 +20,7 @@
  * @return  A completed version of the params object.
  */
 export function parseParamsCLI(p) {
-    var _a, _b;
-    const stage = (_a = p._) === null || _a === void 0 ? void 0 : _a[0];
+    const stage = p._?.[0];
     const releasing = stage === 'release';
     const packaging = stage === 'package' || releasing;
     const building = stage === 'build' || packaging || releasing;
@@ -44,7 +43,7 @@ export function parseParamsCLI(p) {
         'without-package': [],
         'without-release': [],
         /* ## LOG MESSAGES ===================================== */
-        debug: ((_b = p._) === null || _b === void 0 ? void 0 : _b[0]) === 'debug',
+        debug: p._?.[0] === 'debug',
         'log-base-level': 0,
         notice: true,
         progress: true,

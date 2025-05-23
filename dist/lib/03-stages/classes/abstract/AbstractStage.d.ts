@@ -10,8 +10,9 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-import { MessageMaker, node } from '@maddimathon/utility-typescript/classes';
-import type { CLI, Config, Stage } from '../../../../types/index.js';
+import { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import type { CLI, Config, LocalError, Stage } from '../../../../types/index.js';
+import { FileSystem } from '../../../00-universal/index.js';
 import { ProjectConfig } from '../../../01-config/index.js';
 import { Stage_Compiler, Stage_Console } from '../../../02-utils/index.js';
 /**
@@ -44,6 +45,12 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      */
     readonly config: ProjectConfig;
     /**
+     * {@inheritDoc Stage.Class.log}
+     *
+     * @category Utilities
+     */
+    readonly console: Stage_Console;
+    /**
      * Instance used to compile from the src directory.
      *
      * @category Utilities
@@ -54,7 +61,7 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      *
      * @category Utilities
      */
-    protected readonly fs: node.NodeFiles;
+    protected readonly fs: FileSystem;
     /**
      * {@inheritDoc Stage.Class.log}
      *
@@ -107,15 +114,16 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      * @param params  Current CLI params.
      * @param args    Partial overrides for the default stage args.
      */
-    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args?: Partial<Args>);
+    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<Args>);
     /** {@inheritDoc Stage.Class.isSubStageIncluded} */
     isSubStageIncluded(subStage: SubStage, level: number): boolean;
     /** {@inheritDoc Stage.Class.getDistDir} */
-    getDistDir(subDir?: Config.SourceDirectory): string;
-    /** {@inheritDoc Stage.Class.getSrcDir} */
-    getSrcDir(subDir: Config.SourceDirectory): string[];
+    getDistDir(subDir?: Config.Paths.SourceDirectory): string;
+    getSrcDir(subDir: Config.Paths.SourceDirectory): string[];
+    getSrcDir(subDir?: undefined): string;
+    protected handleError(error: any, level: number, args?: Partial<LocalError.Handler.Args>): void;
     /** {@inheritDoc Stage.Class.startEndNotice} */
-    startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean): void | Promise<void>;
+    startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean, stageNameOverride?: null | string): void | Promise<void>;
     /**
      * Runs the entire stage (asynchronously).
      *

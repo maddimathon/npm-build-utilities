@@ -11,11 +11,14 @@
  * @license MIT
  */
 import type { Node } from '@maddimathon/utility-typescript/types';
+import type { Stage } from '../../types/index.js';
 import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage } from './index.js';
 /**
  * Complete, default configuration for the library.
  */
-export declare function defaultConfig(pkg?: Node.PackageJson): {
+export declare function defaultConfig(args: {
+    pkg: Node.PackageJson;
+} | Stage.Console): {
     readonly title: any;
     readonly clr: "purple";
     readonly compiler: {
@@ -36,6 +39,7 @@ export declare function defaultConfig(pkg?: Node.PackageJson): {
                 readonly esModuleInterop: true;
                 readonly exactOptionalPropertyTypes: false;
                 readonly forceConsistentCasingInFileNames: true;
+                readonly lib: ["ES2022"];
                 readonly module: "node18";
                 readonly moduleResolution: "node16";
                 readonly noFallthroughCasesInSwitch: true;
@@ -51,7 +55,7 @@ export declare function defaultConfig(pkg?: Node.PackageJson): {
                 readonly sourceMap: true;
                 readonly strict: true;
                 readonly strictBindCallApply: true;
-                readonly target: "es2018";
+                readonly target: "es2022";
             };
         };
     };
@@ -66,6 +70,7 @@ export declare function defaultConfig(pkg?: Node.PackageJson): {
             readonly ts: "dist/js";
         };
         readonly src: {
+            readonly _: "src";
             readonly docs: "src/docs";
             readonly scss: "src/scss";
             readonly ts: "src/ts";

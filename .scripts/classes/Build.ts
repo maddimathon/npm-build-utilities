@@ -55,7 +55,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
      * ====================================================================== */
 
     constructor ( args: Build.Args ) {
-        super( args, 'blue' );
+        super( 'build', args, 'blue' );
     }
 
 

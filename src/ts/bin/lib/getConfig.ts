@@ -14,24 +14,33 @@
 import type { Json } from '@maddimathon/utility-typescript/types';
 
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
-import { VariableInspector } from '@maddimathon/utility-typescript/classes';
+import {
+    VariableInspector,
+} from '@maddimathon/utility-typescript/classes';
 
 import type { CLI, Config, Stage } from '../../types/index.js';
 
 import {
     defaultConfig,
-    getFileSystem,
     getPackageJson,
     isConfigValid,
 
+    FileSystem,
     Project,
     ProjectConfig,
-} from '../../index.js';
+} from '../../lib/index.js';
 
 
-function _internalConfig( _config: Config | Config & Partial<Config.Internal> | Config.Internal ): Config.Internal {
+function _internalConfig(
+    console: Stage.Console,
+    _config: (
+        | Config
+        | Config & Partial<Config.Internal>
+        | Config.Internal
+    ),
+): Config.Internal {
 
-    const def = defaultConfig();
+    const def = defaultConfig( console );
 
     const config = {
         ...def,
@@ -60,7 +69,7 @@ function _internalConfig( _config: Config | Config & Partial<Config.Internal> | 
     };
 
 
-    const stages: Config.Internal[ 'stages' ] = def.stages;
+    const stages: Config.Internal.Stages = def.stages;
 
     if ( config.stages ) {
 
@@ -151,11 +160,13 @@ function _internalConfig( _config: Config | Config & Partial<Config.Internal> | 
 
         src: typeof config.paths.src === 'function'
             ? {
+                _: config.paths.src(),
                 docs: config.paths.src( 'docs' ),
                 scss: config.paths.src( 'scss' ),
                 ts: config.paths.src( 'ts' ),
             }
             : {
+                _: 'src',
                 docs: 'src/docs',
                 scss: 'src/scss',
                 ts: 'src/ts',
@@ -221,7 +232,7 @@ export async function getConfig(
 
     const maxInterations = pathsToCheck.length;
 
-    const fs = getFileSystem( console.nc );
+    const fs = new FileSystem( console );
 
     params.debug && console.progress( 'Checking config paths...', level );
 
@@ -257,10 +268,7 @@ export async function getConfig(
         config = {};
     }
 
-    const pkg = getPackageJson( {
-        fs,
-        nc: console.nc,
-    } );
+    const pkg = getPackageJson( fs );
 
     const validConfig = isConfigValid( config !== null && config !== void 0 ? config : {} );
 
@@ -268,7 +276,7 @@ export async function getConfig(
     if ( validConfig ) {
         params.debug && console.varDump.progress( { 'valid config': config }, 1 + level );
 
-        const configInstance = new ProjectConfig( _internalConfig( validConfig ) );
+        const configInstance = new ProjectConfig( _internalConfig( console, validConfig ) );
         params.debug && console.varDump.progress( { return: configInstance }, level );
         return configInstance;
     }
@@ -336,7 +344,7 @@ export async function getConfig(
     } ) ) {
         msgArgs.linesIn = 1;
 
-        const defaultConfig = _internalConfig( newConfig );
+        const defaultConfig = _internalConfig( console, newConfig );
 
         newCompleteConfig = {
             ...defaultConfig,
@@ -372,7 +380,7 @@ export async function getConfig(
         };
     }
 
-    const builtConfig = _internalConfig( newCompleteConfig ?? newConfig );
+    const builtConfig = _internalConfig( console, newCompleteConfig ?? newConfig );
 
     const configInstance = new ProjectConfig( builtConfig );
 

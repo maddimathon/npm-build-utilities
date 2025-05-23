@@ -26,6 +26,21 @@ const config = {
             ],
         },
     },
+
+    stages: {
+        compile: {
+            files: {
+
+                root: [
+                    'README.md',
+                ],
+
+                src: [
+                    'src/files',
+                ],
+            },
+        },
+    },
 };
 
 export default config;

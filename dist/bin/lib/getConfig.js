@@ -11,11 +11,10 @@
  * @license MIT
  */
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
-import { VariableInspector } from '@maddimathon/utility-typescript/classes';
-import { defaultConfig, getFileSystem, getPackageJson, isConfigValid, Project, ProjectConfig, } from '../../index.js';
-function _internalConfig(_config) {
-    var _a, _b, _c;
-    const def = defaultConfig();
+import { VariableInspector, } from '@maddimathon/utility-typescript/classes';
+import { defaultConfig, getPackageJson, isConfigValid, FileSystem, Project, ProjectConfig, } from '../../lib/index.js';
+function _internalConfig(console, _config) {
+    const def = defaultConfig(console);
     const config = {
         ...def,
         ..._config,
@@ -29,8 +28,8 @@ function _internalConfig(_config) {
         },
         compiler: {
             ...def.compiler,
-            ...(_a = _config.compiler) !== null && _a !== void 0 ? _a : {},
-            tsConfig: mergeArgs(def.compiler.tsConfig, (_c = (_b = _config.compiler) === null || _b === void 0 ? void 0 : _b.tsConfig) !== null && _c !== void 0 ? _c : {}, true),
+            ..._config.compiler ?? {},
+            tsConfig: mergeArgs(def.compiler.tsConfig, _config.compiler?.tsConfig ?? {}, true),
         },
     };
     const stages = def.stages;
@@ -104,11 +103,13 @@ function _internalConfig(_config) {
                 : config.paths.dist),
         src: typeof config.paths.src === 'function'
             ? {
+                _: config.paths.src(),
                 docs: config.paths.src('docs'),
                 scss: config.paths.src('scss'),
                 ts: config.paths.src('ts'),
             }
             : {
+                _: 'src',
                 docs: 'src/docs',
                 scss: 'src/scss',
                 ts: 'src/ts',
@@ -135,7 +136,6 @@ function _internalConfig(_config) {
  * @param level    Optional. Depth level for this message (above the value of {@link CLI.Params.log-base-level}).
  */
 export async function getConfig(params, console, level = 0) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     if (!console) {
         console = await Project.getConsole({
             name: 'getConfig',
@@ -159,7 +159,7 @@ export async function getConfig(params, console, level = 0) {
     /** Index of the path currently behind checked. */
     let i = 0;
     const maxInterations = pathsToCheck.length;
-    const fs = getFileSystem(console.nc);
+    const fs = new FileSystem(console);
     params.debug && console.progress('Checking config paths...', level);
     while (!config && i < maxInterations) {
         let path = pathsToCheck[i];
@@ -184,15 +184,12 @@ export async function getConfig(params, console, level = 0) {
     if (!config) {
         config = {};
     }
-    const pkg = getPackageJson({
-        fs,
-        nc: console.nc,
-    });
+    const pkg = getPackageJson(fs);
     const validConfig = isConfigValid(config !== null && config !== void 0 ? config : {});
     // returns
     if (validConfig) {
         params.debug && console.varDump.progress({ 'valid config': config }, 1 + level);
-        const configInstance = new ProjectConfig(_internalConfig(validConfig));
+        const configInstance = new ProjectConfig(_internalConfig(console, validConfig));
         params.debug && console.varDump.progress({ return: configInstance }, level);
         return configInstance;
     }
@@ -240,12 +237,12 @@ export async function getConfig(params, console, level = 0) {
      * Basic minimum config constructed because no valid config was found.
      */
     let newConfig = {
-        title: (_a = await console.nc.prompt.input({
+        title: await console.nc.prompt.input({
             message: 'What’s the project’s title? (human-readable, title case)',
             default: config.title,
             required: true,
             msgArgs,
-        })) !== null && _a !== void 0 ? _a : config.title,
+        }) ?? config.title,
     };
     let newCompleteConfig = undefined;
     if (await console.nc.prompt.bool({
@@ -253,34 +250,34 @@ export async function getConfig(params, console, level = 0) {
         msgArgs,
     })) {
         msgArgs.linesIn = 1;
-        const defaultConfig = _internalConfig(newConfig);
+        const defaultConfig = _internalConfig(console, newConfig);
         newCompleteConfig = {
             ...defaultConfig,
             paths: {
                 ...defaultConfig.paths,
-                release: (_d = (_c = (_b = newConfig.paths) === null || _b === void 0 ? void 0 : _b.release) !== null && _c !== void 0 ? _c : await console.nc.prompt.input({
+                release: newConfig.paths?.release ?? await console.nc.prompt.input({
                     message: 'What is the path for the release directory?',
                     default: defaultConfig.paths.release,
                     msgArgs,
-                })) !== null && _d !== void 0 ? _d : defaultConfig.paths.release,
-                snapshot: (_g = (_f = (_e = newConfig.paths) === null || _e === void 0 ? void 0 : _e.snapshot) !== null && _f !== void 0 ? _f : await console.nc.prompt.input({
+                }) ?? defaultConfig.paths.release,
+                snapshot: newConfig.paths?.snapshot ?? await console.nc.prompt.input({
                     message: 'What is the path for the snapshot directory?',
                     default: defaultConfig.paths.snapshot,
                     msgArgs,
-                })) !== null && _g !== void 0 ? _g : defaultConfig.paths.snapshot,
+                }) ?? defaultConfig.paths.snapshot,
             },
             stages: {
                 ...defaultConfig.stages,
-                snapshot: ((_j = (_h = newConfig.paths) === null || _h === void 0 ? void 0 : _h.snapshot) !== null && _j !== void 0 ? _j : (defaultConfig.stages.snapshot
+                snapshot: newConfig.paths?.snapshot ?? (defaultConfig.stages.snapshot
                     && await console.nc.prompt.bool({
                         message: 'Include snapshot stage?',
                         default: !!defaultConfig.stages.snapshot,
                         msgArgs,
-                    }))) ? defaultConfig.stages.snapshot : false,
+                    })) ? defaultConfig.stages.snapshot : false,
             },
         };
     }
-    const builtConfig = _internalConfig(newCompleteConfig !== null && newCompleteConfig !== void 0 ? newCompleteConfig : newConfig);
+    const builtConfig = _internalConfig(console, newCompleteConfig ?? newConfig);
     const configInstance = new ProjectConfig(builtConfig);
     params.debug && console.varDump.progress({ return: configInstance }, level);
     // returns
@@ -288,11 +285,11 @@ export async function getConfig(params, console, level = 0) {
         return configInstance;
     }
     /** Path for writing the config file. */
-    const configPath = (_k = await console.nc.prompt.select({
+    const configPath = await console.nc.prompt.select({
         message: 'Where should we write the config file?',
         choices: defaultConfigPaths,
         msgArgs,
-    })) !== null && _k !== void 0 ? _k : defaultConfigPaths[0];
+    }) ?? defaultConfigPaths[0];
     /** Whether to force-write the config file. */
     const force = fs.exists(configPath)
         ? (await console.nc.prompt.bool({

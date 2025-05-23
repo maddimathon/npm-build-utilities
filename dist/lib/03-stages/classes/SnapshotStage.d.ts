@@ -28,7 +28,7 @@ export declare class SnapshotStage extends AbstractStage<Stage.SubStage.Snapshot
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, args?: Partial<Stage.Args.Snapshot>);
+    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Snapshot>);
     /**
      * Prints a message to the console signalling the start or end of this
      * build stage.

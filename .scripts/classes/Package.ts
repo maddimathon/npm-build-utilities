@@ -54,7 +54,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
      * ====================================================================== */
 
     constructor ( args: Package.Args ) {
-        super( args, args.releasing ? 'orange' : 'purple' );
+        super( 'package', args, args.releasing ? 'orange' : 'purple' );
     }
 
 
@@ -270,6 +270,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
         this._zip(
             this.releasePath,
             zipPath,
+            3,
             [],
             false,
         );
@@ -286,6 +287,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
     protected _zip(
         sourceDir: string,
         zipPath: string,
+        level: number,
         ignoreGlobs: string[] = [],
         filesOnly: boolean = true,
     ): void {
@@ -333,7 +335,11 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
          * Running the command. 
          */
         const zipCMD: string = `cd "${ this.fns.fs.pathRelative( zippingPWD ) }" && zip "${ zipPath.replace( zippingPWD_regex, '' ) }" '${ files.join( "' '" ) }'`;
-        this.fns.nc.cmd( zipCMD );
+        this.try(
+            this.fns.nc.cmd,
+            level,
+            [ zipCMD ],
+        );
     }
 }
 

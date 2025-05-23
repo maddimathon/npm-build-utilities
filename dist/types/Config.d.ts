@@ -11,8 +11,9 @@
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
-import { node, type MessageMaker } from '@maddimathon/utility-typescript/classes';
+import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import * as Stage from './Stage.js';
+import { FileSystem } from '../lib/index.js';
 /**
  * Complete configuration object for a project using this library.
  *
@@ -38,9 +39,9 @@ export interface Config {
      */
     console?: Partial<Stage.Console.Args>;
     /**
-     * Optional arguements to use when constructing {@link node.NodeFiles}.
+     * Optional arguements to use when constructing {@link FileSystem}.
      */
-    fs?: Partial<node.NodeFiles.Args>;
+    fs?: Partial<FileSystem.Args>;
     /** {@inheritDoc Config.Paths} */
     paths?: Partial<Config.Paths>;
     /** {@inheritDoc Config.Stages} */
@@ -78,7 +79,7 @@ export declare namespace Config {
      *
      * @internal
      */
-    export type Internal = Objects.RequirePartial<Omit<Config, "fs" | "paths" | "stages">, Internal_RequiredKeys> & {
+    export type Internal = Objects.RequirePartially<Omit<Config, "fs" | "paths" | "stages">, Internal_RequiredKeys> & {
         /** {@inheritDoc Config.fs} */
         fs: Required<Config>['fs'];
         /** {@inheritDoc Config.Paths} */
@@ -90,12 +91,21 @@ export declare namespace Config {
          */
         stages: Internal.Stages;
     };
+    /**
+     * Types for the {@link Config.Internal} type.
+     */
     export namespace Internal {
         /**
          * @interface
+         *
+         * @expandType Stage
+         * @expandType Stage.Args
+         * @expandType Args
+         * @expandType Stage.ClassType
+         * @expandType ClassType
          */
         type Stages = {
-            [K in Stage.Name]-?: false | Required<Stage.ClassType.All>[K] | [Required<Stage.ClassType.All>[K], undefined | Partial<Stage.Args.All[K]>];
+            [K in Stage.Name]: false | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[K]>];
         };
     }
     /**
@@ -119,8 +129,8 @@ export declare namespace Config {
          * }
          * ```
          */
-        dist: string | ((subDir?: SourceDirectory) => string) | {
-            [D in "_" | SourceDirectory]?: string;
+        dist: string | ((subDir?: Paths.SourceDirectory) => string) | {
+            [D in "_" | Paths.SourceDirectory]?: string;
         };
         /**
          * Source for files to be compiled.
@@ -128,15 +138,18 @@ export declare namespace Config {
          * @default
          * ```ts
          * {
+         *     _: 'src',
          *     docs: 'src/docs',
          *     scss: 'src/scss',
          *     ts: 'src/ts',
          * }
          * ```
          */
-        src: ((subDir: SourceDirectory) => string | string[]) | {
-            [D in SourceDirectory]?: string | string[];
-        };
+        src: Paths.SourceFunction | ({
+            _?: string;
+        } & {
+            [D in Paths.SourceDirectory]?: string | string[];
+        });
         /**
          * Directory for release zip files.
          *
@@ -149,6 +162,27 @@ export declare namespace Config {
          * @default '.snapshots'
          */
         snapshot: string;
+    }
+    /**
+     * Types for the {@link Config.Paths} type.
+     */
+    export namespace Paths {
+        /**
+         * Keys for paths in the source directory.
+         *
+         * @expand
+         */
+        type SourceDirectory = "docs" | "scss" | "ts";
+        /**
+         * Function overloads for configuring the source path via function.
+         *
+         * @expand
+         */
+        interface SourceFunction {
+            (subDir: SourceDirectory): string[];
+            (subDir?: undefined): string;
+            (subDir?: SourceDirectory): string | string[];
+        }
     }
     /**
      * A generic for the allowed input types for stage configuration.
@@ -175,24 +209,12 @@ export declare namespace Config {
      * If true, the default class is run.  If false, it is not run at all.
      *
      * @interface
-     *
-     * @expand
      */
-    export interface Stages {
-        build: boolean | Partial<Stage.Args.Build> | Stage.ClassType.Build | [Stage.ClassType.Build, undefined | Partial<Stage.Args.Build>];
-        compile: boolean | Partial<Stage.Args.Compile> | Stage.ClassType.Compile | [Stage.ClassType.Compile, undefined | Partial<Stage.Args.Compile>];
-        document?: false | Stage.ClassType.Document | [Stage.ClassType.Document, undefined | Partial<Stage.Args.Document>];
-        package: boolean | Partial<Stage.Args.Package> | Stage.ClassType.Package | [Stage.ClassType.Package, undefined | Partial<Stage.Args.Package>];
-        release: boolean | Partial<Stage.Args.Release> | Stage.ClassType.Release | [Stage.ClassType.Release, undefined | Partial<Stage.Args.Release>];
-        snapshot: boolean | Partial<Stage.Args.Snapshot> | Stage.ClassType.Snapshot | [Stage.ClassType.Snapshot, undefined | Partial<Stage.Args.Snapshot>];
-        test?: false | Stage.ClassType.Test | [Stage.ClassType.Test, undefined | Partial<Stage.Args.Test>];
-    }
-    /**
-     * Keys for paths in the source directory.
-     *
-     * @expand
-     */
-    export type SourceDirectory = "docs" | "scss" | "ts";
+    export type Stages = {
+        [S in Stage.WithDefaultClass]: boolean | Partial<Stage.Args.All[S]> | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
+    } & {
+        [S in Stage.WithAbstractClass]?: false | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
+    };
     export {};
 }
 //# sourceMappingURL=Config.d.ts.map

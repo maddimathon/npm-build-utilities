@@ -31,8 +31,8 @@ const config = {
 
     // An array of regexp pattern strings used to skip coverage collection
     coveragePathIgnorePatterns: [
-        '/.scripts/',
-        '/node_modules/',
+        '(^|\/).scripts\/',
+        '(^|\/)node_modules\/',
         '(^|\/)\._.+',
     ],
 
@@ -165,8 +165,10 @@ const config = {
 
     // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
     testPathIgnorePatterns: [
-        '\/@releases\/',
-        '\/node_modules\/',
+        '(^|\/).snapshots\/',
+        '(^|\/)@releases\/',
+        '(^|\/)demos\/',
+        '(^|\/)node_modules\/',
         '(^|\/)\._.+',
     ],
 
