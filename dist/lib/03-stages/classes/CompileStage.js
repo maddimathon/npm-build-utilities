@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { escRegExp, escRegExpReplace } from '@maddimathon/utility-typescript/functions';
@@ -17,7 +17,7 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  *
  * @category Stages
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export class CompileStage extends AbstractStage {
     /* PROPERTIES
@@ -42,9 +42,10 @@ export class CompileStage extends AbstractStage {
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
+     * @param _pkg    The current package.json value, if any.
      */
-    constructor(config, params, args) {
-        super('compile', 'green', config, params, args);
+    constructor(config, params, args, _pkg) {
+        super('compile', 'green', config, params, args, _pkg);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -55,7 +56,7 @@ export class CompileStage extends AbstractStage {
      * @param which  Whether we are starting or ending.
      */
     startEndNotice(which) {
-        super.startEndNotice(which, !this.params.building);
+        return super.startEndNotice(which, !this.params.building);
     }
     /* RUNNING METHODS
      * ====================================================================== */
@@ -119,7 +120,7 @@ export class CompileStage extends AbstractStage {
                 out: out,
             };
         });
-        this.params.debug && this.console.vi.progress({ scssPathArgs }, (this.params.verbose ? 3 : 2));
+        this.console.vi.debug({ scssPathArgs }, (this.params.verbose ? 3 : 2));
         this.console.verbose('compiling to css...', 2);
         return Promise.all(scssPathArgs.map(({ in: input, out: output }) => this.cpl.scss(input, output, (this.params.verbose ? 3 : 2))));
     }
@@ -187,15 +188,15 @@ export class CompileStage extends AbstractStage {
                 },
                 required: true,
             });
-            this.params.debug && this.console.vi.progress({ tsConfigFile }, 3);
+            this.console.vi.debug({ tsConfigFile }, 3);
             // returns
             if (!tsConfigFile) {
                 return;
             }
             const baseUrl = tsSrcDir.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
-            this.params.debug && this.console.vi.progress({ baseUrl }, 2);
+            this.console.vi.debug({ baseUrl }, 2);
             const outDir = this.fs.pathRelative(this.fs.pathResolve(baseUrl, tsDistDir));
-            this.params.debug && this.console.vi.progress({ outDir }, 2);
+            this.console.vi.debug({ outDir }, 2);
             this.fs.writeFile(this.fs.pathResolve(tsConfigFile), JSON.stringify({
                 extends: '@maddimathon/build-utilities/tsconfig',
                 include: [
@@ -212,7 +213,7 @@ export class CompileStage extends AbstractStage {
         }
         this.console.verbose('deleting existing files...', 2);
         this.fs.deleteFiles([tsDistDir], false, (this.params.verbose ? 3 : 2));
-        this.params.debug && this.console.vi.progress({ tsPaths }, (this.params.verbose ? 3 : 2));
+        this.console.vi.debug({ tsPaths }, (this.params.verbose ? 3 : 2));
         this.console.verbose('compiling to javascript...', 2);
         return Promise.all(tsPaths.map(tsc => {
             this.console.verbose('compiling project: ' + tsc, (this.params.verbose ? 3 : 2));

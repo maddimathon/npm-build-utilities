@@ -11,6 +11,8 @@
  * @license MIT
  */
 
+import type { Node } from '@maddimathon/utility-typescript/types';
+
 import type {
     CLI,
     Stage,
@@ -67,13 +69,15 @@ export class BuildStage extends AbstractStage<
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
+     * @param _pkg    The current package.json value, if any.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Build>,
+        _pkg?: Node.PackageJson,
     ) {
-        super( 'build', 'blue', config, params, args );
+        super( 'build', 'blue', config, params, args, _pkg );
     }
 
 
@@ -88,7 +92,7 @@ export class BuildStage extends AbstractStage<
      * @param which  Whether we are starting or ending.
      */
     public override startEndNotice( which: "start" | "end" | null ) {
-        super.startEndNotice( which, !this.params.building );
+        return super.startEndNotice( which, !this.params.packaging );
     }
 
 

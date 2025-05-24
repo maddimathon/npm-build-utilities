@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -20,7 +20,7 @@ import * as Stage from './Stage.js';
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export interface Config {
     /**
@@ -53,7 +53,7 @@ export interface Config {
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace Config {
     /**
@@ -74,7 +74,7 @@ export declare namespace Config {
      * Complete configuration shape. Requires more properties than
      * {@link Config}.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      *
      * @interface
      *

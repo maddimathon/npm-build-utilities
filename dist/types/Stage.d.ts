@@ -3,20 +3,20 @@
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import * as sass from 'sass';
 import typescript from 'typescript';
-import type { Json } from '@maddimathon/utility-typescript/types';
+import type { Json, Node } from '@maddimathon/utility-typescript/types';
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
@@ -44,7 +44,7 @@ export interface Args<SubStage extends string = string> {
 /**
  * Type utilities for stage class argument objects.
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace Args {
     /**
@@ -241,16 +241,17 @@ export interface Class<SubStage extends string = string, A extends Args = Args> 
      * @category Running
      *
      * @param which           Whether we are starting or ending.
-     * @param watcherVersion  Optional. Whether to display the watcher version of the notice. Default false.
+     * @param watcherVersion  Optional. Whether to display the watcher version of the notice **if applicable**. Default false.
+     * @param args            Optional. Message argument overrides.
      */
-    startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean): void | Promise<void>;
+    startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean, args?: Partial<MessageMaker.BulkMsgArgs>): void | Promise<void>;
 }
 /**
  * Type utilities for stage class objects.
  *
  * @see {@link Stage.Class}
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace Class {
     /**
@@ -279,7 +280,7 @@ export declare namespace Class {
  *
  * @expand
  */
-export type ClassType = (new (config: ProjectConfig, params: CLI.Params, args: Partial<Args>) => Class);
+export type ClassType = (new (config: ProjectConfig, params: CLI.Params, args: Partial<Args>, _pkg?: Node.PackageJson) => Class);
 /**
  * Any stage class compatible with this package.
  *
@@ -291,7 +292,7 @@ export type ClassTypeGeneric<SubStage extends string = string, A extends Args<Su
  *
  * @see {@link ClassType}
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace ClassType {
     /**
@@ -320,13 +321,13 @@ export interface Compiler {
  *
  * @see {@link Stage.ClassType}
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace Compiler {
     /**
      * Optional configuration for {@link Compiler} classes.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     interface Args {
         /**

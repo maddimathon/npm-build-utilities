@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { DummyConsole } from '../../@internal/index.js';
@@ -21,7 +21,7 @@ import { defaultConfig, } from '../../03-stages/defaultConfig.js';
  *
  * @category Project
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export class Project {
     params;
@@ -85,7 +85,7 @@ export class Project {
         if (stage === 'debug') {
             return this.debug(console, null, null, null);
         }
-        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, console, this.params) ?? [];
+        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, console) ?? [];
         // returns
         if (!stageClass) {
             if (this.params.debug) {

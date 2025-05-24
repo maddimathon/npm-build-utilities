@@ -11,6 +11,8 @@
  * @license MIT
  */
 
+import type { Node } from '@maddimathon/utility-typescript/types';
+
 import type {
     CLI,
     Stage,
@@ -62,29 +64,21 @@ export class SnapshotStage extends AbstractStage<
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
+     * @param _pkg    The current package.json value, if any.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Snapshot>,
+        _pkg?: Node.PackageJson,
     ) {
-        super( 'snapshot', 'pink', config, params, args );
+        super( 'snapshot', 'pink', config, params, args, _pkg );
     }
 
 
 
     /* LOCAL METHODS
      * ====================================================================== */
-
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
-    public override startEndNotice( which: "start" | "end" | null ) {
-        super.startEndNotice( which, !this.params.building );
-    }
 
 
 
@@ -96,6 +90,22 @@ export class SnapshotStage extends AbstractStage<
     }
 
     protected async snap() {
-        this.console.progress( '(NOT IMPLEMENTED) running snap sub-stage...', 1 );
+        this.console.progress( 'running snap sub-stage...', 1 );
+
+        await this._copy();
+        await this._zip();
+        await this._tidy();
+    }
+
+    protected async _copy() {
+        this.console.progress( '(NOT IMPLEMENTED) copying files...', 2 );
+    }
+
+    protected async _zip() {
+        this.console.progress( '(NOT IMPLEMENTED) zipping folder...', 2 );
+    }
+
+    protected async _tidy() {
+        this.console.progress( '(NOT IMPLEMENTED) deleting snapshot folder...', 2 );
     }
 }

@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { node } from '@maddimathon/utility-typescript/classes';
@@ -18,7 +18,7 @@ import { type FileSystemType } from '../../@internal.js';
  *
  * @category Utilities
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare class FileSystem extends node.NodeFiles {
     readonly console: Logger;
@@ -61,20 +61,20 @@ export declare class FileSystem extends node.NodeFiles {
  *
  * @category Utilities
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace FileSystem {
     /**
      * Optional configuration for {@link FileSystem} class.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     interface Args extends node.NodeFiles.Args {
     }
     /**
      * Optional class instances to pass to {@link FileSystem} constructor.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     interface Utils extends Omit<NonNullable<ConstructorParameters<typeof node.NodeFiles>[1]>, "nc"> {
     }

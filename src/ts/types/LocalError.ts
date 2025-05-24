@@ -77,7 +77,7 @@ export namespace LocalError {
         /**
          * Optional configuration for {@link Handler} function types.
          */
-        export interface Args extends CustomError.Handler.Args, MessageMaker.MsgArgs {
+        export interface Args extends CustomError.Handler.Args, MessageMaker.BulkMsgArgs {
         };
     };
 

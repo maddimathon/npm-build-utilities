@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -20,7 +20,7 @@ import { MessageMaker, node, VariableInspector } from '@maddimathon/utility-type
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export interface Logger extends Objects.Logger<Logger.MethodParams, Logger.ErrorParams, Logger.MessageInput, Logger.ErrorInput> {
     /**
@@ -51,7 +51,7 @@ export interface Logger extends Objects.Logger<Logger.MethodParams, Logger.Error
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
-    error(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): void;
+    error(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     /**
      * Prints a timestamped log message to the console.
      *
@@ -61,7 +61,7 @@ export interface Logger extends Objects.Logger<Logger.MethodParams, Logger.Error
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
-    log(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): void;
+    log(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     /**
      * Prints a timestamped log message to the console. Only if
      * {@link CLI.Params.notice} is truthy.
@@ -93,7 +93,7 @@ export interface Logger extends Objects.Logger<Logger.MethodParams, Logger.Error
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
-    warn(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): void;
+    warn(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     /**
      * Method for printing a log message to the console. Only if
      * {@link CLI.Params.verbose} is truthy.
@@ -111,13 +111,13 @@ export interface Logger extends Objects.Logger<Logger.MethodParams, Logger.Error
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace Logger {
     /**
      * Optional configuration for {@link Logger} classes.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     interface Args {
         /**
@@ -129,63 +129,96 @@ export declare namespace Logger {
          */
         nc: Objects.RecursivePartial<node.NodeConsole.Args>;
     }
+    /**
+     * Used for extending {@link Objects.Logger}.
+     */
     type ErrorInput = MessageMaker.BulkMsgs;
+    /**
+     * Used for extending {@link Objects.Logger}.
+     */
     type ErrorParams = [
         number,
-        Partial<MessageMaker.MsgArgs>,
-        Partial<MessageMaker.MsgArgs>
-    ];
-    type MessageInput = string | string[] | MessageMaker.BulkMsgs;
-    type MethodParams = [
-        number,
-        Partial<MessageMaker.MsgArgs>,
-        Partial<MessageMaker.MsgArgs>
+        Partial<MessageMaker.BulkMsgArgs>,
+        Partial<MessageMaker.BulkMsgArgs>
     ];
     /**
-     * Shape of the vardump utility class to be available in each
+     * Used for extending {@link Objects.Logger}.
+     */
+    type MessageInput = string | string[] | MessageMaker.BulkMsgs;
+    /**
+     * Used for extending {@link Objects.Logger}.
+     */
+    type MethodParams = [
+        number,
+        Partial<MessageMaker.BulkMsgArgs>,
+        Partial<MessageMaker.BulkMsgArgs>
+    ];
+    /**
+     * Shape of the variable inspection utility class to be available in each
      * {@link Logger}.
+     *
+     * @see {@link VariableInspector}  Used to inspect variables.
      */
     interface VarInspect {
         /**
+         * Prints a timestamped log message to the console. Only if
+         * {@link CLI.Params.debug} is truthy.
+         *
+         * @param variable  Variable to inspect. See {@link VariableInspector}.
+         * @param level     Depth level for this message (above the value of
+         *                  {@link CLI.Params.log-base-level}).
+         * @param msgArgs   Optional. Argument overrides for the message.
+         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+         */
+        debug(variable: Parameters<VarInspect['log']>[0], level: Parameters<VarInspect['log']>[1], msgArgs?: Parameters<VarInspect['log']>[2], timeArgs?: Parameters<VarInspect['log']>[3]): void;
+        /**
          * Prints a timestamped log message to the console.
          *
-         * @category Messagers
-         *
-         * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-         *
-         * @param variable  Variable to inspect.
+         * @param variable  Variable to inspect. See {@link VariableInspector}.
+         * @param level     Depth level for this message (above the value of
+         *                  {@link CLI.Params.log-base-level}).
+         * @param msgArgs   Optional. Argument overrides for the message.
+         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
          */
-        log(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): void;
+        log(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
         /**
          * Prints a timestamped log message to the console. Only if
-         * `{@link Stage.Args}.notice` is truthy.
+         * {@link CLI.Params.notice} is truthy.
          *
-         * @category Messagers
-         *
-         * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
+         * @param variable  Variable to inspect. See {@link VariableInspector}.
+         * @param level     Depth level for this message (above the value of
+         *                  {@link CLI.Params.log-base-level}).
+         * @param msgArgs   Optional. Argument overrides for the message.
+         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
          */
         notice(variable: Parameters<VarInspect['log']>[0], level: Parameters<VarInspect['log']>[1], msgArgs?: Parameters<VarInspect['log']>[2], timeArgs?: Parameters<VarInspect['log']>[3]): void;
         /**
          * Prints a timestamped log message to the console. Only if
-         * `{@link Stage.Args}.notice` is truthy.
+         * {@link CLI.Params.notice} is truthy.
          *
-         * @category Messagers
-         *
-         * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
+         * @param variable  Variable to inspect. See {@link VariableInspector}.
+         * @param level     Depth level for this message (above the value of
+         *                  {@link CLI.Params.log-base-level}).
+         * @param msgArgs   Optional. Argument overrides for the message.
+         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
          */
         progress(variable: Parameters<VarInspect['log']>[0], level: Parameters<VarInspect['log']>[1], msgArgs?: Parameters<VarInspect['log']>[2], timeArgs?: Parameters<VarInspect['log']>[3]): void;
         /**
          * Outputs a default-level message of the variable.
          *
-         * @param variable  Variable to inspect.
+         * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param args      Optional. Override arguments for converting the variable.
          */
         stringify(variable: ConstructorParameters<typeof VariableInspector>[0], args?: ConstructorParameters<typeof VariableInspector>[1]): string;
         /**
          * Method for printing a log message to the console. Only if
-         * `{@link Stage.Args}.verbose` is truthy.
+         * {@link CLI.Params.verbose} is truthy.
          *
-         * @category Messagers
+         * @param variable  Variable to inspect. See {@link VariableInspector}.
+         * @param level     Depth level for this message (above the value of
+         *                  {@link CLI.Params.log-base-level}).
+         * @param msgArgs   Optional. Argument overrides for the message.
+         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
          */
         verbose(variable: Parameters<VarInspect['log']>[0], level: Parameters<VarInspect['log']>[1], msgArgs?: Parameters<VarInspect['log']>[2], timeArgs?: Parameters<VarInspect['log']>[3]): void;
     }

@@ -1,17 +1,17 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
-import type { CLI, Config, Logger, Stage } from '../../../types/index.js';
+import type { Config, Logger, Stage } from '../../../types/index.js';
 /**
  * A super-simple class just for the configuration of the entire project.
  *
@@ -20,7 +20,7 @@ import type { CLI, Config, Logger, Stage } from '../../../types/index.js';
  *
  * @category Config
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare class ProjectConfig implements Config.Class {
     readonly clr: import("@maddimathon/utility-typescript/classes/MessageMaker").MessageMaker.Colour;
@@ -57,13 +57,13 @@ export declare class ProjectConfig implements Config.Class {
      * @return  An array with first the stage’s class and then the configured
      *          arguments for that class, if any.
      */
-    getStage(stage: Stage.Name, console: Logger, params: CLI.Params): Promise<undefined | [Stage.ClassType, Partial<Stage.Args>]>;
+    getStage(stage: Stage.Name, console: Logger): Promise<undefined | [Stage.ClassType, Partial<Stage.Args>]>;
     /**
      * Returns the minimum required properties of this config.
      *
      * Useful for creating stripped-down or default configuration objects.
      */
-    minimum(): Config & Partial<Config.Internal>;
+    minimum(): Config;
     /**
      * The object shape used when converting to JSON.
      *

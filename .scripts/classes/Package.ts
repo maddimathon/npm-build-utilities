@@ -86,11 +86,10 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
                     bold: true,
                     clr: this.clr,
 
+                    joiner: '',
+
                     linesIn: 3,
                     linesOut: 1,
-
-                    // @ts-expect-error
-                    joiner: '',
                 },
             );
         } else {

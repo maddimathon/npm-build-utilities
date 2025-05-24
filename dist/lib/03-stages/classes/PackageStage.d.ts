@@ -1,3 +1,4 @@
+import type { Node } from '@maddimathon/utility-typescript/types';
 import type { CLI, Stage } from '../../../types/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
@@ -6,7 +7,7 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  *
  * @category Stages
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare class PackageStage extends AbstractStage<Stage.SubStage.Package, Stage.Args.Package> {
     readonly subStages: Stage.SubStage.Package[];
@@ -15,15 +16,16 @@ export declare class PackageStage extends AbstractStage<Stage.SubStage.Package, 
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
+     * @param _pkg    The current package.json value, if any.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Package>);
+    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Package>, _pkg?: Node.PackageJson);
     /**
      * Prints a message to the console signalling the start or end of this
      * build stage.
      *
      * @param which  Whether we are starting or ending.
      */
-    startEndNotice(which: "start" | "end" | null): void;
+    startEndNotice(which: "start" | "end" | null): void | Promise<void>;
     protected runSubStage(subStage: Stage.SubStage.Package): Promise<void>;
     /**
      * Runs the project's build class.

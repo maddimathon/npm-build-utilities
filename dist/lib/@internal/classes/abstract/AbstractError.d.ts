@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -19,7 +19,7 @@ import type { FileSystemType } from '../../../../types/FileSystemType.js';
  *
  * @category Errors
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare abstract class AbstractError<Args extends LocalError.Args> extends CustomError<Args> implements LocalError<Args> {
     /**
@@ -84,19 +84,19 @@ export declare abstract class AbstractError<Args extends LocalError.Args> extend
  *
  * @category Errors
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace AbstractError {
     /**
      * Context information for an error.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     type Context = Context.Basic | Context.Class | Context.Function;
     /**
      * Types for {@link Context} interface.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     namespace Context {
         /**

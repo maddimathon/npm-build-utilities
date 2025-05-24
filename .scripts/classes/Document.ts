@@ -165,6 +165,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                     'MessageMaker.BulkMsgs': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgs.html',
                     'MessageMaker.Colour': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/Colour.html',
                     'MessageMaker.MsgArgs': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/MsgArgs.html',
+                    'MessageMaker.BulkMsgArgs': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgArgs.html',
                     'VariableInspector': 'https://maddimathon.github.io/utility-typescript/classes/VariableInspector.html',
 
                     'Node': 'https://maddimathon.github.io/utility-typescript/Types/Node.html',

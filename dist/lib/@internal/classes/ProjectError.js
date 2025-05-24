@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { AbstractError } from './abstract/AbstractError.js';
@@ -16,7 +16,7 @@ import { AbstractError } from './abstract/AbstractError.js';
  *
  * @category Errors
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export class ProjectError extends AbstractError {
     /* LOCAL PROPERTIES
@@ -34,7 +34,7 @@ export class ProjectError extends AbstractError {
  *
  * @category Errors
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 (function (ProjectError) {
     ;

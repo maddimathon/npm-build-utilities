@@ -3,15 +3,15 @@
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { CustomError, MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -21,7 +21,7 @@ import { Logger } from './Logger.js';
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export interface LocalError<Args extends LocalError.Args> extends CustomError<Args> {
 }
@@ -30,13 +30,13 @@ export interface LocalError<Args extends LocalError.Args> extends CustomError<Ar
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace LocalError {
     /**
      * Optional configuration for {@link LocalError} classes.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     type Args = CustomError.Args & {};
     /**
@@ -44,7 +44,7 @@ export declare namespace LocalError {
      *
      * **Should exit the node process.**
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     interface Handler {
         (error: Input, level: number, console: Logger, args?: Partial<Handler.Args>): void;
@@ -52,13 +52,13 @@ export declare namespace LocalError {
     /**
      * Types for handling errors in a variety of contexts.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     namespace Handler {
         /**
          * Optional configuration for {@link Handler} function types.
          */
-        interface Args extends CustomError.Handler.Args, MessageMaker.MsgArgs {
+        interface Args extends CustomError.Handler.Args, MessageMaker.BulkMsgArgs {
         }
     }
     /**

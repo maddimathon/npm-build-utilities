@@ -20,6 +20,7 @@ import typescript from 'typescript';
 
 import type {
     Json,
+    Node,
 } from '@maddimathon/utility-typescript/types';
 
 import {
@@ -304,11 +305,13 @@ export interface Class<
      * @category Running
      * 
      * @param which           Whether we are starting or ending.
-     * @param watcherVersion  Optional. Whether to display the watcher version of the notice. Default false.
+     * @param watcherVersion  Optional. Whether to display the watcher version of the notice **if applicable**. Default false.
+     * @param args            Optional. Message argument overrides.
      */
     startEndNotice(
         which: "start" | "end" | null,
         watcherVersion?: boolean,
+        args?: Partial<MessageMaker.BulkMsgArgs>,
     ): void | Promise<void>;
 };
 
@@ -353,6 +356,7 @@ export type ClassType = ( new (
     config: ProjectConfig,
     params: CLI.Params,
     args: Partial<Args>,
+    _pkg?: Node.PackageJson,
 ) => Class );
 
 /**

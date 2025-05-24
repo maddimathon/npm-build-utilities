@@ -11,8 +11,11 @@
  * @license MIT
  */
 
+import type { Node } from '@maddimathon/utility-typescript/types';
+
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
+import { mergeArgs, toTitleCase } from '@maddimathon/utility-typescript/functions';
+
 
 import type {
     CLI,
@@ -29,6 +32,8 @@ import {
     FileSystem,
 } from '../../../00-universal/index.js';
 
+import { getPackageJson } from '../../../00-universal/getPackageJson.js';
+
 import {
     ProjectConfig,
 } from '../../../01-config/index.js';
@@ -37,7 +42,6 @@ import {
 // } from '../../../02-utils/index.js';
 
 import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
-
 import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
 
 
@@ -185,6 +189,7 @@ export abstract class AbstractStage<
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Args>,
+        protected _pkg: Node.PackageJson | undefined,
     ) {
         this.name = name;
         this.clr = clr;
@@ -246,7 +251,7 @@ export abstract class AbstractStage<
             || this.params.only == subStage
             || this.params.only.includes( subStage )
         );
-        this.params.debug && this.console.vi.progress( { include }, 1 + level, { italic: true } );
+        this.console.vi.debug( { include }, 1 + level, { italic: true } );
 
         if ( this.params.verbose && !include ) {
             this.console.vi.progress( {
@@ -271,7 +276,7 @@ export abstract class AbstractStage<
                 || this.params.without.includes( subStage )
             )
         );
-        this.params.debug && this.console.vi.progress( { exclude }, 1 + level, { italic: true } );
+        this.console.vi.debug( { exclude }, 1 + level, { italic: true } );
 
         if ( this.params.verbose && exclude ) {
             this.console.vi.progress( {
@@ -289,7 +294,7 @@ export abstract class AbstractStage<
             && this[ subStage as keyof typeof this ]
         );
 
-        this.params.debug && this.console.vi.progress( { 'isSubStageIncluded() return': result }, 1 + level, { italic: true } );
+        this.console.vi.debug( { 'isSubStageIncluded() return': result }, 1 + level, { italic: true } );
 
         if ( this.params.verbose && !result ) {
             this.console.vi.progress( {
@@ -344,6 +349,42 @@ export abstract class AbstractStage<
         return Array.isArray( result ) ? result : [ result ];
     }
 
+    /**
+     * @todo
+     */
+    public get pkg() {
+
+        if ( typeof this._pkg === 'undefined' ) {
+            this._pkg = this.try( getPackageJson, 1, [ this.fs ] );
+        }
+
+        return {
+            name: this._pkg.name,
+            version: this._pkg.version,
+        } as const satisfies Node.PackageJson;
+    }
+
+    /**
+     * @todo
+     */
+    public set pkg( update: Partial<Node.PackageJson> ) {
+
+        for ( const _key in update ) {
+            const key = _key as keyof typeof update;
+
+            // continues
+            if ( key !== 'version' || typeof update[ key ] === 'undefined' ) {
+                continue;
+            }
+
+            if ( typeof this._pkg === 'undefined' ) {
+                this._pkg = this.try( getPackageJson, 1, [ this.fs ] );
+            }
+
+            this._pkg[ key ] = update[ key ];
+        }
+    }
+
 
     /* ERRORS ===================================== */
 
@@ -356,84 +397,62 @@ export abstract class AbstractStage<
     }
 
 
-    // protected try<
-    //     Params extends never[],
-    //     Return extends unknown,
-    // >(
-    //     tryer: ( ...params: Params ) => Return,
-    //     level: number,
-    //     params?: Params,
-    //     callback?: (
-    //         | null
-    //         | LocalError.Handler
-    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
-    //     ),
-    // ): Return;
+    /**
+     * @param tryer     Function to run inside the try {}.
+     * @param level     Depth level for the error handler.
+     * @param params    Parameters passed to the tryer function, if any.
+     */
+    protected try<
+        Params extends never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params?: Params,
+    ): Return;
 
-    // protected try<
-    //     Params extends unknown[],
-    //     Return extends unknown,
-    // >(
-    //     tryer: ( ...params: Params ) => Return,
-    //     level: number,
-    //     params: Params,
-    //     callback?: (
-    //         | null
-    //         | LocalError.Handler
-    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
-    //     ),
-    // ): Return;
+    protected try<
+        Params extends unknown[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params: Params,
+    ): Return;
 
-    // /**
-    //  * Runs a function, with parameters as applicable, and catches (& handles)
-    //  * anything thrown.
-    //  * 
-    //  * Overloaded for better function param typing.
-    //  */
-    // protected try<
-    //     Params extends unknown[] | never[],
-    //     Return extends unknown,
-    // >(
-    //     tryer: ( ...params: Params ) => Return,
-    //     level: number,
-    //     params?: Params,
-    //     callback: (
-    //         | null
-    //         | LocalError.Handler
-    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
-    //     ) = null,
-    // ): Return {
+    /**
+     * Runs a function, with parameters as applicable, and catches (& handles)
+     * anything thrown.
+     * 
+     * Overloaded for better function param typing.
+     * 
+     * @category Errors
+     * 
+     * @experimental
+     */
+    protected try<
+        Params extends unknown[] | never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params?: Params,
+    ): Return {
 
-    //     try {
+        try {
 
-    //         return (
-    //             params
-    //                 ? tryer( ...params )
-    //                 // @ts-expect-error
-    //                 : tryer()
-    //         );
+            return (
+                params
+                    ? tryer( ...params )
+                    // @ts-expect-error
+                    : tryer()
+            );
 
-    //     } catch ( error ) {
-
-    //         let callbackArgs: Partial<LocalError.Handler.Args> = {};
-
-    //         if ( !callback ) {
-    //             callback = errorHandler;
-    //         } else if ( Array.isArray( callback ) ) {
-    //             callbackArgs = callback[ 1 ];
-    //             callback = callback[ 0 ];
-    //         }
-
-    //         callback(
-    //             error as LocalError.Input,
-    //             level,
-    //             this.console,
-    //             callbackArgs
-    //         );
-
-    //         throw error;
-    //     }
-    // }
+        } catch ( error ) {
+            this.handleError( error as LocalError.Input, level );
+            throw error;
+        }
+    }
 
 
     /* MESSAGES ===================================== */
@@ -442,70 +461,33 @@ export abstract class AbstractStage<
     public startEndNotice(
         which: "start" | "end" | null,
         watcherVersion: boolean = false,
-        stageNameOverride: null | string = null,
     ): void | Promise<void> {
-        if ( this.params.notice === false ) { return; }
-
-        const depth = this.params[ 'log-base-level' ];
-
-        let linesIn = 2;
-        let linesOut = 1;
+        if ( !this.params.notice ) { return; }
 
         const uppercase = {
-            name: ( stageNameOverride ?? this.name ).toUpperCase(),
-            which: ( which ?? '' ).toUpperCase(),
+            name: this.name.toUpperCase(),
+            which: which?.toUpperCase() ?? '',
         };
 
-        const messages = ( watcherVersion && (
+        const messages: {
+            default: MessageMaker.BulkMsgs,
+            start: MessageMaker.BulkMsgs,
+            end: MessageMaker.BulkMsgs,
+        } = ( watcherVersion && (
             this.params.watchedWatcher
             || this.params.watchedFilename
             || this.params.watchedEvent
         ) ) ? {
-            default: `👀 [watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }`,
-            start: `🚨 [watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }`,
-            end: `✅ [watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }`,
-        } : {
-            default: `${ uppercase.which }ING ${ uppercase.name }`,
-            start: `${ uppercase.name } ${ uppercase.which }ING`,
-            end: `${ uppercase.name } FINISHED`,
-        };
+                default: [ [ '👀 ', { flag: false } ], [ `[watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }` ] ],
+                start: [ [ '🚨 ', { flag: false } ], [ `[watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }` ] ],
+                end: [ [ '✅ ', { flag: false } ], [ `[watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }` ] ],
+            } : {
+                default: [ [ `${ uppercase.which }ING ${ uppercase.name }` ] ],
+                start: [ [ `${ uppercase.name } ${ uppercase.which }ING...` ] ],
+                end: [ [ '✓ ', { flag: false } ], [ toTitleCase( `${ uppercase.name } FINISHED!` ), { italic: true } ] ],
+            };
 
-        let msg: string = messages.default;
-
-        switch ( which ) {
-
-            case 'start':
-                msg = messages.start;
-                linesOut = 0;
-
-                if ( depth < 1 ) {
-                    linesIn += 1;
-                }
-                break;
-
-            case 'end':
-                msg = messages.end;
-
-                if ( depth < 1 ) {
-                    linesOut += 1;
-                }
-                break;
-        }
-
-        this.console.notice(
-            [ [
-                msg,
-                { flag: true },
-            ] ],
-            0,
-            {
-                bold: true,
-                italic: false,
-
-                linesIn,
-                linesOut,
-            },
-        );
+        this.console.startOrEnd( messages[ which ?? 'default' ], which );
     }
 
 
@@ -525,7 +507,7 @@ export abstract class AbstractStage<
         /* start */
         await this.startEndNotice( 'start' );
 
-        this.params.debug && this.console.vi.progress( { subStages: this.subStages }, 1 );
+        this.console.vi.debug( { subStages: this.subStages }, 1 );
 
         /* loop through the steps in order */
         for ( const method of this.subStages ) {
@@ -555,13 +537,9 @@ export abstract class AbstractStage<
      * @param stage   Stage to run as a substage.
      * @param level   Depth level to add to {@link CLI.Params.log-base-level | this.params['log-base-level']}.
      */
-    //  * @param config  Current project config.
-    //  * @param params  Current CLI params.
     protected async runStage<S extends Stage.Name>(
         stage: S,
         level: number,
-        // config: ProjectConfig,
-        // params: CLI.Params,
     ): Promise<void> {
 
         const onlyKey: CLI.ParamOnlyStageKey = `only-${ stage }`;
@@ -576,19 +554,12 @@ export abstract class AbstractStage<
             without: this.params[ withoutKey ],
         };
 
+        const t_subConsole = new Stage_Console( this.clr, this.config, subParams );
+
         const [
             stageClass,
             stageArgs = {},
-        ] = await this.config.getStage(
-            stage,
-            new Stage_Console(
-                // stage,
-                this.clr,
-                this.config,
-                subParams,
-            ),
-            this.params
-        ) ?? [];
+        ] = await this.config.getStage( stage, t_subConsole, ) ?? [];
 
         // returns
         if ( !stageClass ) {
@@ -601,6 +572,7 @@ export abstract class AbstractStage<
             this.config,
             subParams,
             { ...this.args, ...stageArgs },
+            this._pkg,
         ) ).run();
     }
 

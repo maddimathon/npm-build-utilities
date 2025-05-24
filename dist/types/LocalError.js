@@ -3,15 +3,15 @@
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 /**
@@ -19,14 +19,14 @@
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export var LocalError;
 (function (LocalError) {
     /**
      * Types for handling errors in a variety of contexts.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     let Handler;
     (function (Handler) {

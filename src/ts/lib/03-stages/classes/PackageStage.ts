@@ -11,6 +11,8 @@
  * @license MIT
  */;
 
+import type { Node } from '@maddimathon/utility-typescript/types';
+
 import type {
     CLI,
     Stage,
@@ -65,13 +67,15 @@ export class PackageStage extends AbstractStage<
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
+     * @param _pkg    The current package.json value, if any.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Package>,
+        _pkg?: Node.PackageJson,
     ) {
-        super( 'package', params?.releasing ? 'orange' : 'purple', config, params, args );
+        super( 'package', params?.releasing ? 'orange' : 'purple', config, params, args, _pkg );
     }
 
 
@@ -86,11 +90,27 @@ export class PackageStage extends AbstractStage<
      * @param which  Whether we are starting or ending.
      */
     public override startEndNotice( which: "start" | "end" | null ) {
-        super.startEndNotice(
-            which,
-            !this.params.building,
-            this.params.dryrun ? 'dryrun' : 'package',
-        );
+
+        // returns
+        switch ( which ) {
+
+            case 'start':
+                this.console.startOrEnd( [
+                    [ 'PACKAGING...' ],
+                    [ `${ this.pkg.name }@${ this.pkg.version }`, { flag: 'reverse' } ],
+                ], which );
+                return;
+
+            case 'end':
+                this.console.startOrEnd( [
+                    [ '✓ ', { flag: false } ],
+                    [ this.params.dryrun ? 'Dry Run - Packaged!' : 'Packaged!', { italic: true } ],
+                    [ `${ this.pkg.name }@${ this.pkg.version }`, { flag: 'reverse' } ],
+                ], which );
+                return;
+        }
+
+        return super.startEndNotice( which, false );
     }
 
 

@@ -110,7 +110,6 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 linesIn,
                 linesOut,
 
-                // @ts-expect-error
                 joiner: '',
             },
         );

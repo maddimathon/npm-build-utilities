@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 // import type typescript from 'typescript';
@@ -23,7 +23,7 @@ import { catchOrReturn, } from '../../00-universal/index.js';
  *
  * @category Utilities
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @internal
  */
@@ -80,7 +80,7 @@ export class Stage_Compiler {
      *                {@link CLI.Params.log-base-level}).
      */
     async scss(input, output, level, sassOpts) {
-        this.params.debug && this.console.vi.progress({ 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true });
+        this.console.vi.debug({ 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true });
         const compiled = sass.compile(input, {
             ...this.config.compiler.sass,
             ...sassOpts,

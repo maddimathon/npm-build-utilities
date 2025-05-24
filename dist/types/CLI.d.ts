@@ -3,15 +3,15 @@
  *
  * @category Types
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon / npm - build - utilities@0.1.0-draft
+ * @package @maddimathon / npm - build - utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import type * as Stage from './Stage.js';
@@ -33,7 +33,7 @@ export type ParamWithoutStageKey = `without-${Stage.Name}`;
  * Assumes the args were parsed with
  * {@link https://www.npmjs.com/package/minimist | minimist}.
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @interface
  */

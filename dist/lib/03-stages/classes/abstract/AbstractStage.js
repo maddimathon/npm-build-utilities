@@ -1,18 +1,19 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
+import { mergeArgs, toTitleCase } from '@maddimathon/utility-typescript/functions';
 import { errorHandler, } from '../../../@internal/index.js';
 import { FileSystem, } from '../../../00-universal/index.js';
+import { getPackageJson } from '../../../00-universal/getPackageJson.js';
 // import {
 // } from '../../../02-utils/index.js';
 import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
@@ -23,11 +24,12 @@ import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
  *
  * @category Stages
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * {@include ./AbstractStage.example.md}
  */
 export class AbstractStage {
+    _pkg;
     /* STATIC
      * ====================================================================== */
     /* Args ===================================== */
@@ -113,7 +115,8 @@ export class AbstractStage {
      * @param params  Current CLI params.
      * @param args    Partial overrides for the default stage args.
      */
-    constructor(name, clr, config, params, args) {
+    constructor(name, clr, config, params, args, _pkg) {
+        this._pkg = _pkg;
         this.name = name;
         this.clr = clr;
         this.config = config;
@@ -144,7 +147,7 @@ export class AbstractStage {
         const include = Boolean(only.isUndefined
             || this.params.only == subStage
             || this.params.only.includes(subStage));
-        this.params.debug && this.console.vi.progress({ include }, 1 + level, { italic: true });
+        this.console.vi.debug({ include }, 1 + level, { italic: true });
         if (this.params.verbose && !include) {
             this.console.vi.progress({
                 include: {
@@ -161,7 +164,7 @@ export class AbstractStage {
         const exclude = Boolean(without.isDefined
             && (this.params.without == subStage
                 || this.params.without.includes(subStage)));
-        this.params.debug && this.console.vi.progress({ exclude }, 1 + level, { italic: true });
+        this.console.vi.debug({ exclude }, 1 + level, { italic: true });
         if (this.params.verbose && exclude) {
             this.console.vi.progress({
                 exclude: {
@@ -174,7 +177,7 @@ export class AbstractStage {
         const result = Boolean(include
             && !exclude
             && this[subStage]);
-        this.params.debug && this.console.vi.progress({ 'isSubStageIncluded() return': result }, 1 + level, { italic: true });
+        this.console.vi.debug({ 'isSubStageIncluded() return': result }, 1 + level, { italic: true });
         if (this.params.verbose && !result) {
             this.console.vi.progress({
                 include: {
@@ -212,128 +215,82 @@ export class AbstractStage {
         const result = this.config.paths.src[subDir ?? '_'] ?? [];
         return Array.isArray(result) ? result : [result];
     }
+    /**
+     * @todo
+     */
+    get pkg() {
+        if (typeof this._pkg === 'undefined') {
+            this._pkg = this.try(getPackageJson, 1, [this.fs]);
+        }
+        return {
+            name: this._pkg.name,
+            version: this._pkg.version,
+        };
+    }
+    /**
+     * @todo
+     */
+    set pkg(update) {
+        for (const _key in update) {
+            const key = _key;
+            // continues
+            if (key !== 'version' || typeof update[key] === 'undefined') {
+                continue;
+            }
+            if (typeof this._pkg === 'undefined') {
+                this._pkg = this.try(getPackageJson, 1, [this.fs]);
+            }
+            this._pkg[key] = update[key];
+        }
+    }
     /* ERRORS ===================================== */
     handleError(error, level, args) {
         errorHandler(error, level, this.console, args);
     }
-    // protected try<
-    //     Params extends never[],
-    //     Return extends unknown,
-    // >(
-    //     tryer: ( ...params: Params ) => Return,
-    //     level: number,
-    //     params?: Params,
-    //     callback?: (
-    //         | null
-    //         | LocalError.Handler
-    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
-    //     ),
-    // ): Return;
-    // protected try<
-    //     Params extends unknown[],
-    //     Return extends unknown,
-    // >(
-    //     tryer: ( ...params: Params ) => Return,
-    //     level: number,
-    //     params: Params,
-    //     callback?: (
-    //         | null
-    //         | LocalError.Handler
-    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
-    //     ),
-    // ): Return;
-    // /**
-    //  * Runs a function, with parameters as applicable, and catches (& handles)
-    //  * anything thrown.
-    //  * 
-    //  * Overloaded for better function param typing.
-    //  */
-    // protected try<
-    //     Params extends unknown[] | never[],
-    //     Return extends unknown,
-    // >(
-    //     tryer: ( ...params: Params ) => Return,
-    //     level: number,
-    //     params?: Params,
-    //     callback: (
-    //         | null
-    //         | LocalError.Handler
-    //         | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
-    //     ) = null,
-    // ): Return {
-    //     try {
-    //         return (
-    //             params
-    //                 ? tryer( ...params )
-    //                 // @ts-expect-error
-    //                 : tryer()
-    //         );
-    //     } catch ( error ) {
-    //         let callbackArgs: Partial<LocalError.Handler.Args> = {};
-    //         if ( !callback ) {
-    //             callback = errorHandler;
-    //         } else if ( Array.isArray( callback ) ) {
-    //             callbackArgs = callback[ 1 ];
-    //             callback = callback[ 0 ];
-    //         }
-    //         callback(
-    //             error as LocalError.Input,
-    //             level,
-    //             this.console,
-    //             callbackArgs
-    //         );
-    //         throw error;
-    //     }
-    // }
+    /**
+     * Runs a function, with parameters as applicable, and catches (& handles)
+     * anything thrown.
+     *
+     * Overloaded for better function param typing.
+     *
+     * @category Errors
+     *
+     * @experimental
+     */
+    try(tryer, level, params) {
+        try {
+            return (params
+                ? tryer(...params)
+                // @ts-expect-error
+                : tryer());
+        }
+        catch (error) {
+            this.handleError(error, level);
+            throw error;
+        }
+    }
     /* MESSAGES ===================================== */
     /** {@inheritDoc Stage.Class.startEndNotice} */
-    startEndNotice(which, watcherVersion = false, stageNameOverride = null) {
-        if (this.params.notice === false) {
+    startEndNotice(which, watcherVersion = false) {
+        if (!this.params.notice) {
             return;
         }
-        const depth = this.params['log-base-level'];
-        let linesIn = 2;
-        let linesOut = 1;
         const uppercase = {
-            name: (stageNameOverride ?? this.name).toUpperCase(),
-            which: (which ?? '').toUpperCase(),
+            name: this.name.toUpperCase(),
+            which: which?.toUpperCase() ?? '',
         };
         const messages = (watcherVersion && (this.params.watchedWatcher
             || this.params.watchedFilename
             || this.params.watchedEvent)) ? {
-            default: `👀 [watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
-            start: `🚨 [watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
-            end: `✅ [watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
+            default: [['👀 ', { flag: false }], [`[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`]],
+            start: [['🚨 ', { flag: false }], [`[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`]],
+            end: [['✅ ', { flag: false }], [`[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`]],
         } : {
-            default: `${uppercase.which}ING ${uppercase.name}`,
-            start: `${uppercase.name} ${uppercase.which}ING`,
-            end: `${uppercase.name} FINISHED`,
+            default: [[`${uppercase.which}ING ${uppercase.name}`]],
+            start: [[`${uppercase.name} ${uppercase.which}ING...`]],
+            end: [['✓ ', { flag: false }], [toTitleCase(`${uppercase.name} FINISHED!`), { italic: true }]],
         };
-        let msg = messages.default;
-        switch (which) {
-            case 'start':
-                msg = messages.start;
-                linesOut = 0;
-                if (depth < 1) {
-                    linesIn += 1;
-                }
-                break;
-            case 'end':
-                msg = messages.end;
-                if (depth < 1) {
-                    linesOut += 1;
-                }
-                break;
-        }
-        this.console.notice([[
-                msg,
-                { flag: true },
-            ]], 0, {
-            bold: true,
-            italic: false,
-            linesIn,
-            linesOut,
-        });
+        this.console.startOrEnd(messages[which ?? 'default'], which);
     }
     /* RUNNING ===================================== */
     /**
@@ -348,7 +305,7 @@ export class AbstractStage {
     async run() {
         /* start */
         await this.startEndNotice('start');
-        this.params.debug && this.console.vi.progress({ subStages: this.subStages }, 1);
+        this.console.vi.debug({ subStages: this.subStages }, 1);
         /* loop through the steps in order */
         for (const method of this.subStages) {
             this.params.debug && this.console.verbose(`testing method: ${method}`, 1, { italic: true });
@@ -369,8 +326,6 @@ export class AbstractStage {
      * @param stage   Stage to run as a substage.
      * @param level   Depth level to add to {@link CLI.Params.log-base-level | this.params['log-base-level']}.
      */
-    //  * @param config  Current project config.
-    //  * @param params  Current CLI params.
     async runStage(stage, level) {
         const onlyKey = `only-${stage}`;
         const withoutKey = `without-${stage}`;
@@ -380,15 +335,14 @@ export class AbstractStage {
             only: this.params[onlyKey],
             without: this.params[withoutKey],
         };
-        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, new Stage_Console(
-        // stage,
-        this.clr, this.config, subParams), this.params) ?? [];
+        const t_subConsole = new Stage_Console(this.clr, this.config, subParams);
+        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, t_subConsole) ?? [];
         // returns
         if (!stageClass) {
             return;
         }
         this.params.debug && this.console.vi.verbose({ subParams }, level);
-        return (new stageClass(this.config, subParams, { ...this.args, ...stageArgs })).run();
+        return (new stageClass(this.config, subParams, { ...this.args, ...stageArgs }, this._pkg)).run();
     }
 }
 //# sourceMappingURL=AbstractStage.js.map

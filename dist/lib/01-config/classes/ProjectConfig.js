@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { typeOf } from '@maddimathon/utility-typescript/functions/typeOf';
@@ -19,7 +19,7 @@ import { typeOf } from '@maddimathon/utility-typescript/functions/typeOf';
  *
  * @category Config
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export class ProjectConfig {
     clr;
@@ -66,11 +66,11 @@ export class ProjectConfig {
      * @return  An array with first the stage’s class and then the configured
      *          arguments for that class, if any.
      */
-    async getStage(stage, console, params) {
+    async getStage(stage, console) {
         const stageConfig = this.stages[stage];
         // returns
         if (!stageConfig) {
-            params.debug && console.progress(`no ${stage} stage config found, skipping...`, 0, { italic: true });
+            console.debug(`no ${stage} stage config found, skipping...`, 0, { italic: true });
             return undefined;
         }
         let stageClass;

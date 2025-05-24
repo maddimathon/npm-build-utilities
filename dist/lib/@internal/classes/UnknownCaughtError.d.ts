@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import type { LocalError } from '../../../types/LocalError.js';
@@ -18,7 +18,7 @@ import { AbstractError } from './abstract/AbstractError.js';
  *
  * @category Errors
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare class UnknownCaughtError extends AbstractError<UnknownCaughtError.Args> {
     readonly name: string;
@@ -32,13 +32,13 @@ export declare class UnknownCaughtError extends AbstractError<UnknownCaughtError
  *
  * @category Errors
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export declare namespace UnknownCaughtError {
     /**
      * Optional configuration for {@link UnknownCaughtError} class.
      *
-     * @since 0.1.0-draft
+     * @since 0.1.0-alpha.draft
      */
     interface Args extends LocalError.Args {
         context: AbstractError.Context;

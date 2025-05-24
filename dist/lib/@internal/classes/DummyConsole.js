@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { node, VariableInspector, } from '@maddimathon/utility-typescript/classes';
@@ -77,6 +77,9 @@ class _DummyConsole_VarDump {
     constructor(nc = new node.NodeConsole(), params = {}) {
         this.nc = nc;
         this.params = params;
+    }
+    debug(variable, level, msgArgs, timeArgs) {
+        this.log(variable, level, msgArgs, timeArgs);
     }
     log(variable, level, msgArgs = {}, timeArgs = {}) {
         this.nc.timestampLog(this.stringify(variable), {

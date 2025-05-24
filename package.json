@@ -1,9 +1,9 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.1.0",
+    "version": "0.1.0-alpha",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
-    "description": "Opinionated utilities for easy build systems for npm projects.",
+    "description": "Opinionated utilities for easy build systems in npm projects.",
     "keywords": [
         "javascript-build-utilities",
         "npm-package",

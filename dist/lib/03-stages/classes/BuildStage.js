@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { AbstractStage } from './abstract/AbstractStage.js';
@@ -16,7 +16,7 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  *
  * @category Stages
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  */
 export class BuildStage extends AbstractStage {
     /* PROPERTIES
@@ -41,9 +41,10 @@ export class BuildStage extends AbstractStage {
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
+     * @param _pkg    The current package.json value, if any.
      */
-    constructor(config, params, args) {
-        super('build', 'blue', config, params, args);
+    constructor(config, params, args, _pkg) {
+        super('build', 'blue', config, params, args, _pkg);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -54,7 +55,7 @@ export class BuildStage extends AbstractStage {
      * @param which  Whether we are starting or ending.
      */
     startEndNotice(which) {
-        super.startEndNotice(which, !this.params.building);
+        return super.startEndNotice(which, !this.params.packaging);
     }
     /* RUNNING METHODS
      * ====================================================================== */

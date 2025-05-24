@@ -6,14 +6,14 @@ children:
 ---
 
 <!--README_HEADER-->
-# NPM Build Utilities @ 0.1.0-draft
+# NPM Build Utilities @ 0.1.0-alpha.draft
 <!--/README_HEADER-->
 
 **Not yet finished and still weird.**  This site is only public because I don't
 want to pay even more for GitHub.
 
 <!--README_DESC-->
-Opinionated utilities for easy build systems for npm projects.
+Opinionated utilities for easy build systems in npm projects.
 <!--/README_DESC-->
 
 Not meant for use in production/client-side, only during development/build.
@@ -35,8 +35,8 @@ or
 
 <!--README_INSTALL-->
 ```sh
-npm i -D @maddimathon/build-utilities@0.1.0
-npm i -D github:maddimathon/build-utilities#0.1.0
+npm i -D @maddimathon/build-utilities@0.1.0-alpha
+npm i -D github:maddimathon/build-utilities#0.1.0-alpha
 ```
 <!--/README_INSTALL-->
 
@@ -62,20 +62,17 @@ without being considered a breaking change).
 import type { ... } from '@maddimathon/build-utilities';
 import type { ... } from '@maddimathon/build-utilities/types';
 
-import { ... } from '@maddimathon/build-utilities';
+import { cli, internal, ... } from '@maddimathon/build-utilities';
 
-import { cli, internal, ... } from '@maddimathon/build-utilities/cli';
+import { ... } from '@maddimathon/build-utilities/cli';
 import { ... } from '@maddimathon/build-utilities/internal';
 ```
 
-A basic tsconfig to extend is available at `@maddimathon/build-utilities/tsconfig`.
+A basic tsconfig to extend for npm scripts is available at
+`@maddimathon/build-utilities/tsconfig`.
 
 
 ### Command Line
-
-```sh
-build-utils [bin-function]
-```
 
 See <a href="https://maddimathon.github.io/npm-build-utilities/cli.html">documentation</a> for details.
 

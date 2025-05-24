@@ -150,11 +150,7 @@ export class Project {
         const [
             stageClass,
             stageArgs = {},
-        ] = await this.config.getStage(
-            stage,
-            console,
-            this.params
-        ) ?? [];
+        ] = await this.config.getStage( stage, console ) ?? [];
 
         // returns
         if ( !stageClass ) {

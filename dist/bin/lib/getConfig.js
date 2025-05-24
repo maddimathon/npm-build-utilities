@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { VariableInspector, } from '@maddimathon/utility-typescript/classes';
@@ -52,7 +52,7 @@ export async function getConfig(params, console = null, level = 0) {
     let i = 0;
     const maxInterations = pathsToCheck.length;
     const fs = new FileSystem(console);
-    params.debug && console.progress('Checking config paths...', level);
+    console.debug('Checking config paths...', level);
     while (!config && i < maxInterations) {
         let path = pathsToCheck[i];
         i++;
@@ -60,17 +60,17 @@ export async function getConfig(params, console = null, level = 0) {
         if (!path) {
             continue;
         }
-        params.debug && console.progress(`path #${i.toString()}: ${VariableInspector.stringify({ path })}`, 1 + level);
+        console.debug(`path #${i.toString()}: ${VariableInspector.stringify({ path })}`, 1 + level);
         path = fs.pathResolve(path);
         // continues
         if (!fs.exists(path)) {
             continue;
         }
         const content = (await import(path)).default;
-        params.debug && console.vi.progress({ content }, 2 + level);
+        console.vi.debug({ content }, 2 + level);
         if (content && typeof content === 'object') {
             config = content;
-            params.debug && console.progress('content approved for config', 2 + level);
+            console.debug('content approved for config', 2 + level);
         }
     }
     if (!config) {
@@ -80,9 +80,9 @@ export async function getConfig(params, console = null, level = 0) {
     const validConfig = isConfigValid(config !== null && config !== void 0 ? config : {});
     // returns
     if (validConfig) {
-        params.debug && console.vi.progress({ 'valid config': config }, 1 + level);
+        console.vi.debug({ 'valid config': config }, 1 + level);
         const configInstance = new ProjectConfig(internalConfig(validConfig, console));
-        params.debug && console.vi.progress({ return: configInstance }, level);
+        console.vi.debug({ return: configInstance }, level);
         return configInstance;
     }
     // adds config from package.json as backup defaults
@@ -90,7 +90,7 @@ export async function getConfig(params, console = null, level = 0) {
         ...pkg.config,
         ...config,
     };
-    params.debug && console.vi.progress({ 'partial config': config }, 1 + level);
+    console.vi.debug({ 'partial config': config }, 1 + level);
     /**
      * What to do since no valid config was found.
      */
@@ -171,7 +171,7 @@ export async function getConfig(params, console = null, level = 0) {
     }
     const builtConfig = internalConfig(newCompleteConfig ?? newConfig, console);
     const configInstance = new ProjectConfig(builtConfig);
-    params.debug && console.vi.progress({ return: configInstance }, level);
+    console.vi.debug({ return: configInstance }, level);
     // returns
     if (noConfigPrompt !== 'create-new') {
         return configInstance;
@@ -205,7 +205,7 @@ export async function getConfig(params, console = null, level = 0) {
         ``,
         `export default config;`,
     ].join('\n');
-    params.debug && console.vi.progress({ configFileContent }, level);
+    console.vi.debug({ configFileContent }, level);
     fs.writeFile(configPath, configFileContent, { force });
     return configInstance;
 }

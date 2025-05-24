@@ -1,15 +1,16 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
+import type { Node } from '@maddimathon/utility-typescript/types';
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { CLI, Config, LocalError, Stage } from '../../../../types/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
@@ -22,11 +23,12 @@ import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
  *
  * @category Stages
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * {@include ./AbstractStage.example.md}
  */
 export declare abstract class AbstractStage<SubStage extends string = string, Args extends Stage.Args = Stage.Args> implements Stage.Class<SubStage, Args> {
+    protected _pkg: Node.PackageJson | undefined;
     /**
      * Default values for {@link Stage.Args}.
      *
@@ -109,16 +111,31 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      * @param params  Current CLI params.
      * @param args    Partial overrides for the default stage args.
      */
-    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<Args>);
+    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<Args>, _pkg: Node.PackageJson | undefined);
     /** {@inheritDoc Stage.Class.isSubStageIncluded} */
     isSubStageIncluded(subStage: SubStage, level: number): boolean;
     /** {@inheritDoc Stage.Class.getDistDir} */
     getDistDir(subDir?: Config.Paths.SourceDirectory): string;
     getSrcDir(subDir: Config.Paths.SourceDirectory): string[];
     getSrcDir(subDir?: undefined): string;
+    /**
+     * @todo
+     */
+    get pkg(): Partial<Node.PackageJson>;
+    /**
+     * @todo
+     */
+    set pkg(update: Partial<Node.PackageJson>);
     protected handleError(error: any, level: number, args?: Partial<LocalError.Handler.Args>): void;
+    /**
+     * @param tryer     Function to run inside the try {}.
+     * @param level     Depth level for the error handler.
+     * @param params    Parameters passed to the tryer function, if any.
+     */
+    protected try<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params?: Params): Return;
+    protected try<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params): Return;
     /** {@inheritDoc Stage.Class.startEndNotice} */
-    startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean, stageNameOverride?: null | string): void | Promise<void>;
+    startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean): void | Promise<void>;
     /**
      * Runs the entire stage (asynchronously).
      *

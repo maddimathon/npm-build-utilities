@@ -38,5 +38,5 @@ export default async function (
 
     // TODO finish me
     console.notice( 'Hello!  I am the help function.  I am not yet useful, sorry.', level, { linesOut: 2 } );
-    params.debug && console.vi.progress( { params }, level, { bold: false, linesOut: 2 } );
+    console.vi.debug( { params }, level, { bold: false, linesOut: 2 } );
 };

@@ -1,13 +1,13 @@
 /**
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { MessageMaker, node, VariableInspector } from '@maddimathon/utility-typescript/classes';
@@ -20,7 +20,7 @@ import { ProjectConfig } from '../../01-config/index.js';
  *
  * @category Utilities
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @internal
  */
@@ -51,20 +51,30 @@ export declare class Stage_Console implements Logger {
      *
      * @return  An object with arguments separated by message (`msg`) and time.
      */
-    protected msgArgs(level?: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): {
-        msg: Partial<MessageMaker.MsgArgs>;
-        time: Partial<MessageMaker.MsgArgs>;
+    protected msgArgs(level?: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): {
+        msg: Partial<MessageMaker.BulkMsgArgs>;
+        time: Partial<MessageMaker.BulkMsgArgs>;
     };
     /** {@inheritDoc Logger.debug} */
     debug(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /** {@inheritDoc Logger.error} */
-    error(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): void;
+    error(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     /** {@inheritDoc Logger.log} */
-    log(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): void;
+    log(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     /** {@inheritDoc Logger.notice} */
     notice(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /** {@inheritDoc Logger.progress} */
     progress(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    /**
+     * Prints a message to the console signalling the start or end of this build
+     * stage if {@link Stage_Console['params']['notice']} is truthy.  Uses
+     * {@link Stage_Console['notice']}.
+     *
+     * @param msg    Text to display as start/end notice.
+     * @param which  Whether we are starting or ending.
+     * @param args   Optional. Message argument overrides.
+     */
+    startOrEnd(msg: string | string[] | MessageMaker.BulkMsgs, which: "start" | "end" | null, args?: Partial<MessageMaker.BulkMsgArgs>): void;
     /**
      * {@inheritDoc Logger.debug}
      *
@@ -82,7 +92,7 @@ export declare class Stage_Console implements Logger {
  *
  * @category Utilities
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @internal
  * @private
@@ -90,15 +100,18 @@ export declare class Stage_Console implements Logger {
 export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     readonly config: ProjectConfig;
     readonly params: CLI.Params;
-    readonly msgArgs: Stage_Console['msgArgs'];
+    readonly _msgArgs: Stage_Console['msgArgs'];
     protected readonly nc: node.NodeConsole;
     /**
      * @param config   Current project config.
      * @param params   Current CLI params.
-     * @param msgArgs  Function to construct a {@link MessageMaker.MsgArgs} object.
+     * @param msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
      * @param nc       Instance to use within the class.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, msgArgs: Stage_Console['msgArgs'], nc: node.NodeConsole);
+    constructor(config: ProjectConfig, params: CLI.Params, _msgArgs: Stage_Console['msgArgs'], nc: node.NodeConsole);
+    private msgArgs;
+    /** {@inheritDoc Logger.VarInspect.debug} */
+    debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
     /** {@inheritDoc Logger.VarInspect.log} */
     log(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<Stage_Console['notice']>[1], msgArgs?: Parameters<Stage_Console['notice']>[2], timeArgs?: Parameters<Stage_Console['notice']>[3]): void;
     /** {@inheritDoc Logger.VarInspect.notice} */

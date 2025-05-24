@@ -86,7 +86,7 @@ export async function getConfig(
 
     const fs = new FileSystem( console );
 
-    params.debug && console.progress( 'Checking config paths...', level );
+    console.debug( 'Checking config paths...', level );
 
     while ( !config && i < maxInterations ) {
         let path = pathsToCheck[ i ];
@@ -97,7 +97,7 @@ export async function getConfig(
             continue;
         }
 
-        params.debug && console.progress( `path #${ i.toString() }: ${ VariableInspector.stringify( { path } ) }`, 1 + level );
+        console.debug( `path #${ i.toString() }: ${ VariableInspector.stringify( { path } ) }`, 1 + level );
 
         path = fs.pathResolve( path );
 
@@ -108,11 +108,11 @@ export async function getConfig(
 
         const content = ( await import( path ) ).default;
 
-        params.debug && console.vi.progress( { content }, 2 + level );
+        console.vi.debug( { content }, 2 + level );
 
         if ( content && typeof content === 'object' ) {
             config = content;
-            params.debug && console.progress( 'content approved for config', 2 + level );
+            console.debug( 'content approved for config', 2 + level );
         }
     }
 
@@ -126,10 +126,10 @@ export async function getConfig(
 
     // returns
     if ( validConfig ) {
-        params.debug && console.vi.progress( { 'valid config': config }, 1 + level );
+        console.vi.debug( { 'valid config': config }, 1 + level );
 
         const configInstance = new ProjectConfig( internalConfig( validConfig, console ) );
-        params.debug && console.vi.progress( { return: configInstance }, level );
+        console.vi.debug( { return: configInstance }, level );
         return configInstance;
     }
 
@@ -139,7 +139,7 @@ export async function getConfig(
         ...config,
     };
 
-    params.debug && console.vi.progress( { 'partial config': config }, 1 + level );
+    console.vi.debug( { 'partial config': config }, 1 + level );
 
     /**
      * What to do since no valid config was found.
@@ -236,7 +236,7 @@ export async function getConfig(
 
     const configInstance = new ProjectConfig( builtConfig );
 
-    params.debug && console.vi.progress( { return: configInstance }, level );
+    console.vi.debug( { return: configInstance }, level );
 
     // returns
     if ( noConfigPrompt !== 'create-new' ) {
@@ -275,7 +275,7 @@ export async function getConfig(
         `export default config;`,
     ].join( '\n' );
 
-    params.debug && console.vi.progress( { configFileContent }, level );
+    console.vi.debug( { configFileContent }, level );
 
     fs.writeFile( configPath, configFileContent, { force } );
 

@@ -136,6 +136,15 @@ class _DummyConsole_VarDump implements Logger.VarInspect {
     ) {
     }
 
+    public debug(
+        variable: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 0 ],
+        level: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 1 ],
+        msgArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 2 ],
+        timeArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 3 ],
+    ) {
+        this.log( variable, level, msgArgs, timeArgs );
+    }
+
     public log(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
         level: number,

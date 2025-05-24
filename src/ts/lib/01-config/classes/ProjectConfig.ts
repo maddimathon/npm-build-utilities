@@ -16,7 +16,6 @@ import type { Objects } from '@maddimathon/utility-typescript/types';
 import { typeOf } from '@maddimathon/utility-typescript/functions/typeOf';
 
 import type {
-    CLI,
     Config,
     Logger,
     Stage,
@@ -95,14 +94,13 @@ export class ProjectConfig implements Config.Class {
     public async getStage(
         stage: Stage.Name,
         console: Logger,
-        params: CLI.Params,
     ): Promise<undefined | [ Stage.ClassType, Partial<Stage.Args> ]> {
 
         const stageConfig = this.stages[ stage ];
 
         // returns
         if ( !stageConfig ) {
-            params.debug && console.progress( `no ${ stage } stage config found, skipping...`, 0, { italic: true } );
+            console.debug( `no ${ stage } stage config found, skipping...`, 0, { italic: true } );
             return undefined;
         }
 
@@ -141,7 +139,7 @@ export class ProjectConfig implements Config.Class {
      * 
      * Useful for creating stripped-down or default configuration objects.
      */
-    public minimum(): Config & Partial<Config.Internal> {
+    public minimum(): Config {
         return {
             title: this.title,
         };

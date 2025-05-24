@@ -118,7 +118,7 @@ export class Stage_Compiler implements Stage.Compiler {
         level: number,
         sassOpts?: sass.Options<"sync">,
     ): Promise<void> {
-        this.params.debug && this.console.vi.progress( { 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true } );
+        this.console.vi.debug( { 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true } );
 
         const compiled = sass.compile( input, {
             ...this.config.compiler.sass,

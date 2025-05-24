@@ -3,7 +3,7 @@
  *
  * @module (root)
  *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @example
  * ```ts
@@ -14,14 +14,14 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  * @author Maddi Mathon (www.maddimathon.com)
  * @homepage https://maddimathon.github.io/npm-build-utilities
  *
  * @license MIT
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 /** @hidden - documented as an entry point module */
