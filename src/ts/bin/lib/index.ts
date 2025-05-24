@@ -7,18 +7,18 @@
  * 
  * @example
  * ```ts
- * import { bin } from '@maddimathon/npm-build-utilities';
- * import { ... } from '@maddimathon/npm-build-utilities/bin';
+ * import { bin } from '@maddimathon/build-utilities';
+ * import { ... } from '@maddimathon/build-utilities/bin';
  * ```
  * 
  * @packageDocumentation
  * @internal
  */
 /**
- * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  */
 /*!
- * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 

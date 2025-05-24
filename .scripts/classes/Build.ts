@@ -1,7 +1,7 @@
 #!/usr/bin/env -S npx tsx
 'use strict';
 /**
- * @package @maddimathon/npm-build-utilities
+ * @package @maddimathon/build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT
@@ -176,7 +176,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
                 this.fns.fs.readFile( 'README.md' )
                     .replace( installRegex, '$1\n' + utils.functions.escRegExpReplace( [
                         '```sh',
-                        'npm i -D @maddimathon/npm-build-utilities@' + this.pkg.version,
+                        'npm i -D @maddimathon/build-utilities@' + this.pkg.version,
                         'npm i -D github:maddimathon/npm-build-utilities#' + this.pkg.version,
                         '```',
                     ].join( '\n' ) ) + '\n$2' )

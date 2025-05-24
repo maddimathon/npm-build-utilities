@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -113,8 +113,6 @@ export declare namespace Config {
      * Paths to files or directories.
      *
      * Absolute *or* relative to node’s cwd.
-     *
-     * @expand
      */
     export interface Paths {
         /**
@@ -197,7 +195,6 @@ export declare namespace Config {
      * an abstract is included in this package (test, document).
      *
      * @internal
-     * @expand
      */
     export type StageOptsAbstract<Stage extends Stage.Name, B extends boolean | never = false, A extends Stage.Args.All[Stage] = Stage.Args.All[Stage]> = B | Stage.ClassType.All[Stage] | [Stage.ClassType.All[Stage]] | [
         Stage.ClassType.All[Stage],

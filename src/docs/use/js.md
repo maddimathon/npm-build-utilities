@@ -19,7 +19,7 @@ import {
 
     parseParamsCLI,
     Project,
-} from '@maddimathon/npm-build-utilities';
+} from '@maddimathon/build-utilities';
 
 const params = parseParamsCLI( {
     config: 'path/to/build.config.js',
@@ -43,7 +43,7 @@ import {
     ProjectConfig,
     
     parseParamsCLI,
-} from '@maddimathon/npm-build-utilities';
+} from '@maddimathon/build-utilities';
 
 const config = new ProjectConfig( internal.internalConfig( {
     title: 'Example Project Title',

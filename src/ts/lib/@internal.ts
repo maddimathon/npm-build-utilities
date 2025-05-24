@@ -8,18 +8,18 @@
  * 
  * @example
  * ```ts
- * import { internal } from '@maddimathon/npm-build-utilities';
- * import { ... } from '@maddimathon/npm-build-utilities/internal';
+ * import { internal } from '@maddimathon/build-utilities';
+ * import { ... } from '@maddimathon/build-utilities/internal';
  * ```
  * 
  * @packageDocumentation
  * @internal
  */
 /**
- * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  */
 /*!
- * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 

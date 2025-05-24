@@ -7,21 +7,21 @@
  * 
  * @example
  * ```ts
- * import type { ... } from '@maddimathon/npm-build-utilities';
- * import { ... } from '@maddimathon/npm-build-utilities';
+ * import type { ... } from '@maddimathon/build-utilities';
+ * import { ... } from '@maddimathon/build-utilities';
  * ```
  * 
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  * @author Maddi Mathon (www.maddimathon.com)
  * @homepage ___CURRENT_URL___
  * 
  * @license MIT
  */
 /*!
- * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 

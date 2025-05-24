@@ -1,7 +1,7 @@
 /**
  * Utility types for build process scripts.
  * 
- * @package @maddimathon/npm-build-utilities
+ * @package @maddimathon/build-utilities
  * @since ___PKG_VERSION___
  */
 

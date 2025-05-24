@@ -1,5 +1,5 @@
 {
-    "name": "@maddimathon/npm-build-utilities--demos--complete",
+    "name": "@maddimathon/build-utilities--demos--complete",
     "version": "0.1.0",
 
     "config": {
@@ -29,7 +29,7 @@
     "dependencies": {
     },
     "devDependencies": {
-        "@maddimathon/npm-build-utilities": "file:../.."
+        "@maddimathon/build-utilities": "file:../.."
     },
 
     "browserslist": [

@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
@@ -119,9 +119,7 @@ export class AbstractStage {
         this.config = config;
         this.params = params;
         this.args = this.buildArgs(args);
-        this.console = new Stage_Console(
-        // this.name,
-        this.clr, this.config, this.params);
+        this.console = new Stage_Console(this.clr, this.config, this.params);
         this.fs = this.args.objs.fs ?? new FileSystem(this.console, this.config.fs);
         this.cpl = this.args.objs.cpl ?? new Stage_Compiler(this.config, this.params, this.console, this.fs, this.config.compiler);
     }

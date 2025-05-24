@@ -5,7 +5,7 @@ import {
     ProjectConfig,
 
     parseParamsCLI,
-} from '@maddimathon/npm-build-utilities';
+} from '@maddimathon/build-utilities';
 
 const config = new ProjectConfig( internal.internalConfig( {
     title: 'Example Project Title',

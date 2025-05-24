@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 import { escRegExp, typeOf, } from '@maddimathon/utility-typescript/functions';
@@ -45,7 +45,7 @@ function _errorStringifyInternal(error, args, console, level) {
 /**
  * Returns a string representation of the error for logging.
  *
- * @category Internal
+ * @category Errors
  *
  * @internal
  * @private
@@ -267,6 +267,8 @@ export function _errorStringify(error, args, console, level) {
 /**
  * Default error handler for use within the library.
  *
+ * @category Errors
+ *
  * @internal
  */
 export function errorHandler(error, level, console, args) {
@@ -276,13 +278,9 @@ export function errorHandler(error, level, console, args) {
         italic: false,
         linesIn: 2,
         linesOut: 2,
-        // maxWidth: null,
         ...args ?? {},
     };
     const bulkMsgs = _errorStringify(error, args, console, 0);
-    // const msgMaker = _msgMaker;
-    // const fs = new node.NodeFiles();
-    // fs.writeFile( '.scripts/.logs/errors/' + timestamp( null, { date: true, time: true, } ) + '.txt', msgMaker.msgs( bulkMsgs ), { rename: true } );
     console.error(bulkMsgs, level, args);
     process.exit(process.exitCode ?? 0);
 }

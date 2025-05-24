@@ -1,5 +1,5 @@
 {
-    "extends": "@maddimathon/npm-build-utilities/tsconfig",
+    "extends": "@maddimathon/build-utilities/tsconfig",
     "include": [
         "../.scripts/**/*",
         ".scripts/**/*"

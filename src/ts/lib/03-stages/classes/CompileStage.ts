@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  */
 /*!
- * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
@@ -294,7 +294,7 @@ export class CompileStage extends AbstractStage<
             this.params.debug && this.console.vi.progress( { outDir }, 2 );
 
             this.fs.writeFile( this.fs.pathResolve( tsConfigFile ), JSON.stringify( {
-                extends: '@maddimathon/npm-build-utilities/tsconfig',
+                extends: '@maddimathon/build-utilities/tsconfig',
                 include: [
                     './**/*',
                 ],

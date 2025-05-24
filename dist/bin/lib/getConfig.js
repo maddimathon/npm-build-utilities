@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 import { VariableInspector, } from '@maddimathon/utility-typescript/classes';
@@ -195,7 +195,7 @@ export async function getConfig(params, console = null, level = 0) {
         `'use strict';`,
         ``,
         `/**`,
-        ` * @import { Config } from "@maddimathon/npm-build-utilities"`,
+        ` * @import { Config } from "@maddimathon/build-utilities"`,
         ` */`,
         ``,
         `/**`,

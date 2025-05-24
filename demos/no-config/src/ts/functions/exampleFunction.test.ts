@@ -1,11 +1,11 @@
 /**
- * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  * @since ___PKG_VERSION___
  * 
  * @packageDocumentation
  */
 /*!
- * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 

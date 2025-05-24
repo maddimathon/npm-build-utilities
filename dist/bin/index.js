@@ -2,7 +2,7 @@
 /**
  * NPM Build Utilities (CLI)
  *
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  * @author Maddi Mathon (www.maddimathon.com)
  * @homepage https://maddimathon.github.io/npm-build-utilities
  *
@@ -13,7 +13,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 import minimist from 'minimist';

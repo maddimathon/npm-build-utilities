@@ -2,7 +2,7 @@
 /**
  * NPM Build Utilities (CLI)
  * 
- * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  * @author Maddi Mathon (www.maddimathon.com)
  * @homepage ___CURRENT_URL___
  * 
@@ -13,7 +13,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 

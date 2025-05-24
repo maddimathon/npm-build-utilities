@@ -35,7 +35,7 @@ or
 
 <!--README_INSTALL-->
 ```sh
-npm i -D @maddimathon/npm-build-utilities@0.1.0
+npm i -D @maddimathon/build-utilities@0.1.0
 npm i -D github:maddimathon/npm-build-utilities#0.1.0
 ```
 <!--/README_INSTALL-->
@@ -59,16 +59,16 @@ to target individual files (carefully and at your own risk, paths may change
 without being considered a breaking change).
 
 ```ts
-import type { ... } from '@maddimathon/npm-build-utilities';
-import type { ... } from '@maddimathon/npm-build-utilities/types';
+import type { ... } from '@maddimathon/build-utilities';
+import type { ... } from '@maddimathon/build-utilities/types';
 
-import { ... } from '@maddimathon/npm-build-utilities';
+import { ... } from '@maddimathon/build-utilities';
 
-import { ... } from '@maddimathon/npm-build-utilities/bin';
-import { ... } from '@maddimathon/npm-build-utilities/internal';
+import { ... } from '@maddimathon/build-utilities/bin';
+import { ... } from '@maddimathon/build-utilities/internal';
 ```
 
-A basic tsconfig to extend is available at `@maddimathon/npm-build-utilities/tsconfig`.
+A basic tsconfig to extend is available at `@maddimathon/build-utilities/tsconfig`.
 
 
 ### Command Line

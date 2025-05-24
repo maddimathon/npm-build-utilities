@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 import { escRegExp, escRegExpReplace } from '@maddimathon/utility-typescript/functions';
@@ -197,7 +197,7 @@ export class CompileStage extends AbstractStage {
             const outDir = this.fs.pathRelative(this.fs.pathResolve(baseUrl, tsDistDir));
             this.params.debug && this.console.vi.progress({ outDir }, 2);
             this.fs.writeFile(this.fs.pathResolve(tsConfigFile), JSON.stringify({
-                extends: '@maddimathon/npm-build-utilities/tsconfig',
+                extends: '@maddimathon/build-utilities/tsconfig',
                 include: [
                     './**/*',
                 ],

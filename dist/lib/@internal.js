@@ -8,18 +8,18 @@
  *
  * @example
  * ```ts
- * import { internal } from '@maddimathon/npm-build-utilities';
- * import { ... } from '@maddimathon/npm-build-utilities/internal';
+ * import { internal } from '@maddimathon/build-utilities';
+ * import { ... } from '@maddimathon/build-utilities/internal';
  * ```
  *
  * @packageDocumentation
  * @internal
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 export * from './@internal/classes/abstract/AbstractError.js';

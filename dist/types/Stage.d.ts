@@ -8,10 +8,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 import * as sass from 'sass';
@@ -259,7 +259,7 @@ export declare namespace Class {
      * Those that are optional only have abstract classes included in this
      * package (test, document).
      *
-     * @expand
+     * @interface
      */
     type All = {
         [K in WithDefaultClass]: Class;
@@ -289,7 +289,7 @@ export type ClassTypeGeneric<SubStage extends string = string, A extends Args<Su
 /**
  * Type utilities for stage class types.
  *
- * @see {@link Stage.ClassType}
+ * @see {@link ClassType}
  *
  * @since 0.1.0-draft
  */
@@ -363,7 +363,7 @@ export declare namespace SubStage {
      * Those that are optional only have abstract classes included in this
      * package (test, document).
      *
-     * @expand
+     * @interface
      */
     type All = {
         build: SubStage.Build;
@@ -413,7 +413,6 @@ export type WithDefaultClass = Exclude<Name, WithAbstractClass>;
 /**
  * Stages included in the library only as abstract classes.
  *
- * @useDeclaredType
  * @expand
  */
 export type WithAbstractClass = ("document" | "test" | "test-string") & Name;

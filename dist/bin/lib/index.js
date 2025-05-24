@@ -7,18 +7,18 @@
  *
  * @example
  * ```ts
- * import { bin } from '@maddimathon/npm-build-utilities';
- * import { ... } from '@maddimathon/npm-build-utilities/bin';
+ * import { bin } from '@maddimathon/build-utilities';
+ * import { ... } from '@maddimathon/build-utilities/bin';
  * ```
  *
  * @packageDocumentation
  * @internal
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 export * from './getConfig.js';

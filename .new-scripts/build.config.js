@@ -2,7 +2,7 @@
 // @ts-check
 'use strict';
 /**
- * @package @maddimathon/npm-build-utilities
+ * @package @maddimathon/build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT

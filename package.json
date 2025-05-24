@@ -1,5 +1,5 @@
 {
-    "name": "@maddimathon/npm-build-utilities",
+    "name": "@maddimathon/build-utilities",
     "version": "0.1.0",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
@@ -53,13 +53,13 @@
         "./bin": "./dist/bin/lib/index.js",
         "./internal": "./dist/lib/@internal.js",
 
+        "./tsconfig": "./tsconfig.base.json",
+
         "./*": [
             "./dist/*.js",
             "./dist/*/index.js"
         ],
         "./*.js": "./dist/*.js",
-
-        "./tsconfig": "./tsconfig.base.json",
         
         "./types": "./dist/js/types/index.d.ts",
         "./types/*": [

@@ -1,7 +1,7 @@
 #!/usr/bin/env -S npx tsx
 'use strict';
 /**
- * @package @maddimathon/npm-build-utilities
+ * @package @maddimathon/build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
  * 
  * @license MIT
@@ -181,8 +181,8 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
             [
                 ...this.pkg.files,
 
-                '.npmrc',
-                '.nvmrc',
+                // '.npmrc',
+                // '.nvmrc',
                 'package.json',
                 'package-lock.json',
                 'LICENSE.md',

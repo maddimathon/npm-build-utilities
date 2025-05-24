@@ -2,10 +2,8 @@ name: Publish GitHub Pages
 
 on:
   workflow_dispatch: # allows running from the Actions tab
-  push:
-    branches: [main]
-  # release:
-  #   types: [published]
+  release:
+    types: [published]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:

@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  */
 /*!
- * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
@@ -264,7 +264,7 @@ export async function getConfig(
         `'use strict';`,
         ``,
         `/**`,
-        ` * @import { Config } from "@maddimathon/npm-build-utilities"`,
+        ` * @import { Config } from "@maddimathon/build-utilities"`,
         ` */`,
         ``,
         `/**`,

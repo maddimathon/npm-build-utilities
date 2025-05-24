@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /**
- * @package @maddimathon/npm-build-utilities@0.1.0-draft
+ * @package @maddimathon/build-utilities@0.1.0-draft
  */
 /*!
- * @maddimathon/npm-build-utilities@0.1.0-draft
+ * @maddimathon/build-utilities@0.1.0-draft
  * @license MIT
  */
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -15,7 +15,7 @@ import type { LocalError, Logger } from '../../types/index.js';
 /**
  * Returns a string representation of the error for logging.
  *
- * @category Internal
+ * @category Errors
  *
  * @internal
  * @private
@@ -23,6 +23,8 @@ import type { LocalError, Logger } from '../../types/index.js';
 export declare function _errorStringify(error: LocalError.Input, args: Partial<LocalError.Handler.Args>, console: Logger, level: number): MessageMaker.BulkMsgs;
 /**
  * Default error handler for use within the library.
+ *
+ * @category Errors
  *
  * @internal
  */
