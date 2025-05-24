@@ -37,13 +37,12 @@ import {
 } from '../../vars/replacements.js';
 
 import {
-    Internal,
+    internal,
 
     defaultConfig,
     parseParamsCLI,
 
     ProjectConfig,
-    Stage_Console,
 } from '../../../src/ts/index.js';
 
 
@@ -69,12 +68,10 @@ function getStageConsole(
 
     const config: Config.Internal = defaultConfig( { pkg } );
 
-    return new Stage_Console(
-        name,
+    return new internal.Stage_Console(
         clr,
         new ProjectConfig( config ),
         parseParamsCLI( args ),
-        {}
     );
 }
 
@@ -190,11 +187,11 @@ export abstract class AbstractStage<
         args: Partial<Args>,
         clr: cls.MessageMaker.Colour,
         utils: ConstructorParameters<typeof cls.node.AbstractBuildStage>[ 2 ] = {},
-        public readonly console: Stage_Console = getStageConsole( name, clr, args ),
+        public readonly console: internal.Stage_Console = getStageConsole( name, clr, args ),
     ) {
         super( args, clr, {
             ...utils,
-            nc: utils.nc ?? console.nc,
+            nc: console.nc ?? utils.nc,
         } );
     }
 
@@ -208,7 +205,7 @@ export abstract class AbstractStage<
         level: number,
         args?: Partial<LocalError.Handler.Args>,
     ): void {
-        Internal.errorHandler( error, level, this.console, args );
+        internal.errorHandler( error, level, this.console, args );
     }
 
 
@@ -274,7 +271,7 @@ export abstract class AbstractStage<
             let callbackArgs: Partial<LocalError.Handler.Args> = {};
 
             if ( !callback ) {
-                callback = Internal.errorHandler;
+                callback = internal.errorHandler;
             } else if ( Array.isArray( callback ) ) {
                 callbackArgs = callback[ 1 ];
                 callback = callback[ 0 ];
@@ -304,8 +301,8 @@ export abstract class AbstractStage<
         startMsg: string,
         endMsg: string,
         defaultMsg: string,
-        msgArgs: Parameters<typeof this.progressLog>[ 2 ] = {},
-        timeArgs: Parameters<typeof this.progressLog>[ 3 ] = {},
+        msgArgs: Parameters<typeof this.console.progress>[ 2 ] = {},
+        timeArgs: Parameters<typeof this.console.progress>[ 3 ] = {},
     ): void {
         if ( this.args[ 'notice' ] === false ) { return; }
 
@@ -345,7 +342,7 @@ export abstract class AbstractStage<
             depth,
         };
 
-        this.progressLog(
+        this.console.progress(
             [ [
                 msg,
                 { flag: true },
@@ -391,9 +388,9 @@ export abstract class AbstractStage<
             ...params,
         };
 
-        this.verboseLog( `compiling ${ input } to ${ output }...`, 0 + logBaseLevel );
+        this.console.verbose( `compiling ${ input } to ${ output }...`, 0 + logBaseLevel );
         this.try(
-            this.fns.nc.cmd,
+            this.console.nc.cmd,
             0 + logBaseLevel,
             [ `sass ${ input }:${ output }`, args ]
         );
@@ -413,7 +410,7 @@ export abstract class AbstractStage<
         logBaseLevel: number,
         params: CmdArgs = {},
     ): Promise<void> {
-        this.verboseLog( `compiling typescript project ${ tsconfigPath }...`, 0 + logBaseLevel );
+        this.console.verbose( `compiling typescript project ${ tsconfigPath }...`, 0 + logBaseLevel );
 
         const tsconfig: Partial<{
             exclude: string | string[];
@@ -434,11 +431,11 @@ export abstract class AbstractStage<
             if ( outDir ) {
 
                 const tsconfigDir = tsconfigPath.replace( /\/[^\/]+\.json$/, '/' ).replace( /^[^\/]+\.json$/, './' );
-                this.args.debug && this.progressLog( `tsconfigDir = ${ tsconfigDir }`, ( this.args.verbose ? 1 : 0 ) + logBaseLevel );
+                this.args.debug && this.console.progress( `tsconfigDir = ${ tsconfigDir }`, ( this.args.verbose ? 1 : 0 ) + logBaseLevel );
 
                 const outDirGlobs = this.fns.fs.pathRelative( this.fns.fs.pathResolve( tsconfigDir, outDir.replace( /(\/+\**)?$/, '' ) ) ) + '/**/*';
 
-                this.verboseLog( `deleting current contents (${ outDirGlobs })...`, 1 + logBaseLevel );
+                this.console.verbose( `deleting current contents (${ outDirGlobs })...`, 1 + logBaseLevel );
                 this.fns.fs.deleteFiles( this.glob( outDirGlobs ) );
             }
         }
@@ -448,13 +445,13 @@ export abstract class AbstractStage<
             project: tsconfigPath,
         };
 
-        this.verboseLog( 'running tsc...', 2 + logBaseLevel );
-        const tscCmd = `tsc ${ this.fns.nc.cmdArgs( cmdParams, true, false ) }`;
+        this.console.verbose( 'running tsc...', 2 + logBaseLevel );
+        const tscCmd = `tsc ${ this.console.nc.cmdArgs( cmdParams, true, false ) }`;
 
-        this.args.debug && this.progressLog( tscCmd, ( this.args.verbose ? 3 : 2 ) + logBaseLevel );
+        this.args.debug && this.console.progress( tscCmd, ( this.args.verbose ? 3 : 2 ) + logBaseLevel );
         this.try(
-            this.fns.nc.cmd,
-            ( this.args.verbose ? 3 : 2 ) + logBaseLevel,
+            this.console.nc.cmd,
+            ( this.args.verbose ? 3 : 1 ) + logBaseLevel,
             [ tscCmd ]
         );
     }
@@ -471,7 +468,7 @@ export abstract class AbstractStage<
 
         const findArr: ( string | RegExp )[] = Array.isArray( find ) ? find : [ find ];
 
-        this.args.debug && this.progressLog(
+        this.args.debug && this.console.progress(
             `replacing '${ findArr.join( "'|'" ) }' => '${ replace }'`,
             logBaseLevel,
             {

@@ -1,11 +1,17 @@
 /**
- * NPM Build Utilities
+ * Exports from the root/default export path.
  * 
- * @module .
- * 
- * @mergeModuleWith <project>
+ * @module (root)
  * 
  * @since ___PKG_VERSION___
+ * 
+ * @example
+ * ```ts
+ * import type { ... } from '@maddimathon/npm-build-utilities';
+ * import { ... } from '@maddimathon/npm-build-utilities';
+ * ```
+ * 
+ * @packageDocumentation
  */
 /**
  * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
@@ -20,4 +26,11 @@
  */
 
 export type * from './types/index.js';
+
+/** @hidden - documented as an entry point module */
+export * as bin from './bin/lib/index.js';
+
+/** @hidden - documented as an entry point module */
+export * as internal from './lib/@internal.js';
+
 export * from './lib/index.js';

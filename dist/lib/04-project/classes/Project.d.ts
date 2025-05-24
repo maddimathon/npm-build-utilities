@@ -10,9 +10,9 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-import type { CLI, Config, Stage } from '../../../types/index.js';
+import type { CLI, Config, Logger, Stage } from '../../../types/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
-import { Stage_Console } from '../../02-utils/index.js';
+import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
 /**
  * Manages and runs a single project (typically used by the cli).
  *
@@ -41,7 +41,7 @@ export declare class Project {
     /**
      * Displays some debugging information.
      */
-    protected debug<S extends Stage.Name>(console: Stage.Console, stageClass: null | Stage.ClassType.All[S], stageArgs: null | Partial<Stage.Args.All[S]>, stageInstance: null | Stage.Class.All[S]): Promise<void>;
+    protected debug<S extends Stage.Name>(console: Logger, stageClass: null | Stage.ClassType.All[S], stageArgs: null | Partial<Stage.Args.All[S]>, stageInstance: null | Stage.Class.All[S]): Promise<void>;
     /**
      * Runs the given stage with the params.
      */

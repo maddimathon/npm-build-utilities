@@ -11,9 +11,6 @@
  * @license MIT
  */
 
-/** @module Internal */
-export * as Internal from './@internal/public.js';
-
 export * from './00-universal/index.js';
 export * from './01-config/index.js';
 export * from './02-utils/index.js';

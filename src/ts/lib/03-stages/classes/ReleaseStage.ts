@@ -96,8 +96,8 @@ export class ReleaseStage extends AbstractStage<
     /* RUNNING METHODS
      * ====================================================================== */
 
-    protected async runSubStage( stage: Stage.SubStage.Release ) {
-        await this[ stage ]();
+    protected async runSubStage( subStage: Stage.SubStage.Release ) {
+        await this[ subStage ]();
     }
 
     protected async changelog() {

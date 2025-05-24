@@ -20,7 +20,7 @@ import minimist from 'minimist';
 import help from './help.js';
 import { parseParamsCLI, Project, } from '../lib/index.js';
 import { getConfig } from './lib/index.js';
-const params = minimist(process.argv.slice(2));
+const params = parseParamsCLI(minimist(process.argv.slice(2)));
 const scriptName = (params._?.[0]);
 switch (scriptName) {
     case 'debug':
@@ -31,11 +31,7 @@ switch (scriptName) {
     case 'build':
     case 'package':
     case 'release':
-        const fullParams = parseParamsCLI(params);
-        const project = new Project(await getConfig(fullParams, await Project.getConsole({
-            name: 'Project',
-            params: fullParams,
-        })), fullParams);
+        const project = new Project(await getConfig(params), params);
         await project.run(scriptName);
         break;
     case 'help':

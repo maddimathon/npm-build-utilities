@@ -16,9 +16,10 @@ import type { Objects } from '@maddimathon/utility-typescript/types';
 import { CustomError, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
 
 import type {
-    FileSystemType,
     LocalError,
 } from '../../../../types/index.js';
+
+import type { FileSystemType } from '../../../../types/FileSystemType.js';
 
 // import { DummyConsole } from '../DummyConsole.js';
 
@@ -64,9 +65,7 @@ export abstract class AbstractError<
     /* LOCAL PROPERTIES
      * ====================================================================== */
 
-    // protected readonly console: Stage.Console;
     public readonly context: null | AbstractError.Context;
-    // public readonly level: number;
 
 
     /* Args ===================================== */

@@ -67,17 +67,17 @@ export class Test extends AbstractStage<Test.Stages, Test.Args> {
      * ====================================================================== */
 
     protected async js() {
-        this.progressLog( 'running jest...', 1 );
+        this.console.progress( 'running jest...', 1 );
 
         this.try(
-            this.fns.nc.cmd,
+            this.console.nc.cmd,
             2,
             [ 'node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js' ]
         );
 
         if ( this.args.packaging && !this.args.dryrun ) {
 
-            this.verboseLog( 'removing test files from dist...', 2 );
+            this.console.verbose( 'removing test files from dist...', 2 );
             this.fns.fs.deleteFiles( this.glob( [
                 'dist/**/*.test.d.ts',
                 'dist/**/*.test.d.ts.map',
@@ -88,7 +88,7 @@ export class Test extends AbstractStage<Test.Stages, Test.Args> {
     }
 
     protected async scss() {
-        this.progressLog( '(NOT IMPLEMENTED) testing scss...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) testing scss...', 1 );
     }
 }
 

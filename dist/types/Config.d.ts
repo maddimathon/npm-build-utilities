@@ -12,8 +12,9 @@
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
 import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import type { FileSystem } from '../lib/index.js';
+import { Logger } from './Logger.js';
 import * as Stage from './Stage.js';
-import { FileSystem } from '../lib/index.js';
 /**
  * Complete configuration object for a project using this library.
  *
@@ -35,9 +36,9 @@ export interface Config {
      */
     compiler?: Partial<Stage.Compiler.Args>;
     /**
-     * Optional arguements to use when constructing {@link Stage.Console}.
+     * Optional arguements to use when constructing {@link Logger}.
      */
-    console?: Partial<Stage.Console.Args>;
+    console?: Partial<Logger.Args>;
     /**
      * Optional arguements to use when constructing {@link FileSystem}.
      */

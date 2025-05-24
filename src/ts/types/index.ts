@@ -11,7 +11,7 @@
  * @license MIT
  */
 
-export type * from './FileSystemType.js';
+export type * from './Logger.js';
 
 /** @module CLI */
 export type * as CLI from './CLI.js';

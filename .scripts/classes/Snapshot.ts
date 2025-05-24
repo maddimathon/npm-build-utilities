@@ -66,7 +66,7 @@ export class Snapshot extends AbstractStage<Snapshot.Stages, Snapshot.Args> {
      * ====================================================================== */
 
     protected async snapshot() {
-        this.verboseLog( 'getting included paths...', 1 );
+        this.console.verbose( 'getting included paths...', 1 );
 
         const snapdir = this.pkg.config.paths.snapshots.replace( /\/+$/gi, '' );
 
@@ -92,25 +92,25 @@ export class Snapshot extends AbstractStage<Snapshot.Stages, Snapshot.Args> {
             },
             true
         );
-        this.args.debug && this.fns.nc.timestampVarDump( { includePaths }, { depth: ( this.args.verbose ? 2 : 1 ) + ( this.args[ 'log-base-level' ] ?? 0 ) } );
+        this.args.debug && this.console.vi.log( { includePaths }, ( this.args.verbose ? 2 : 1 ) );
 
-        this.verboseLog( 'copying files...', 1 );
+        this.console.verbose( 'copying files...', 1 );
         this.copyFiles( includePaths, exportPath );
 
 
-        this.verboseLog( 'zipping snapshot...', 1 );
+        this.console.verbose( 'zipping snapshot...', 1 );
         this.try(
-            this.fns.nc.cmd,
+            this.console.nc.cmd,
             2,
             [ `cd ${ snapdir }/ && zip -r ${ exportName }.zip ${ exportName }` ]
         );
 
 
-        this.verboseLog( 'tidying up...', 1 );
+        this.console.verbose( 'tidying up...', 1 );
         this.fns.fs.deleteFiles( [ exportPath ] );
 
 
-        this.progressLog( `snapshot zipped: ${ this.fns.fs.pathRelative( exportPath ) }.zip`, 1, { maxWidth: null } );
+        this.console.progress( `snapshot zipped: ${ this.fns.fs.pathRelative( exportPath ) }.zip`, 1, { maxWidth: null } );
     }
 }
 

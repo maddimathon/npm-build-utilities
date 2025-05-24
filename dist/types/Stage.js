@@ -45,18 +45,4 @@ export var Compiler;
 })(Compiler || (Compiler = {}));
 ;
 ;
-/**
- * Type utilities for {@link Console} classes.
- *
- * @see {@link Stage.ClassType}
- *
- * @since 0.1.0-draft
- */
-export var Console;
-(function (Console) {
-    ;
-    ;
-})(Console || (Console = {}));
-;
-;
 //# sourceMappingURL=Stage.js.map

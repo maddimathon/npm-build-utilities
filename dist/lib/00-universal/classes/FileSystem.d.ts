@@ -11,8 +11,8 @@
  * @license MIT
  */
 import { node } from '@maddimathon/utility-typescript/classes';
-import type { Stage } from '../../../types/index.js';
-import { FileSystemType } from '../../@internal/index.js';
+import type { Logger } from '../../../types/index.js';
+import { type FileSystemType } from '../../@internal.js';
 /**
  * Extends the {@link node.NodeFiles} class with some custom logic useful to this package.
  *
@@ -21,7 +21,7 @@ import { FileSystemType } from '../../@internal/index.js';
  * @since 0.1.0-draft
  */
 export declare class FileSystem extends node.NodeFiles {
-    readonly console: Stage.Console;
+    readonly console: Logger;
     /**
      * A completed args object.
      *
@@ -45,7 +45,7 @@ export declare class FileSystem extends node.NodeFiles {
      * @param console   Used to output messages within the class.
      * @param args
      */
-    constructor(console: Stage.Console, args?: Partial<FileSystem.Args>);
+    constructor(console: Logger, args?: Partial<FileSystem.Args>);
     /**
      * Copies files from one directory to another, maintaing their relative
      * directory structure.

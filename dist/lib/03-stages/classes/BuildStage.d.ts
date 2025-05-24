@@ -36,7 +36,7 @@ export declare class BuildStage extends AbstractStage<Stage.SubStage.Build, Stag
      * @param which  Whether we are starting or ending.
      */
     startEndNotice(which: "start" | "end" | null): void;
-    protected runSubStage(stage: Stage.SubStage.Build): Promise<void>;
+    protected runSubStage(subStage: Stage.SubStage.Build): Promise<void>;
     /**
      * Runs the project's compile class.
      */

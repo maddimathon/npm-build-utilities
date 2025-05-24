@@ -10,9 +10,8 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-import type { Objects } from '@maddimathon/utility-typescript/types';
 import { MessageMaker, node, VariableInspector } from '@maddimathon/utility-typescript/classes';
-import type { CLI, Config, Stage } from '../../../types/index.js';
+import type { CLI, Logger } from '../../../types/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
@@ -25,208 +24,90 @@ import { ProjectConfig } from '../../01-config/index.js';
  *
  * @internal
  */
-export declare class Stage_Console implements Stage.Console {
-    readonly name: string;
-    readonly clr: Config['clr'];
+export declare class Stage_Console implements Logger {
+    readonly clr: MessageMaker.Colour;
     readonly config: ProjectConfig;
     readonly params: CLI.Params;
-    /** {@inheritDoc Stage.Console.nc} */
+    /** {@inheritDoc Logger.nc} */
     readonly nc: node.NodeConsole;
+    /** {@inheritDoc Logger.vi} */
+    readonly vi: _Stage_Console_VarInspect;
     /**
-     * Instance to use within the class.
-     */
-    readonly varDump: _Stage_Console_VarInspect;
-    /**
-     * @param name    Name for this stage used for notices.
      * @param clr     Colour slug for this colour-coding this class.
      * @param config  Current project config.
      * @param params  Current CLI params.
-     * @param utils   Optional. Partial argument overrides for classes used
-     *                within this one.
      */
-    constructor(name: string, clr: Config['clr'], config: ProjectConfig, params: CLI.Params, utils?: {
-        nc?: Objects.RecursivePartial<node.NodeConsole.Args>;
-    });
+    constructor(clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params);
     /**
      * Creates an argument object used to print messages to the terminal, adding
      * styling defaults by depth level.
      *
-     * @category Messagers
-     *
-     * @see {@link AbstractStage.clr}  Default colour for the message.
+     * @see {@link Stage_Console.clr}  Default colour for the message.
      *
      * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
+     *                  {@link CLI.Params.log-base-level}).
      * @param msgArgs   Optional. Argument overrides for the message.
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      *
      * @return  An object with arguments separated by message (`msg`) and time.
      */
-    protected msgArgs(level?: number, msgArgs?: Parameters<node.NodeConsole['timestampLog']>[1], timeArgs?: Parameters<node.NodeConsole['timestampLog']>[2]): {
-        msg: Parameters<node.NodeConsole['timestampLog']>[1];
-        time: Parameters<node.NodeConsole['timestampLog']>[2];
+    protected msgArgs(level?: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): {
+        msg: Partial<MessageMaker.MsgArgs>;
+        time: Partial<MessageMaker.MsgArgs>;
     };
-    error(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Parameters<node.NodeConsole['timestampLog']>[1], timeArgs?: Parameters<node.NodeConsole['timestampLog']>[2]): void;
-    /**
-     * Prints a timestamped log message to the console.
-     *
-     * @category Messagers
-     *
-     * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-     *
-     * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-     */
-    log(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: number, msgArgs?: Parameters<node.NodeConsole['timestampLog']>[1], timeArgs?: Parameters<node.NodeConsole['timestampLog']>[2]): void;
-    /**
-     * Prints a timestamped log message to the console. Only if
-     * `{@link Stage.Args}.notice` is truthy.
-     *
-     * @category Messagers
-     *
-     * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-     *
-     * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-     */
+    /** {@inheritDoc Logger.debug} */
+    debug(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    /** {@inheritDoc Logger.error} */
+    error(msg: MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): void;
+    /** {@inheritDoc Logger.log} */
+    log(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: number, msgArgs?: Partial<MessageMaker.MsgArgs>, timeArgs?: Partial<MessageMaker.MsgArgs>): void;
+    /** {@inheritDoc Logger.notice} */
     notice(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
-    /**
-     * Prints a timestamped log message to the console. Only if
-     * `{@link Stage.Args}.notice` is truthy.
-     *
-     * @category Messagers
-     *
-     * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-     *
-     * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-     */
+    /** {@inheritDoc Logger.progress} */
     progress(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /**
-     * Method for printing a log message to the console. Only if
-     * `{@link Stage.Args}.verbose` is truthy.
+     * {@inheritDoc Logger.debug}
      *
-     * Alias for {@link AbstractStage.progressLog}.
-     *
-     * @category Messagers
-     *
-     * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @todo
+     * **Doesn't currently actually warn.**
      */
+    warn(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    /** {@inheritDoc Logger.verbose} */
     verbose(msg: Parameters<Stage_Console['progress']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
 }
 /**
  * To be used by {@link Stage_Console}.
  *
- * Includes a variety of utilities for printing messages to the console.
+ * Includes a variety of utilities for printing variable inspections to the console.
  *
  * @category Utilities
  *
  * @since 0.1.0-draft
  *
- * @private
  * @internal
+ * @private
  */
-export declare class _Stage_Console_VarInspect implements Stage.Console.VarInspect {
-    readonly name: string;
+export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     readonly config: ProjectConfig;
     readonly params: CLI.Params;
     readonly msgArgs: Stage_Console['msgArgs'];
-    /**
-     * Instance to use within the class.
-     */
     protected readonly nc: node.NodeConsole;
     /**
-     * Default values for the args property.
-     *
-     * @category Args
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param msgArgs  Function to construct a {@link MessageMaker.MsgArgs} object.
+     * @param nc       Instance to use within the class.
      */
-    get ARGS_DEFAULT(): Stage.Console.Args;
-    /**
-     * @param name    Name for this stage used for notices.
-     * @param config  Current project config.
-     * @param params  Current CLI params.
-     * @param msgArgs
-     * @param utils   Optional. Partial argument overrides for classes used
-     *                within this one.
-     */
-    constructor(name: string, config: ProjectConfig, params: CLI.Params, msgArgs: Stage_Console['msgArgs'], utils: {
-        nc: node.NodeConsole;
-    });
-    /**
-     * Gets a simple, unformatted inspection string.
-     */
-    varString(variable: ConstructorParameters<typeof VariableInspector>[0], args?: ConstructorParameters<typeof VariableInspector>[1]): string;
-    /**
-     * Prints a timestamped log message to the console.
-     *
-     * @category Messagers
-     *
-     * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-     *
-     * @param variable  Variable to inspect.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-     */
+    constructor(config: ProjectConfig, params: CLI.Params, msgArgs: Stage_Console['msgArgs'], nc: node.NodeConsole);
+    /** {@inheritDoc Logger.VarInspect.log} */
     log(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<Stage_Console['notice']>[1], msgArgs?: Parameters<Stage_Console['notice']>[2], timeArgs?: Parameters<Stage_Console['notice']>[3]): void;
-    /**
-     * Prints a timestamped log message to the console. Only if
-     * `{@link Stage.Args}.notice` is truthy.
-     *
-     * @category Messagers
-     *
-     * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-     *
-     * @param variable  Variable to inspect.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-     */
+    /** {@inheritDoc Logger.VarInspect.notice} */
     notice(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
-    /**
-     * Prints a timestamped log message to the console. Only if
-     * `{@link Stage.Args}.notice` is truthy.
-     *
-     * @category Messagers
-     *
-     * @see {@link AbstractStage['msgArgs']}  Generates default arguments.
-     *
-     * @param variable  Variable to inspect.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-     */
+    /** {@inheritDoc Logger.VarInspect.progress} */
     progress(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
-    /**
-     * Method for printing a log message to the console. Only if
-     * `{@link Stage.Args}.verbose` is truthy.
-     *
-     * Alias for {@link AbstractStage.progressLog}.
-     *
-     * @category Messagers
-     *
-     * @param variable  Variable to inspect.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-     */
+    /** {@inheritDoc Logger.VarInspect.stringify} */
+    stringify(variable: ConstructorParameters<typeof VariableInspector>[0], args?: ConstructorParameters<typeof VariableInspector>[1]): string;
+    /** {@inheritDoc Logger.VarInspect.verbose} */
     verbose(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
 }
 //# sourceMappingURL=Stage_Console.d.ts.map

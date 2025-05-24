@@ -11,14 +11,16 @@
  * @license MIT
  */
 import type { Node } from '@maddimathon/utility-typescript/types';
-import type { Stage } from '../../types/index.js';
+import type { Logger } from '../../types/index.js';
 import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage } from './index.js';
 /**
  * Complete, default configuration for the library.
+ *
+ * @category Config
  */
-export declare function defaultConfig(args: {
+export declare function defaultConfig(args?: {
     pkg: Node.PackageJson;
-} | Stage.Console): {
+} | Logger): {
     readonly title: any;
     readonly clr: "purple";
     readonly compiler: {

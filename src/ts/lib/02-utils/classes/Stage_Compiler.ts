@@ -32,9 +32,7 @@ import {
     ProjectConfig,
 } from '../../01-config/index.js';
 
-import type {
-    Stage_Console,
-} from './Stage_Console.js';
+import type { Stage_Console } from './Stage_Console.js';
 
 
 /**
@@ -112,7 +110,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * @param input   Scss input path.
      * @param output  Scss output path.
      * @param level   Depth level for this message (above the value of 
-     *                {@link Stage.Args['log-base-level']}).
+     *                {@link CLI.Params.log-base-level}).
      */
     public async scss(
         input: string,
@@ -120,14 +118,14 @@ export class Stage_Compiler implements Stage.Compiler {
         level: number,
         sassOpts?: sass.Options<"sync">,
     ): Promise<void> {
-        this.params.debug && this.console.varDump.progress( { 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true } );
+        this.params.debug && this.console.vi.progress( { 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true } );
 
         const compiled = sass.compile( input, {
             ...this.config.compiler.sass,
             ...sassOpts,
         } );
 
-        this.params.debug && this.console.varDump.verbose( { compiled }, level );
+        this.params.debug && this.console.vi.verbose( { compiled }, level );
 
         if ( compiled.css ) {
             this.console.verbose( 'writing css to path: ' + output, level );
@@ -157,7 +155,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @param tsConfig  Path to TS config json used to compile the project.
      * @param level     Depth level for this message (above the value of 
-     *                  {@link Stage.Args['log-base-level']}).
+     *                  {@link CLI.Params.log-base-level}).
      */
     public async typescript(
         tsConfig: string,

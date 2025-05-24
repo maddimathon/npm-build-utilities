@@ -96,8 +96,8 @@ export class BuildStage extends AbstractStage<
     /* RUNNING METHODS
      * ====================================================================== */
 
-    protected async runSubStage( stage: Stage.SubStage.Build ) {
-        await this[ stage ]();
+    protected async runSubStage( subStage: Stage.SubStage.Build ) {
+        await this[ subStage ]();
     }
 
     /**

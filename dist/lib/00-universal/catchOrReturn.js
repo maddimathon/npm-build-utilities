@@ -17,6 +17,8 @@ import { errorHandler } from '../@internal/index.js';
  *
  * Overloaded for better function param typing.
  *
+ * @category Errors
+ *
  * @experimental
  */
 export function catchOrReturn(tryer, level, console, params, callback = null) {

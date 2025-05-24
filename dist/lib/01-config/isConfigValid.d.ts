@@ -16,6 +16,8 @@ import type { Config } from '../../types/index.js';
  * valid {@link Config} object.
  *
  * @category Config
+ *
+ * @internal
  */
 export declare function isConfigValid(test: Config | Partial<Config>): false | Config;
 //# sourceMappingURL=isConfigValid.d.ts.map

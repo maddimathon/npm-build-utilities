@@ -75,7 +75,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
             ? 1
             : ( which === 'start' ? 1 : 0 );
 
-        const msg: Parameters<typeof this.progressLog>[ 0 ] = which === 'start'
+        const msg: Parameters<typeof this.console.progress>[ 0 ] = which === 'start'
             ? [
                 [
                     `RELEASE STARTING`,
@@ -100,7 +100,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                     ]
                 ];
 
-        this.progressLog(
+        this.console.progress(
             msg,
             0,
             {
@@ -110,6 +110,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 linesIn,
                 linesOut,
 
+                // @ts-expect-error
                 joiner: '',
             },
         );
@@ -131,7 +132,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 },
             };
 
-            this.args.dryrun = await this.fns.nc.prompt.bool( {
+            this.args.dryrun = await this.console.nc.prompt.bool( {
                 ...promptArgs,
 
                 message: `Is this a dry run?`,
@@ -142,12 +143,12 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
             const inputVersionMessage = 'What version is being released?';
 
             const inputVersionIndent: string = ' '.repeat(
-                ( depth * this.fns.nc.msg.args.msg.tab.length )
+                ( depth * this.console.nc.msg.args.msg.tab.length )
                 + inputVersionMessage.length
                 + 11
             );
 
-            const inputVersion = ( await this.fns.nc.prompt.input( {
+            const inputVersion = ( await this.console.nc.prompt.input( {
                 ...promptArgs ?? {},
                 message: inputVersionMessage,
 
@@ -157,7 +158,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                         ? true
                         : utils.functions.softWrapText(
                             'The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, another valid version code, or metadata prefixed with `+`.',
-                            Math.max( 20, ( this.fns.nc.msg.args.msg.maxWidth ?? 80 ) - inputVersionIndent.length )
+                            Math.max( 20, ( this.console.nc.msg.args.msg.maxWidth ?? 80 ) - inputVersionIndent.length )
                         ).split( /\n/g ).join( '\n' + inputVersionIndent )
                 ),
             } ) ?? '' ).trim();
@@ -183,7 +184,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
 
                 // returns
                 if (
-                    ! await this.fns.nc.prompt.bool( {
+                    ! await this.console.nc.prompt.bool( {
                         ...promptArgs,
                         message: `Is .releasenotes.md updated?`,
                     } )
@@ -201,7 +202,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
 
     protected async changelog() {
         if ( !this.args.dryrun ) {
-            this.progressLog( 'updating changelog...', 1 );
+            this.console.progress( 'updating changelog...', 1 );
         }
 
         const newEntryRegex = /(\n\s*)<!--CHANGELOG_NEW-->\s*(\n|$)/g;
@@ -215,13 +216,9 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
 
         // returns
         if ( this.args.dryrun ) {
-            this.verboseLog( 'skipping changelog updates during dryrun...', 1 );
+            this.console.verbose( 'skipping changelog updates during dryrun...', 1 );
 
-            this.args.debug && this.fns.nc.varDump( { newChangeLogEntry }, {
-                clr: this.clr,
-                depth: 2 + ( this.args[ 'log-base-level' ] ?? 0 ),
-                maxWidth: null,
-            } );
+            this.args.debug && this.console.vi.progress( { newChangeLogEntry }, 2, { maxWidth: null } );
 
             return;
         }
@@ -249,11 +246,11 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
     }
 
     protected async replace() {
-        this.progressLog( 'replacing placeholders in source...', 1 );
+        this.console.progress( 'replacing placeholders in source...', 1 );
 
         // returns
         if ( this.args.dryrun ) {
-            this.verboseLog( 'skipping replacements during dryrun...', 2 );
+            this.console.verbose( 'skipping replacements during dryrun...', 2 );
             return;
         }
 
@@ -269,7 +266,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
         ];
 
         for ( const globs of replacementGlobs ) {
-            this.args.debug && this.progressLog(
+            this.args.debug && this.console.progress(
                 `replacing in globs: ${ [ globs ].flat().map( s => `'${ s }'` ).join( ' ' ) }`,
                 2,
             );
@@ -287,26 +284,17 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
     }
 
     protected async commit() {
-        this.progressLog( 'commiting any new changes...', 1 );
+        this.console.progress( 'commiting any new changes...', 1 );
 
         const gitCmd = `git add @releases/*.zip dist docs CHANGELOG.md README.md && git commit -a --allow-empty -m "[${ this.datestamp() }] release: ${ this.pkgVersion }"`;
 
         if ( this.args.dryrun ) {
-            this.verboseLog( 'skipping git commit during dryrun...', 2 );
+            this.console.verbose( 'skipping git commit during dryrun...', 2 );
 
-            this.args.debug && this.fns.nc.varDump( { gitCmd }, {
-                clr: this.clr,
-                depth: ( this.args.verbose ? 3 : 2 ) + ( this.args[ 'log-base-level' ] ?? 0 ),
-                maxWidth: null,
-            } );
+            this.args.debug && this.console.vi.progress( { gitCmd }, ( this.args.verbose ? 3 : 2 ), { maxWidth: null } );
 
         } else {
-
-            this.args.debug && this.fns.nc.varDump( { gitCmd }, {
-                clr: this.clr,
-                depth: 2 + ( this.args[ 'log-base-level' ] ?? 0 ),
-                maxWidth: null,
-            } );
+            this.args.debug && this.console.vi.progress( { gitCmd }, 2, { maxWidth: null } );
 
             for ( const _cmd of [
                 gitCmd,
@@ -314,15 +302,15 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
                 `git push --tags || echo ''`,
             ] ) {
                 this.try(
-                    this.fns.nc.cmd,
+                    this.console.nc.cmd,
                     2,
                     [ _cmd ]
                 );
             }
 
-            this.verboseLog( 'pushing to origin...', 2 );
+            this.console.verbose( 'pushing to origin...', 2 );
             this.try(
-                this.fns.nc.cmd,
+                this.console.nc.cmd,
                 2,
                 [ 'git push' ]
             );
@@ -330,63 +318,51 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
     }
 
     protected async github() {
-        this.progressLog( 'publishing to github...', 1 );
+        this.console.progress( 'publishing to github...', 1 );
 
 
-        this.verboseLog( 'updating repo metadata...', 2 );
-        const repoUpdateCmd = `gh repo edit ${ this.fns.nc.cmdArgs( {
+        this.console.verbose( 'updating repo metadata...', 2 );
+        const repoUpdateCmd = `gh repo edit ${ this.console.nc.cmdArgs( {
             description: this.pkg.description,
             homepage: this.pkg.homepage,
         }, false, false ) }`;
 
         if ( this.args.dryrun ) {
-            this.verboseLog( 'skipping repo updates during dryrun...', 3 );
+            this.console.verbose( 'skipping repo updates during dryrun...', 3 );
 
-            this.args.debug && this.fns.nc.varDump( { repoUpdateCmd }, {
-                clr: this.clr,
-                depth: ( this.args.verbose ? 4 : 2 ) + ( this.args[ 'log-base-level' ] ?? 0 ),
-                maxWidth: null,
-            } );
+            this.args.debug && this.console.vi.progress( { repoUpdateCmd }, ( this.args.verbose ? 4 : 2 ), { maxWidth: null } );
 
         } else {
 
             this.try(
-                this.fns.nc.cmd,
+                this.console.nc.cmd,
                 2,
                 [ repoUpdateCmd ]
             );
         }
 
 
-        this.verboseLog( 'creating github release...', 2 );
+        this.console.verbose( 'creating github release...', 2 );
 
         const releaseAttachment = `"${ this.releasePath.replace( /\/*$/g, '' ) + '.zip' }#${ this.pkg.name }@${ this.pkgVersion }"`;
 
-        const releaseCmd = `gh release create ${ this.pkgVersion } ${ releaseAttachment } ${ this.fns.nc.cmdArgs( {
+        const releaseCmd = `gh release create ${ this.pkgVersion } ${ releaseAttachment } ${ this.console.nc.cmdArgs( {
             draft: true,
             'notes-file': '.releasenotes.md',
             title: `${ this.pkgVersion } — ${ this.datestamp() }`,
         }, false, false ) }`;
 
         if ( this.args.dryrun ) {
-            this.verboseLog( 'skipping github release during dryrun...', 3 );
+            this.console.verbose( 'skipping github release during dryrun...', 3 );
 
-            this.args.debug && this.fns.nc.varDump( { releaseCmd }, {
-                clr: this.clr,
-                depth: ( this.args.verbose ? 4 : 2 ) + ( this.args[ 'log-base-level' ] ?? 0 ),
-                maxWidth: null,
-            } );
+            this.args.debug && this.console.vi.progress( { releaseCmd }, ( this.args.verbose ? 4 : 2 ), { maxWidth: null } );
 
         } else {
 
-            this.args.debug && this.fns.nc.varDump( { releaseCmd }, {
-                clr: this.clr,
-                depth: ( this.args.verbose ? 3 : 2 ) + ( this.args[ 'log-base-level' ] ?? 0 ),
-                maxWidth: null,
-            } );
+            this.args.debug && this.console.vi.progress( { releaseCmd }, ( this.args.verbose ? 3 : 2 ), { maxWidth: null } );
 
             this.try(
-                this.fns.nc.cmd,
+                this.console.nc.cmd,
                 2,
                 [ releaseCmd ]
             );
@@ -394,10 +370,10 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
     }
 
     protected async tidy() {
-        this.progressLog( 'tidying up...', 1 );
+        this.console.progress( 'tidying up...', 1 );
 
         if ( !this.args.dryrun ) {
-            this.verboseLog( 'resetting release notes...', 2 );
+            this.console.verbose( 'resetting release notes...', 2 );
             this.fns.fs.writeFile( '.releasenotes.md', [
                 '',
                 '### Breaking',

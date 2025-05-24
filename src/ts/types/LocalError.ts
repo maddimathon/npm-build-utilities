@@ -15,12 +15,20 @@
  * @license MIT
  */
 
-import { CustomError, MessageMaker } from '@maddimathon/utility-typescript/classes';
-import { Stage } from './index.js';
+import {
+    CustomError,
+    MessageMaker,
+} from '@maddimathon/utility-typescript/classes';
+
+import { Logger } from './Logger.js';
 
 
 /**
  * Shape of error classes used in this project.
+ * 
+ * @category Types
+ * 
+ * @since ___PKG_VERSION___
  */
 export interface LocalError<
     Args extends LocalError.Args,
@@ -28,6 +36,8 @@ export interface LocalError<
 
 /**
  * Types used for {@link LocalError} classes.
+ * 
+ * @category Types
  * 
  * @since ___PKG_VERSION___
  */
@@ -52,7 +62,7 @@ export namespace LocalError {
         (
             error: Input,
             level: number,
-            console: Stage.Console,
+            console: Logger,
             args?: Partial<Handler.Args>,
         ): void;
     }

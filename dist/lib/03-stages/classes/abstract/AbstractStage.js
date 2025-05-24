@@ -13,7 +13,10 @@
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import { errorHandler, } from '../../../@internal/index.js';
 import { FileSystem, } from '../../../00-universal/index.js';
-import { Stage_Compiler, Stage_Console, } from '../../../02-utils/index.js';
+// import {
+// } from '../../../02-utils/index.js';
+import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
+import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
 /**
  * Abstract class for a single build stage, along with a variety of utilities
  * for building projects.
@@ -54,7 +57,7 @@ export class AbstractStage {
      */
     config;
     /**
-     * {@inheritDoc Stage.Class.log}
+     * {@inheritDoc Stage.Class.console}
      *
      * @category Utilities
      */
@@ -71,12 +74,6 @@ export class AbstractStage {
      * @category Utilities
      */
     fs;
-    /**
-     * {@inheritDoc Stage.Class.log}
-     *
-     * @category Utilities
-     */
-    log;
     /**
      * {@inheritDoc Stage.Class.name}
      *
@@ -122,8 +119,9 @@ export class AbstractStage {
         this.config = config;
         this.params = params;
         this.args = this.buildArgs(args);
-        this.console = new Stage_Console(this.name, this.clr, this.config, this.params);
-        this.log = this.console;
+        this.console = new Stage_Console(
+        // this.name,
+        this.clr, this.config, this.params);
         this.fs = this.args.objs.fs ?? new FileSystem(this.console, this.config.fs);
         this.cpl = this.args.objs.cpl ?? new Stage_Compiler(this.config, this.params, this.console, this.fs, this.config.compiler);
     }
@@ -134,19 +132,23 @@ export class AbstractStage {
     isSubStageIncluded(subStage, level) {
         this.params.debug && this.console.progress(`isSubStageIncluded( '${subStage}' )`, level, { italic: true });
         // returns
+        if (!(subStage in this) || typeof this[subStage] !== 'function') {
+            return false;
+        }
+        // returns
         if (!this.subStages.includes(subStage)) {
             return false;
         }
-        this.params.debug && this.console.varDump.verbose({ 'this.params.only': this.params.only }, 1 + level, { italic: true });
+        this.params.debug && this.console.vi.verbose({ 'this.params.only': this.params.only }, 1 + level, { italic: true });
         const only = {
             isUndefined: !this.params.only || !this.params.only.length,
         };
         const include = Boolean(only.isUndefined
             || this.params.only == subStage
             || this.params.only.includes(subStage));
-        this.params.debug && this.console.varDump.progress({ include }, 1 + level, { italic: true });
+        this.params.debug && this.console.vi.progress({ include }, 1 + level, { italic: true });
         if (this.params.verbose && !include) {
-            this.console.varDump.progress({
+            this.console.vi.progress({
                 include: {
                     isUndefined: only.isUndefined,
                     'this.params.only == subStage': this.params.only == subStage,
@@ -154,16 +156,16 @@ export class AbstractStage {
                 }
             }, 2 + level, { italic: true });
         }
-        this.params.debug && this.console.varDump.verbose({ 'this.params.without': this.params.without }, 1 + level, { italic: true });
+        this.params.debug && this.console.vi.verbose({ 'this.params.without': this.params.without }, 1 + level, { italic: true });
         const without = {
             isDefined: this.params.without || this.params.without.length,
         };
         const exclude = Boolean(without.isDefined
             && (this.params.without == subStage
                 || this.params.without.includes(subStage)));
-        this.params.debug && this.console.varDump.progress({ exclude }, 1 + level, { italic: true });
+        this.params.debug && this.console.vi.progress({ exclude }, 1 + level, { italic: true });
         if (this.params.verbose && exclude) {
-            this.console.varDump.progress({
+            this.console.vi.progress({
                 exclude: {
                     isDefined: without.isDefined,
                     'this.params.without == subStage': this.params.without == subStage,
@@ -174,9 +176,9 @@ export class AbstractStage {
         const result = Boolean(include
             && !exclude
             && this[subStage]);
-        this.params.debug && this.console.varDump.progress({ 'isSubStageIncluded() return': result }, 1 + level, { italic: true });
+        this.params.debug && this.console.vi.progress({ 'isSubStageIncluded() return': result }, 1 + level, { italic: true });
         if (this.params.verbose && !result) {
-            this.console.varDump.progress({
+            this.console.vi.progress({
                 include: {
                     include,
                     exclude,
@@ -348,11 +350,13 @@ export class AbstractStage {
     async run() {
         /* start */
         await this.startEndNotice('start');
-        this.params.debug && this.console.varDump.progress({ subStages: this.subStages }, 1);
+        this.params.debug && this.console.vi.progress({ subStages: this.subStages }, 1);
         /* loop through the steps in order */
         for (const method of this.subStages) {
             this.params.debug && this.console.verbose(`testing method: ${method}`, 1, { italic: true });
-            if (this.isSubStageIncluded(method, ((this.params.debug && this.params.verbose) ? 2 : 1))) {
+            if ((method in this)
+                && typeof this[method] === 'function'
+                && this.isSubStageIncluded(method, ((this.params.debug && this.params.verbose) ? 2 : 1))) {
                 await this.runSubStage(method);
             }
         }
@@ -378,12 +382,14 @@ export class AbstractStage {
             only: this.params[onlyKey],
             without: this.params[withoutKey],
         };
-        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, new Stage_Console(stage, this.clr, this.config, subParams), this.params) ?? [];
+        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, new Stage_Console(
+        // stage,
+        this.clr, this.config, subParams), this.params) ?? [];
         // returns
         if (!stageClass) {
             return;
         }
-        this.params.debug && this.console.varDump.verbose({ subParams }, level);
+        this.params.debug && this.console.vi.verbose({ subParams }, level);
         return (new stageClass(this.config, subParams, { ...this.args, ...stageArgs })).run();
     }
 }

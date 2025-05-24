@@ -74,7 +74,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
      * ====================================================================== */
 
     protected async replace() {
-        this.progressLog( 'replacing placeholders...', 1 );
+        this.console.progress( 'replacing placeholders...', 1 );
 
         for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
             this.replaceInFiles(
@@ -89,7 +89,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
     }
 
     protected async ts() {
-        this.progressLog( 'documenting typescript...', 1 );
+        this.console.progress( 'documenting typescript...', 1 );
 
         /** URL to documentation, without trailing slash. */
         const homepage = this.pkg.homepage.replace( /\/+$/gi, '' );
@@ -100,7 +100,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
         // TODO - generate entryPoints from pkg.main and pkg.exports
         const config: Partial<typeDoc.TypeDocOptions> = {
 
-            // alwaysCreateEntryPointModule: true,
+            alwaysCreateEntryPointModule: true,
 
             basePath: 'src/ts',
 
@@ -110,6 +110,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                 '@homepage',
                 '@package',
                 '@source',
+                '@todo',
             ],
 
             categorizeByGroup: true,
@@ -122,7 +123,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                 // 'Modules',
                 // 'Entry Points',
                 'Other',
-                'Misc.',
+                'Internal',
             ],
 
             customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com" target="_blank">Maddi Mathon</a>, 2025. <a href="${ homepage }/MIT_License.html">MIT license</a>.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`,
@@ -135,6 +136,8 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
 
             entryPoints: [
                 'src/ts/index.ts',
+                'src/ts/lib/@internal.ts',
+                'src/ts/bin/lib/index.ts',
             ],
 
             // entryPointStrategy: 'expand',
@@ -159,7 +162,9 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                     'node.NodeFiles.Args': 'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
 
                     'MessageMaker': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker.html',
+                    'MessageMaker.BulkMsgs': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgs.html',
                     'MessageMaker.Colour': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/Colour.html',
+                    'MessageMaker.MsgArgs': 'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/MsgArgs.html',
                     'VariableInspector': 'https://maddimathon.github.io/utility-typescript/classes/VariableInspector.html',
 
                     'Node': 'https://maddimathon.github.io/utility-typescript/Types/Node.html',
@@ -169,6 +174,8 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                     'Objects': 'https://maddimathon.github.io/utility-typescript/Types/Objects.html',
                     'Classify': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
                     'Objects.Classify': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
+                    'Logger': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Logger.html',
+                    'Objects.Logger': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Logger.html',
                     'RecursivePartial': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
                     'Objects.RecursivePartial': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
                     'RecursiveRequired': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
@@ -271,7 +278,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
             searchInDocuments: true,
 
             sourceLinkExternal: true,
-            sourceLinkTemplate: `${ repository }/blob/main/${ this.args.packaging ? encodeURI( this.pkg.version.replace( /-draft(\+|$)/gi, '$1' ) ) + '/' : '' }{path}#L{line}`,
+            sourceLinkTemplate: `${ repository }/blob/main/${ this.args.packaging ? encodeURI( this.pkg.version.replace( /-draft(\-|\+|$)/gi, '$1' ) ) + '/' : '' }{path}#L{line}`,
 
             sort: [
                 'documents-first',
@@ -287,17 +294,18 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
             useFirstParagraphOfCommentAsSummary: true,
 
             visibilityFilters: {
-                '@alpha': false,
+                '@alpha': !this.args.releasing || !!this.args.dryrun,
                 '@beta': true,
                 external: true,
                 inherited: true,
-                private: false,
+                private: !this.args.releasing || !!this.args.dryrun,
                 protected: true,
             },
         };
 
+
         if ( config.out ) {
-            this.verboseLog( 'deleting existing files...', 2 );
+            this.console.verbose( 'deleting existing files...', 2 );
 
             const outDir = config.out.replace( /\/+$/gi, '' );
 
@@ -309,16 +317,13 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
 
         if ( config.json ) {
             if ( !config.out ) {
-                this.verboseLog( 'deleting existing files...', 2 );
+                this.console.verbose( 'deleting existing files...', 2 );
             }
             this.fns.fs.deleteFiles( [ config.json ] );
         }
 
-        this.verboseLog( 'running typedoc...', 2 );
-        this.args.debug && this.fns.nc.varDump( { 'TypeDoc config': config }, {
-            clr: this.clr,
-            depth: ( this.args.verbose ? 3 : 2 ) + ( this.args[ 'log-base-level' ] ?? 0 ),
-        } );
+        this.console.verbose( 'running typedoc...', 2 );
+        this.args.debug && this.console.vi.progress( { 'TypeDoc config': config }, ( this.args.verbose ? 3 : 2 ) );
         const app: typeDoc.Application = await typeDoc.Application.bootstrapWithPlugins( config );
 
         // May be undefined if errors are encountered.
@@ -326,7 +331,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
 
         // returns
         if ( !project ) {
-            this.verboseLog( 'typedoc failed', 3 );
+            this.console.verbose( 'typedoc failed', 3 );
             return;
         }
 

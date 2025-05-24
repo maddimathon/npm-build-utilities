@@ -24,7 +24,7 @@ export declare class PackageStage extends AbstractStage<Stage.SubStage.Package, 
      * @param which  Whether we are starting or ending.
      */
     startEndNotice(which: "start" | "end" | null): void;
-    protected runSubStage(stage: Stage.SubStage.Package): Promise<void>;
+    protected runSubStage(subStage: Stage.SubStage.Package): Promise<void>;
     /**
      * Runs the project's build class.
      */

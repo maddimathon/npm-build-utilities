@@ -59,7 +59,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @param input   Scss input path.
      * @param output  Scss output path.
      * @param level   Depth level for this message (above the value of
-     *                {@link Stage.Args['log-base-level']}).
+     *                {@link CLI.Params.log-base-level}).
      */
     scss(input: string, output: string, level: number, sassOpts?: sass.Options<"sync">): Promise<void>;
     /**
@@ -68,7 +68,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @param tsConfig  Path to TS config json used to compile the project.
      * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
+     *                  {@link CLI.Params.log-base-level}).
      */
     typescript(tsConfig: string, level: number): Promise<void>;
 }

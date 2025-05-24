@@ -58,8 +58,8 @@ export class ReleaseStage extends AbstractStage {
     }
     /* RUNNING METHODS
      * ====================================================================== */
-    async runSubStage(stage) {
-        await this[stage]();
+    async runSubStage(subStage) {
+        await this[subStage]();
     }
     async changelog() {
         this.console.progress('(NOT IMPLEMENTED) running changelog sub-stage...', 1);

@@ -60,7 +60,7 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
             || this.args.watchedFilename
             || this.args.watchedEvent
         ) ) {
-            this.progressLog( `${ emoji } [watch-change-${ which }] file ${ this.args.watchedEvent }: ${ this.args.watchedFilename }`, 0 );
+            this.console.progress( `${ emoji } [watch-change-${ which }] file ${ this.args.watchedEvent }: ${ this.args.watchedFilename }`, 0 );
         } else {
 
             this.startEndNoticeLog(
@@ -78,11 +78,11 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
      * ====================================================================== */
 
     protected async css() {
-        this.progressLog( '(NOT IMPLEMENTED) compiling scss...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) compiling scss...', 1 );
     }
 
     protected async files() {
-        this.progressLog( 'copying misc. files...', 1 );
+        this.console.progress( 'copying misc. files...', 1 );
 
         const srcPaths: string[] = [
         ];
@@ -95,7 +95,7 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
     }
 
     protected async js() {
-        this.progressLog( 'compiling typescript files...', 1 );
+        this.console.progress( 'compiling typescript files...', 1 );
 
         const typescriptFiles = [
             'src/ts/tsconfig.json',
@@ -107,7 +107,7 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
 
         // if ( !this.args.watchedEvent ) {
 
-        //     this.verboseLog( 'deleting type-only javascript files...', 2 );
+        //     this.console.verbose( 'deleting type-only javascript files...', 2 );
         //     this.fns.fs.deleteFiles( this.glob( [
         //         'dist/types/**/*.js',
         //         'dist/types/**/*.js.map',

@@ -10,28 +10,7 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-import { node, } from '@maddimathon/utility-typescript/classes';
-class _DummyConsole_VarDump {
-    nc;
-    constructor(nc) {
-        this.nc = nc ?? new node.NodeConsole();
-    }
-    log(variable, level, msgArgs = {}, timeArgs = {}) {
-        this.nc.timestampVarDump(variable, {
-            ...msgArgs,
-            depth: level,
-        }, timeArgs);
-    }
-    notice(variable, level, msgArgs, timeArgs) {
-        this.log(variable, level, msgArgs, timeArgs);
-    }
-    progress(variable, level, msgArgs, timeArgs) {
-        this.log(variable, level, msgArgs, timeArgs);
-    }
-    verbose(variable, level, msgArgs, timeArgs) {
-        this.log(variable, level, msgArgs, timeArgs);
-    }
-}
+import { node, VariableInspector, } from '@maddimathon/utility-typescript/classes';
 /**
  * A basic console class used as a back-up before {@link Stage_Console} is
  * defined.
@@ -40,9 +19,17 @@ class _DummyConsole_VarDump {
  */
 export class DummyConsole {
     nc;
-    varDump = new _DummyConsole_VarDump();
-    constructor(nc) {
-        this.nc = nc ?? new node.NodeConsole();
+    params;
+    vi = new _DummyConsole_VarDump();
+    constructor(nc = new node.NodeConsole(), params = {}) {
+        this.nc = nc;
+        this.params = params;
+    }
+    debug(msg, level, msgArgs, timeArgs) {
+        if (!this.params.debug && typeof this.params.debug !== 'undefined') {
+            return;
+        }
+        this.log(msg, level, msgArgs, timeArgs);
     }
     error(msg, level, msgArgs = {}, timeArgs = {}) {
         this.nc.timestampLog(msg, {
@@ -57,13 +44,57 @@ export class DummyConsole {
         }, timeArgs);
     }
     notice(msg, level, msgArgs, timeArgs) {
+        if (!this.params.notice && typeof this.params.notice !== 'undefined') {
+            return;
+        }
         this.log(msg, level, msgArgs, timeArgs);
     }
     progress(msg, level, msgArgs, timeArgs) {
+        if (!this.params.progress && typeof this.params.progress !== 'undefined') {
+            return;
+        }
+        this.log(msg, level, msgArgs, timeArgs);
+    }
+    /**
+     * Doesn't currently actually warn.
+     *
+     * @todo
+     */
+    warn(msg, level, msgArgs, timeArgs) {
         this.log(msg, level, msgArgs, timeArgs);
     }
     verbose(msg, level, msgArgs, timeArgs) {
+        if (!this.params.verbose && typeof this.params.verbose !== 'undefined') {
+            return;
+        }
         this.log(msg, level, msgArgs, timeArgs);
+    }
+}
+class _DummyConsole_VarDump {
+    nc;
+    params;
+    // public readonly nc: node.NodeConsole;
+    constructor(nc = new node.NodeConsole(), params = {}) {
+        this.nc = nc;
+        this.params = params;
+    }
+    log(variable, level, msgArgs = {}, timeArgs = {}) {
+        this.nc.timestampLog(this.stringify(variable), {
+            ...msgArgs,
+            depth: level,
+        }, timeArgs);
+    }
+    notice(variable, level, msgArgs, timeArgs) {
+        this.log(variable, level, msgArgs, timeArgs);
+    }
+    progress(variable, level, msgArgs, timeArgs) {
+        this.log(variable, level, msgArgs, timeArgs);
+    }
+    stringify(variable, args) {
+        return VariableInspector.stringify(variable, args);
+    }
+    verbose(variable, level, msgArgs, timeArgs) {
+        this.log(variable, level, msgArgs, timeArgs);
     }
 }
 //# sourceMappingURL=DummyConsole.js.map

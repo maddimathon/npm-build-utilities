@@ -59,6 +59,8 @@ export class ProjectConfig {
     /**
      * Gets the instance for the given stage.
      *
+     * @category Fetchers
+     *
      * @param stage  Stage to get.
      *
      * @return  An array with first the stage’s class and then the configured

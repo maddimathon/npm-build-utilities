@@ -14,6 +14,7 @@
 import type {
     CLI,
     Config,
+    Logger,
     Stage,
 } from '../../../types/index.js';
 
@@ -24,10 +25,14 @@ import {
     ProjectConfig,
 } from '../../01-config/index.js';
 
+// import {
+// } from '../../02-utils/index.js';
+
+import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
+
 import {
-    Stage_Console,
-} from '../../02-utils/index.js';
-import { defaultConfig } from '../../03-stages/defaultConfig.js';
+    defaultConfig,
+} from '../../03-stages/defaultConfig.js';
 
 /**
  * Manages and runs a single project (typically used by the cli).
@@ -55,14 +60,14 @@ export class Project {
         const config = opts.config ?? new ProjectConfig( defaultConfig( new DummyConsole() ) );
 
         return new Stage_Console(
-            opts.name ?? 'Package',
+            // opts.name ?? 'Package',
             config.clr,
             config,
             params,
-            {
-                clr: config.clr ?? 'purple',
-                ...config.console,
-            },
+            // {
+            //     clr: config.clr ?? 'purple',
+            //     ...config.console,
+            // },
         );
     }
 
@@ -106,7 +111,7 @@ export class Project {
      * Displays some debugging information.
      */
     protected async debug<S extends Stage.Name>(
-        console: Stage.Console,
+        console: Logger,
         stageClass: null | Stage.ClassType.All[ S ],
         stageArgs: null | Partial<Stage.Args.All[ S ]>,
         stageInstance: null | Stage.Class.All[ S ],
@@ -115,9 +120,9 @@ export class Project {
 
         console.progress( '[Project] Debugging some info...', level );
 
-        stageClass && console.varDump.progress( { stageClass }, 1 + level );
-        stageArgs && console.varDump.progress( { stageArgs }, 1 + level );
-        stageInstance && console.varDump.progress( {
+        stageClass && console.vi.progress( { stageClass }, 1 + level );
+        stageArgs && console.vi.progress( { stageArgs }, 1 + level );
+        stageInstance && console.vi.progress( {
             stageInstance: {
                 // config: stageInstance.config,
                 params: stageInstance.params,

@@ -70,7 +70,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
 
         if ( which === 'start' ) {
 
-            this.progressLog(
+            this.console.progress(
                 [
                     [
                         'PACKAGING:',
@@ -89,6 +89,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
                     linesIn: 3,
                     linesOut: 1,
 
+                    // @ts-expect-error
                     joiner: '',
                 },
             );
@@ -107,7 +108,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
 
             const depth = this.args[ 'log-base-level' ] ?? 0;
 
-            const promptArgs: Omit<Parameters<typeof this.fns.nc.prompt.bool>[ 0 ], "message"> = {
+            const promptArgs: Omit<Parameters<typeof this.console.nc.prompt.bool>[ 0 ], "message"> = {
 
                 default: false,
 
@@ -122,7 +123,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
                 },
             };
 
-            this.args.dryrun = await this.fns.nc.prompt.bool( {
+            this.args.dryrun = await this.console.nc.prompt.bool( {
                 ...promptArgs,
                 message: `Is this a dry run?`,
                 default: !!this.args.dryrun,
@@ -172,10 +173,10 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
      * Copies files into @releases/ subdirectory.
      */
     public async copy(): Promise<void> {
-        this.progressLog( 'copying files to package directory...', 1 );
+        this.console.progress( 'copying files to package directory...', 1 );
 
 
-        this.verboseLog( 'copying files to package...', 2 );
+        this.console.verbose( 'copying files to package...', 2 );
         this._copyToPkg(
             [
                 ...this.pkg.files,
@@ -201,7 +202,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
         );
 
 
-        this.verboseLog( 'replacing placeholders in package...', 3 );
+        this.console.verbose( 'replacing placeholders in package...', 3 );
         for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
             this.replaceInFiles(
                 [
@@ -225,7 +226,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
     ) {
 
         if ( NodeFS.existsSync( this.fns.fs.pathResolve( outDir, '../' ) ) ) {
-            this.verboseLog( 'deleting current contents...', 3 );
+            this.console.verbose( 'deleting current contents...', 3 );
 
             try {
                 this.fns.fs.deleteFiles( [ outDir ] );
@@ -235,7 +236,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
         }
 
 
-        this.verboseLog( 'copying files...', 3 );
+        this.console.verbose( 'copying files...', 3 );
         this.copyFiles(
             sourceGlobs,
             outDir,
@@ -257,16 +258,16 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
         // returns
         if ( this.args.dryrun ) { return; }
 
-        this.progressLog( 'zipping release packages...', 1 );
+        this.console.progress( 'zipping release packages...', 1 );
 
         const zipPath: string = this.releasePath.replace( /\/*$/g, '' ) + '.zip';
 
         if ( !this.args.packaging ) {
-            this.verboseLog( 'skipping the real zipping...', 2 );
+            this.console.verbose( 'skipping the real zipping...', 2 );
             return;
         }
 
-        this.verboseLog( 'zipping package...', 2 );
+        this.console.verbose( 'zipping package...', 2 );
         this._zip(
             this.releasePath,
             zipPath,
@@ -336,7 +337,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
          */
         const zipCMD: string = `cd "${ this.fns.fs.pathRelative( zippingPWD ) }" && zip "${ zipPath.replace( zippingPWD_regex, '' ) }" '${ files.join( "' '" ) }'`;
         this.try(
-            this.fns.nc.cmd,
+            this.console.nc.cmd,
             level,
             [ zipCMD ],
         );

@@ -20,6 +20,8 @@ import { FileSystem, } from './classes/index.js';
  *
  * @throws ProjectError  If no {@link FileSystem} instance was passed or there
  *                       was not enough information to construct one.
+ *
+ * @internal
  */
 export function getPackageJson(args) {
     let fs;

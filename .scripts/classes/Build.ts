@@ -76,7 +76,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
             || this.args.watchedFilename
             || this.args.watchedEvent
         ) {
-            this.progressLog( `${ emoji } [watch-change-${ which }] file ${ this.args.watchedEvent }: ${ this.args.watchedFilename }`, 0 );
+            this.console.progress( `${ emoji } [watch-change-${ which }] file ${ this.args.watchedEvent }: ${ this.args.watchedFilename }`, 0 );
         } else {
 
             this.startEndNoticeLog(
@@ -122,22 +122,22 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
     }
 
     protected async minimize() {
-        this.progressLog( 'minifying files...', 1 );
+        this.console.progress( 'minifying files...', 1 );
 
-        this.verboseLog( '(NOT IMPLEMENTED) minifying javascript...', 2 );
+        this.console.verbose( '(NOT IMPLEMENTED) minifying javascript...', 2 );
 
-        this.verboseLog( '(NOT IMPLEMENTED) minifying css...', 2 );
+        this.console.verbose( '(NOT IMPLEMENTED) minifying css...', 2 );
     }
 
     protected async prettify() {
-        this.progressLog( '(NOT IMPLEMENTED) prettifying files...', 1 );
+        this.console.progress( '(NOT IMPLEMENTED) prettifying files...', 1 );
     }
 
     protected async replace() {
-        this.progressLog( 'replacing placeholders...', 1 );
+        this.console.progress( 'replacing placeholders...', 1 );
 
 
-        this.verboseLog( 'replacing in dist...', 2 );
+        this.console.verbose( 'replacing in dist...', 2 );
         for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
             this.replaceInFiles(
                 [
@@ -150,7 +150,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
         }
 
 
-        this.verboseLog( 'replacing in README...', 2 );
+        this.console.verbose( 'replacing in README...', 2 );
 
         const headerRegex = /(<!--README_HEADER-->).*?(<!--\/README_HEADER-->)/gs;
 

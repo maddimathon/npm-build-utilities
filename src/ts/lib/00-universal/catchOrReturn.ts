@@ -13,7 +13,7 @@
 
 import type {
     LocalError,
-    Stage,
+    Logger,
 } from '../../types/index.js';
 
 import { errorHandler } from '../@internal/index.js';
@@ -31,7 +31,7 @@ export function catchOrReturn<
 >(
     tryer: ( ...params: Params ) => Return,
     level: number,
-    console: Stage.Console,
+    console: Logger,
     params?: Params,
     callback?: (
         | null
@@ -46,7 +46,7 @@ export function catchOrReturn<
 >(
     tryer: ( ...params: Params ) => Return,
     level: number,
-    console: Stage.Console,
+    console: Logger,
     params: Params,
     callback?: (
         | null
@@ -61,6 +61,8 @@ export function catchOrReturn<
  * 
  * Overloaded for better function param typing.
  * 
+ * @category Errors
+ * 
  * @experimental
  */
 export function catchOrReturn<
@@ -69,7 +71,7 @@ export function catchOrReturn<
 >(
     tryer: ( ...params: Params ) => Return,
     level: number,
-    console: Stage.Console,
+    console: Logger,
     params?: Params,
     callback: (
         | null

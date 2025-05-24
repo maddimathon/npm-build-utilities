@@ -15,15 +15,17 @@ import type { Json, Node } from '@maddimathon/utility-typescript/types';
 
 import type {
     Config,
-    Stage,
+    Logger,
 } from '../../types/index.js';
 
-// import {
-// } from '../@internal/index.js';
+import {
+    DummyConsole,
+} from '../@internal/index.js';
+
+import { getPackageJson } from '../00-universal/getPackageJson.js';
 
 import {
     catchOrReturn,
-    getPackageJson,
 
     FileSystem,
 } from '../00-universal/index.js';
@@ -36,20 +38,23 @@ import {
     SnapshotStage,
 } from './index.js';
 
+const _dummyConsole = new DummyConsole();
 
 /**
  * Complete, default configuration for the library.
+ * 
+ * @category Config
  */
 export function defaultConfig(
-    args: { pkg: Node.PackageJson; } | Stage.Console,
+    args?: { pkg: Node.PackageJson; } | Logger,
 ) {
-    const pkg = 'pkg' in args
+    const pkg = ( args && ( 'pkg' in args ) )
         ? args.pkg
         : catchOrReturn(
             getPackageJson,
             0,
-            args,
-            [ new FileSystem( args ) ],
+            args ?? _dummyConsole,
+            [ new FileSystem( args ?? _dummyConsole ) ],
         );
 
     const stages = {

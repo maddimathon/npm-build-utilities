@@ -15,8 +15,10 @@ import type { Objects } from '@maddimathon/utility-typescript/types';
 
 import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
 
+import type { FileSystem } from '../lib/index.js';
+
+import { Logger } from './Logger.js';
 import * as Stage from './Stage.js';
-import { FileSystem } from '../lib/index.js';
 
 
 
@@ -45,9 +47,9 @@ export interface Config {
     compiler?: Partial<Stage.Compiler.Args>;
 
     /**
-     * Optional arguements to use when constructing {@link Stage.Console}.
+     * Optional arguements to use when constructing {@link Logger}.
      */
-    console?: Partial<Stage.Console.Args>;
+    console?: Partial<Logger.Args>;
 
     /**
      * Optional arguements to use when constructing {@link FileSystem}.
@@ -148,8 +150,6 @@ export namespace Config {
      * Paths to files or directories.
      * 
      * Absolute *or* relative to node’s cwd.
-     * 
-     * @expand
      */
     export interface Paths {
 
@@ -251,7 +251,6 @@ export namespace Config {
      * an abstract is included in this package (test, document).
      *
      * @internal
-     * @expand
      */
     export type StageOptsAbstract<
         Stage extends Stage.Name,

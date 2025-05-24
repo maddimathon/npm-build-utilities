@@ -36,7 +36,7 @@ export declare class CompileStage extends AbstractStage<Stage.SubStage.Compile, 
      * @param which  Whether we are starting or ending.
      */
     startEndNotice(which: "start" | "end" | null): void;
-    protected runSubStage(stage: Stage.SubStage.Compile): Promise<void>;
+    protected runSubStage(subStage: Stage.SubStage.Compile): Promise<void>;
     protected scss(): Promise<void[] | undefined>;
     protected ts(): Promise<void[] | undefined>;
     protected files(): Promise<void>;

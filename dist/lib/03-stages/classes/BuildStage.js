@@ -58,8 +58,8 @@ export class BuildStage extends AbstractStage {
     }
     /* RUNNING METHODS
      * ====================================================================== */
-    async runSubStage(stage) {
-        await this[stage]();
+    async runSubStage(subStage) {
+        await this[subStage]();
     }
     /**
      * Runs the project's compile class.

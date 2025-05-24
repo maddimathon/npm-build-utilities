@@ -18,6 +18,7 @@ import { typeOf } from '@maddimathon/utility-typescript/functions/typeOf';
 import type {
     CLI,
     Config,
+    Logger,
     Stage,
 } from '../../../types/index.js';
 
@@ -83,6 +84,8 @@ export class ProjectConfig implements Config.Class {
 
     /**
      * Gets the instance for the given stage.
+     * 
+     * @category Fetchers
      *
      * @param stage  Stage to get.
      *
@@ -91,7 +94,7 @@ export class ProjectConfig implements Config.Class {
      */
     public async getStage(
         stage: Stage.Name,
-        console: Stage.Console,
+        console: Logger,
         params: CLI.Params,
     ): Promise<undefined | [ Stage.ClassType, Partial<Stage.Args> ]> {
 

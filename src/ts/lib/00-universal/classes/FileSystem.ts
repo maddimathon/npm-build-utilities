@@ -14,12 +14,12 @@
 import { node } from '@maddimathon/utility-typescript/classes';
 
 import type {
-    Stage,
+    Logger,
 } from '../../../types/index.js';
 
 import {
-    FileSystemType,
-} from '../../@internal/index.js';
+    type FileSystemType,
+} from '../../@internal.js';
 
 /**
  * Extends the {@link node.NodeFiles} class with some custom logic useful to this package.
@@ -67,7 +67,7 @@ export class FileSystem extends node.NodeFiles {
      * @param args  
      */
     public constructor (
-        public readonly console: Stage.Console,
+        public readonly console: Logger,
         args: Partial<FileSystem.Args> = {},
     ) {
         super( args, {

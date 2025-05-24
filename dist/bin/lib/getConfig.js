@@ -10,118 +10,10 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import { VariableInspector, } from '@maddimathon/utility-typescript/classes';
-import { defaultConfig, getPackageJson, isConfigValid, FileSystem, Project, ProjectConfig, } from '../../lib/index.js';
-function _internalConfig(console, _config) {
-    const def = defaultConfig(console);
-    const config = {
-        ...def,
-        ..._config,
-        paths: {
-            ...def.paths,
-            ..._config.paths,
-        },
-        stages: {
-            ...def.stages,
-            ..._config.stages,
-        },
-        compiler: {
-            ...def.compiler,
-            ..._config.compiler ?? {},
-            tsConfig: mergeArgs(def.compiler.tsConfig, _config.compiler?.tsConfig ?? {}, true),
-        },
-    };
-    const stages = def.stages;
-    if (config.stages) {
-        for (const _stage in config.stages) {
-            const stage = _stage;
-            const stageConfig = config.stages[stage];
-            // continues
-            if (typeof stageConfig === 'undefined') {
-                continue;
-            }
-            let stageClass = def.stages[stage] || undefined;
-            let stageArgs = undefined;
-            // continues
-            if (typeof stageConfig === 'undefined') {
-                continue;
-            }
-            // continues
-            if (Array.isArray(stageConfig)) {
-                const [tmp_0, tmp_1] = stageConfig;
-                if (tmp_0 && typeof tmp_0 === 'function') {
-                    stageClass = tmp_0;
-                }
-                if (tmp_1 && typeof tmp_1 === 'object') {
-                    stageArgs = tmp_1;
-                }
-                if (stageClass) {
-                    stages[stage] = [stageClass, stageArgs];
-                }
-                continue;
-            }
-            // continues
-            switch (typeof stageConfig) {
-                case 'boolean':
-                    if (!stageConfig) {
-                        stages[stage] = false;
-                    }
-                    continue;
-                    break;
-                case 'object':
-                    // is an args object
-                    if (stageClass) {
-                        stages[stage] = [stageClass, stageConfig];
-                    }
-                    continue;
-                    break;
-                default:
-                    stages[stage] = stageConfig;
-                    continue;
-                    break;
-            }
-        }
-    }
-    const paths = {
-        ...config.paths,
-        dist: typeof config.paths.dist === 'function'
-            ? {
-                _: config.paths.dist(),
-                docs: config.paths.dist('docs'),
-                scss: config.paths.dist('scss'),
-                ts: config.paths.dist('ts'),
-            }
-            : (typeof config.paths.dist === 'object'
-                ? {
-                    _: 'dist',
-                    docs: 'docs',
-                    scss: 'dist/scss',
-                    ts: 'dist/js',
-                    ...config.paths.dist,
-                }
-                : config.paths.dist),
-        src: typeof config.paths.src === 'function'
-            ? {
-                _: config.paths.src(),
-                docs: config.paths.src('docs'),
-                scss: config.paths.src('scss'),
-                ts: config.paths.src('ts'),
-            }
-            : {
-                _: 'src',
-                docs: 'src/docs',
-                scss: 'src/scss',
-                ts: 'src/ts',
-                ...config.paths.src,
-            },
-    };
-    return {
-        ...config,
-        paths,
-        stages,
-    };
-}
+import { getPackageJson } from '../../lib/00-universal/getPackageJson.js';
+import { FileSystem, Project, ProjectConfig, } from '../../lib/index.js';
+import { isConfigValid, internalConfig, } from '../../lib/@internal.js';
 /**
  * Gets the configuration object for the current node package.
  *
@@ -132,10 +24,10 @@ function _internalConfig(console, _config) {
  * @since 0.1.0-draft
  *
  * @param params   Input CLI params to convert.
- * @param console  And instance of the console class to use for outputting messages.
+ * @param console  Optional. And instance of the console class to use for outputting messages.
  * @param level    Optional. Depth level for this message (above the value of {@link CLI.Params.log-base-level}).
  */
-export async function getConfig(params, console, level = 0) {
+export async function getConfig(params, console = null, level = 0) {
     if (!console) {
         console = await Project.getConsole({
             name: 'getConfig',
@@ -175,7 +67,7 @@ export async function getConfig(params, console, level = 0) {
             continue;
         }
         const content = (await import(path)).default;
-        params.debug && console.varDump.progress({ content }, 2 + level);
+        params.debug && console.vi.progress({ content }, 2 + level);
         if (content && typeof content === 'object') {
             config = content;
             params.debug && console.progress('content approved for config', 2 + level);
@@ -188,9 +80,9 @@ export async function getConfig(params, console, level = 0) {
     const validConfig = isConfigValid(config !== null && config !== void 0 ? config : {});
     // returns
     if (validConfig) {
-        params.debug && console.varDump.progress({ 'valid config': config }, 1 + level);
-        const configInstance = new ProjectConfig(_internalConfig(console, validConfig));
-        params.debug && console.varDump.progress({ return: configInstance }, level);
+        params.debug && console.vi.progress({ 'valid config': config }, 1 + level);
+        const configInstance = new ProjectConfig(internalConfig(validConfig, console));
+        params.debug && console.vi.progress({ return: configInstance }, level);
         return configInstance;
     }
     // adds config from package.json as backup defaults
@@ -198,7 +90,7 @@ export async function getConfig(params, console, level = 0) {
         ...pkg.config,
         ...config,
     };
-    params.debug && console.varDump.progress({ 'partial config': config }, 1 + level);
+    params.debug && console.vi.progress({ 'partial config': config }, 1 + level);
     /**
      * What to do since no valid config was found.
      */
@@ -250,7 +142,7 @@ export async function getConfig(params, console, level = 0) {
         msgArgs,
     })) {
         msgArgs.linesIn = 1;
-        const defaultConfig = _internalConfig(console, newConfig);
+        const defaultConfig = internalConfig(newConfig, console);
         newCompleteConfig = {
             ...defaultConfig,
             paths: {
@@ -277,9 +169,9 @@ export async function getConfig(params, console, level = 0) {
             },
         };
     }
-    const builtConfig = _internalConfig(console, newCompleteConfig ?? newConfig);
+    const builtConfig = internalConfig(newCompleteConfig ?? newConfig, console);
     const configInstance = new ProjectConfig(builtConfig);
-    params.debug && console.varDump.progress({ return: configInstance }, level);
+    params.debug && console.vi.progress({ return: configInstance }, level);
     // returns
     if (noConfigPrompt !== 'create-new') {
         return configInstance;
@@ -313,7 +205,7 @@ export async function getConfig(params, console, level = 0) {
         ``,
         `export default config;`,
     ].join('\n');
-    params.debug && console.varDump.progress({ configFileContent }, level);
+    params.debug && console.vi.progress({ configFileContent }, level);
     fs.writeFile(configPath, configFileContent, { force });
     return configInstance;
 }

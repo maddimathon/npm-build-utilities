@@ -1,0 +1,42 @@
+/**
+ * Utilities typically only used internally, but occasionally useful for users,
+ * so they are made available here.
+ * 
+ * @module internal
+ * 
+ * @since ___PKG_VERSION___
+ * 
+ * @example
+ * ```ts
+ * import { internal } from '@maddimathon/npm-build-utilities';
+ * import { ... } from '@maddimathon/npm-build-utilities/internal';
+ * ```
+ * 
+ * @packageDocumentation
+ * @internal
+ */
+/**
+ * @package @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ */
+/*!
+ * @maddimathon/npm-build-utilities@___CURRENT_VERSION___
+ * @license MIT
+ */
+
+export type * from '../types/FileSystemType.js';
+
+export * from './@internal/classes/abstract/AbstractError.js';
+
+export * from './@internal/classes/UnknownCaughtError.js';
+export * from './@internal/classes/ProjectError.js';
+
+export * from './@internal/errorHandler.js';
+
+export * from './00-universal/getPackageJson.js';
+
+export * from './01-config/isConfigValid.js';
+
+export * from './02-utils/classes/Stage_Compiler.js';
+export * from './02-utils/classes/Stage_Console.js';
+
+export * from './03-stages/internalConfig.js';

@@ -10,17 +10,20 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-// import {
-// } from '../@internal/index.js';
-import { catchOrReturn, getPackageJson, FileSystem, } from '../00-universal/index.js';
+import { DummyConsole, } from '../@internal/index.js';
+import { getPackageJson } from '../00-universal/getPackageJson.js';
+import { catchOrReturn, FileSystem, } from '../00-universal/index.js';
 import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage, } from './index.js';
+const _dummyConsole = new DummyConsole();
 /**
  * Complete, default configuration for the library.
+ *
+ * @category Config
  */
 export function defaultConfig(args) {
-    const pkg = 'pkg' in args
+    const pkg = (args && ('pkg' in args))
         ? args.pkg
-        : catchOrReturn(getPackageJson, 0, args, [new FileSystem(args)]);
+        : catchOrReturn(getPackageJson, 0, args ?? _dummyConsole, [new FileSystem(args ?? _dummyConsole)]);
     const stages = {
         compile: CompileStage,
         build: BuildStage,

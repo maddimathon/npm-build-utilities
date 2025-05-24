@@ -33,7 +33,9 @@ import {
 import { getConfig } from './lib/index.js';
 
 
-const params = minimist( process.argv.slice( 2 ) ) as Partial<CLI.Params>;
+const params = parseParamsCLI(
+    minimist( process.argv.slice( 2 ) ) as Partial<CLI.Params>,
+);
 
 const scriptName = ( params._?.[ 0 ] ) as CLI.Command | undefined;
 
@@ -47,18 +49,7 @@ switch ( scriptName ) {
     case 'build':
     case 'package':
     case 'release':
-        const fullParams = parseParamsCLI( params );
-        const project = new Project(
-            await getConfig(
-                fullParams,
-                await Project.getConsole( {
-                    name: 'Project',
-                    params: fullParams,
-                } ),
-            ),
-            fullParams
-        );
-
+        const project = new Project( await getConfig( params ), params );
         await project.run( scriptName );
         break;
 

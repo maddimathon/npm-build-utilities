@@ -53,8 +53,8 @@ export class SnapshotStage extends AbstractStage {
     }
     /* RUNNING METHODS
      * ====================================================================== */
-    async runSubStage(stage) {
-        await this[stage]();
+    async runSubStage(subStage) {
+        await this[subStage]();
     }
     async snap() {
         this.console.progress('(NOT IMPLEMENTED) running snap sub-stage...', 1);

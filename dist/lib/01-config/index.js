@@ -11,6 +11,5 @@
  * @license MIT
  */
 export * from './classes/index.js';
-export * from './isConfigValid.js';
 export * from './parseParamsCLI.js';
 //# sourceMappingURL=index.js.map

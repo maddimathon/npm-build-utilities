@@ -12,7 +12,8 @@
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
 import { CustomError, MessageMaker } from '@maddimathon/utility-typescript/classes';
-import type { FileSystemType, LocalError } from '../../../../types/index.js';
+import type { LocalError } from '../../../../types/index.js';
+import type { FileSystemType } from '../../../../types/FileSystemType.js';
 /**
  * An extension of the utilities error for use within the library.
  */

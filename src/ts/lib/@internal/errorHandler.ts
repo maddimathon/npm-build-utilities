@@ -24,7 +24,7 @@ import {
 
 import type {
     LocalError,
-    Stage,
+    Logger,
 } from '../../types/index.js';
 
 import {
@@ -46,7 +46,7 @@ const _msgMaker = new MessageMaker();
 function _errorStringifyInternal(
     error: LocalError.Input,
     args: Partial<LocalError.Handler.Args>,
-    console: Stage.Console,
+    console: Logger,
     level: number,
 ): MessageMaker.BulkMsgs {
     args = {
@@ -81,13 +81,15 @@ function _errorStringifyInternal(
 /**
  * Returns a string representation of the error for logging.
  * 
+ * @category Errors
+ * 
  * @internal
  * @private
  */
 export function _errorStringify(
     error: LocalError.Input,
     args: Partial<LocalError.Handler.Args>,
-    console: Stage.Console,
+    console: Logger,
     level: number,
 ): MessageMaker.BulkMsgs {
 
@@ -231,8 +233,8 @@ export function _errorStringify(
                 - errorType.length
                 - 6
             );
-            // console.varDump.log( { 'UnknownCaughtError.prototype.name.length': ( new UnknownCaughtError( '' ) ).name.length }, level );
-            // console.varDump.log( { _errorStringLength }, level );
+            // console.vi.log( { 'UnknownCaughtError.prototype.name.length': ( new UnknownCaughtError( '' ) ).name.length }, level );
+            // console.vi.log( { _errorStringLength }, level );
 
             let _errorString = String( error );
 
@@ -399,13 +401,16 @@ export function _errorStringify(
 }
 
 /**
+ * Default error handler for use within the library.
+ * 
+ * @category Errors
+ * 
  * @internal
- * @private
  */
 export function errorHandler(
     error: LocalError.Input,
     level: number,
-    console: Stage.Console,
+    console: Logger,
     args?: Partial<LocalError.Handler.Args>,
 ) {
     args = {
@@ -416,17 +421,10 @@ export function errorHandler(
         linesIn: 2,
         linesOut: 2,
 
-        // maxWidth: null,
-
         ...args ?? {},
     };
 
     const bulkMsgs = _errorStringify( error, args, console, 0 );
-
-    // const msgMaker = _msgMaker;
-
-    // const fs = new node.NodeFiles();
-    // fs.writeFile( '.scripts/.logs/errors/' + timestamp( null, { date: true, time: true, } ) + '.txt', msgMaker.msgs( bulkMsgs ), { rename: true } );
 
     console.error( bulkMsgs, level, args );
     process.exit( process.exitCode ?? 0 );

@@ -13,7 +13,7 @@
 
 import type { Test } from '@maddimathon/utility-typescript/types';
 
-import type { FileSystemType } from '../../../types/index.js';
+import type { FileSystemType } from '../../../types/FileSystemType.js';
 
 import { FileSystem } from './FileSystem.js';
 

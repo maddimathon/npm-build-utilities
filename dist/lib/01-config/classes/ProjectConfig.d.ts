@@ -11,7 +11,7 @@
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
-import type { CLI, Config, Stage } from '../../../types/index.js';
+import type { CLI, Config, Logger, Stage } from '../../../types/index.js';
 /**
  * A super-simple class just for the configuration of the entire project.
  *
@@ -25,7 +25,7 @@ import type { CLI, Config, Stage } from '../../../types/index.js';
 export declare class ProjectConfig implements Config.Class {
     readonly clr: import("@maddimathon/utility-typescript/classes/MessageMaker").MessageMaker.Colour;
     readonly compiler: Partial<Stage.Compiler.Args>;
-    readonly console: Partial<Stage.Console.Args>;
+    readonly console: Partial<Logger.Args>;
     readonly fs: Partial<import("../../index.js").FileSystem.Args>;
     readonly paths: {
         dist: string | Required<{
@@ -50,12 +50,14 @@ export declare class ProjectConfig implements Config.Class {
     /**
      * Gets the instance for the given stage.
      *
+     * @category Fetchers
+     *
      * @param stage  Stage to get.
      *
      * @return  An array with first the stage’s class and then the configured
      *          arguments for that class, if any.
      */
-    getStage(stage: Stage.Name, console: Stage.Console, params: CLI.Params): Promise<undefined | [Stage.ClassType, Partial<Stage.Args>]>;
+    getStage(stage: Stage.Name, console: Logger, params: CLI.Params): Promise<undefined | [Stage.ClassType, Partial<Stage.Args>]>;
     /**
      * Returns the minimum required properties of this config.
      *

@@ -11,8 +11,5 @@
  * @license MIT
  */
 
-export * from '../../types/FileSystemType.js';
-
 export * from './classes/index.js';
-
 export * from './errorHandler.js';

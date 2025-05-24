@@ -11,177 +11,29 @@
  * @license MIT
  */
 
-import type { Json } from '@maddimathon/utility-typescript/types';
-
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import {
     VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
 
-import type { CLI, Config, Stage } from '../../types/index.js';
+import type {
+    CLI,
+    Config,
+    Logger,
+} from '../../types/index.js';
+
+import { getPackageJson } from '../../lib/00-universal/getPackageJson.js';
 
 import {
-    defaultConfig,
-    getPackageJson,
-    isConfigValid,
-
     FileSystem,
     Project,
     ProjectConfig,
 } from '../../lib/index.js';
 
+import {
+    isConfigValid,
+    internalConfig,
+} from '../../lib/@internal.js';
 
-function _internalConfig(
-    console: Stage.Console,
-    _config: (
-        | Config
-        | Config & Partial<Config.Internal>
-        | Config.Internal
-    ),
-): Config.Internal {
-
-    const def = defaultConfig( console );
-
-    const config = {
-        ...def,
-        ..._config,
-
-        paths: {
-            ...def.paths,
-            ..._config.paths,
-        },
-
-        stages: {
-            ...def.stages,
-            ..._config.stages,
-        },
-
-        compiler: {
-            ...def.compiler,
-            ..._config.compiler ?? {},
-
-            tsConfig: mergeArgs(
-                def.compiler.tsConfig as Json.TsConfig,
-                _config.compiler?.tsConfig ?? {},
-                true
-            ),
-        },
-    };
-
-
-    const stages: Config.Internal.Stages = def.stages;
-
-    if ( config.stages ) {
-
-        for ( const _stage in config.stages ) {
-            const stage = _stage as keyof typeof config.stages;
-            const stageConfig = config.stages[ stage ];
-
-            // continues
-            if ( typeof stageConfig === 'undefined' ) {
-                continue;
-            }
-
-            let stageClass: Stage.ClassType | undefined = def.stages[ stage ] || undefined;
-            let stageArgs: Partial<Stage.Args> | undefined = undefined;
-
-            // continues
-            if ( typeof stageConfig === 'undefined' ) {
-                continue;
-            }
-
-            // continues
-            if ( Array.isArray( stageConfig ) ) {
-
-                const [ tmp_0, tmp_1 ] = stageConfig;
-
-                if ( tmp_0 && typeof tmp_0 === 'function' ) {
-                    stageClass = tmp_0;
-                }
-
-                if ( tmp_1 && typeof tmp_1 === 'object' ) {
-                    stageArgs = tmp_1;
-                }
-
-                if ( stageClass ) {
-                    stages[ stage ] = [ stageClass, stageArgs ];
-                }
-                continue;
-            }
-
-            // continues
-            switch ( typeof stageConfig ) {
-
-                case 'boolean':
-                    if ( !stageConfig ) {
-                        stages[ stage ] = false;
-                    }
-                    continue;
-                    break;
-
-                case 'object':
-                    // is an args object
-                    if ( stageClass ) {
-                        stages[ stage ] = [ stageClass, stageConfig ];
-                    }
-                    continue;
-                    break;
-
-                default:
-                    stages[ stage ] = stageConfig;
-                    continue;
-                    break;
-            }
-        }
-    }
-
-
-    const paths: Config.Internal[ 'paths' ] = {
-        ...config.paths,
-
-        dist: typeof config.paths.dist === 'function'
-            ? {
-                _: config.paths.dist(),
-                docs: config.paths.dist( 'docs' ),
-                scss: config.paths.dist( 'scss' ),
-                ts: config.paths.dist( 'ts' ),
-            }
-            : ( typeof config.paths.dist === 'object'
-                ? {
-                    _: 'dist',
-                    docs: 'docs',
-                    scss: 'dist/scss',
-                    ts: 'dist/js',
-
-                    ...config.paths.dist,
-                }
-                : config.paths.dist
-            ),
-
-        src: typeof config.paths.src === 'function'
-            ? {
-                _: config.paths.src(),
-                docs: config.paths.src( 'docs' ),
-                scss: config.paths.src( 'scss' ),
-                ts: config.paths.src( 'ts' ),
-            }
-            : {
-                _: 'src',
-                docs: 'src/docs',
-                scss: 'src/scss',
-                ts: 'src/ts',
-
-                ...config.paths.src,
-            },
-    };
-
-    return {
-        ...config,
-
-        paths,
-        stages,
-    };
-}
 
 /**
  * Gets the configuration object for the current node package.
@@ -193,12 +45,12 @@ function _internalConfig(
  * @since 0.1.0-draft
  *
  * @param params   Input CLI params to convert.
- * @param console  And instance of the console class to use for outputting messages.
+ * @param console  Optional. And instance of the console class to use for outputting messages.
  * @param level    Optional. Depth level for this message (above the value of {@link CLI.Params.log-base-level}).
  */
 export async function getConfig(
     params: CLI.Params,
-    console: Stage.Console | null,
+    console: Logger | null = null,
     level: number = 0,
 ): Promise<ProjectConfig> {
 
@@ -256,7 +108,7 @@ export async function getConfig(
 
         const content = ( await import( path ) ).default;
 
-        params.debug && console.varDump.progress( { content }, 2 + level );
+        params.debug && console.vi.progress( { content }, 2 + level );
 
         if ( content && typeof content === 'object' ) {
             config = content;
@@ -274,10 +126,10 @@ export async function getConfig(
 
     // returns
     if ( validConfig ) {
-        params.debug && console.varDump.progress( { 'valid config': config }, 1 + level );
+        params.debug && console.vi.progress( { 'valid config': config }, 1 + level );
 
-        const configInstance = new ProjectConfig( _internalConfig( console, validConfig ) );
-        params.debug && console.varDump.progress( { return: configInstance }, level );
+        const configInstance = new ProjectConfig( internalConfig( validConfig, console ) );
+        params.debug && console.vi.progress( { return: configInstance }, level );
         return configInstance;
     }
 
@@ -287,7 +139,7 @@ export async function getConfig(
         ...config,
     };
 
-    params.debug && console.varDump.progress( { 'partial config': config }, 1 + level );
+    params.debug && console.vi.progress( { 'partial config': config }, 1 + level );
 
     /**
      * What to do since no valid config was found.
@@ -344,7 +196,7 @@ export async function getConfig(
     } ) ) {
         msgArgs.linesIn = 1;
 
-        const defaultConfig = _internalConfig( console, newConfig );
+        const defaultConfig = internalConfig( newConfig, console );
 
         newCompleteConfig = {
             ...defaultConfig,
@@ -380,11 +232,11 @@ export async function getConfig(
         };
     }
 
-    const builtConfig = _internalConfig( console, newCompleteConfig ?? newConfig );
+    const builtConfig = internalConfig( newCompleteConfig ?? newConfig, console );
 
     const configInstance = new ProjectConfig( builtConfig );
 
-    params.debug && console.varDump.progress( { return: configInstance }, level );
+    params.debug && console.vi.progress( { return: configInstance }, level );
 
     // returns
     if ( noConfigPrompt !== 'create-new' ) {
@@ -423,7 +275,7 @@ export async function getConfig(
         `export default config;`,
     ].join( '\n' );
 
-    params.debug && console.varDump.progress( { configFileContent }, level );
+    params.debug && console.vi.progress( { configFileContent }, level );
 
     fs.writeFile( configPath, configFileContent, { force } );
 

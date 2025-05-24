@@ -11,7 +11,7 @@
  * @license MIT
  */
 import type { Node } from '@maddimathon/utility-typescript/types';
-import type { Stage } from '../../types/index.js';
+import type { Logger } from '../../types/index.js';
 import { FileSystem } from './classes/index.js';
 /**
  * Gets a copy of the package.json object for the current npm project.
@@ -21,12 +21,14 @@ import { FileSystem } from './classes/index.js';
  *
  * @throws ProjectError  If no {@link FileSystem} instance was passed or there
  *                       was not enough information to construct one.
+ *
+ * @internal
  */
 export declare function getPackageJson(args: FileSystem | {
-    console?: Stage.Console;
+    console?: Logger;
     fs: FileSystem;
 } | {
-    console: Stage.Console;
+    console: Logger;
     fs?: undefined | FileSystem.Args;
 }): Node.PackageJson;
 //# sourceMappingURL=getPackageJson.d.ts.map

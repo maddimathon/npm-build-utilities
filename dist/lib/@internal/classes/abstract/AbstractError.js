@@ -36,7 +36,6 @@ export class AbstractError extends CustomError {
     }
     /* LOCAL PROPERTIES
      * ====================================================================== */
-    // protected readonly console: Stage.Console;
     context;
     /* CONSTRUCTOR
      * ====================================================================== */

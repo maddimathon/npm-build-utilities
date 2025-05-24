@@ -10,7 +10,7 @@
  * @maddimathon/npm-build-utilities@0.1.0-draft
  * @license MIT
  */
-export type * from './FileSystemType.js';
+export type * from './Logger.js';
 /** @module CLI */
 export type * as CLI from './CLI.js';
 /** @module Config */

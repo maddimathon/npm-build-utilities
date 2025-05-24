@@ -45,6 +45,8 @@ function _errorStringifyInternal(error, args, console, level) {
 /**
  * Returns a string representation of the error for logging.
  *
+ * @category Internal
+ *
  * @internal
  * @private
  */
@@ -148,8 +150,8 @@ export function _errorStringify(error, args, console, level) {
                 - (new UnknownCaughtError('')).name.length
                 - errorType.length
                 - 6);
-            // console.varDump.log( { 'UnknownCaughtError.prototype.name.length': ( new UnknownCaughtError( '' ) ).name.length }, level );
-            // console.varDump.log( { _errorStringLength }, level );
+            // console.vi.log( { 'UnknownCaughtError.prototype.name.length': ( new UnknownCaughtError( '' ) ).name.length }, level );
+            // console.vi.log( { _errorStringLength }, level );
             let _errorString = String(error);
             if (_errorString.length > _errorStringLength) {
                 _errorString = _errorString.substring(0, _errorStringLength - 3) + '...';
@@ -263,8 +265,9 @@ export function _errorStringify(error, args, console, level) {
     return bulkMsgs;
 }
 /**
+ * Default error handler for use within the library.
+ *
  * @internal
- * @private
  */
 export function errorHandler(error, level, console, args) {
     args = {

@@ -53,15 +53,19 @@ below.
 
 ### Exports & Entry Points
 
-There is only one defined entry point (the root, plus one for types only) though
-it should be possible to target individual files (carefully and at your own
-risk, paths may change without being considered a breaking change).
+There is one main entry point (the root), plus one for types only and one for
+the {@link bin} and {@link internal} modules.  It should, however, be possible
+to target individual files (carefully and at your own risk, paths may change
+without being considered a breaking change).
 
 ```ts
 import type { ... } from '@maddimathon/npm-build-utilities';
 import type { ... } from '@maddimathon/npm-build-utilities/types';
 
 import { ... } from '@maddimathon/npm-build-utilities';
+
+import { ... } from '@maddimathon/npm-build-utilities/bin';
+import { ... } from '@maddimathon/npm-build-utilities/internal';
 ```
 
 A basic tsconfig to extend is available at `@maddimathon/npm-build-utilities/tsconfig`.

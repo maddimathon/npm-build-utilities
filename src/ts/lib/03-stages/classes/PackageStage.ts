@@ -98,8 +98,8 @@ export class PackageStage extends AbstractStage<
     /* RUNNING METHODS
      * ====================================================================== */
 
-    protected async runSubStage( stage: Stage.SubStage.Package ) {
-        await this[ stage ]();
+    protected async runSubStage( subStage: Stage.SubStage.Package ) {
+        await this[ subStage ]();
     }
 
     /**

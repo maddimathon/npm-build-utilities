@@ -12,8 +12,10 @@
  */
 import { DummyConsole } from '../../@internal/index.js';
 import { parseParamsCLI, ProjectConfig, } from '../../01-config/index.js';
-import { Stage_Console, } from '../../02-utils/index.js';
-import { defaultConfig } from '../../03-stages/defaultConfig.js';
+// import {
+// } from '../../02-utils/index.js';
+import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
+import { defaultConfig, } from '../../03-stages/defaultConfig.js';
 /**
  * Manages and runs a single project (typically used by the cli).
  *
@@ -28,10 +30,9 @@ export class Project {
     static async getConsole(opts = {}) {
         const params = opts.params ?? parseParamsCLI({});
         const config = opts.config ?? new ProjectConfig(defaultConfig(new DummyConsole()));
-        return new Stage_Console(opts.name ?? 'Package', config.clr, config, params, {
-            clr: config.clr ?? 'purple',
-            ...config.console,
-        });
+        return new Stage_Console(
+        // opts.name ?? 'Package',
+        config.clr, config, params);
     }
     /* LOCAL PROPERTIES
      * ====================================================================== */
@@ -61,9 +62,9 @@ export class Project {
     async debug(console, stageClass, stageArgs, stageInstance) {
         const level = this.params['log-base-level'];
         console.progress('[Project] Debugging some info...', level);
-        stageClass && console.varDump.progress({ stageClass }, 1 + level);
-        stageArgs && console.varDump.progress({ stageArgs }, 1 + level);
-        stageInstance && console.varDump.progress({
+        stageClass && console.vi.progress({ stageClass }, 1 + level);
+        stageArgs && console.vi.progress({ stageArgs }, 1 + level);
+        stageInstance && console.vi.progress({
             stageInstance: {
                 // config: stageInstance.config,
                 params: stageInstance.params,

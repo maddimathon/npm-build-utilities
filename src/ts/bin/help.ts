@@ -19,8 +19,11 @@ import type {
 import {
     parseParamsCLI,
     Project,
-    Stage_Console,
 } from '../lib/index.js';
+
+import {
+    Stage_Console,
+} from '../lib/@internal.js';
 
 export default async function (
     _params?: Partial<CLI.Params>,
@@ -35,5 +38,5 @@ export default async function (
 
     // TODO finish me
     console.notice( 'Hello!  I am the help function.  I am not yet useful, sorry.', level, { linesOut: 2 } );
-    params.debug && console.varDump.progress( { params }, level, { bold: false, linesOut: 2 } );
+    params.debug && console.vi.progress( { params }, level, { bold: false, linesOut: 2 } );
 };

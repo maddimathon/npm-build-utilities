@@ -19,7 +19,7 @@ export default async function (_params, level = 0, console) {
     }
     // TODO finish me
     console.notice('Hello!  I am the help function.  I am not yet useful, sorry.', level, { linesOut: 2 });
-    params.debug && console.varDump.progress({ params }, level, { bold: false, linesOut: 2 });
+    params.debug && console.vi.progress({ params }, level, { bold: false, linesOut: 2 });
 }
 ;
 //# sourceMappingURL=help.js.map

@@ -13,7 +13,9 @@
 
 import type { Node } from '@maddimathon/utility-typescript/types';
 
-import type { Stage } from '../../types/index.js';
+import type {
+    Logger,
+} from '../../types/index.js';
 
 import {
     ProjectError,
@@ -32,13 +34,15 @@ import {
  *
  * @throws ProjectError  If no {@link FileSystem} instance was passed or there
  *                       was not enough information to construct one.
+ * 
+ * @internal
  */
 export function getPackageJson(
     args: FileSystem | {
-        console?: Stage.Console,
+        console?: Logger,
         fs: FileSystem,
     } | {
-        console: Stage.Console,
+        console: Logger,
         fs?: undefined | FileSystem.Args,
     },
 ): Node.PackageJson {

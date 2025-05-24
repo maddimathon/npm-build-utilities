@@ -17,6 +17,8 @@
 /**
  * Types used for {@link LocalError} classes.
  *
+ * @category Types
+ *
  * @since 0.1.0-draft
  */
 export var LocalError;

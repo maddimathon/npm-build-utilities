@@ -36,7 +36,7 @@ export declare class SnapshotStage extends AbstractStage<Stage.SubStage.Snapshot
      * @param which  Whether we are starting or ending.
      */
     startEndNotice(which: "start" | "end" | null): void;
-    protected runSubStage(stage: Stage.SubStage.Snapshot): Promise<void>;
+    protected runSubStage(subStage: Stage.SubStage.Snapshot): Promise<void>;
     protected snap(): Promise<void>;
 }
 //# sourceMappingURL=SnapshotStage.d.ts.map

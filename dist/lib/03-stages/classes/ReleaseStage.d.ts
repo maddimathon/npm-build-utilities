@@ -36,7 +36,7 @@ export declare class ReleaseStage extends AbstractStage<Stage.SubStage.Release, 
      * @param which  Whether we are starting or ending.
      */
     startEndNotice(which: "start" | "end" | null): void;
-    protected runSubStage(stage: Stage.SubStage.Release): Promise<void>;
+    protected runSubStage(subStage: Stage.SubStage.Release): Promise<void>;
     protected changelog(): Promise<void>;
     protected commit(): Promise<void>;
     protected github(): Promise<void>;

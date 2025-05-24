@@ -77,15 +77,15 @@ export class Stage_Compiler {
      * @param input   Scss input path.
      * @param output  Scss output path.
      * @param level   Depth level for this message (above the value of
-     *                {@link Stage.Args['log-base-level']}).
+     *                {@link CLI.Params.log-base-level}).
      */
     async scss(input, output, level, sassOpts) {
-        this.params.debug && this.console.varDump.progress({ 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true });
+        this.params.debug && this.console.vi.progress({ 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true });
         const compiled = sass.compile(input, {
             ...this.config.compiler.sass,
             ...sassOpts,
         });
-        this.params.debug && this.console.varDump.verbose({ compiled }, level);
+        this.params.debug && this.console.vi.verbose({ compiled }, level);
         if (compiled.css) {
             this.console.verbose('writing css to path: ' + output, level);
             this.fs.writeFile(output, compiled.css, { force: true });
@@ -102,7 +102,7 @@ export class Stage_Compiler {
      *
      * @param tsConfig  Path to TS config json used to compile the project.
      * @param level     Depth level for this message (above the value of
-     *                  {@link Stage.Args['log-base-level']}).
+     *                  {@link CLI.Params.log-base-level}).
      */
     async typescript(tsConfig, level) {
         this.console.verbose('running tsc...', level);

@@ -91,8 +91,8 @@ export class SnapshotStage extends AbstractStage<
     /* RUNNING METHODS
      * ====================================================================== */
 
-    protected async runSubStage( stage: Stage.SubStage.Snapshot ) {
-        await this[ stage ]();
+    protected async runSubStage( subStage: Stage.SubStage.Snapshot ) {
+        await this[ subStage ]();
     }
 
     protected async snap() {

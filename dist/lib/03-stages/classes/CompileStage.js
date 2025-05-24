@@ -59,14 +59,13 @@ export class CompileStage extends AbstractStage {
     }
     /* RUNNING METHODS
      * ====================================================================== */
-    async runSubStage(stage) {
-        // returns
-        if (!this.args[stage]) {
-            return;
-        }
-        await this[stage]();
+    async runSubStage(subStage) {
+        await this[subStage]();
     }
     async scss() {
+        if (!this.args.scss) {
+            return;
+        }
         this.console.progress('compiling scss files...', 1);
         const scssSrcDir = this.getSrcDir('scss');
         const scssPaths = scssSrcDir.map((path) => {
@@ -120,11 +119,14 @@ export class CompileStage extends AbstractStage {
                 out: out,
             };
         });
-        this.params.debug && this.console.varDump.progress({ scssPathArgs }, (this.params.verbose ? 3 : 2));
+        this.params.debug && this.console.vi.progress({ scssPathArgs }, (this.params.verbose ? 3 : 2));
         this.console.verbose('compiling to css...', 2);
         return Promise.all(scssPathArgs.map(({ in: input, out: output }) => this.cpl.scss(input, output, (this.params.verbose ? 3 : 2))));
     }
     async ts() {
+        if (!this.args.ts) {
+            return;
+        }
         this.console.progress('compiling typescript files...', 1);
         const tsSrcDir = this.getSrcDir('ts');
         const tsPaths = tsSrcDir.map((path) => {
@@ -185,15 +187,15 @@ export class CompileStage extends AbstractStage {
                 },
                 required: true,
             });
-            this.params.debug && this.console.varDump.progress({ tsConfigFile }, 3);
+            this.params.debug && this.console.vi.progress({ tsConfigFile }, 3);
             // returns
             if (!tsConfigFile) {
                 return;
             }
             const baseUrl = tsSrcDir.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
-            this.params.debug && this.console.varDump.progress({ baseUrl }, 2);
+            this.params.debug && this.console.vi.progress({ baseUrl }, 2);
             const outDir = this.fs.pathRelative(this.fs.pathResolve(baseUrl, tsDistDir));
-            this.params.debug && this.console.varDump.progress({ outDir }, 2);
+            this.params.debug && this.console.vi.progress({ outDir }, 2);
             this.fs.writeFile(this.fs.pathResolve(tsConfigFile), JSON.stringify({
                 extends: '@maddimathon/npm-build-utilities/tsconfig',
                 include: [
@@ -210,7 +212,7 @@ export class CompileStage extends AbstractStage {
         }
         this.console.verbose('deleting existing files...', 2);
         this.fs.deleteFiles([tsDistDir], false, (this.params.verbose ? 3 : 2));
-        this.params.debug && this.console.varDump.progress({ tsPaths }, (this.params.verbose ? 3 : 2));
+        this.params.debug && this.console.vi.progress({ tsPaths }, (this.params.verbose ? 3 : 2));
         this.console.verbose('compiling to javascript...', 2);
         return Promise.all(tsPaths.map(tsc => {
             this.console.verbose('compiling project: ' + tsc, (this.params.verbose ? 3 : 2));

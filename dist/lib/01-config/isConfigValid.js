@@ -15,6 +15,8 @@
  * valid {@link Config} object.
  *
  * @category Config
+ *
+ * @internal
  */
 export function isConfigValid(test) {
     /**

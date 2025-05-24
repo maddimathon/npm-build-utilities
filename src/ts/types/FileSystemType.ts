@@ -17,6 +17,16 @@ import {
     node,
 } from '@maddimathon/utility-typescript/classes';
 
+/**
+ * Shape of the file/path utility class.
+ *
+ * Defined here so that the type can easily be used before the
+ * {@link FileSystem} class is defined.
+ *
+ * @category Types
+ *
+ * @internal
+ */
 export interface FileSystemType extends node.NodeFiles {
 
     /**
@@ -37,6 +47,13 @@ export interface FileSystemType extends node.NodeFiles {
     ): string | string[];
 }
 
+/**
+ * Types for the {@link FileSystemType} interface.
+ * 
+ * @category Types
+ * 
+ * @internal
+ */
 export namespace FileSystemType {
 
     /**
