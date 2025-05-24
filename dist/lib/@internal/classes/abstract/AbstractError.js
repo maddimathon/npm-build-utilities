@@ -20,6 +20,10 @@ import { CustomError, VariableInspector } from '@maddimathon/utility-typescript/
 // const _dummyConsole = new DummyConsole();
 /**
  * An extension of the utilities error for use within the library.
+ *
+ * @category Errors
+ *
+ * @since 0.1.0-draft
  */
 export class AbstractError extends CustomError {
     /* STATIC
@@ -111,6 +115,8 @@ export class AbstractError extends CustomError {
 }
 /**
  * Used only for {@link AbstractError}.
+ *
+ * @category Errors
  *
  * @since 0.1.0-draft
  */

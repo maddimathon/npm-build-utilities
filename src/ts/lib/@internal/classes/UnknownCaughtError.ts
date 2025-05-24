@@ -19,6 +19,10 @@ import { AbstractError } from './abstract/AbstractError.js';
 /**
  * An extension of the utilities error for catching errors, mainly ones that are
  * not (Error) objects already.
+ * 
+ * @category Errors
+ * 
+ * @since ___PKG_VERSION___
  */
 export class UnknownCaughtError extends AbstractError<UnknownCaughtError.Args> {
 
@@ -65,6 +69,8 @@ export class UnknownCaughtError extends AbstractError<UnknownCaughtError.Args> {
 
 /**
  * Used only for {@link UnknownCaughtError}.
+ * 
+ * @category Errors
  * 
  * @since ___PKG_VERSION___
  */

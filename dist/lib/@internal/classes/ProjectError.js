@@ -13,6 +13,10 @@
 import { AbstractError } from './abstract/AbstractError.js';
 /**
  * An extension of the utilities error for while running a {@link Project}.
+ *
+ * @category Errors
+ *
+ * @since 0.1.0-draft
  */
 export class ProjectError extends AbstractError {
     /* LOCAL PROPERTIES
@@ -27,6 +31,8 @@ export class ProjectError extends AbstractError {
 }
 /**
  * Used only for {@link ProjectError}.
+ *
+ * @category Errors
  *
  * @since 0.1.0-draft
  */

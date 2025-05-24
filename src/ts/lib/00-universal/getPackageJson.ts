@@ -28,12 +28,16 @@ import {
 
 /**
  * Gets a copy of the package.json object for the current npm project.
+ * 
+ * @category Config
  *
  * @param args  A {@link FileSystem} instance to use or arguments to use to
  * construct one.
  *
  * @throws ProjectError  If no {@link FileSystem} instance was passed or there
  *                       was not enough information to construct one.
+ * 
+ * @since ___PKG_VERSION___
  * 
  * @internal
  */

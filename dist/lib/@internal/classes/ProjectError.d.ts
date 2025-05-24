@@ -14,6 +14,10 @@ import type { LocalError } from '../../../types/LocalError.js';
 import { AbstractError } from './abstract/AbstractError.js';
 /**
  * An extension of the utilities error for while running a {@link Project}.
+ *
+ * @category Errors
+ *
+ * @since 0.1.0-draft
  */
 export declare class ProjectError extends AbstractError<ProjectError.Args> {
     readonly name: string;
@@ -21,6 +25,8 @@ export declare class ProjectError extends AbstractError<ProjectError.Args> {
 }
 /**
  * Used only for {@link ProjectError}.
+ *
+ * @category Errors
  *
  * @since 0.1.0-draft
  */

@@ -28,7 +28,7 @@
 export type * from './types/index.js';
 
 /** @hidden - documented as an entry point module */
-export * as bin from './bin/lib/index.js';
+export * as cli from './bin/lib/index.js';
 
 /** @hidden - documented as an entry point module */
 export * as internal from './lib/@internal.js';

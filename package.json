@@ -50,7 +50,7 @@
     "exports": {
 
         ".": "./dist/index.js",
-        "./bin": "./dist/bin/lib/index.js",
+        "./cli": "./dist/bin/lib/index.js",
         "./internal": "./dist/lib/@internal.js",
 
         "./tsconfig": "./tsconfig.base.json",

@@ -177,7 +177,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
                     .replace( installRegex, '$1\n' + utils.functions.escRegExpReplace( [
                         '```sh',
                         'npm i -D @maddimathon/build-utilities@' + this.pkg.version,
-                        'npm i -D github:maddimathon/npm-build-utilities#' + this.pkg.version,
+                        'npm i -D github:maddimathon/build-utilities#' + this.pkg.version,
                         '```',
                     ].join( '\n' ) ) + '\n$2' )
             ), { force: true } );

@@ -18,6 +18,10 @@ import { AbstractError } from './abstract/AbstractError.js';
 
 /**
  * An extension of the utilities error for while running a {@link Project}.
+ * 
+ * @category Errors
+ * 
+ * @since ___PKG_VERSION___
  */
 export class ProjectError extends AbstractError<ProjectError.Args> {
 
@@ -46,6 +50,8 @@ export class ProjectError extends AbstractError<ProjectError.Args> {
 
 /**
  * Used only for {@link ProjectError}.
+ * 
+ * @category Errors
  * 
  * @since ___PKG_VERSION___
  */

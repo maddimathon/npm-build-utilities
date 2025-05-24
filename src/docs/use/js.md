@@ -15,7 +15,7 @@ class.
 
 ```ts
 import {
-    bin,
+    cli,
 
     parseParamsCLI,
     Project,
@@ -25,7 +25,7 @@ const params = parseParamsCLI( {
     config: 'path/to/build.config.js',
 } );
 
-const project = new Project( await bin.getConfig( params ), params );
+const project = new Project( await cli.getConfig( params ), params );
 
 await project.run( 'compile' );
 ```

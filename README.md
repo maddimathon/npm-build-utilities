@@ -36,7 +36,7 @@ or
 <!--README_INSTALL-->
 ```sh
 npm i -D @maddimathon/build-utilities@0.1.0
-npm i -D github:maddimathon/npm-build-utilities#0.1.0
+npm i -D github:maddimathon/build-utilities#0.1.0
 ```
 <!--/README_INSTALL-->
 
@@ -54,7 +54,7 @@ below.
 ### Exports & Entry Points
 
 There is one main entry point (the root), plus one for types only and one for
-the {@link bin} and {@link internal} modules.  It should, however, be possible
+the {@link cli} and {@link internal} modules.  It should, however, be possible
 to target individual files (carefully and at your own risk, paths may change
 without being considered a breaking change).
 
@@ -64,7 +64,7 @@ import type { ... } from '@maddimathon/build-utilities/types';
 
 import { ... } from '@maddimathon/build-utilities';
 
-import { ... } from '@maddimathon/build-utilities/bin';
+import { cli, internal, ... } from '@maddimathon/build-utilities/cli';
 import { ... } from '@maddimathon/build-utilities/internal';
 ```
 

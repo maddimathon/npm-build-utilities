@@ -16,6 +16,10 @@ import type { LocalError } from '../../../../types/index.js';
 import type { FileSystemType } from '../../../../types/FileSystemType.js';
 /**
  * An extension of the utilities error for use within the library.
+ *
+ * @category Errors
+ *
+ * @since 0.1.0-draft
  */
 export declare abstract class AbstractError<Args extends LocalError.Args> extends CustomError<Args> implements LocalError<Args> {
     /**
@@ -77,6 +81,8 @@ export declare abstract class AbstractError<Args extends LocalError.Args> extend
 }
 /**
  * Used only for {@link AbstractError}.
+ *
+ * @category Errors
  *
  * @since 0.1.0-draft
  */

@@ -34,6 +34,10 @@ import type { FileSystemType } from '../../../../types/FileSystemType.js';
 
 /**
  * An extension of the utilities error for use within the library.
+ * 
+ * @category Errors
+ * 
+ * @since ___PKG_VERSION___
  */
 export abstract class AbstractError<
     Args extends LocalError.Args,
@@ -181,6 +185,8 @@ export abstract class AbstractError<
 
 /**
  * Used only for {@link AbstractError}.
+ * 
+ * @category Errors
  * 
  * @since ___PKG_VERSION___
  */
