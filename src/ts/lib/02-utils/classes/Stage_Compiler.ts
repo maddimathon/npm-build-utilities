@@ -129,7 +129,7 @@ export class Stage_Compiler implements Stage.Compiler {
 
         if ( compiled.css ) {
             this.console.verbose( 'writing css to path: ' + output, level );
-            this.fs.writeFile( output, compiled.css, { force: true } );
+            this.fs.write( output, compiled.css, { force: true } );
         }
 
         if ( compiled.sourceMap ) {
@@ -137,7 +137,7 @@ export class Stage_Compiler implements Stage.Compiler {
             const sourceMap = output.replace( /\.(s?css)$/g, '.$1.map' );
 
             this.console.verbose( 'writing sourceMap to path: ' + sourceMap, level );
-            this.fs.writeFile(
+            this.fs.write(
                 sourceMap,
                 JSON.stringify(
                     compiled.sourceMap,
@@ -167,6 +167,7 @@ export class Stage_Compiler implements Stage.Compiler {
             this.console.nc.cmd,
             1 + level,
             this.console,
+            this.fs,
             [ `tsc --project "${ this.fs.pathRelative( tsConfig ).replace( /"/g, '\\"' ) }"` ]
         );
     }

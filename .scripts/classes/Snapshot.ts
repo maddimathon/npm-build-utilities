@@ -107,7 +107,7 @@ export class Snapshot extends AbstractStage<Snapshot.Stages, Snapshot.Args> {
 
 
         this.console.verbose( 'tidying up...', 1 );
-        this.fns.fs.deleteFiles( [ exportPath ] );
+        this.fns.fs.delete( [ exportPath ] );
 
 
         this.console.progress( `snapshot zipped: ${ this.fns.fs.pathRelative( exportPath ) }.zip`, 1, { maxWidth: null } );

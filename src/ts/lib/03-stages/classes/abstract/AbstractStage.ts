@@ -415,7 +415,7 @@ export abstract class AbstractStage<
         level: number,
         args?: Partial<LocalError.Handler.Args>,
     ): void {
-        errorHandler( error, level, this.console, args );
+        errorHandler( error, level, this.console, this.fs, args );
     }
 
 
@@ -463,12 +463,7 @@ export abstract class AbstractStage<
 
         try {
 
-            return (
-                params
-                    ? tryer( ...params )
-                    // @ts-expect-error
-                    : tryer()
-            );
+            return tryer( ...( params ?? [] as Params ) );
 
         } catch ( error ) {
             this.handleError( error as LocalError.Input, level );
@@ -506,7 +501,7 @@ export abstract class AbstractStage<
             } : {
                 default: [ [ `${ uppercase.which }ING ${ uppercase.name }` ] ],
                 start: [ [ `${ uppercase.name } ${ uppercase.which }ING...` ] ],
-                end: [ [ '✓ ', { flag: false } ], [ toTitleCase( `${ uppercase.name } FINISHED!` ), { italic: true } ] ],
+                end: [ [ '✓ ', { flag: false } ], [ `${ toTitleCase( this.name ) } Complete!`, { italic: true } ] ],
             };
 
         this.console.startOrEnd( messages[ which ?? 'default' ], which );

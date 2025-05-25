@@ -206,7 +206,7 @@ export async function getConfig(params, console = null, level = 0) {
         `export default config;`,
     ].join('\n');
     console.vi.debug({ configFileContent }, level);
-    fs.writeFile(configPath, configFileContent, { force });
+    fs.write(configPath, configFileContent, { force });
     return configInstance;
 }
 //# sourceMappingURL=getConfig.js.map

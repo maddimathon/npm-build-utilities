@@ -11,8 +11,9 @@
  * @license MIT
  */
 import { node } from '@maddimathon/utility-typescript/classes';
-import type { Logger } from '../../../types/index.js';
-import { type FileSystemType } from '../../@internal.js';
+import type { LocalError, Logger } from '../../../types/index.js';
+import type { FileSystemType } from '../../../types/FileSystemType.js';
+import { AbstractError } from '../../@internal/index.js';
 /**
  * Extends the {@link node.NodeFiles} class with some custom logic useful to this package.
  *
@@ -35,18 +36,33 @@ export declare class FileSystem extends node.NodeFiles {
      */
     get ARGS_DEFAULT(): {
         readonly copy: {
-            readonly glob: {};
+            readonly force: true;
+            readonly recursive: true;
+            readonly rename: true;
+            readonly glob: {
+                readonly absolute: false;
+                readonly dot: true;
+            };
         };
         readonly glob: {
             readonly absolute: true;
             readonly dot: true;
-            readonly ignore: ["**/._*", "**/._**/*", "**/.DS_Store", "**/.smbdelete**"];
+            readonly ignore: ["._*", "._**/**", "**/._*", "**/._**/**", "**/.DS_Store", "**/.smbdelete**"];
         };
         readonly argsRecursive: false;
+        readonly copyFileArgs: {
+            readonly force: true;
+            readonly rename: true;
+            readonly recursive: false;
+        };
         readonly root: "./";
-        readonly writeFileArgs: {
-            readonly force: false;
-            readonly rename: false;
+        readonly readDirArgs: {
+            readonly recursive: false;
+        };
+        readonly readFileArgs: {};
+        readonly writeArgs: {
+            force: boolean;
+            rename: boolean;
         };
     };
     /**
@@ -54,10 +70,16 @@ export declare class FileSystem extends node.NodeFiles {
      * @param args
      */
     constructor(console: Logger, args?: Partial<FileSystem.Args>);
-    /** {@inheritDoc FileSystemType.copy} */
-    copy(globs: string | string[], level: number, outputDir: string, sourceDir?: string | null, opts?: Partial<FileSystemType.Copy.Args>): false | string[];
+    /**
+     * {@inheritDoc FileSystemType.copy}
+     *
+     * @throws {@link FileSystem.Error}
+     */
+    copy(globs: string | string[], level: number, outputDir: string, sourceDir?: string | null, args?: Partial<FileSystemType.Copy.Args>): false | string[];
+    /** {@inheritDoc FileSystemType.delete} */
+    delete(globs: string | string[], level: number, dryRun?: boolean, args?: FileSystemType.Glob.Args): void;
     /** {@inheritDoc FileSystemType.glob} */
-    glob(globs: string | string[], opts?: FileSystemType.Glob.Args): string[];
+    glob(globs: string | string[], args?: FileSystemType.Glob.Args): string[];
 }
 /**
  * Used only for {@link FileSystem}.
@@ -81,6 +103,40 @@ export declare namespace FileSystem {
          * Defaults for the {@link FileSystem.glob} method.
          */
         glob: FileSystemType.Glob.Args;
+    }
+    /**
+     * An extension of the utilities error used by the {@link FileSystem} class.
+     *
+     * @category Errors
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    class Error extends AbstractError<Error.Args> {
+        readonly name: string;
+        get ARGS_DEFAULT(): any;
+        constructor(message: string, context: null | AbstractError.Context, args?: Partial<Error.Args> & {
+            cause?: LocalError.Input;
+        });
+    }
+    /**
+     * Used only for {@link FileSystem.Error}.
+     *
+     * @category Errors
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    namespace Error {
+        /**
+         * All allowed error code strings.
+         */
+        type Code = never;
+        /**
+         * Optional configuration for {@link Error} class.
+         *
+         * @since 0.1.0-alpha.draft
+         */
+        interface Args extends LocalError.Args {
+        }
     }
     /**
      * Optional class instances to pass to {@link FileSystem} constructor.

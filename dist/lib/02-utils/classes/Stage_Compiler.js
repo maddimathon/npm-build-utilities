@@ -88,12 +88,12 @@ export class Stage_Compiler {
         this.params.debug && this.console.vi.verbose({ compiled }, level);
         if (compiled.css) {
             this.console.verbose('writing css to path: ' + output, level);
-            this.fs.writeFile(output, compiled.css, { force: true });
+            this.fs.write(output, compiled.css, { force: true });
         }
         if (compiled.sourceMap) {
             const sourceMap = output.replace(/\.(s?css)$/g, '.$1.map');
             this.console.verbose('writing sourceMap to path: ' + sourceMap, level);
-            this.fs.writeFile(sourceMap, JSON.stringify(compiled.sourceMap, null, this.params.packaging ? 0 : 4), { force: true });
+            this.fs.write(sourceMap, JSON.stringify(compiled.sourceMap, null, this.params.packaging ? 0 : 4), { force: true });
         }
     }
     /**
@@ -106,7 +106,7 @@ export class Stage_Compiler {
      */
     async typescript(tsConfig, level) {
         this.console.verbose('running tsc...', level);
-        catchOrReturn(this.console.nc.cmd, 1 + level, this.console, [`tsc --project "${this.fs.pathRelative(tsConfig).replace(/"/g, '\\"')}"`]);
+        catchOrReturn(this.console.nc.cmd, 1 + level, this.console, this.fs, [`tsc --project "${this.fs.pathRelative(tsConfig).replace(/"/g, '\\"')}"`]);
     }
 }
 /**

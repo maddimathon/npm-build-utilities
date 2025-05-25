@@ -277,7 +277,7 @@ export async function getConfig(
 
     console.vi.debug( { configFileContent }, level );
 
-    fs.writeFile( configPath, configFileContent, { force } );
+    fs.write( configPath, configFileContent, { force } );
 
     return configInstance;
 }

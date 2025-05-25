@@ -1,8 +1,8 @@
 import type { Node } from '@maddimathon/utility-typescript/types';
 import type { CLI, Stage } from '../../../types/index.js';
+import { SemVer } from '../../@internal/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
-import { SemVer } from '../../@internal.js';
 /**
  * Default package stage.
  *

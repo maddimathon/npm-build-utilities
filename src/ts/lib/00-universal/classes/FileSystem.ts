@@ -21,12 +21,15 @@ import {
 import { node } from '@maddimathon/utility-typescript/classes';
 
 import type {
+    LocalError,
     Logger,
 } from '../../../types/index.js';
 
+import type { FileSystemType } from '../../../types/FileSystemType.js';
+
 import {
-    type FileSystemType,
-} from '../../@internal.js';
+    AbstractError,
+} from '../../@internal/index.js';
 
 /**
  * Extends the {@link node.NodeFiles} class with some custom logic useful to this package.
@@ -60,15 +63,26 @@ export class FileSystem extends node.NodeFiles {
     public override get ARGS_DEFAULT() {
 
         const copy = {
-            glob: {},
+
+            force: true,
+            recursive: true,
+            rename: true,
+
+            glob: {
+                absolute: false,
+                dot: true,
+            },
+
         } as const satisfies FileSystemType.Copy.Args;
 
         const glob = {
             absolute: true,
             dot: true,
             ignore: [
+                '._*',
+                '._**/**',
                 '**/._*',
-                '**/._**/*',
+                '**/._**/**',
                 '**/.DS_Store',
                 '**/.smbdelete**',
             ],
@@ -103,6 +117,10 @@ export class FileSystem extends node.NodeFiles {
             // @ts-expect-error - it is initialized in the super constructor
             this.args
         ) ?? this.buildArgs( args );
+
+        this.copy = this.copy.bind( this );
+        this.delete = this.delete.bind( this );
+        this.glob = this.glob.bind( this );
     }
 
 
@@ -110,14 +128,19 @@ export class FileSystem extends node.NodeFiles {
     /* METHODS
      * ====================================================================== */
 
-    /** {@inheritDoc FileSystemType.copy} */
+    /** 
+     * {@inheritDoc FileSystemType.copy}
+     * 
+     * @throws {@link FileSystem.Error}
+     */
     public copy(
         globs: string | string[],
         level: number,
         outputDir: string,
         sourceDir: string | null = null,
-        opts: Partial<FileSystemType.Copy.Args> = {},
+        args: Partial<FileSystemType.Copy.Args> = {},
     ): false | string[] {
+        args = mergeArgs( this.args.copy, args, true );
 
         outputDir = './' + outputDir.replace( /(^\.\/|\/$)/g, '' ) + '/';
 
@@ -125,21 +148,18 @@ export class FileSystem extends node.NodeFiles {
             sourceDir = './' + sourceDir.replace( /(^\.\/|\/$)/g, '' ) + '/';
         }
 
-        // this.console.vi.progress( { globs }, level );
-        // this.console.vi.progress( { outputDir }, level );
-        // this.console.vi.progress( { sourceDir }, level );
-
         if ( !Array.isArray( globs ) ) {
             globs = [ globs ];
         }
 
         const copyPaths = this.glob(
             sourceDir ? globs.map( glob => this.pathResolve( sourceDir, glob ) ) : globs,
-            opts.glob,
+            args.glob,
         );
 
         const sourceDirRegex = sourceDir && new RegExp( '^' + escRegExp( this.pathRelative( sourceDir ) + '/' ), 'gi' );
-        // this.console.vi.log( { sourceDirRegex }, level );
+
+        const output: string[] = [];
 
         for ( const source of copyPaths ) {
 
@@ -150,28 +170,71 @@ export class FileSystem extends node.NodeFiles {
                 sourceDirRegex ? source_relative.replace( sourceDirRegex, '' ) : source_relative,
             );
 
-            this.console.verbose(
+            this.console.debug(
                 `(TESTING) ${ source_relative } → ${ this.pathRelative( destination ) }`,
                 level,
                 { linesIn: 0, linesOut: 0, maxWidth: null }
             );
+
+            const t_output = this.copyFile( source, destination, args );
+
+            // throws
+            if ( !t_output ) {
+
+                throw new FileSystem.Error(
+                    [
+                        'this.copyFile returned falsey',
+                        'source = ' + source,
+                        'destination = ' + this.pathRelative( destination ),
+                    ].join( '\n' ),
+                    {
+                        class: 'FileSystem',
+                        method: 'copy',
+                    },
+                );
+            }
+
+            output.push( t_output );
         }
 
-        return [];
+        return output;
+    }
+
+    /** {@inheritDoc FileSystemType.delete} */
+    public override delete(
+        globs: string | string[],
+        level: number,
+        dryRun?: boolean,
+        args: FileSystemType.Glob.Args = {},
+    ) {
+        try {
+            return super.delete( this.glob( globs, args ), level, dryRun );
+        } catch ( error ) {
+
+            if (
+                error
+                && typeof error === 'object'
+                && 'message' in error
+                && String( error.message )?.match( /^\s*ENOTEMPTY\b/g )
+            ) {
+            } else {
+                throw error;
+            }
+        }
     }
 
     /** {@inheritDoc FileSystemType.glob} */
     public glob(
         globs: string | string[],
-        opts: FileSystemType.Glob.Args = {},
+        args: FileSystemType.Glob.Args = {},
     ): string[] {
 
-        opts = mergeArgs( this.args.glob, opts, false );
+        args = mergeArgs( this.args.glob, args, false );
 
-        const globResult = globSync( globs, opts )
+        const globResult = globSync( globs, args )
             .map( res => typeof res === 'object' ? res.fullpath() : res );
 
-        return globResult;
+        return globResult.filter( path => !path.match( /(^|\/)\._/g ) );
     }
 }
 
@@ -200,6 +263,85 @@ export namespace FileSystem {
          * Defaults for the {@link FileSystem.glob} method.
          */
         glob: FileSystemType.Glob.Args;
+    };
+
+    /**
+     * An extension of the utilities error used by the {@link FileSystem} class.
+     * 
+     * @category Errors
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export class Error extends AbstractError<Error.Args> {
+
+
+
+        /* LOCAL PROPERTIES
+         * ================================================================== */
+
+        // public readonly code: Error.Code;
+
+
+        /* Args ===================================== */
+
+        public override readonly name: string = 'FileSystem Error';
+
+        public get ARGS_DEFAULT() {
+
+            return {
+                ...AbstractError.prototype.ARGS_DEFAULT,
+            } as const satisfies Error.Args;
+        }
+
+
+
+        /* CONSTRUCTOR
+         * ================================================================== */
+
+        // public constructor (
+        //     message: string,
+        //     // code: Error.Code,
+        //     context: null | AbstractError.Context,
+        //     args?: Partial<Error.Args> & { cause?: LocalError.Input; },
+        // ) {
+        //     super( message, context, args );
+        //     // this.code = code;
+        // }
+
+
+
+        /* LOCAL METHODS
+         * ================================================================== */
+    }
+
+    /**
+     * Used only for {@link FileSystem.Error}.
+     * 
+     * @category Errors
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export namespace Error {
+
+        /**
+         * All allowed error code strings.
+         */
+        export type Code =
+            // | typeof INVALID_INPUT
+            | never;
+
+        // /**
+        //  * Error code for
+        //  */
+        // export const INVALID_INPUT = '4';
+
+        /**
+         * Optional configuration for {@link Error} class.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        export interface Args extends LocalError.Args {
+        };
     };
 
     /**

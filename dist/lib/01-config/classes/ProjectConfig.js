@@ -45,7 +45,7 @@ export class ProjectConfig {
                 [/2025/g, _currentYear],
             ],
             package: [
-                [/2025-05-24/g, _currentDate],
+                [/2025-05-25/g, _currentDate],
                 [/0.1.0-alpha.draft/g, stage.version.toString(stage.isDraftVersion)],
                 [/2025/g, _currentYear],
             ],

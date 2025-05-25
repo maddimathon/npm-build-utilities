@@ -78,7 +78,7 @@ export class Test extends AbstractStage<Test.Stages, Test.Args> {
         if ( this.args.packaging && !this.args.dryrun ) {
 
             this.console.verbose( 'removing test files from dist...', 2 );
-            this.fns.fs.deleteFiles( this.glob( [
+            this.fns.fs.delete( this.glob( [
                 'dist/**/*.test.d.ts',
                 'dist/**/*.test.d.ts.map',
                 'dist/**/*.test.js',

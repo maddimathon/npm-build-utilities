@@ -16,6 +16,10 @@ import { toTitleCase } from '@maddimathon/utility-typescript/functions/index';
 /**
  * For parsing and validating semantic version strings.
  *
+ * @category Config
+ *
+ * @since 0.1.0-alpha.draft
+ *
  * @internal
  */
 export class SemVer {
@@ -131,6 +135,13 @@ export class SemVer {
         return version;
     }
 }
+/**
+ * Used only for the {@link SemVer} class.
+ *
+ * @category Config
+ *
+ * @since 0.1.0-alpha.draft
+ */
 (function (SemVer) {
     /**
      * An extension of the utilities error used by the {@link SemVer} class.

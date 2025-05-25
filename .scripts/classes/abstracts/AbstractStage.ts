@@ -44,6 +44,7 @@ import {
 
     ProjectConfig,
 } from '../../../src/ts/index.js';
+import { FileSystemType } from 'src/ts/types/FileSystemType.js';
 
 
 type CmdArgs = Parameters<cls.node.NodeConsole[ 'cmdArgs' ]>[ 0 ];
@@ -205,7 +206,7 @@ export abstract class AbstractStage<
         level: number,
         args?: Partial<LocalError.Handler.Args>,
     ): void {
-        internal.errorHandler( error, level, this.console, args );
+        internal.errorHandler( error, level, this.console, this.fns.fs as FileSystemType, args );
     }
 
 
@@ -259,12 +260,7 @@ export abstract class AbstractStage<
 
         try {
 
-            return (
-                params
-                    ? tryer( ...params )
-                    // @ts-expect-error
-                    : tryer()
-            );
+            return tryer( ...( params ?? [] as Params ) );
 
         } catch ( error ) {
 
@@ -281,7 +277,8 @@ export abstract class AbstractStage<
                 error as LocalError.Input,
                 level,
                 this.console,
-                callbackArgs
+                this.fns.fs as FileSystemType,
+                callbackArgs,
             );
 
             throw error;
@@ -367,7 +364,7 @@ export abstract class AbstractStage<
     ): Promise<void> {
 
         if ( !this.args[ 'css-update' ] ) {
-            this.fns.fs.deleteFiles( this.glob( output ) );
+            this.fns.fs.delete( this.glob( output ) );
         }
 
         const packaging: boolean | null = this.args.packaging || null;
@@ -436,7 +433,7 @@ export abstract class AbstractStage<
                 const outDirGlobs = this.fns.fs.pathRelative( this.fns.fs.pathResolve( tsconfigDir, outDir.replace( /(\/+\**)?$/, '' ) ) ) + '/**/*';
 
                 this.console.verbose( `deleting current contents (${ outDirGlobs })...`, 1 + logBaseLevel );
-                this.fns.fs.deleteFiles( this.glob( outDirGlobs ) );
+                this.fns.fs.delete( this.glob( outDirGlobs ) );
             }
         }
 
@@ -493,7 +490,7 @@ export abstract class AbstractStage<
 
                 if ( fileContent.match( regexp ) !== null ) {
 
-                    this.fns.fs.writeFile(
+                    this.fns.fs.write(
                         path,
                         fileContent.replace(
                             regexp,

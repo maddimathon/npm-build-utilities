@@ -55,13 +55,16 @@ const _dummyConsole = new DummyConsole();
 export function defaultConfig(
     args?: { pkg: Node.PackageJson; } | Logger,
 ) {
+    const fs = new FileSystem( ( args && !( 'pkg' in args ) ) ? args : _dummyConsole );
+
     const pkg = ( args && ( 'pkg' in args ) )
         ? args.pkg
         : catchOrReturn(
             getPackageJson,
             0,
-            args ?? _dummyConsole,
-            [ new FileSystem( args ?? _dummyConsole ) ],
+            fs.console,
+            fs,
+            [ fs ],
         );
 
     const paths = {

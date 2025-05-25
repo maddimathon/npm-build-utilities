@@ -111,7 +111,7 @@ export class CompileStage extends AbstractStage {
         }
         const scssDistDir = this.getDistDir('scss');
         this.console.verbose('deleting existing files...', 2);
-        this.fs.deleteFiles([scssDistDir]);
+        this.fs.delete([scssDistDir], 3);
         this.console.verbose('building path arguments...', 2);
         const scssPathArgs = scssPaths.map((path) => {
             const srcDirRegex = new RegExp(escRegExp(this.fs.pathRelative(this.fs.pathResolve(path, '../')).replace(/\/$/g, '') + '/'), 'g');
@@ -198,7 +198,7 @@ export class CompileStage extends AbstractStage {
             this.console.vi.debug({ baseUrl }, 2);
             const outDir = this.fs.pathRelative(this.fs.pathResolve(baseUrl, tsDistDir));
             this.console.vi.debug({ outDir }, 2);
-            this.fs.writeFile(this.fs.pathResolve(tsConfigFile), JSON.stringify({
+            this.fs.write(this.fs.pathResolve(tsConfigFile), JSON.stringify({
                 extends: '@maddimathon/build-utilities/tsconfig',
                 include: [
                     './**/*',
@@ -213,7 +213,7 @@ export class CompileStage extends AbstractStage {
             tsPaths.push(tsConfigFile);
         }
         this.console.verbose('deleting existing files...', 2);
-        this.fs.deleteFiles([tsDistDir], false, (this.params.verbose ? 3 : 2));
+        this.fs.delete([tsDistDir], (this.params.verbose ? 3 : 2));
         this.console.vi.debug({ tsPaths }, (this.params.verbose ? 3 : 2));
         this.console.verbose('compiling to javascript...', 2);
         return Promise.all(tsPaths.map(tsc => {

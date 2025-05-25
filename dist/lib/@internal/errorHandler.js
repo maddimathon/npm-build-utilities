@@ -10,9 +10,9 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { escRegExp, typeOf, } from '@maddimathon/utility-typescript/functions';
-import { MessageMaker, node, VariableInspector, } from '@maddimathon/utility-typescript/classes';
-import { AbstractError, UnknownCaughtError, } from './index.js';
+import { slugify, timestamp, typeOf, } from '@maddimathon/utility-typescript/functions';
+import { MessageMaker, VariableInspector, } from '@maddimathon/utility-typescript/classes';
+import { AbstractError, UnknownCaughtError, } from './classes/index.js';
 const _msgMaker = new MessageMaker();
 /**
  * Returns a string representation of the error for logging a child object of an
@@ -21,7 +21,7 @@ const _msgMaker = new MessageMaker();
  * @internal
  * @private
  */
-function _errorStringifyInternal(error, args, console, level) {
+function _errorStringifyInternal(error, args, console, fs, level) {
     args = {
         ...args,
         bold: false,
@@ -33,7 +33,7 @@ function _errorStringifyInternal(error, args, console, level) {
     }
     const bulkMsgs = [];
     let i = 0;
-    for (const [_msg, _args] of _errorStringify(error, args, console, 1 + level)) {
+    for (const [_msg, _args] of _errorStringify(error, args, console, fs, 1 + level)) {
         bulkMsgs.push([_msg, {
                 depth: (i > 0 ? 1 : 0),
                 ..._args,
@@ -50,7 +50,7 @@ function _errorStringifyInternal(error, args, console, level) {
  * @internal
  * @private
  */
-export function _errorStringify(error, args, console, level) {
+export function _errorStringify(error, args, console, fs, level) {
     /**
      * Sectioned information for the error message.
      */
@@ -70,7 +70,7 @@ export function _errorStringify(error, args, console, level) {
                 cause: err.cause,
             };
             const causeString = err.cause
-                ? _msgMaker.msgs(_errorStringifyInternal(err.cause, args, console, 1 + level))
+                ? _msgMaker.msgs(_errorStringifyInternal(err.cause, args, console, fs, 1 + level))
                 : '';
             if (causeString.length) {
                 default_info.cause = undefined;
@@ -92,11 +92,6 @@ export function _errorStringify(error, args, console, level) {
     switch (typeof error) {
         case 'object':
             // breaks
-            if (error instanceof UnknownCaughtError) {
-                t_errorInfo = _defaultErrorInfo(error);
-                break;
-            }
-            // breaks
             if (error instanceof AbstractError) {
                 t_errorInfo = _defaultErrorInfo(error);
                 break;
@@ -108,10 +103,10 @@ export function _errorStringify(error, args, console, level) {
                         || error.stderr
                         || error.stdout
                         || []
-                ].flat();
+                ].flat().filter(v => v !== null).join('\n\n');
                 t_errorInfo = _defaultErrorInfo(error, {
                     message: error.message,
-                    output: output.filter(v => v !== null).join('\n\n'),
+                    output: output,
                     details: {
                         code: error.code,
                         signal: error.signal,
@@ -180,11 +175,17 @@ export function _errorStringify(error, args, console, level) {
         [`[${errorInfo.name}] ${errorInfo.message ?? ''}`],
     ];
     if (errorInfo.output) {
+        if (errorInfo.output.split('\n').length > 300) {
+            const t_outputPath = fs.write(`.scripts/.logs/errors/${slugify(error.name)}_${timestamp(null, { date: true, time: true }).replace(/[\-:]/g, '').replace(/[^\d]+/g, '-')}.txt`, errorInfo.output, { force: false, rename: true });
+            if (t_outputPath) {
+                errorInfo.output = 'Long output message written to ' + fs.pathRelative(t_outputPath).replace(' ', '%20');
+            }
+        }
         if (error instanceof AbstractError) {
-            bulkMsgs.push([errorInfo.output, { bold: false }]);
+            bulkMsgs.push([errorInfo.output, { bold: false, maxWidth: null }]);
         }
         else {
-            bulkMsgs.push([errorInfo.output, { bold: false, clr: 'black', }]);
+            bulkMsgs.push([errorInfo.output, { bold: false, clr: 'black', maxWidth: null }]);
         }
     }
     if (errorInfo.cause) {
@@ -193,7 +194,7 @@ export function _errorStringify(error, args, console, level) {
                 bulkMsgs.push(arr);
             }
         }
-        for (const arr of _errorStringifyInternal(errorInfo.cause, args, console, 1 + level)) {
+        for (const arr of _errorStringifyInternal(errorInfo.cause, args, console, fs, 1 + level)) {
             bulkMsgs.push(arr);
         }
     }
@@ -201,13 +202,22 @@ export function _errorStringify(error, args, console, level) {
         for (const arr of _msgHeading('Stack')) {
             bulkMsgs.push(arr);
         }
-        const _fs = new node.NodeFiles();
-        const _rootDirPath = _fs.pathResolve().replace(/\/\s*$/g, '') + '/';
-        const _rootDirPathRegex = new RegExp(`(?<=[\\(|\\s|\\n])${escRegExp(_rootDirPath)}`, 'g');
-        const _trimmedStack = errorInfo.stack.replace(_rootDirPathRegex, '');
+        const _stackPathRegex = /((?:^|\n)\s*at\s+[^\n]*?\s+)\(([^\(\)]+)\)(?=(?:\s*(?:\n|$)))/;
+        const _trimmedStack = errorInfo.stack
+            // .replace( new RegExp(
+            //     `(?<=[\\(|\\s|\\n])${ escRegExp( fs.pathResolve().replace( /\/\s*$/g, '' ) + '/' ) }`,
+            //     'g'
+            // ), '' )
+            .split('\n').map((path) => {
+            const _matches = path.match(_stackPathRegex);
+            if (_matches && _matches[2]) {
+                path = path.replace(_stackPathRegex, '$1') + `(${fs.pathRelative(_matches[2]).replace(' ', '%20')})`;
+            }
+            return path;
+        });
         bulkMsgs.push([
             _trimmedStack,
-            { bold: false, italic: true, maxWidth: null, }
+            { bold: false, italic: true, maxWidth: null }
         ]);
     }
     const details = [];
@@ -271,7 +281,7 @@ export function _errorStringify(error, args, console, level) {
  *
  * @internal
  */
-export function errorHandler(error, level, console, args) {
+export function errorHandler(error, level, console, fs, args) {
     args = {
         bold: true,
         clr: 'red',
@@ -280,7 +290,7 @@ export function errorHandler(error, level, console, args) {
         linesOut: 2,
         ...args ?? {},
     };
-    const bulkMsgs = _errorStringify(error, args, console, 0);
+    const bulkMsgs = _errorStringify(error, args, console, fs, 0);
     console.error(bulkMsgs, level, args);
     process.exit(process.exitCode ?? 0);
 }

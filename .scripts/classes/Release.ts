@@ -168,7 +168,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
 
                 this.pkg.version = inputVersion;
 
-                this.fns.fs.writeFile(
+                this.fns.fs.write(
                     'package.json',
                     currentPkgJson.replace(
                         /"version":\s*"[^"]*"/gi,
@@ -222,7 +222,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
             return;
         }
 
-        this.fns.fs.writeFile( 'CHANGELOG.md', (
+        this.fns.fs.write( 'CHANGELOG.md', (
             this.fns.fs.readFile( 'CHANGELOG.md' )
                 .replace( newEntryRegex, this.fns.fns.escRegExpReplace( newChangeLogEntry ) )
         ), { force: true } );
@@ -373,7 +373,7 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
 
         if ( !this.args.dryrun ) {
             this.console.verbose( 'resetting release notes...', 2 );
-            this.fns.fs.writeFile( '.releasenotes.md', [
+            this.fns.fs.write( '.releasenotes.md', [
                 '',
                 '### Breaking',
                 '- ',

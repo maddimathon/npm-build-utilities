@@ -22,9 +22,10 @@ const _dummyConsole = new DummyConsole();
  * @category Config
  */
 export function defaultConfig(args) {
+    const fs = new FileSystem((args && !('pkg' in args)) ? args : _dummyConsole);
     const pkg = (args && ('pkg' in args))
         ? args.pkg
-        : catchOrReturn(getPackageJson, 0, args ?? _dummyConsole, [new FileSystem(args ?? _dummyConsole)]);
+        : catchOrReturn(getPackageJson, 0, fs.console, fs, [fs]);
     const paths = {
         release: '@releases',
         snapshot: '.snapshots',

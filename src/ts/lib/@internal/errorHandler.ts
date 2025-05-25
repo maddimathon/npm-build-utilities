@@ -12,13 +12,17 @@
  */
 
 import {
-    escRegExp,
+    RecursivePartial,
+} from '@maddimathon/utility-typescript/types/objects';
+
+import {
+    slugify,
+    timestamp,
     typeOf,
 } from '@maddimathon/utility-typescript/functions';
 
 import {
     MessageMaker,
-    node,
     VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
 
@@ -27,11 +31,12 @@ import type {
     Logger,
 } from '../../types/index.js';
 
+import type { FileSystemType } from '../../types/FileSystemType.js';
+
 import {
     AbstractError,
     UnknownCaughtError,
-} from './index.js';
-import { RecursivePartial } from '@maddimathon/utility-typescript/types/objects/basics';
+} from './classes/index.js';
 
 
 const _msgMaker = new MessageMaker();
@@ -47,6 +52,7 @@ function _errorStringifyInternal(
     error: LocalError.Input,
     args: Partial<LocalError.Handler.Args>,
     console: Logger,
+    fs: FileSystemType,
     level: number,
 ): MessageMaker.BulkMsgs {
     args = {
@@ -65,7 +71,13 @@ function _errorStringifyInternal(
     const bulkMsgs: MessageMaker.BulkMsgs = [];
 
     let i = 0;
-    for ( const [ _msg, _args ] of _errorStringify( error, args, console, 1 + level ) ) {
+    for ( const [ _msg, _args ] of _errorStringify(
+        error,
+        args,
+        console,
+        fs,
+        1 + level,
+    ) ) {
 
         bulkMsgs.push( [ _msg, {
             depth: ( i > 0 ? 1 : 0 ),
@@ -90,6 +102,7 @@ export function _errorStringify(
     error: LocalError.Input,
     args: Partial<LocalError.Handler.Args>,
     console: Logger,
+    fs: FileSystemType,
     level: number,
 ): MessageMaker.BulkMsgs {
 
@@ -129,7 +142,13 @@ export function _errorStringify(
             };
 
             const causeString = err.cause
-                ? _msgMaker.msgs( _errorStringifyInternal( err.cause, args, console, 1 + level ) )
+                ? _msgMaker.msgs( _errorStringifyInternal(
+                    err.cause,
+                    args,
+                    console,
+                    fs,
+                    1 + level,
+                ) )
                 : '';
 
             if ( causeString.length ) {
@@ -155,12 +174,6 @@ export function _errorStringify(
 
         case 'object':
             // breaks
-            if ( error instanceof UnknownCaughtError ) {
-                t_errorInfo = _defaultErrorInfo( error );
-                break;
-            }
-
-            // breaks
             if ( error instanceof AbstractError ) {
                 t_errorInfo = _defaultErrorInfo( error );
                 break;
@@ -174,11 +187,11 @@ export function _errorStringify(
                     || error.stderr
                     || error.stdout
                     || []
-                ].flat();
+                ].flat().filter( v => v !== null ).join( '\n\n' );
 
                 t_errorInfo = _defaultErrorInfo( error, {
                     message: error.message,
-                    output: output.filter( v => v !== null ).join( '\n\n' ),
+                    output: output,
 
                     details: {
                         code: error.code,
@@ -186,8 +199,6 @@ export function _errorStringify(
                         status: error.status,
                         path: error.path,
                         pid: error.pid,
-                        // stderr: error.stderr,
-                        // stdout: error.stdout,
                     },
                 } );
 
@@ -279,10 +290,23 @@ export function _errorStringify(
 
     if ( errorInfo.output ) {
 
+        if ( errorInfo.output.split( '\n' ).length > 300 ) {
+
+            const t_outputPath = fs.write(
+                `.scripts/.logs/errors/${ slugify( error.name ) }_${ timestamp( null, { date: true, time: true } ).replace( /[\-:]/g, '' ).replace( /[^\d]+/g, '-' ) }.txt`,
+                errorInfo.output,
+                { force: false, rename: true },
+            );
+
+            if ( t_outputPath ) {
+                errorInfo.output = 'Long output message written to ' + fs.pathRelative( t_outputPath ).replace( ' ', '%20' );
+            }
+        }
+
         if ( error instanceof AbstractError ) {
-            bulkMsgs.push( [ errorInfo.output, { bold: false } ] );
+            bulkMsgs.push( [ errorInfo.output, { bold: false, maxWidth: null } ] );
         } else {
-            bulkMsgs.push( [ errorInfo.output, { bold: false, clr: 'black', } ] );
+            bulkMsgs.push( [ errorInfo.output, { bold: false, clr: 'black', maxWidth: null } ] );
         }
     }
 
@@ -295,7 +319,13 @@ export function _errorStringify(
             }
         }
 
-        for ( const arr of _errorStringifyInternal( errorInfo.cause, args, console, 1 + level ) ) {
+        for ( const arr of _errorStringifyInternal(
+            errorInfo.cause,
+            args,
+            console,
+            fs,
+            1 + level,
+        ) ) {
             bulkMsgs.push( arr );
         }
     }
@@ -306,20 +336,23 @@ export function _errorStringify(
             bulkMsgs.push( arr );
         }
 
-        const _fs = new node.NodeFiles();
+        const _stackPathRegex = /(^\s*at\s+[^\n]*?\s+)\(([^\(\)]+)\)(?=(?:\s*$))/;
 
-        const _rootDirPath = _fs.pathResolve().replace( /\/\s*$/g, '' ) + '/';
+        const _trimmedStack = errorInfo.stack.split( '\n' ).map( ( path ) => {
 
-        const _rootDirPathRegex = new RegExp(
-            `(?<=[\\(|\\s|\\n])${ escRegExp( _rootDirPath ) }`,
-            'g'
-        );
+            const _matches = path.match( _stackPathRegex );
 
-        const _trimmedStack = errorInfo.stack.replace( _rootDirPathRegex, '' );
+            if ( _matches && _matches[ 2 ] ) {
+                path = path.replace( _stackPathRegex, '$1' )
+                    + `(${ fs.pathRelative( _matches[ 2 ] ).replace( ' ', '%20' ) })`;
+            }
+
+            return path;
+        } );
 
         bulkMsgs.push( [
             _trimmedStack,
-            { bold: false, italic: true, maxWidth: null, }
+            { bold: false, italic: true, maxWidth: null }
         ] );
     }
 
@@ -411,6 +444,7 @@ export function errorHandler(
     error: LocalError.Input,
     level: number,
     console: Logger,
+    fs: FileSystemType,
     args?: Partial<LocalError.Handler.Args>,
 ) {
     args = {
@@ -424,7 +458,7 @@ export function errorHandler(
         ...args ?? {},
     };
 
-    const bulkMsgs = _errorStringify( error, args, console, 0 );
+    const bulkMsgs = _errorStringify( error, args, console, fs, 0 );
 
     console.error( bulkMsgs, level, args );
     process.exit( process.exitCode ?? 0 );

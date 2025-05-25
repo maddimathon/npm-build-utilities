@@ -228,7 +228,7 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
             this.console.verbose( 'deleting current contents...', 3 );
 
             try {
-                this.fns.fs.deleteFiles( [ outDir ] );
+                this.fns.fs.delete( [ outDir ] );
             } catch ( err ) {
                 // nodeErrorCLI( err as NodeError, ( this.args.verbose ? 4 : 3 ) );
             }

@@ -20,7 +20,8 @@ import {
     MessageMaker,
 } from '@maddimathon/utility-typescript/classes';
 
-import { Logger } from './Logger.js';
+import type { Logger } from './Logger.js';
+import type { FileSystemType } from './FileSystemType.js';
 
 
 /**
@@ -63,6 +64,7 @@ export namespace LocalError {
             error: Input,
             level: number,
             console: Logger,
+            fs: FileSystemType,
             args?: Partial<Handler.Args>,
         ): void;
     }

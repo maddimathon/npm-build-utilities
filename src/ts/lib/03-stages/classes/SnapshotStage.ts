@@ -12,14 +12,22 @@
  */
 
 import type { Node } from '@maddimathon/utility-typescript/types';
-import { slugify, timestamp } from '@maddimathon/utility-typescript/functions';
+
+import {
+    slugify,
+    timestamp,
+} from '@maddimathon/utility-typescript/functions';
+
+import {
+    MessageMaker,
+} from '@maddimathon/utility-typescript/classes';
 
 import type {
     CLI,
     Stage,
 } from '../../../types/index.js';
 
-import { SemVer } from '../../@internal.js';
+import { SemVer } from '../../@internal/index.js';
 
 import { ProjectConfig } from '../../01-config/index.js';
 
@@ -69,12 +77,15 @@ export class SnapshotStage extends AbstractStage<
             ignoreGlobs: ( stage: Stage.Class ) => [
                 '.git/**',
                 'node_modules/**',
+                '**/node_modules/**',
                 'dist/**',
                 'docs/**',
 
                 `${ stage.config.paths.release.replace( /\/$/g, '' ) }/**`,
                 `${ stage.config.paths.snapshot.replace( /\/$/g, '' ) }/**`,
 
+                '._*',
+                '._*/**',
                 '**/._*',
                 '**/._*/**',
                 '**/.DS_Store',
@@ -120,6 +131,32 @@ export class SnapshotStage extends AbstractStage<
     /* LOCAL METHODS
      * ====================================================================== */
 
+    /**
+     * Prints a message to the console signalling the start or end of this
+     * build stage.
+     *
+     * @param which  Whether we are starting or ending.
+     */
+    public override async startEndNotice( which: "start" | "end" | null ) {
+
+        // returns
+        if ( which !== 'end' ) {
+            return super.startEndNotice( which, false );
+        }
+
+        const _endMsg: MessageMaker.BulkMsgs = [
+            [ '✓ ', { flag: false } ],
+            [ 'Snapshot Complete!', { italic: true } ],
+            [
+                this.path + '.zip',
+                { bold: false, flag: false, indent: '  ', italic: true }
+            ],
+        ];
+
+        this.console.startOrEnd( _endMsg, which, { maxWidth: null } );
+        return;
+    }
+
 
 
     /* RUNNING METHODS
@@ -131,24 +168,64 @@ export class SnapshotStage extends AbstractStage<
 
     protected async snap() {
 
-        this.console.progress( 'copying files...', 1 );
-        this.fs.copy( '*', 2, this.path, null, {
-            glob: {
+        await this._tidy();
+
+        this.console.verbose( 'copying files...', 1 );
+        const copyPaths = this.try(
+            this.fs.glob,
+            2,
+            [ '**/*', {
+                follow: false,
                 ignore: typeof this.args.ignoreGlobs === 'function'
                     ? this.args.ignoreGlobs( this )
                     : this.args.ignoreGlobs,
+            }, ]
+        ).filter( path => !this.fs.isSymLink( this.fs.pathResolve( path ) ) );
+
+        this.try( this.fs.copy, this.params.verbose ? 2 : 1, [
+            copyPaths,
+            this.params.verbose ? 2 : 1,
+            this.path,
+            null,
+            {
+                recursive: false,
             },
-        } );
+        ] );
 
         await this._zip();
-        await this._tidy();
+
+        this.console.verbose( 'removing the snapshot folder...', 1 );
+        this.try(
+            this.fs.delete,
+            this.params.verbose ? 2 : 1,
+            [ this.path, this.params.verbose ? 2 : 1, false ],
+        );
+    }
+
+
+    protected async _tidy() {
+        this.console.verbose( 'removing any current folders...', 1 );
+
+        const snapDir = this.config.paths.snapshot.replace( /\/$/g, '' ) + '/';
+
+        const currentFolders = this.fs.readDir( snapDir )
+            .map( p => snapDir + p )
+            .filter( path => this.fs.isDirectory( path ) );
+
+        this.try(
+            this.fs.delete,
+            this.params.verbose ? 2 : 1,
+            [ currentFolders, this.params.verbose ? 2 : 1, false ],
+        );
     }
 
     protected async _zip() {
-        this.console.progress( '(NOT IMPLEMENTED) zipping folder...', 1 );
-    }
+        this.console.verbose( 'zipping folder...', 1 );
 
-    protected async _tidy() {
-        this.console.progress( '(NOT IMPLEMENTED) deleting snapshot folder...', 1 );
+        this.try(
+            this.console.nc.cmd,
+            this.params.verbose ? 2 : 1,
+            [ `cd ${ this.config.paths.snapshot } && zip -r ${ this.filename }.zip ${ this.filename }` ],
+        );
     }
 }

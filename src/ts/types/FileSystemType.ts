@@ -42,6 +42,24 @@ export interface FileSystemType extends node.NodeFiles {
     ): false | string[];
 
     /**
+     * Deletes given globs.
+     * 
+     * @category Filers
+     * 
+     * @param paths   Paths to delete. Absolute or relative to root dir.
+     * @param level   Depth level for this message (above the value of 
+     *                {@link CLI.Params.log-base-level}).
+     * @param dryRun  If true, files that would be deleted are printed to the 
+     *                console and not deleted.
+     */
+    delete(
+        globs: string | string[],
+        level: number,
+        dryRun?: boolean,
+        args?: FileSystemType.Glob.Args,
+    ): ReturnType<node.NodeFiles[ 'delete' ]>;
+
+    /**
      * Gets the valid paths matched against the input globs.
      */
     glob(
@@ -71,7 +89,7 @@ export namespace FileSystemType {
          * 
          * @since ___PKG_VERSION___
          */
-        export interface Args {
+        export interface Args extends node.NodeFiles.CopyFileArgs {
             glob: Glob.Args;
         };
     };

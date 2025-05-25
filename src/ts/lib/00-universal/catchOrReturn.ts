@@ -16,12 +16,17 @@ import type {
     Logger,
 } from '../../types/index.js';
 
-import { errorHandler } from '../@internal/index.js';
+import type { FileSystemType } from '../../types/FileSystemType.js';
+
+import {
+    errorHandler,
+} from '../@internal/index.js';
 
 /**
  * @param tryer     Function to run inside the try {}.
  * @param level     
  * @param console   Instance used to log debugging information.
+ * @param fs        
  * @param params    Parameters passed to the tryer function, if any.
  * @param callback  Used to handle the error.  Note: if the callback does not throw or exit, the caught error is re-thrown.
  */
@@ -32,6 +37,7 @@ export function catchOrReturn<
     tryer: ( ...params: Params ) => Return,
     level: number,
     console: Logger,
+    fs: FileSystemType,
     params?: Params,
     callback?: (
         | null
@@ -47,6 +53,7 @@ export function catchOrReturn<
     tryer: ( ...params: Params ) => Return,
     level: number,
     console: Logger,
+    fs: FileSystemType,
     params: Params,
     callback?: (
         | null
@@ -72,7 +79,8 @@ export function catchOrReturn<
     tryer: ( ...params: Params ) => Return,
     level: number,
     console: Logger,
-    params?: Params,
+    fs: FileSystemType,
+    params: Params,
     callback: (
         | null
         | LocalError.Handler
@@ -82,12 +90,7 @@ export function catchOrReturn<
 
     try {
 
-        return (
-            params
-                ? tryer( ...params )
-                // @ts-expect-error
-                : tryer()
-        );
+        return tryer( ...( params ?? [] as Params ) );
 
     } catch ( error ) {
 
@@ -104,6 +107,7 @@ export function catchOrReturn<
             error as LocalError.Input,
             level,
             console,
+            fs,
             callbackArgs,
         );
 

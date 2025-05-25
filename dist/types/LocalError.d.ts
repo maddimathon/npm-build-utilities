@@ -16,6 +16,7 @@
  */
 import { CustomError, MessageMaker } from '@maddimathon/utility-typescript/classes';
 import { Logger } from './Logger.js';
+import { FileSystemType } from './FileSystemType.js';
 /**
  * Shape of error classes used in this project.
  *
@@ -47,7 +48,7 @@ export declare namespace LocalError {
      * @since 0.1.0-alpha.draft
      */
     interface Handler {
-        (error: Input, level: number, console: Logger, args?: Partial<Handler.Args>): void;
+        (error: Input, level: number, console: Logger, fs: FileSystemType, args?: Partial<Handler.Args>): void;
     }
     /**
      * Types for handling errors in a variety of contexts.

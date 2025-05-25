@@ -10,7 +10,7 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { errorHandler } from '../@internal/index.js';
+import { errorHandler, } from '../@internal/index.js';
 /**
  * Runs a function, with parameters as applicable, and catches (& handles)
  * anything thrown.
@@ -21,12 +21,9 @@ import { errorHandler } from '../@internal/index.js';
  *
  * @experimental
  */
-export function catchOrReturn(tryer, level, console, params, callback = null) {
+export function catchOrReturn(tryer, level, console, fs, params, callback = null) {
     try {
-        return (params
-            ? tryer(...params)
-            // @ts-expect-error
-            : tryer());
+        return tryer(...(params ?? []));
     }
     catch (error) {
         let callbackArgs = {};
@@ -37,7 +34,7 @@ export function catchOrReturn(tryer, level, console, params, callback = null) {
             callbackArgs = callback[1];
             callback = callback[0];
         }
-        callback(error, level, console, callbackArgs);
+        callback(error, level, console, fs, callbackArgs);
         throw error;
     }
 }

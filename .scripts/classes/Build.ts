@@ -160,7 +160,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
 
         const changelogRegex = /(<!--README_DOCS_CHANGELOG-->).*?(<!--\/README_DOCS_CHANGELOG-->)/gs;
 
-        this.fns.fs.writeFile( 'README.md', (
+        this.fns.fs.write( 'README.md', (
             this.fns.fs.readFile( 'README.md' )
                 .replace( headerRegex, '$1\n' + utils.functions.escRegExpReplace( `# ${ this.pkg.config.title } @ ${ this.pkgVersion }` ) + '\n$2' )
                 .replace( descRegex, '$1\n' + utils.functions.escRegExpReplace( softWrapText( this.pkg.description, 80 ) ) + '\n$2' )
@@ -172,7 +172,7 @@ export class Build extends AbstractStage<Build.Stages, Build.Args> {
 
             const installRegex = /(<!--README_INSTALL-->).*?(<!--\/README_INSTALL-->)/gs;
 
-            this.fns.fs.writeFile( 'README.md', (
+            this.fns.fs.write( 'README.md', (
                 this.fns.fs.readFile( 'README.md' )
                     .replace( installRegex, '$1\n' + utils.functions.escRegExpReplace( [
                         '```sh',

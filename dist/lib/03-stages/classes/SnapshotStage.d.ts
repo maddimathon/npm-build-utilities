@@ -12,7 +12,7 @@
  */
 import type { Node } from '@maddimathon/utility-typescript/types';
 import type { CLI, Stage } from '../../../types/index.js';
-import { SemVer } from '../../@internal.js';
+import { SemVer } from '../../@internal/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
@@ -47,9 +47,16 @@ export declare class SnapshotStage extends AbstractStage<Stage.SubStage.Snapshot
      * @param _version  Optional. Current version object, if any.
      */
     constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Snapshot>, _pkg?: Node.PackageJson, _version?: SemVer);
+    /**
+     * Prints a message to the console signalling the start or end of this
+     * build stage.
+     *
+     * @param which  Whether we are starting or ending.
+     */
+    startEndNotice(which: "start" | "end" | null): Promise<void>;
     protected runSubStage(subStage: Stage.SubStage.Snapshot): Promise<void>;
     protected snap(): Promise<void>;
-    protected _zip(): Promise<void>;
     protected _tidy(): Promise<void>;
+    protected _zip(): Promise<void>;
 }
 //# sourceMappingURL=SnapshotStage.d.ts.map

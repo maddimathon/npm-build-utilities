@@ -124,6 +124,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                 // 'Entry Points',
                 'Other',
                 'Internal',
+                'Deprecated',
             ],
 
             customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com" target="_blank">Maddi Mathon</a>, 2025. <a href="${ homepage }/MIT_License.html">MIT license</a>.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`,
@@ -310,7 +311,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
 
             const outDir = config.out.replace( /\/+$/gi, '' );
 
-            this.fns.fs.deleteFiles( this.glob( [
+            this.fns.fs.delete( this.glob( [
                 outDir + '/*',
                 outDir + '/.*',
             ] ) );
@@ -320,7 +321,7 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
             if ( !config.out ) {
                 this.console.verbose( 'deleting existing files...', 2 );
             }
-            this.fns.fs.deleteFiles( [ config.json ] );
+            this.fns.fs.delete( [ config.json ] );
         }
 
         this.console.verbose( 'running typedoc...', 2 );

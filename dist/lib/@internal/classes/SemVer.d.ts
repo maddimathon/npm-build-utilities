@@ -16,6 +16,10 @@ import { AbstractError } from './abstract/AbstractError.js';
 /**
  * For parsing and validating semantic version strings.
  *
+ * @category Config
+ *
+ * @since 0.1.0-alpha.draft
+ *
  * @internal
  */
 export declare class SemVer {
@@ -37,6 +41,13 @@ export declare class SemVer {
     constructor(input: string, console: Logger);
     toString(draft?: boolean): string;
 }
+/**
+ * Used only for the {@link SemVer} class.
+ *
+ * @category Config
+ *
+ * @since 0.1.0-alpha.draft
+ */
 export declare namespace SemVer {
     /**
      * An extension of the utilities error used by the {@link SemVer} class.

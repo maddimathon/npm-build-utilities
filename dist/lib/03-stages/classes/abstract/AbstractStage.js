@@ -264,7 +264,7 @@ export class AbstractStage {
     }
     /* ERRORS ===================================== */
     handleError(error, level, args) {
-        errorHandler(error, level, this.console, args);
+        errorHandler(error, level, this.console, this.fs, args);
     }
     /**
      * Runs a function, with parameters as applicable, and catches (& handles)
@@ -278,10 +278,7 @@ export class AbstractStage {
      */
     try(tryer, level, params) {
         try {
-            return (params
-                ? tryer(...params)
-                // @ts-expect-error
-                : tryer());
+            return tryer(...(params ?? []));
         }
         catch (error) {
             this.handleError(error, level);
@@ -307,7 +304,7 @@ export class AbstractStage {
         } : {
             default: [[`${uppercase.which}ING ${uppercase.name}`]],
             start: [[`${uppercase.name} ${uppercase.which}ING...`]],
-            end: [['✓ ', { flag: false }], [toTitleCase(`${uppercase.name} FINISHED!`), { italic: true }]],
+            end: [['✓ ', { flag: false }], [`${toTitleCase(this.name)} Complete!`, { italic: true }]],
         };
         this.console.startOrEnd(messages[which ?? 'default'], which);
     }

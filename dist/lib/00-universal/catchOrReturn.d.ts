@@ -11,13 +11,15 @@
  * @license MIT
  */
 import type { LocalError, Logger } from '../../types/index.js';
+import type { FileSystemType } from '../../types/FileSystemType.js';
 /**
  * @param tryer     Function to run inside the try {}.
  * @param level
  * @param console   Instance used to log debugging information.
+ * @param fs
  * @param params    Parameters passed to the tryer function, if any.
  * @param callback  Used to handle the error.  Note: if the callback does not throw or exit, the caught error is re-thrown.
  */
-export declare function catchOrReturn<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, console: Logger, params?: Params, callback?: (null | LocalError.Handler | [LocalError.Handler, Partial<LocalError.Handler.Args>])): Return;
-export declare function catchOrReturn<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, console: Logger, params: Params, callback?: (null | LocalError.Handler | [LocalError.Handler, Partial<LocalError.Handler.Args>])): Return;
+export declare function catchOrReturn<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, console: Logger, fs: FileSystemType, params?: Params, callback?: (null | LocalError.Handler | [LocalError.Handler, Partial<LocalError.Handler.Args>])): Return;
+export declare function catchOrReturn<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, console: Logger, fs: FileSystemType, params: Params, callback?: (null | LocalError.Handler | [LocalError.Handler, Partial<LocalError.Handler.Args>])): Return;
 //# sourceMappingURL=catchOrReturn.d.ts.map

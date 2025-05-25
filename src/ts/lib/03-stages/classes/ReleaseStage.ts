@@ -29,10 +29,11 @@ import type {
     Stage,
 } from '../../../types/index.js';
 
+import { SemVer } from '../../@internal/index.js';
+
 import { ProjectConfig } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
-import { SemVer } from '../../@internal.js';
 
 
 
@@ -163,7 +164,7 @@ export class ReleaseStage extends AbstractStage<
 
             this.version = inputVersion;
 
-            this.fs.writeFile(
+            this.fs.write(
                 'package.json',
                 currentPkgJson.replace(
                     /"version":\s*"[^"]*"/gi,

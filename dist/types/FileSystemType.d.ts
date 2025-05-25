@@ -29,6 +29,18 @@ export interface FileSystemType extends node.NodeFiles {
      */
     copy(globs: string | string[], level: number, outputDir: string, sourceDir?: string | null, args?: Partial<FileSystemType.Copy.Args>): false | string[];
     /**
+     * Deletes given globs.
+     *
+     * @category Filers
+     *
+     * @param paths   Paths to delete. Absolute or relative to root dir.
+     * @param level   Depth level for this message (above the value of
+     *                {@link CLI.Params.log-base-level}).
+     * @param dryRun  If true, files that would be deleted are printed to the
+     *                console and not deleted.
+     */
+    delete(globs: string | string[], level: number, dryRun?: boolean, args?: FileSystemType.Glob.Args): ReturnType<node.NodeFiles['delete']>;
+    /**
      * Gets the valid paths matched against the input globs.
      */
     glob(input: string | string[], args?: FileSystemType.Glob.Args): string[];
@@ -52,7 +64,7 @@ export declare namespace FileSystemType {
          *
          * @since 0.1.0-alpha.draft
          */
-        interface Args {
+        interface Args extends node.NodeFiles.CopyFileArgs {
             glob: Glob.Args;
         }
     }
@@ -65,7 +77,7 @@ export declare namespace FileSystemType {
         /**
          * Optional configuration for {@link FileSystem.glob} method.
          *
-         * @since
+         * @since 0.1.0-alpha.draft
          *
          * @interface
          */

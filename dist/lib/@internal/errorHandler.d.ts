@@ -12,6 +12,7 @@
  */
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { LocalError, Logger } from '../../types/index.js';
+import type { FileSystemType } from '../../types/FileSystemType.js';
 /**
  * Returns a string representation of the error for logging.
  *
@@ -20,7 +21,7 @@ import type { LocalError, Logger } from '../../types/index.js';
  * @internal
  * @private
  */
-export declare function _errorStringify(error: LocalError.Input, args: Partial<LocalError.Handler.Args>, console: Logger, level: number): MessageMaker.BulkMsgs;
+export declare function _errorStringify(error: LocalError.Input, args: Partial<LocalError.Handler.Args>, console: Logger, fs: FileSystemType, level: number): MessageMaker.BulkMsgs;
 /**
  * Default error handler for use within the library.
  *
@@ -28,5 +29,5 @@ export declare function _errorStringify(error: LocalError.Input, args: Partial<L
  *
  * @internal
  */
-export declare function errorHandler(error: LocalError.Input, level: number, console: Logger, args?: Partial<LocalError.Handler.Args>): void;
+export declare function errorHandler(error: LocalError.Input, level: number, console: Logger, fs: FileSystemType, args?: Partial<LocalError.Handler.Args>): void;
 //# sourceMappingURL=errorHandler.d.ts.map

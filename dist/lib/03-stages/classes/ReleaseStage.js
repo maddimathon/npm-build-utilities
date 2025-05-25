@@ -90,7 +90,7 @@ export class ReleaseStage extends AbstractStage {
         if (inputVersion !== this.pkg.version) {
             const currentPkgJson = this.fs.readFile('package.json');
             this.version = inputVersion;
-            this.fs.writeFile('package.json', currentPkgJson.replace(/"version":\s*"[^"]*"/gi, escRegExpReplace(`"version": "${inputVersion}"`)), { force: true });
+            this.fs.write('package.json', currentPkgJson.replace(/"version":\s*"[^"]*"/gi, escRegExpReplace(`"version": "${inputVersion}"`)), { force: true });
         }
         // returns if prep questions fail
         if (!this.params.dryrun && this.isSubStageIncluded('changelog', 1)) {
