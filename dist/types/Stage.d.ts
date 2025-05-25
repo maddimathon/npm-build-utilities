@@ -23,16 +23,11 @@ import type { Config } from './Config.js';
 import type { FileSystem, ProjectConfig } from '../lib/index.js';
 import type { Stage_Compiler } from '../lib/02-utils/classes/Stage_Compiler.js';
 import { Logger } from './Logger.js';
+import { SemVer } from '../lib/@internal.js';
 /**
  * The required shape for every stage's arguments.
  */
 export interface Args<SubStage extends string = string> {
-    /**
-     * Optional class argument overrides to use.
-     */
-    args: {
-        console?: Partial<Logger.Args>;
-    };
     /**
      * Optional class instances to use.
      */
@@ -71,6 +66,8 @@ export declare namespace Args {
     }
     /**
      * The required shape for a compile stage.
+     *
+     * @see {@link CompileStage.ARGS_DEFAULT}  For defaults.
      */
     interface Compile<SubStage extends string = string> extends Args<SubStage> {
         /**
@@ -123,8 +120,14 @@ export declare namespace Args {
     }
     /**
      * The required shape for a snapshot stage.
+     *
+     * @see {@link SnapshotStage.ARGS_DEFAULT}  For defaults.
      */
     interface Snapshot<SubStage extends string = string> extends Args<SubStage> {
+        /**
+         * Globs to ignore when putting together the snapshot.
+         */
+        ignoreGlobs: string[] | ((stage: Class) => string[]);
     }
     /**
      * The required shape for a test stage.
@@ -170,6 +173,13 @@ export interface Class<SubStage extends string = string, A extends Args = Args> 
      */
     readonly console: Logger;
     /**
+     * Wheather the current project version is a draft (e.g., this is not a
+     * non-dryrun release).
+     *
+     * @category Project
+     */
+    readonly isDraftVersion: boolean;
+    /**
      * Name for this stage used for notices.
      *
      * @category Args
@@ -182,11 +192,23 @@ export interface Class<SubStage extends string = string, A extends Args = Args> 
      */
     readonly params: CLI.Params;
     /**
+     * Current value of the package.json file for this project.
+     *
+     * @category Project
+     */
+    readonly pkg: Node.PackageJson;
+    /**
      * All substage available in this stage.
      *
      * @category Args
      */
     readonly subStages: SubStage[];
+    /**
+     * Current version object.
+     *
+     * @category Project
+     */
+    readonly version: SemVer;
     /**
      * Runs the entire stage (asynchronously).
      *
@@ -280,7 +302,7 @@ export declare namespace Class {
  *
  * @expand
  */
-export type ClassType = (new (config: ProjectConfig, params: CLI.Params, args: Partial<Args>, _pkg?: Node.PackageJson) => Class);
+export type ClassType = (new (config: ProjectConfig, params: CLI.Params, args: Partial<Args>, _pkg?: Node.PackageJson, _version?: SemVer) => Class);
 /**
  * Any stage class compatible with this package.
  *

@@ -11,6 +11,13 @@
  * @license MIT
  */
 
+import { globSync } from 'glob';
+
+import {
+    escRegExp,
+    mergeArgs,
+} from '@maddimathon/utility-typescript/functions';
+
 import { node } from '@maddimathon/utility-typescript/classes';
 
 import type {
@@ -52,8 +59,26 @@ export class FileSystem extends node.NodeFiles {
      */
     public override get ARGS_DEFAULT() {
 
+        const copy = {
+            glob: {},
+        } as const satisfies FileSystemType.Copy.Args;
+
+        const glob = {
+            absolute: true,
+            dot: true,
+            ignore: [
+                '**/._*',
+                '**/._**/*',
+                '**/.DS_Store',
+                '**/.smbdelete**',
+            ],
+        } as const satisfies FileSystemType.Glob.Args;
+
         return {
             ...node.NodeFiles.prototype.ARGS_DEFAULT,
+
+            copy,
+            glob,
         } as const satisfies FileSystem.Args;
     }
 
@@ -85,29 +110,68 @@ export class FileSystem extends node.NodeFiles {
     /* METHODS
      * ====================================================================== */
 
-    /**
-     * Copies files from one directory to another, maintaing their relative
-     * directory structure.
-     */
+    /** {@inheritDoc FileSystemType.copy} */
     public copy(
         globs: string | string[],
-        opts: FileSystemType.Glob.Args,
-    ): string | string[] {
-        this.console.progress( `(NOT IMPLEMENTED) FileSystem.copy()`, 1 );
+        level: number,
+        outputDir: string,
+        sourceDir: string | null = null,
+        opts: Partial<FileSystemType.Copy.Args> = {},
+    ): false | string[] {
+
+        outputDir = './' + outputDir.replace( /(^\.\/|\/$)/g, '' ) + '/';
+
+        if ( sourceDir ) {
+            sourceDir = './' + sourceDir.replace( /(^\.\/|\/$)/g, '' ) + '/';
+        }
+
+        // this.console.vi.progress( { globs }, level );
+        // this.console.vi.progress( { outputDir }, level );
+        // this.console.vi.progress( { sourceDir }, level );
+
+        if ( !Array.isArray( globs ) ) {
+            globs = [ globs ];
+        }
+
+        const copyPaths = this.glob(
+            sourceDir ? globs.map( glob => this.pathResolve( sourceDir, glob ) ) : globs,
+            opts.glob,
+        );
+
+        const sourceDirRegex = sourceDir && new RegExp( '^' + escRegExp( this.pathRelative( sourceDir ) + '/' ), 'gi' );
+        // this.console.vi.log( { sourceDirRegex }, level );
+
+        for ( const source of copyPaths ) {
+
+            const source_relative = this.pathRelative( source );
+
+            const destination = this.pathResolve(
+                outputDir,
+                sourceDirRegex ? source_relative.replace( sourceDirRegex, '' ) : source_relative,
+            );
+
+            this.console.verbose(
+                `(TESTING) ${ source_relative } → ${ this.pathRelative( destination ) }`,
+                level,
+                { linesIn: 0, linesOut: 0, maxWidth: null }
+            );
+        }
 
         return [];
     }
 
-    /**
-     * Gets the valid paths matched against the input globs.
-     */
+    /** {@inheritDoc FileSystemType.glob} */
     public glob(
-        input: string | string[],
-        opts: FileSystemType.Glob.Args,
-    ): string | string[] {
-        this.console.progress( `(NOT IMPLEMENTED) FileSystem.glob()`, 1 );
+        globs: string | string[],
+        opts: FileSystemType.Glob.Args = {},
+    ): string[] {
 
-        return [];
+        opts = mergeArgs( this.args.glob, opts, false );
+
+        const globResult = globSync( globs, opts )
+            .map( res => typeof res === 'object' ? res.fullpath() : res );
+
+        return globResult;
     }
 }
 
@@ -125,7 +189,18 @@ export namespace FileSystem {
      * 
      * @since ___PKG_VERSION___
      */
-    export interface Args extends node.NodeFiles.Args { };
+    export interface Args extends node.NodeFiles.Args {
+
+        /**
+         * Defaults for the {@link FileSystem.copy} method.
+         */
+        copy: Partial<FileSystemType.Copy.Args>;
+
+        /**
+         * Defaults for the {@link FileSystem.glob} method.
+         */
+        glob: FileSystemType.Glob.Args;
+    };
 
     /**
      * Optional class instances to pass to {@link FileSystem} constructor.

@@ -23,6 +23,7 @@ import type {
 import { ProjectConfig } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
+import { SemVer } from '../../@internal.js';
 
 
 
@@ -72,15 +73,17 @@ export class CompileStage extends AbstractStage<
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Compile>,
         _pkg?: Node.PackageJson,
+        _version?: SemVer,
     ) {
-        super( 'compile', 'green', config, params, args, _pkg );
+        super( 'compile', 'green', config, params, args, _pkg, _version );
     }
 
 
@@ -340,10 +343,7 @@ export class CompileStage extends AbstractStage<
         if ( !rootPaths?.length ) {
             this.console.verbose( `no files to copy from the root directory`, 2 );
         } else {
-
-            for ( const path of rootPaths ) {
-                this.console.verbose( `(NOT IMPLEMENTED) ${ path } → ${ distDir }/${ path }`, 2 );
-            }
+            this.fs.copy( rootPaths, 2, distDir );
         }
 
         const srcPaths = this.args.files.src;
@@ -351,22 +351,8 @@ export class CompileStage extends AbstractStage<
         if ( !srcPaths?.length ) {
             this.console.verbose( `no files to copy from the source directory`, 2 );
         } else {
-
             const srcDir = this.getSrcDir().trim().replace( /\/$/g, '' );
-
-            for ( const path of srcPaths ) {
-                this.console.verbose( `(NOT IMPLEMENTED) ${ srcDir }/${ path } → ${ distDir }/${ path }`, 2 );
-            }
+            this.fs.copy( srcPaths, 2, distDir, srcDir );
         }
     }
-
-    // TODO add replacement sub-stage
-    // for ( const o of currentReplacements( this ).concat( pkgReplacements( this ) ) ) {
-    //     this.replaceInFiles(
-    //         output,
-    //         o.find,
-    //         o.replace,
-    //         1 + logBaseLevel,
-    //     );
-    // }
 }

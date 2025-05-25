@@ -13,7 +13,10 @@
 
 import type { Objects } from '@maddimathon/utility-typescript/types';
 
-import { typeOf } from '@maddimathon/utility-typescript/functions/typeOf';
+import {
+    timestamp,
+    typeOf,
+} from '@maddimathon/utility-typescript/functions';
 
 import type {
     Config,
@@ -34,11 +37,49 @@ import type {
  */
 export class ProjectConfig implements Config.Class {
 
+    static replace( stage: Stage.Class ): Config.Replace {
+
+        const _currentDate = timestamp( null, {
+            time: false,
+            date: true,
+        } );
+
+        const _currentYear = timestamp( null, {
+            time: false,
+            date: true,
+            format: {
+                date: {
+                    year: 'numeric',
+                },
+            },
+        } );
+
+        const rpl: Config.Replace = {
+
+            current: [
+                [ /___CURRENT_DATE___/g, _currentDate ],
+                [ /___CURRENT_DESC(RIPTION)?___/g, stage.pkg.description ?? '' ],
+                [ /___CURRENT_(HOMEPAGE|URL)___/g, stage.pkg.homepage ?? '' ],
+                [ /___CURRENT_VERSION___/g, stage.version.toString( stage.isDraftVersion ) ],
+                [ /___CURRENT_YEAR___/g, _currentYear ],
+            ],
+
+            package: [
+                [ /___PKG_DATE___/g, _currentDate ],
+                [ /___PKG_VERSION___/g, stage.version.toString( stage.isDraftVersion ) ],
+                [ /___PKG_YEAR___/g, _currentYear ],
+            ],
+        };
+        stage.console.vi.log( { 'ProjectConfig.replace()': rpl }, 1 );
+        return rpl;
+    }
+
     public readonly clr;
     public readonly compiler;
     public readonly console;
     public readonly fs;
     public readonly paths;
+    public readonly replace;
     public readonly stages;
     public readonly title;
 
@@ -48,6 +89,7 @@ export class ProjectConfig implements Config.Class {
         this.console = config.console ?? {};
         this.fs = config.fs;
         this.paths = config.paths;
+        this.replace = config.replace;
         this.stages = config.stages;
         this.title = config.title;
 

@@ -60,14 +60,9 @@ export class Project {
         const config = opts.config ?? new ProjectConfig( defaultConfig( new DummyConsole() ) );
 
         return new Stage_Console(
-            // opts.name ?? 'Package',
             config.clr,
             config,
             params,
-            // {
-            //     clr: config.clr ?? 'purple',
-            //     ...config.console,
-            // },
         );
     }
 

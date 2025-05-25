@@ -32,6 +32,7 @@ import type {
 import { ProjectConfig } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
+import { SemVer } from '../../@internal.js';
 
 
 
@@ -77,18 +78,20 @@ export class ReleaseStage extends AbstractStage<
      * ====================================================================== */
 
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param config    Complete project configuration.
+     * @param params    Current CLI params.
+     * @param args      Optional. Partial overrides for the default args.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Release>,
         _pkg?: Node.PackageJson,
+        _version?: SemVer,
     ) {
-        super( 'release', 'purple', config, params, args, _pkg );
+        super( 'release', 'purple', config, params, args, _pkg, _version );
     }
 
 
@@ -154,13 +157,11 @@ export class ReleaseStage extends AbstractStage<
             ),
         } ) ?? '' ).trim();
 
-        this.console.vi.log( { inputVersion }, 1 );
-
         if ( inputVersion !== this.pkg.version ) {
 
             const currentPkgJson: string = this.fs.readFile( 'package.json' );
 
-            this.pkg = { version: inputVersion };
+            this.version = inputVersion;
 
             this.fs.writeFile(
                 'package.json',
@@ -196,6 +197,8 @@ export class ReleaseStage extends AbstractStage<
      */
     public override async startEndNotice( which: "start" | "end" | null ) {
 
+        const version = this.version.toString( this.isDraftVersion );
+
         // returns
         switch ( which ) {
 
@@ -208,13 +211,13 @@ export class ReleaseStage extends AbstractStage<
 
                 const _endMsg: MessageMaker.BulkMsgs = [
                     [ '✓ ', { flag: false } ],
-                    [ this.params.dryrun ? 'Dry Run - Released!' : 'Released!', { italic: true } ],
-                    [ `${ this.pkg.name }@${ this.pkg.version }`, { flag: 'reverse' } ],
+                    [ 'Released!', { italic: true } ],
+                    [ `${ this.pkg.name }@${ version }`, { flag: 'reverse' } ],
                     [ ' 🎉 🎉 🎉', { flag: false } ],
                     [ '\n\n', { flag: false } ],
                     [
                         'eventually I will put a link to the github release draft here: ' + 'https://github.com/maddimathon/npm-build-utilities/releases',
-                        { bold: false, flag: false, indent: '   ', italic: true, maxWidth }
+                        { bold: false, flag: false, indent: '  ', italic: true, maxWidth }
                     ],
                 ];
 

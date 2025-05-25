@@ -11,6 +11,8 @@
  * @license MIT
  */
 import { node } from '@maddimathon/utility-typescript/classes';
+import { escRegExp, mergeArgs } from '@maddimathon/utility-typescript/functions/index';
+import { globSync } from 'glob';
 /**
  * Extends the {@link node.NodeFiles} class with some custom logic useful to this package.
  *
@@ -35,8 +37,23 @@ export class FileSystem extends node.NodeFiles {
      * @category Args
      */
     get ARGS_DEFAULT() {
+        const copy = {
+            glob: {},
+        };
+        const glob = {
+            absolute: true,
+            dot: true,
+            ignore: [
+                '**/._*',
+                '**/._**/*',
+                '**/.DS_Store',
+                '**/.smbdelete**',
+            ],
+        };
         return {
             ...node.NodeFiles.prototype.ARGS_DEFAULT,
+            copy,
+            glob,
         };
     }
     /* CONSTRUCTOR
@@ -56,20 +73,34 @@ export class FileSystem extends node.NodeFiles {
     }
     /* METHODS
      * ====================================================================== */
-    /**
-     * Copies files from one directory to another, maintaing their relative
-     * directory structure.
-     */
-    copy(globs, opts) {
-        this.console.progress(`(NOT IMPLEMENTED) FileSystem.copy()`, 1);
+    /** {@inheritDoc FileSystemType.copy} */
+    copy(globs, level, outputDir, sourceDir = null, opts = {}) {
+        outputDir = './' + outputDir.replace(/(^\.\/|\/$)/g, '') + '/';
+        if (sourceDir) {
+            sourceDir = './' + sourceDir.replace(/(^\.\/|\/$)/g, '') + '/';
+        }
+        // this.console.vi.progress( { globs }, level );
+        // this.console.vi.progress( { outputDir }, level );
+        // this.console.vi.progress( { sourceDir }, level );
+        if (!Array.isArray(globs)) {
+            globs = [globs];
+        }
+        const copyPaths = this.glob(sourceDir ? globs.map(glob => this.pathResolve(sourceDir, glob)) : globs, opts.glob);
+        const sourceDirRegex = sourceDir && new RegExp('^' + escRegExp(this.pathRelative(sourceDir) + '/'), 'gi');
+        // this.console.vi.log( { sourceDirRegex }, level );
+        for (const source of copyPaths) {
+            const source_relative = this.pathRelative(source);
+            const destination = this.pathResolve(outputDir, sourceDirRegex ? source_relative.replace(sourceDirRegex, '') : source_relative);
+            this.console.verbose(`(TESTING) ${source_relative} → ${this.pathRelative(destination)}`, level, { linesIn: 0, linesOut: 0, maxWidth: null });
+        }
         return [];
     }
-    /**
-     * Gets the valid paths matched against the input globs.
-     */
-    glob(input, opts) {
-        this.console.progress(`(NOT IMPLEMENTED) FileSystem.glob()`, 1);
-        return [];
+    /** {@inheritDoc FileSystemType.glob} */
+    glob(globs, opts = {}) {
+        opts = mergeArgs(this.args.glob, opts, false);
+        const globResult = globSync(globs, opts)
+            .map(res => typeof res === 'object' ? res.fullpath() : res);
+        return globResult;
     }
 }
 /**

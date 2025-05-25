@@ -19,5 +19,5 @@ import { Config, Logger } from '../../types/index.js';
  *
  * @internal
  */
-export declare function internalConfig(_config: (Config | Config & Partial<Config.Internal>), console?: Logger): Config.Internal;
+export declare function internalConfig(_config: (Config | Config.Internal | Config & Partial<Config.Internal>), console?: Logger): Config.Internal;
 //# sourceMappingURL=internalConfig.d.ts.map

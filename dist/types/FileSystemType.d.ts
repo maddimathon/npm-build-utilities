@@ -27,11 +27,11 @@ export interface FileSystemType extends node.NodeFiles {
      * Copies files from one directory to another, maintaing their relative
      * directory structure.
      */
-    copy(globs: string | string[], opts: FileSystemType.Glob.Args): string | string[];
+    copy(globs: string | string[], level: number, outputDir: string, sourceDir?: string | null, args?: Partial<FileSystemType.Copy.Args>): false | string[];
     /**
      * Gets the valid paths matched against the input globs.
      */
-    glob(input: string | string[], opts: FileSystemType.Glob.Args): string | string[];
+    glob(input: string | string[], args?: FileSystemType.Glob.Args): string[];
 }
 /**
  * Types for the {@link FileSystemType} interface.
@@ -42,6 +42,21 @@ export interface FileSystemType extends node.NodeFiles {
  */
 export declare namespace FileSystemType {
     /**
+     * Types for {@link FileSystem.copy} method.
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    namespace Copy {
+        /**
+         * Optional configuration for {@link FileSystem.copy} method.
+         *
+         * @since 0.1.0-alpha.draft
+         */
+        interface Args {
+            glob: Glob.Args;
+        }
+    }
+    /**
      * Types for {@link FileSystem.glob} method.
      *
      * @since 0.1.0-alpha.draft
@@ -50,9 +65,11 @@ export declare namespace FileSystemType {
         /**
          * Optional configuration for {@link FileSystem.glob} method.
          *
-         * @since 0.1.0-alpha.draft
+         * @since
+         *
+         * @interface
          */
-        type Args = GlobOptions & {};
+        type Args = GlobOptions & Partial<{}>;
     }
 }
 //# sourceMappingURL=FileSystemType.d.ts.map

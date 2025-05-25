@@ -11,7 +11,7 @@
  * @license MIT
  */
 import { mergeArgs, toTitleCase } from '@maddimathon/utility-typescript/functions';
-import { errorHandler, } from '../../../@internal/index.js';
+import { errorHandler, SemVer, } from '../../../@internal/index.js';
 import { FileSystem, } from '../../../00-universal/index.js';
 import { getPackageJson } from '../../../00-universal/getPackageJson.js';
 // import {
@@ -30,6 +30,7 @@ import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
  */
 export class AbstractStage {
     _pkg;
+    _version;
     /* STATIC
      * ====================================================================== */
     /* Args ===================================== */
@@ -40,7 +41,6 @@ export class AbstractStage {
      */
     static get ARGS_DEFAULT() {
         return {
-            args: {},
             objs: {},
         };
     }
@@ -88,6 +88,47 @@ export class AbstractStage {
      * @category Args
      */
     params;
+    /**
+     * {@inheritDoc Stage.Class.pkg}
+     *
+     * @category Project
+     */
+    get pkg() {
+        if (typeof this._pkg === 'undefined') {
+            this._pkg = this.try(getPackageJson, 1, [this.fs]);
+        }
+        return {
+            name: this._pkg.name,
+            version: this._pkg.version,
+            description: this._pkg.description,
+            homepage: this._pkg.homepage,
+        };
+    }
+    /**
+     * {@inheritDoc Stage.Class.version}
+     *
+     * @category Project
+     */
+    get version() {
+        if (typeof this._version === 'undefined') {
+            this._version = new SemVer(this.pkg.version ?? '0.0.0', this.console);
+        }
+        return this._version;
+    }
+    set version(input) {
+        if (!input) {
+            return;
+        }
+        // returns
+        if (input instanceof SemVer) {
+            this._version = input;
+            return;
+        }
+        this._version = new SemVer(input, this.console);
+        if (this._pkg) {
+            this._pkg.version = this._version.toString();
+        }
+    }
     /* Args ===================================== */
     /**
      * Builds a complete version of this class' args, falling back to defaults
@@ -115,8 +156,9 @@ export class AbstractStage {
      * @param params  Current CLI params.
      * @param args    Partial overrides for the default stage args.
      */
-    constructor(name, clr, config, params, args, _pkg) {
+    constructor(name, clr, config, params, args, _pkg, _version) {
         this._pkg = _pkg;
+        this._version = _version;
         this.name = name;
         this.clr = clr;
         this.config = config;
@@ -125,9 +167,14 @@ export class AbstractStage {
         this.console = new Stage_Console(this.clr, this.config, this.params);
         this.fs = this.args.objs.fs ?? new FileSystem(this.console, this.config.fs);
         this.cpl = this.args.objs.cpl ?? new Stage_Compiler(this.config, this.params, this.console, this.fs, this.config.compiler);
+        this.version = _version;
     }
     /* METHODS
      * ====================================================================== */
+    /** {@inheritDoc Stage.Class.isDraftVersion} */
+    get isDraftVersion() {
+        return !(this.params?.packaging || this.params?.releasing) || !!this.params?.dryrun;
+    }
     /* CONFIG & ARGS ===================================== */
     /** {@inheritDoc Stage.Class.isSubStageIncluded} */
     isSubStageIncluded(subStage, level) {
@@ -214,34 +261,6 @@ export class AbstractStage {
         }
         const result = this.config.paths.src[subDir ?? '_'] ?? [];
         return Array.isArray(result) ? result : [result];
-    }
-    /**
-     * @todo
-     */
-    get pkg() {
-        if (typeof this._pkg === 'undefined') {
-            this._pkg = this.try(getPackageJson, 1, [this.fs]);
-        }
-        return {
-            name: this._pkg.name,
-            version: this._pkg.version,
-        };
-    }
-    /**
-     * @todo
-     */
-    set pkg(update) {
-        for (const _key in update) {
-            const key = _key;
-            // continues
-            if (key !== 'version' || typeof update[key] === 'undefined') {
-                continue;
-            }
-            if (typeof this._pkg === 'undefined') {
-                this._pkg = this.try(getPackageJson, 1, [this.fs]);
-            }
-            this._pkg[key] = update[key];
-        }
     }
     /* ERRORS ===================================== */
     handleError(error, level, args) {
@@ -342,7 +361,7 @@ export class AbstractStage {
             return;
         }
         this.params.debug && this.console.vi.verbose({ subParams }, level);
-        return (new stageClass(this.config, subParams, { ...this.args, ...stageArgs }, this._pkg)).run();
+        return (new stageClass(this.config, subParams, { ...this.args, ...stageArgs }, this._pkg, this._version)).run();
     }
 }
 //# sourceMappingURL=AbstractStage.js.map

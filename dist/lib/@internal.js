@@ -25,6 +25,7 @@
 export * from './@internal/classes/abstract/AbstractError.js';
 export * from './@internal/classes/UnknownCaughtError.js';
 export * from './@internal/classes/ProjectError.js';
+export * from './@internal/classes/SemVer.js';
 export * from './@internal/errorHandler.js';
 export * from './00-universal/getPackageJson.js';
 export * from './01-config/isConfigValid.js';

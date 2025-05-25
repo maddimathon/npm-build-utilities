@@ -21,6 +21,7 @@ import type {
 import { ProjectConfig } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
+import { SemVer } from '../../@internal.js';
 
 
 
@@ -66,18 +67,20 @@ export class BuildStage extends AbstractStage<
      * ====================================================================== */
 
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param config    Complete project configuration.
+     * @param params    Current CLI params.
+     * @param args      Optional. Partial overrides for the default args.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Build>,
         _pkg?: Node.PackageJson,
+        _version?: SemVer,
     ) {
-        super( 'build', 'blue', config, params, args, _pkg );
+        super( 'build', 'blue', config, params, args, _pkg, _version );
     }
 
 

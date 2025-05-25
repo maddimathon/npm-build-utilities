@@ -13,6 +13,7 @@
 import { DummyConsole, } from '../@internal/index.js';
 import { getPackageJson } from '../00-universal/getPackageJson.js';
 import { catchOrReturn, FileSystem, } from '../00-universal/index.js';
+import { ProjectConfig, } from '../01-config/index.js';
 import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage, } from './index.js';
 const _dummyConsole = new DummyConsole();
 /**
@@ -24,15 +25,6 @@ export function defaultConfig(args) {
     const pkg = (args && ('pkg' in args))
         ? args.pkg
         : catchOrReturn(getPackageJson, 0, args ?? _dummyConsole, [new FileSystem(args ?? _dummyConsole)]);
-    const stages = {
-        compile: CompileStage,
-        build: BuildStage,
-        document: false,
-        package: PackageStage,
-        release: ReleaseStage,
-        snapshot: SnapshotStage,
-        test: false,
-    };
     const paths = {
         release: '@releases',
         snapshot: '.snapshots',
@@ -48,6 +40,15 @@ export function defaultConfig(args) {
             scss: 'src/scss',
             ts: 'src/ts',
         },
+    };
+    const stages = {
+        compile: CompileStage,
+        build: BuildStage,
+        document: false,
+        package: PackageStage,
+        release: ReleaseStage,
+        snapshot: SnapshotStage,
+        test: false,
     };
     const tsConfig = {
         extends: [
@@ -91,13 +92,14 @@ export function defaultConfig(args) {
     };
     return {
         title: pkg.config?.title ?? pkg.name,
-        clr: 'purple',
+        clr: 'black',
         compiler: {
             sass,
             tsConfig,
         },
         fs: {},
         paths,
+        replace: ProjectConfig.replace,
         stages,
     };
 }

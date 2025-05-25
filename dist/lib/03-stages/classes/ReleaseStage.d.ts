@@ -14,6 +14,7 @@ import type { Node } from '@maddimathon/utility-typescript/types';
 import type { CLI, Stage } from '../../../types/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
+import { SemVer } from '../../@internal.js';
 /**
  * Default release stage.
  *
@@ -25,12 +26,13 @@ export declare class ReleaseStage extends AbstractStage<Stage.SubStage.Release, 
     readonly subStages: Stage.SubStage.Release[];
     get ARGS_DEFAULT(): Stage.Args.Release;
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param config    Complete project configuration.
+     * @param params    Current CLI params.
+     * @param args      Optional. Partial overrides for the default args.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Release>, _pkg?: Node.PackageJson);
+    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Release>, _pkg?: Node.PackageJson, _version?: SemVer);
     /**
      * Runs the prompters to confirm before starting the substages.
      */

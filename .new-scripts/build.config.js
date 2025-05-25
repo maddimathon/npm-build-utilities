@@ -26,6 +26,7 @@ const config = {
     },
 
     stages: {
+
         compile: {
 
             scss: false,

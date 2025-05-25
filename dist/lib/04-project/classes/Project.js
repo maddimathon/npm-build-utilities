@@ -30,9 +30,7 @@ export class Project {
     static async getConsole(opts = {}) {
         const params = opts.params ?? parseParamsCLI({});
         const config = opts.config ?? new ProjectConfig(defaultConfig(new DummyConsole()));
-        return new Stage_Console(
-        // opts.name ?? 'Package',
-        config.clr, config, params);
+        return new Stage_Console(config.clr, config, params);
     }
     /* LOCAL PROPERTIES
      * ====================================================================== */

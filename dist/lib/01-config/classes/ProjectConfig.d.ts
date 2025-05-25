@@ -23,6 +23,7 @@ import type { Config, Logger, Stage } from '../../../types/index.js';
  * @since 0.1.0-alpha.draft
  */
 export declare class ProjectConfig implements Config.Class {
+    static replace(stage: Stage.Class): Config.Replace;
     readonly clr: import("@maddimathon/utility-typescript/classes/MessageMaker").MessageMaker.Colour;
     readonly compiler: Partial<Stage.Compiler.Args>;
     readonly console: Partial<Logger.Args>;
@@ -44,6 +45,7 @@ export declare class ProjectConfig implements Config.Class {
         release: string;
         snapshot: string;
     };
+    readonly replace: {};
     readonly stages: Config.Internal.Stages;
     readonly title: string;
     constructor(config: Config.Internal);

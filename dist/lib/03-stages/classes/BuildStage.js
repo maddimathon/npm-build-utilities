@@ -38,13 +38,14 @@ export class BuildStage extends AbstractStage {
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param config    Complete project configuration.
+     * @param params    Current CLI params.
+     * @param args      Optional. Partial overrides for the default args.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
-    constructor(config, params, args, _pkg) {
-        super('build', 'blue', config, params, args, _pkg);
+    constructor(config, params, args, _pkg, _version) {
+        super('build', 'blue', config, params, args, _pkg, _version);
     }
     /* LOCAL METHODS
      * ====================================================================== */

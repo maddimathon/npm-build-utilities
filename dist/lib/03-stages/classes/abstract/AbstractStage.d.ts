@@ -13,6 +13,7 @@
 import type { Node } from '@maddimathon/utility-typescript/types';
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { CLI, Config, LocalError, Stage } from '../../../../types/index.js';
+import { SemVer } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
 import { ProjectConfig } from '../../../01-config/index.js';
 import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
@@ -29,6 +30,7 @@ import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
  */
 export declare abstract class AbstractStage<SubStage extends string = string, Args extends Stage.Args = Stage.Args> implements Stage.Class<SubStage, Args> {
     protected _pkg: Node.PackageJson | undefined;
+    protected _version: SemVer | undefined;
     /**
      * Default values for {@link Stage.Args}.
      *
@@ -78,6 +80,24 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      */
     readonly params: CLI.Params;
     /**
+     * {@inheritDoc Stage.Class.pkg}
+     *
+     * @category Project
+     */
+    get pkg(): {
+        readonly name: string;
+        readonly version: string;
+        readonly description: string | undefined;
+        readonly homepage: string | undefined;
+    };
+    /**
+     * {@inheritDoc Stage.Class.version}
+     *
+     * @category Project
+     */
+    get version(): SemVer;
+    protected set version(input: string | SemVer | undefined);
+    /**
      * {@inheritDoc Stage.Class.subStages}
      *
      * @category Args
@@ -111,21 +131,15 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      * @param params  Current CLI params.
      * @param args    Partial overrides for the default stage args.
      */
-    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<Args>, _pkg: Node.PackageJson | undefined);
+    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<Args>, _pkg: Node.PackageJson | undefined, _version: SemVer | undefined);
+    /** {@inheritDoc Stage.Class.isDraftVersion} */
+    get isDraftVersion(): boolean;
     /** {@inheritDoc Stage.Class.isSubStageIncluded} */
     isSubStageIncluded(subStage: SubStage, level: number): boolean;
     /** {@inheritDoc Stage.Class.getDistDir} */
     getDistDir(subDir?: Config.Paths.SourceDirectory): string;
     getSrcDir(subDir: Config.Paths.SourceDirectory): string[];
     getSrcDir(subDir?: undefined): string;
-    /**
-     * @todo
-     */
-    get pkg(): Partial<Node.PackageJson>;
-    /**
-     * @todo
-     */
-    set pkg(update: Partial<Node.PackageJson>);
     protected handleError(error: any, level: number, args?: Partial<LocalError.Handler.Args>): void;
     /**
      * @param tryer     Function to run inside the try {}.

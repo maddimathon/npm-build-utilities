@@ -17,8 +17,8 @@ import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
 
 import type { FileSystem } from '../lib/index.js';
 
-import { Logger } from './Logger.js';
-import * as Stage from './Stage.js';
+import type { Logger } from './Logger.js';
+import type * as Stage from './Stage.js';
 
 
 
@@ -57,10 +57,13 @@ export interface Config {
     fs?: Partial<FileSystem.Args>;
 
     /** {@inheritDoc Config.Paths} */
-    paths?: Partial<Config.Paths>,
+    paths?: Partial<Config.Paths>;
+
+    /** {@inheritDoc Config.Replace} */
+    replace?: Config.Replace | ( ( stage: Stage.Class ) => Config.Replace );
 
     /** {@inheritDoc Config.Stages} */
-    stages?: Partial<Config.Stages>,
+    stages?: Partial<Config.Stages>;
 };
 
 /**
@@ -94,7 +97,7 @@ export namespace Config {
      * @internal
      * @expand
      */
-    type Internal_RequiredKeys = "clr";
+    type Internal_RequiredKeys = "clr" | "replace";
 
     /**
      * Complete configuration shape. Requires more properties than
@@ -228,6 +231,30 @@ export namespace Config {
 
             ( subDir?: SourceDirectory ): string | string[];
         };
+    };
+
+    /**
+     * Placeholders to be replaced during the build processes.
+     * 
+     * For default values, see {@link defaultConfig}.
+     */
+    export interface Replace {
+
+        /**
+         * These placeholders are only ever replaced in compiled files and
+         * should never be replaced in the source.
+         *
+         * This is handy for e.g., the current package version or url in source
+         * file doc comments.
+         */
+        current?: [ string | RegExp, string ][];
+
+        /**
+         * These placeholders are replaced in the source ONLY during a non-dryrun release stage.
+         *
+         * This is handy for e.g., the package version in a doc comment's @since tag for a new function/class/etc.
+         */
+        package?: [ string | RegExp, string ][];
     };
 
     /**

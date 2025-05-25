@@ -17,3 +17,4 @@ export * from './DummyConsole.js';
 
 export * from './UnknownCaughtError.js';
 export * from './ProjectError.js';
+export * from './SemVer.js';

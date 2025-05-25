@@ -35,16 +35,19 @@ export interface FileSystemType extends node.NodeFiles {
      */
     copy(
         globs: string | string[],
-        opts: FileSystemType.Glob.Args,
-    ): string | string[];
+        level: number,
+        outputDir: string,
+        sourceDir?: string | null,
+        args?: Partial<FileSystemType.Copy.Args>,
+    ): false | string[];
 
     /**
      * Gets the valid paths matched against the input globs.
      */
     glob(
         input: string | string[],
-        opts: FileSystemType.Glob.Args,
-    ): string | string[];
+        args?: FileSystemType.Glob.Args,
+    ): string[];
 }
 
 /**
@@ -57,6 +60,23 @@ export interface FileSystemType extends node.NodeFiles {
 export namespace FileSystemType {
 
     /**
+     * Types for {@link FileSystem.copy} method.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export namespace Copy {
+
+        /**
+         * Optional configuration for {@link FileSystem.copy} method.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        export interface Args {
+            glob: Glob.Args;
+        };
+    };
+
+    /**
      * Types for {@link FileSystem.glob} method.
      * 
      * @since ___PKG_VERSION___
@@ -67,8 +87,10 @@ export namespace FileSystemType {
          * Optional configuration for {@link FileSystem.glob} method.
          * 
          * @since ___PKG_VERSION___
+         * 
+         * @interface
          */
-        export type Args = GlobOptions & {
-        };
+        export type Args = GlobOptions & Partial<{
+        }>;
     };
 }

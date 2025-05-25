@@ -30,5 +30,6 @@ export var Config;
         ;
     })(Paths = Config.Paths || (Config.Paths = {}));
     ;
+    ;
 })(Config || (Config = {}));
 //# sourceMappingURL=Config.js.map

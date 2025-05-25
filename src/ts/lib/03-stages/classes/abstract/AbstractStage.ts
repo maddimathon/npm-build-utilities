@@ -26,6 +26,7 @@ import type {
 
 import {
     errorHandler,
+    SemVer,
 } from '../../../@internal/index.js';
 
 import {
@@ -76,7 +77,6 @@ export abstract class AbstractStage<
     public static get ARGS_DEFAULT(): Stage.Args {
 
         return {
-            args: {},
             objs: {},
         };
     }
@@ -136,6 +136,56 @@ export abstract class AbstractStage<
     public readonly params;
 
     /** 
+     * {@inheritDoc Stage.Class.pkg}
+     * 
+     * @category Project
+     */
+    public get pkg() {
+
+        if ( typeof this._pkg === 'undefined' ) {
+            this._pkg = this.try( getPackageJson, 1, [ this.fs ] );
+        }
+
+        return {
+            name: this._pkg.name,
+            version: this._pkg.version,
+
+            description: this._pkg.description,
+            homepage: this._pkg.homepage,
+        } as const satisfies Node.PackageJson;
+    }
+
+    /** 
+     * {@inheritDoc Stage.Class.version}
+     * 
+     * @category Project
+     */
+    public get version(): SemVer {
+
+        if ( typeof this._version === 'undefined' ) {
+            this._version = new SemVer( this.pkg.version ?? '0.0.0', this.console );
+        }
+
+        return this._version;
+    }
+
+    protected set version( input: string | SemVer | undefined ) {
+        if ( !input ) { return; }
+
+        // returns
+        if ( input instanceof SemVer ) {
+            this._version = input;
+            return;
+        }
+
+        this._version = new SemVer( input, this.console );
+
+        if ( this._pkg ) {
+            this._pkg.version = this._version.toString();
+        }
+    }
+
+    /** 
      * {@inheritDoc Stage.Class.subStages}
      * 
      * @category Args
@@ -190,6 +240,7 @@ export abstract class AbstractStage<
         params: CLI.Params,
         args: Partial<Args>,
         protected _pkg: Node.PackageJson | undefined,
+        protected _version: SemVer | undefined,
     ) {
         this.name = name;
         this.clr = clr;
@@ -213,12 +264,19 @@ export abstract class AbstractStage<
             this.fs,
             this.config.compiler,
         );
+
+        this.version = _version;
     }
 
 
 
     /* METHODS
      * ====================================================================== */
+
+    /** {@inheritDoc Stage.Class.isDraftVersion} */
+    public get isDraftVersion(): boolean {
+        return !( this.params?.packaging || this.params?.releasing ) || !!this.params?.dryrun;
+    }
 
 
     /* CONFIG & ARGS ===================================== */
@@ -347,42 +405,6 @@ export abstract class AbstractStage<
         const result = this.config.paths.src[ subDir ?? '_' ] ?? [];
 
         return Array.isArray( result ) ? result : [ result ];
-    }
-
-    /**
-     * @todo
-     */
-    public get pkg() {
-
-        if ( typeof this._pkg === 'undefined' ) {
-            this._pkg = this.try( getPackageJson, 1, [ this.fs ] );
-        }
-
-        return {
-            name: this._pkg.name,
-            version: this._pkg.version,
-        } as const satisfies Node.PackageJson;
-    }
-
-    /**
-     * @todo
-     */
-    public set pkg( update: Partial<Node.PackageJson> ) {
-
-        for ( const _key in update ) {
-            const key = _key as keyof typeof update;
-
-            // continues
-            if ( key !== 'version' || typeof update[ key ] === 'undefined' ) {
-                continue;
-            }
-
-            if ( typeof this._pkg === 'undefined' ) {
-                this._pkg = this.try( getPackageJson, 1, [ this.fs ] );
-            }
-
-            this._pkg[ key ] = update[ key ];
-        }
     }
 
 
@@ -573,6 +595,7 @@ export abstract class AbstractStage<
             subParams,
             { ...this.args, ...stageArgs },
             this._pkg,
+            this._version,
         ) ).run();
     }
 

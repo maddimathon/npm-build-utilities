@@ -34,6 +34,14 @@ export declare class FileSystem extends node.NodeFiles {
      * @category Args
      */
     get ARGS_DEFAULT(): {
+        readonly copy: {
+            readonly glob: {};
+        };
+        readonly glob: {
+            readonly absolute: true;
+            readonly dot: true;
+            readonly ignore: ["**/._*", "**/._**/*", "**/.DS_Store", "**/.smbdelete**"];
+        };
         readonly argsRecursive: false;
         readonly root: "./";
         readonly writeFileArgs: {
@@ -46,15 +54,10 @@ export declare class FileSystem extends node.NodeFiles {
      * @param args
      */
     constructor(console: Logger, args?: Partial<FileSystem.Args>);
-    /**
-     * Copies files from one directory to another, maintaing their relative
-     * directory structure.
-     */
-    copy(globs: string | string[], opts: FileSystemType.Glob.Args): string | string[];
-    /**
-     * Gets the valid paths matched against the input globs.
-     */
-    glob(input: string | string[], opts: FileSystemType.Glob.Args): string | string[];
+    /** {@inheritDoc FileSystemType.copy} */
+    copy(globs: string | string[], level: number, outputDir: string, sourceDir?: string | null, opts?: Partial<FileSystemType.Copy.Args>): false | string[];
+    /** {@inheritDoc FileSystemType.glob} */
+    glob(globs: string | string[], opts?: FileSystemType.Glob.Args): string[];
 }
 /**
  * Used only for {@link FileSystem}.
@@ -70,6 +73,14 @@ export declare namespace FileSystem {
      * @since 0.1.0-alpha.draft
      */
     interface Args extends node.NodeFiles.Args {
+        /**
+         * Defaults for the {@link FileSystem.copy} method.
+         */
+        copy: Partial<FileSystemType.Copy.Args>;
+        /**
+         * Defaults for the {@link FileSystem.glob} method.
+         */
+        glob: FileSystemType.Glob.Args;
     }
     /**
      * Optional class instances to pass to {@link FileSystem} constructor.

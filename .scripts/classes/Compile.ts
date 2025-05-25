@@ -104,17 +104,6 @@ export class Compile extends AbstractStage<Compile.Stages, Compile.Args> {
         for ( const path of typescriptFiles ) {
             await this.compileTypescript( path, 2 );
         }
-
-        // if ( !this.args.watchedEvent ) {
-
-        //     this.console.verbose( 'deleting type-only javascript files...', 2 );
-        //     this.fns.fs.deleteFiles( this.glob( [
-        //         'dist/types/**/*.js',
-        //         'dist/types/**/*.js.map',
-        //         'dist/types/**/*.test.d.ts',
-        //         'dist/types/**/*.test.d.ts.map',
-        //     ] ) );
-        // }
     }
 }
 

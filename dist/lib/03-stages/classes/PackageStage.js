@@ -39,10 +39,11 @@ export class PackageStage extends AbstractStage {
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
-    constructor(config, params, args, _pkg) {
-        super('package', params?.releasing ? 'orange' : 'purple', config, params, args, _pkg);
+    constructor(config, params, args, _pkg, _version) {
+        super('package', params?.releasing ? 'orange' : 'purple', config, params, args, _pkg, _version);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -53,19 +54,20 @@ export class PackageStage extends AbstractStage {
      * @param which  Whether we are starting or ending.
      */
     startEndNotice(which) {
+        const version = this.version.toString(this.isDraftVersion);
         // returns
         switch (which) {
             case 'start':
                 this.console.startOrEnd([
                     ['PACKAGING...'],
-                    [`${this.pkg.name}@${this.pkg.version}`, { flag: 'reverse' }],
+                    [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
                 ], which);
                 return;
             case 'end':
                 this.console.startOrEnd([
                     ['✓ ', { flag: false }],
-                    [this.params.dryrun ? 'Dry Run - Packaged!' : 'Packaged!', { italic: true }],
-                    [`${this.pkg.name}@${this.pkg.version}`, { flag: 'reverse' }],
+                    ['Packaged!', { italic: true }],
+                    [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
                 ], which);
                 return;
         }

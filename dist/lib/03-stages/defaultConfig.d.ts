@@ -12,6 +12,7 @@
  */
 import type { Node } from '@maddimathon/utility-typescript/types';
 import type { Logger } from '../../types/index.js';
+import { ProjectConfig } from '../01-config/index.js';
 import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage } from './index.js';
 /**
  * Complete, default configuration for the library.
@@ -22,7 +23,7 @@ export declare function defaultConfig(args?: {
     pkg: Node.PackageJson;
 } | Logger): {
     readonly title: any;
-    readonly clr: "purple";
+    readonly clr: "black";
     readonly compiler: {
         readonly sass: {
             readonly charset: true;
@@ -78,6 +79,7 @@ export declare function defaultConfig(args?: {
             readonly ts: "src/ts";
         };
     };
+    readonly replace: typeof ProjectConfig.replace;
     readonly stages: {
         readonly compile: typeof CompileStage;
         readonly build: typeof BuildStage;

@@ -11,7 +11,10 @@
  * @license MIT
  */
 
-import type { Json, Node } from '@maddimathon/utility-typescript/types';
+import type {
+    Json,
+    Node,
+} from '@maddimathon/utility-typescript/types';
 
 import type {
     Config,
@@ -29,6 +32,10 @@ import {
 
     FileSystem,
 } from '../00-universal/index.js';
+
+import {
+    ProjectConfig,
+} from '../01-config/index.js';
 
 import {
     BuildStage,
@@ -57,16 +64,6 @@ export function defaultConfig(
             [ new FileSystem( args ?? _dummyConsole ) ],
         );
 
-    const stages = {
-        compile: CompileStage,
-        build: BuildStage,
-        document: false,
-        package: PackageStage,
-        release: ReleaseStage,
-        snapshot: SnapshotStage,
-        test: false,
-    } as const satisfies Config.Internal.Stages;
-
     const paths = {
 
         release: '@releases',
@@ -86,6 +83,16 @@ export function defaultConfig(
             ts: 'src/ts',
         },
     } as const satisfies Config.Internal[ 'paths' ];
+
+    const stages = {
+        compile: CompileStage,
+        build: BuildStage,
+        document: false,
+        package: PackageStage,
+        release: ReleaseStage,
+        snapshot: SnapshotStage,
+        test: false,
+    } as const satisfies Config.Internal.Stages;
 
 
     const tsConfig = {
@@ -137,7 +144,7 @@ export function defaultConfig(
 
         title: pkg.config?.title ?? pkg.name,
 
-        clr: 'purple',
+        clr: 'black',
 
         compiler: {
             sass,
@@ -147,6 +154,7 @@ export function defaultConfig(
         fs: {},
 
         paths,
+        replace: ProjectConfig.replace,
         stages,
 
     } as const satisfies Config.Internal;

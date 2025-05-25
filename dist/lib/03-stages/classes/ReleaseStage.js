@@ -39,13 +39,14 @@ export class ReleaseStage extends AbstractStage {
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param config    Complete project configuration.
+     * @param params    Current CLI params.
+     * @param args      Optional. Partial overrides for the default args.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
-    constructor(config, params, args, _pkg) {
-        super('release', 'purple', config, params, args, _pkg);
+    constructor(config, params, args, _pkg, _version) {
+        super('release', 'purple', config, params, args, _pkg, _version);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -86,10 +87,9 @@ export class ReleaseStage extends AbstractStage {
                 ? true
                 : softWrapText('The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, another valid version code, or metadata prefixed with `+`.', Math.max(20, (this.console.nc.msg.args.msg.maxWidth ?? 80) - inputVersionIndent.length)).split(/\n/g).join('\n' + inputVersionIndent)),
         }) ?? '').trim();
-        this.console.vi.log({ inputVersion }, 1);
         if (inputVersion !== this.pkg.version) {
             const currentPkgJson = this.fs.readFile('package.json');
-            this.pkg = { version: inputVersion };
+            this.version = inputVersion;
             this.fs.writeFile('package.json', currentPkgJson.replace(/"version":\s*"[^"]*"/gi, escRegExpReplace(`"version": "${inputVersion}"`)), { force: true });
         }
         // returns if prep questions fail
@@ -111,6 +111,7 @@ export class ReleaseStage extends AbstractStage {
      * @param which  Whether we are starting or ending.
      */
     async startEndNotice(which) {
+        const version = this.version.toString(this.isDraftVersion);
         // returns
         switch (which) {
             case 'start':
@@ -120,13 +121,13 @@ export class ReleaseStage extends AbstractStage {
                 const maxWidth = this.console.nc.msg.args.msg.maxWidth ?? 120;
                 const _endMsg = [
                     ['✓ ', { flag: false }],
-                    [this.params.dryrun ? 'Dry Run - Released!' : 'Released!', { italic: true }],
-                    [`${this.pkg.name}@${this.pkg.version}`, { flag: 'reverse' }],
+                    ['Released!', { italic: true }],
+                    [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
                     [' 🎉 🎉 🎉', { flag: false }],
                     ['\n\n', { flag: false }],
                     [
                         'eventually I will put a link to the github release draft here: ' + 'https://github.com/maddimathon/npm-build-utilities/releases',
-                        { bold: false, flag: false, indent: '   ', italic: true, maxWidth }
+                        { bold: false, flag: false, indent: '  ', italic: true, maxWidth }
                     ],
                 ];
                 this.console.startOrEnd(_endMsg, which, { maxWidth: null });

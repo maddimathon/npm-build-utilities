@@ -42,10 +42,11 @@ export class CompileStage extends AbstractStage {
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
-    constructor(config, params, args, _pkg) {
-        super('compile', 'green', config, params, args, _pkg);
+    constructor(config, params, args, _pkg, _version) {
+        super('compile', 'green', config, params, args, _pkg, _version);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -231,9 +232,7 @@ export class CompileStage extends AbstractStage {
             this.console.verbose(`no files to copy from the root directory`, 2);
         }
         else {
-            for (const path of rootPaths) {
-                this.console.verbose(`(NOT IMPLEMENTED) ${path} → ${distDir}/${path}`, 2);
-            }
+            this.fs.copy(rootPaths, 2, distDir);
         }
         const srcPaths = this.args.files.src;
         if (!srcPaths?.length) {
@@ -241,9 +240,7 @@ export class CompileStage extends AbstractStage {
         }
         else {
             const srcDir = this.getSrcDir().trim().replace(/\/$/g, '');
-            for (const path of srcPaths) {
-                this.console.verbose(`(NOT IMPLEMENTED) ${srcDir}/${path} → ${distDir}/${path}`, 2);
-            }
+            this.fs.copy(srcPaths, 2, distDir, srcDir);
         }
     }
 }

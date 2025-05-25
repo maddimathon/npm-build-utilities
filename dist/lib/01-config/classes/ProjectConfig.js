@@ -10,7 +10,7 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { typeOf } from '@maddimathon/utility-typescript/functions/typeOf';
+import { timestamp, typeOf, } from '@maddimathon/utility-typescript/functions';
 /**
  * A super-simple class just for the configuration of the entire project.
  *
@@ -22,11 +22,43 @@ import { typeOf } from '@maddimathon/utility-typescript/functions/typeOf';
  * @since 0.1.0-alpha.draft
  */
 export class ProjectConfig {
+    static replace(stage) {
+        const _currentDate = timestamp(null, {
+            time: false,
+            date: true,
+        });
+        const _currentYear = timestamp(null, {
+            time: false,
+            date: true,
+            format: {
+                date: {
+                    year: 'numeric',
+                },
+            },
+        });
+        const rpl = {
+            current: [
+                [/___CURRENT_DATE___/g, _currentDate],
+                [/___CURRENT_DESC(RIPTION)?___/g, stage.pkg.description ?? ''],
+                [/___CURRENT_(HOMEPAGE|URL)___/g, stage.pkg.homepage ?? ''],
+                [/0.1.0-alpha.draft/g, stage.version.toString(stage.isDraftVersion)],
+                [/2025/g, _currentYear],
+            ],
+            package: [
+                [/2025-05-24/g, _currentDate],
+                [/0.1.0-alpha.draft/g, stage.version.toString(stage.isDraftVersion)],
+                [/2025/g, _currentYear],
+            ],
+        };
+        stage.console.vi.log({ 'ProjectConfig.replace()': rpl }, 1);
+        return rpl;
+    }
     clr;
     compiler;
     console;
     fs;
     paths;
+    replace;
     stages;
     title;
     constructor(config) {
@@ -35,6 +67,7 @@ export class ProjectConfig {
         this.console = config.console ?? {};
         this.fs = config.fs;
         this.paths = config.paths;
+        this.replace = config.replace;
         this.stages = config.stages;
         this.title = config.title;
         if (this.stages.compile

@@ -14,6 +14,7 @@ import type { Node } from '@maddimathon/utility-typescript/types';
 import type { CLI, Stage } from '../../../types/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
+import { SemVer } from '../../@internal.js';
 /**
  * Default compile stage.
  *
@@ -28,9 +29,10 @@ export declare class CompileStage extends AbstractStage<Stage.SubStage.Compile, 
      * @param config  Complete project configuration.
      * @param params  Current CLI params.
      * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg    The current package.json value, if any.
+     * @param _pkg      Optional. The current package.json value, if any.
+     * @param _version  Optional. Current version object, if any.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Compile>, _pkg?: Node.PackageJson);
+    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Compile>, _pkg?: Node.PackageJson, _version?: SemVer);
     /**
      * Prints a message to the console signalling the start or end of this
      * build stage.

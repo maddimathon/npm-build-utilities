@@ -36,6 +36,7 @@ import { defaultConfig } from './defaultConfig.js';
 export function internalConfig(
     _config: (
         | Config
+        | Config.Internal
         | Config & Partial<Config.Internal>
     ),
     console?: Logger,

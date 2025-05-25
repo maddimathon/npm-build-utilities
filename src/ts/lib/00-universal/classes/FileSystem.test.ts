@@ -14,11 +14,15 @@
 import type { Test } from '@maddimathon/utility-typescript/types';
 
 import type { FileSystemType } from '../../../types/FileSystemType.js';
+import type { Logger } from '../../../types/Logger.js';
 
 import { FileSystem } from './FileSystem.js';
 
 // gets the expected type
-type _ClassType = ( new ( ...a: any[] ) => FileSystemType );
+type _ClassType = ( new (
+    console: Logger,
+    args?: Partial<FileSystem.Args>,
+) => FileSystemType );
 
 // checks if the actual class can be assigned to its class type
 const testClass: _ClassType = FileSystem;
