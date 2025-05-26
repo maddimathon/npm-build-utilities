@@ -86,12 +86,12 @@ export class Stage_Compiler {
         });
         this.params.debug && this.console.vi.verbose({ compiled }, level);
         if (compiled.css) {
-            this.console.verbose('writing css to path: ' + output, level);
+            this.console.verbose('writing css to path: ' + this.fs.pathRelative(output), level, { maxWidth: null });
             this.fs.write(output, compiled.css, { force: true });
         }
         if (compiled.sourceMap) {
             const sourceMap = output.replace(/\.(s?css)$/g, '.$1.map');
-            this.console.verbose('writing sourceMap to path: ' + sourceMap, level);
+            this.params.debug && this.console.verbose('writing sourceMap to path: ' + this.fs.pathRelative(sourceMap), 1 + level);
             this.fs.write(sourceMap, JSON.stringify(compiled.sourceMap, null, this.params.packaging ? 0 : 4), { force: true });
         }
     }

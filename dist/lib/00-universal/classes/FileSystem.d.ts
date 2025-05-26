@@ -51,6 +51,7 @@ export declare class FileSystem extends node.NodeFiles {
             readonly dot: true;
             readonly ignore: string[];
         };
+        readonly prettier: typeof FileSystem.prettier.argsDefault;
         readonly argsRecursive: false;
         readonly copyFileArgs: {
             readonly force: true;
@@ -88,7 +89,7 @@ export declare class FileSystem extends node.NodeFiles {
         output: string;
     }[];
     /** {@inheritDoc internal.FileSystemType.prettier} */
-    prettier(globs: string | string[], format: "css" | "html" | "js" | "scss" | "ts", level: number, args?: FileSystemType.Glob.Args): string[];
+    prettier(globs: string | string[], format: FileSystemType.Prettier.Format, args?: Partial<FileSystemType.Prettier.Args>): Promise<string[]>;
     /** {@inheritDoc internal.FileSystemType.replaceInFiles} */
     replaceInFiles(globs: string | string[], replace: [string | RegExp, string] | [string | RegExp, string][], level: number, args?: FileSystemType.Glob.Args): string[];
 }
@@ -100,27 +101,6 @@ export declare class FileSystem extends node.NodeFiles {
  * @since 0.1.0-alpha.draft
  */
 export declare namespace FileSystem {
-    /**
-     * Arrays of utility globs used within the library.
-     */
-    namespace globs {
-        /**
-         *
-         */
-        const IGNORE_COPIED: (stage: Stage.Class) => string[];
-        /**
-         * Files to ignore
-         */
-        const IGNORE_COMPILED: string[];
-        /**
-         * Files that we probably want to ignore within an npm project.
-         */
-        const IGNORE_PROJECT: string[];
-        /**
-         * System files that we *never, ever* want to include.
-         */
-        const SYSTEM: string[];
-    }
     /**
      * Optional configuration for {@link FileSystem} class.
      *
@@ -135,6 +115,10 @@ export declare namespace FileSystem {
          * Defaults for the {@link FileSystem.glob} method.
          */
         glob: FileSystemType.Glob.Args;
+        /**
+         * Defaults for the {@link FileSystem.prettier} method.
+         */
+        prettier: FileSystemType.Prettier.Args | ((format: FileSystemType.Prettier.Format) => FileSystemType.Prettier.Args);
     }
     /**
      * An extension of the utilities error used by the {@link FileSystem} class.
@@ -146,6 +130,9 @@ export declare namespace FileSystem {
     class Error extends AbstractError<Error.Args> {
         readonly name: string;
         get ARGS_DEFAULT(): any;
+        constructor(message: string, method: string, args?: Partial<Error.Args> & {
+            cause?: LocalError.Input;
+        });
     }
     /**
      * Used only for {@link FileSystem.Error}.
@@ -166,6 +153,82 @@ export declare namespace FileSystem {
          */
         interface Args extends LocalError.Args {
         }
+    }
+    /**
+     * Arrays of utility globs used within the library.
+     */
+    namespace globs {
+        /**
+         * Files that are copied into subdirectories (e.g., releases and
+         * snapshots).
+         */
+        const IGNORE_COPIED: (stage: Stage.Class) => string[];
+        /**
+         * Compiled files to ignore.
+         */
+        const IGNORE_COMPILED: string[];
+        /**
+         * Files that we probably want to ignore within an npm project.
+         */
+        const IGNORE_PROJECT: string[];
+        /**
+         * System files that we *never, ever* want to include.
+         */
+        const SYSTEM: string[];
+    }
+    /**
+     * Utility functions for the {@link FileSystem.prettier} method.
+     */
+    namespace prettier {
+        function argsDefault(format: FileSystemType.Prettier.Format): {
+            readonly bracketSameLine: false;
+            readonly bracketSpacing: true;
+            readonly experimentalOperatorPosition: "start";
+            readonly experimentalTernaries: false;
+            readonly htmlWhitespaceSensitivity: "strict";
+            readonly jsxSingleQuote: false;
+            readonly printWidth: 80;
+            readonly proseWrap: "preserve";
+            readonly semi: true;
+            readonly singleAttributePerLine: true;
+            readonly singleQuote: true;
+            readonly tabWidth: 4;
+            readonly trailingComma: "all";
+            readonly useTabs: false;
+            readonly glob: {};
+        } | {
+            readonly singleQuote: false;
+            readonly bracketSameLine: false;
+            readonly bracketSpacing: true;
+            readonly experimentalOperatorPosition: "start";
+            readonly experimentalTernaries: false;
+            readonly htmlWhitespaceSensitivity: "strict";
+            readonly jsxSingleQuote: false;
+            readonly printWidth: 80;
+            readonly proseWrap: "preserve";
+            readonly semi: true;
+            readonly singleAttributePerLine: true;
+            readonly tabWidth: 4;
+            readonly trailingComma: "all";
+            readonly useTabs: false;
+            readonly glob: {};
+        } | {
+            readonly printWidth: 10000;
+            readonly bracketSameLine: false;
+            readonly bracketSpacing: true;
+            readonly experimentalOperatorPosition: "start";
+            readonly experimentalTernaries: false;
+            readonly htmlWhitespaceSensitivity: "strict";
+            readonly jsxSingleQuote: false;
+            readonly proseWrap: "preserve";
+            readonly semi: true;
+            readonly singleAttributePerLine: true;
+            readonly singleQuote: true;
+            readonly tabWidth: 4;
+            readonly trailingComma: "all";
+            readonly useTabs: false;
+            readonly glob: {};
+        };
     }
     /**
      * Optional class instances to pass to {@link FileSystem} constructor.

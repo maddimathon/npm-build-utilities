@@ -15,8 +15,11 @@ import type { Node } from '@maddimathon/utility-typescript/types';
 
 import type {
     CLI,
+    Config,
     Stage,
 } from '../../../types/index.js';
+
+import { FileSystemType } from '../../../types/FileSystemType.js';
 
 import {
     SemVer,
@@ -65,6 +68,74 @@ export class BuildStage extends AbstractStage<
 
     public get ARGS_DEFAULT() {
 
+        const prettify = ( _stage: Stage.Class ) => {
+
+            const _distDir: {
+                [ D in "_" | Config.Paths.DistDirectory ]: string;
+            } = {
+                _: _stage.getDistDir().replace( /\/$/, '' ),
+                scss: _stage.getDistDir( 'scss' ).replace( /\/$/, '' ),
+                docs: _stage.getDistDir( 'docs' ).replace( /\/$/, '' ),
+            };
+
+            return {
+
+                css: [
+                    [
+                        `${ _distDir._ }/**/*.css`,
+                        `${ _distDir.scss }/**/*.css`,
+                    ],
+                ],
+
+                html: [
+                    [ `${ _distDir._ }/**/*.html`, ],
+                ],
+
+                js: [
+                    [
+                        `${ _distDir._ }/**/*.js`,
+                        `${ _distDir._ }/**/*.jsx`,
+                        `${ _distDir.docs }/**/*.js`,
+                        `${ _distDir.docs }/**/*.jsx`,
+                    ],
+                ],
+
+                json: [
+                    [ `${ _distDir._ }/**/*.json`, ],
+                ],
+
+                md: undefined,
+
+                mdx: undefined,
+
+                scss: [
+                    [
+                        `${ _distDir._ }/**/*.scss`,
+                        `${ _distDir.scss }/**/*.scss`,
+                    ],
+                ],
+
+                ts: [
+                    [
+                        `${ _distDir._ }/**/*.ts`,
+                        `${ _distDir._ }/**/*.tsx`,
+                        `${ _distDir.docs }/**/*.ts`,
+                        `${ _distDir.docs }/**/*.tsx`,
+                    ],
+                ],
+
+                yaml: [
+                    [ `${ _distDir._ }/**/*.yaml`, ],
+                ],
+
+            } as const satisfies {
+                [ K in FileSystemType.Prettier.Format ]:
+                | undefined
+                | readonly [ readonly string[] ]
+                | readonly [ readonly string[], undefined | Partial<FileSystemType.Prettier.Args> ];
+            };
+        };
+
         const replace = ( stage: Stage.Class ) => ( {
 
             current: [
@@ -91,7 +162,7 @@ export class BuildStage extends AbstractStage<
             compile: true,
             document: false,
             minimize: true,
-            prettify: true,
+            prettify,
             replace,
             test: false,
 
@@ -160,15 +231,66 @@ export class BuildStage extends AbstractStage<
     }
 
     protected async minimize() {
+        // if ( !this.args.minimize ) { return; } // here for typing backup
         this.console.progress( '(NOT IMPLEMENTED) running minimize sub-stage...', 1 );
     }
 
     protected async prettify() {
-        this.console.progress( '(NOT IMPLEMENTED) running prettify sub-stage...', 1 );
+        if ( !this.args.prettify ) { return; } // here for typing backup
+        this.console.progress( 'running prettify sub-stage...', 1 );
+
+        const args = typeof this.args.prettify === 'function'
+            ? this.args.prettify( this )
+            : this.args.prettify;
+
+        // returns
+        if ( !Object.keys( args ).length ) {
+            this.console.verbose( 'empty prettier args, no files to format', 2 );
+            return;
+        }
+
+        for ( const t_format in args ) {
+            const _format = t_format as FileSystemType.Prettier.Format;
+
+            // continues
+            if ( typeof args[ _format ] === 'undefined' ) {
+                continue;
+            }
+
+            // continues
+            if (
+                !args[ _format ]
+                || !Array.isArray( args[ _format ][ 0 ] )
+            ) {
+                this.console.verbose( `no globs present to prettify ${ _format } files`, 2, { italic: true } );
+                continue;
+            }
+
+
+            this.console.verbose( `prettifying ${ _format } files...`, 2 );
+
+            const [
+                _globs,
+                _args = {} as Partial<FileSystemType.Prettier.Args>,
+            ] = args[ _format ];
+
+
+            const _prettified = await this.fs.prettier(
+                _globs,
+                _format,
+                _args,
+            );
+
+            this.console.verbose(
+                `prettified ${ _prettified.length } ${ _format } files`,
+                3,
+                { italic: true },
+            );
+        }
     }
 
     protected async replace() {
-        if ( !this.args.replace ) { return; }
+        if ( !this.args.replace ) { return; } // here for typing backup
         this.console.progress( 'replacing placeholders...', 1 );
 
         const paths = this.args.replace( this );
@@ -177,18 +299,26 @@ export class BuildStage extends AbstractStage<
             ? this.config.replace( this )
             : this.config.replace;
 
-        if ( paths.current && replacements.current ) {
+        for ( const _key of ( [ 'current', 'package' ] as const ) ) {
 
-            this.fs.replaceInFiles( paths.current, replacements.current, 2, {
-                ignore: paths.ignore ?? FileSystem.globs.SYSTEM,
-            } );
-        }
+            if ( paths[ _key ] && replacements[ _key ] ) {
+                this.console.verbose( `making ${ _key } replacements...`, 2 );
 
-        if ( paths.package && replacements.package ) {
+                const _currentReplaced = this.fs.replaceInFiles(
+                    paths[ _key ],
+                    replacements[ _key ],
+                    ( this.params.verbose ? 3 : 2 ),
+                    {
+                        ignore: paths.ignore ?? FileSystem.globs.SYSTEM,
+                    },
+                );
 
-            this.fs.replaceInFiles( paths.package, replacements.package, 2, {
-                ignore: paths.ignore ?? FileSystem.globs.SYSTEM,
-            } );
+                this.console.verbose(
+                    `replaced ${ _key } placeholders in ${ _currentReplaced.length } files`,
+                    3,
+                    { italic: true },
+                );
+            }
         }
     }
 

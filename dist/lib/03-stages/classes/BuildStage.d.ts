@@ -28,7 +28,17 @@ export declare class BuildStage extends AbstractStage<Stage.SubStage.Build, Stag
         readonly compile: true;
         readonly document: false;
         readonly minimize: true;
-        readonly prettify: true;
+        readonly prettify: (_stage: Stage.Class) => {
+            readonly css: readonly [readonly [`${string}/**/*.css`, `${string}/**/*.css`]];
+            readonly html: readonly [readonly [`${string}/**/*.html`]];
+            readonly js: readonly [readonly [`${string}/**/*.js`, `${string}/**/*.jsx`, `${string}/**/*.js`, `${string}/**/*.jsx`]];
+            readonly json: readonly [readonly [`${string}/**/*.json`]];
+            readonly md: undefined;
+            readonly mdx: undefined;
+            readonly scss: readonly [readonly [`${string}/**/*.scss`, `${string}/**/*.scss`]];
+            readonly ts: readonly [readonly [`${string}/**/*.ts`, `${string}/**/*.tsx`, `${string}/**/*.ts`, `${string}/**/*.tsx`]];
+            readonly yaml: readonly [readonly [`${string}/**/*.yaml`]];
+        };
         readonly replace: (stage: Stage.Class) => {
             current: string[];
             ignore: string[];

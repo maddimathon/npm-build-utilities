@@ -129,6 +129,11 @@ export declare namespace Config {
         /**
          * Source for files to be compiled.
          *
+         * - `_` expects a directory
+         * - `docs` expects a directory (or array of such)
+         * - `scss` expects a directory, file path, or globs (or array of such)
+         * - `ts` expects a directory or file path (or array of such)
+         *
          * @default
          * ```ts
          * {

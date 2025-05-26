@@ -178,7 +178,7 @@ export class AbstractStage {
     /* CONFIG & ARGS ===================================== */
     /** {@inheritDoc Stage.Class.isSubStageIncluded} */
     isSubStageIncluded(subStage, level) {
-        this.params.debug && this.console.progress(`isSubStageIncluded( '${subStage}' )`, level, { italic: true });
+        this.params.debug && this.console.verbose(`isSubStageIncluded( '${subStage}' )`, level, { italic: true });
         // returns
         if (!(subStage in this) || typeof this[subStage] !== 'function') {
             return false;
@@ -194,9 +194,9 @@ export class AbstractStage {
         const include = Boolean(only.isUndefined
             || this.params.only == subStage
             || this.params.only.includes(subStage));
-        this.console.vi.debug({ include }, 1 + level, { italic: true });
-        if (this.params.verbose && !include) {
-            this.console.vi.progress({
+        this.params.debug && this.console.vi.verbose({ include }, 1 + level, { italic: true });
+        if (this.params.debug && this.params.verbose && !include) {
+            this.console.vi.verbose({
                 include: {
                     isUndefined: only.isUndefined,
                     'this.params.only == subStage': this.params.only == subStage,
@@ -212,8 +212,8 @@ export class AbstractStage {
             && (this.params.without == subStage
                 || this.params.without.includes(subStage)));
         this.console.vi.debug({ exclude }, 1 + level, { italic: true });
-        if (this.params.verbose && exclude) {
-            this.console.vi.progress({
+        if (this.params.debug && this.params.verbose && exclude) {
+            this.console.vi.verbose({
                 exclude: {
                     isDefined: without.isDefined,
                     'this.params.without == subStage': this.params.without == subStage,
@@ -225,9 +225,9 @@ export class AbstractStage {
             && !exclude
             && this[subStage]);
         this.console.vi.debug({ 'isSubStageIncluded() return': result }, 1 + level, { italic: true });
-        if (this.params.verbose && !result) {
-            this.console.vi.progress({
-                include: {
+        if (this.params.debug && this.params.verbose && !result) {
+            this.console.vi.verbose({
+                result: {
                     include,
                     exclude,
                     'this[ subStage as keyof typeof this ]': Boolean(this[subStage]),

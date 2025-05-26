@@ -12,6 +12,7 @@
  */
 import { escRegExp, escRegExpReplace } from '@maddimathon/utility-typescript/functions';
 import { AbstractStage } from './abstract/AbstractStage.js';
+import { FileSystem } from '../../00-universal/index.js';
 /**
  * Default compile stage.
  *
@@ -70,36 +71,86 @@ export class CompileStage extends AbstractStage {
     async scss() {
         this.console.progress('compiling scss files...', 1);
         const scssSrcDir = this.getSrcDir('scss');
-        const scssPaths = scssSrcDir.map((path) => {
+        // const scssPaths = scssSrcDir.map( ( path ) => {
+        //     // returns
+        //     if ( !this.fs.exists( path ) ) {
+        //         this.console.verbose( 'ⅹ configured scss source path not found: ' + path, 2, { italic: true } );
+        //         return [];
+        //     }
+        //     // returns
+        //     if ( !this.fs.isDirectory( path ) ) {
+        //         this.console.verbose( '✓ configured scss source path found: ' + path, 2, { italic: true } );
+        //         return path;
+        //     }
+        //     this.console.verbose( 'configured scss source path is a directory: ' + path, 2, { italic: true } );
+        //     const testSubPaths = [
+        //         'index.scss',
+        //         'main.scss',
+        //         'style.scss',
+        //         'styles.scss',
+        //         'index.css',
+        //         'main.css',
+        //         'style.css',
+        //         'styles.css',
+        //     ];
+        //     for ( const subPath of testSubPaths ) {
+        //         const fullPath = this.fs.pathResolve( path, subPath );
+        //         // returns
+        //         if ( this.fs.exists( fullPath ) && this.fs.isFile( fullPath ) ) {
+        //             const relativePath = this.fs.pathRelative( fullPath );
+        //             this.console.verbose( '✓ default sub-file found: ' + relativePath, 3, { italic: true } );
+        //             return relativePath;
+        //         }
+        //     }
+        //     this.console.verbose( 'ⅹ no default files found', 3 );
+        //     return [];
+        // } ).flat();
+        const globArgs = {
+            ignore: [
+                ...FileSystem.globs.SYSTEM,
+                '**/_*',
+            ]
+        };
+        const scssPaths = this.fs.glob(scssSrcDir, globArgs).map((_path) => {
+            const _stats = this.fs.getStats(_path);
             // returns
-            if (!this.fs.exists(path)) {
-                this.console.verbose('ⅹ configured scss source path not found: ' + path, 2, { italic: true });
+            if (!_stats || _stats.isSymbolicLink()) {
                 return [];
             }
             // returns
-            if (!this.fs.isDirectory(path)) {
-                this.console.verbose('✓ configured scss source path found: ' + path, 2, { italic: true });
-                return path;
+            if (_stats.isFile()) {
+                this.console.verbose('✓ configured scss source _path found: ' + _path, 2, { italic: true });
+                return _path;
             }
-            this.console.verbose('configured scss source path is a directory: ' + path, 2, { italic: true });
-            const testSubPaths = [
+            this.console.verbose('configured scss source _path is a directory: ' + this.fs.pathRelative(_path), 2, { italic: true });
+            const _indexFileNames = [
                 'index.scss',
-                'main.scss',
-                'style.scss',
-                'styles.scss',
+                'index.sass',
                 'index.css',
-                'main.css',
-                'style.css',
-                'styles.css',
+                '_index.scss',
+                '_index.sass',
+                '_index.css',
             ];
-            for (const subPath of testSubPaths) {
-                const fullPath = this.fs.pathResolve(path, subPath);
+            // returns on existing file found
+            for (const _filename of _indexFileNames) {
+                const _indexPath = this.fs.pathResolve(_path, _filename);
                 // returns
-                if (this.fs.exists(fullPath) && this.fs.isFile(fullPath)) {
-                    const relativePath = this.fs.pathRelative(fullPath);
-                    this.console.verbose('✓ default sub-file found: ' + relativePath, 3, { italic: true });
-                    return relativePath;
+                if (this.fs.exists(_indexPath) && this.fs.isFile(_indexPath)) {
+                    const _relativePath = this.fs.pathRelative(_indexPath);
+                    this.console.verbose('✓ default sub-file found: ' + _relativePath, 3, { italic: true });
+                    return _relativePath;
                 }
+            }
+            const _globResults = this.fs.glob([
+                './**/*.css',
+                './**/*.sass',
+                './**/*.scss',
+            ].map(_p => this.fs.pathRelative(this.fs.pathResolve(_path, _p))), globArgs).filter(_p => this.fs.isFile(_p));
+            // returns
+            if (_globResults.length) {
+                const _relativePaths = _globResults.map(this.fs.pathRelative);
+                this.console.verbose('✓ globbed sub-file(s) found: ' + _relativePaths.map(_p => '\n    ' + _p).join(''), 3, { italic: true });
+                return _globResults;
             }
             this.console.verbose('ⅹ no default files found', 3);
             return [];
@@ -226,7 +277,7 @@ export class CompileStage extends AbstractStage {
             this.console.verbose(`no files to copy from the root directory`, 2);
         }
         else {
-            this.fs.copy(rootPaths, 2, distDir);
+            this.fs.copy(rootPaths, 2, distDir, null, { force: true, rename: true });
         }
         const srcPaths = this.args.files.src;
         if (!srcPaths?.length) {
@@ -234,7 +285,7 @@ export class CompileStage extends AbstractStage {
         }
         else {
             const srcDir = this.getSrcDir().trim().replace(/\/$/g, '');
-            this.fs.copy(srcPaths, 2, distDir, srcDir);
+            this.fs.copy(srcPaths, 2, distDir, srcDir, { force: true, rename: true });
         }
     }
 }

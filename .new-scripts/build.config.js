@@ -12,8 +12,12 @@ import { BuildStage } from '../src/ts/index.js';
  */
 
 /**
- * @import { Config, Stage } from "../src/ts/types/index.js"
+ * @import { Config } from "../src/ts/types/index.js"
  */
+
+const _defaults = {
+    build: BuildStage.prototype.ARGS_DEFAULT,
+};
 
 /**
  * @type {Config}
@@ -21,16 +25,6 @@ import { BuildStage } from '../src/ts/index.js';
 const config = {
 
     title: 'NPM Build Utilities',
-
-    paths: {
-
-        /** @type {Config.Internal['paths']['dist']} */
-        dist: {
-            _: 'new-dist',
-            docs: 'new-docs',
-            scss: 'new-dist-scss',
-        },
-    },
 
     stages: {
 
@@ -48,12 +42,23 @@ const config = {
 
         build: {
 
-            /**
-             * @type {( stage: Stage.Class ) => { current: string[]; ignore: string[]; package: string[]; }}
-             */
+            prettify: ( stage ) => {
+
+                return {
+                    ..._defaults.build.prettify( stage ),
+
+                    css: undefined,
+                    html: undefined,
+                    json: undefined,
+                    scss: undefined,
+                    ts: undefined,
+                    yaml: undefined,
+                };
+            },
+
             replace: ( stage ) => {
 
-                const _obj = BuildStage.prototype.ARGS_DEFAULT.replace( stage );
+                const _obj = _defaults.build.replace( stage );
 
                 _obj.ignore.push( 'demos/**' );
 

@@ -11,6 +11,7 @@
  * @license MIT
  */
 import { GlobOptions } from 'glob';
+import * as prettier from "prettier";
 import { node } from '@maddimathon/utility-typescript/classes';
 /**
  * Shape of the file/path utility class.
@@ -53,7 +54,7 @@ export interface FileSystemType extends node.NodeFiles {
     /**
      * Runs prettier on the given file globs.
      */
-    prettier(globs: string | string[], format: "css" | "html" | "js" | "scss" | "ts", level: number, args?: FileSystemType.Glob.Args): string[];
+    prettier(globs: string | string[], format: FileSystemType.Prettier.Format, args?: FileSystemType.Glob.Args): Promise<string[]>;
     /**
      * Replaces the given text or regex in the given file globs.
      */
@@ -96,6 +97,27 @@ export declare namespace FileSystemType {
          * @interface
          */
         type Args = GlobOptions & Partial<{}>;
+    }
+    /**
+     * Types for {@link FileSystem.prettier} method.
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    namespace Prettier {
+        /**
+         * Optional configuration for {@link FileSystem.prettier} method.
+         *
+         * @since 0.1.0-alpha.draft
+         *
+         * @interface
+         */
+        interface Args extends prettier.Options {
+            glob: Glob.Args;
+        }
+        /**
+         * File type options for prettier.
+         */
+        type Format = "css" | "html" | "js" | "json" | "mdx" | "scss" | "ts" | "yaml" | "md";
     }
 }
 //# sourceMappingURL=FileSystemType.d.ts.map

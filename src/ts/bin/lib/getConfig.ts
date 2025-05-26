@@ -167,14 +167,17 @@ export async function getConfig(
             linesIn: 1,
         },
     } );
+
     // exits process
     if ( noConfigPrompt === 'cancel' ) {
         process.exit( 0 );
     }
+
     const msgArgs = {
         depth: level,
         linesIn: 0,
     };
+
     // the basic minimum object
     /**
      * Basic minimum config constructed because no valid config was found.

@@ -39,6 +39,7 @@ import type { SemVer } from '../lib/@internal/classes/SemVer.js';
 
 import type { Stage_Compiler } from '../lib/02-utils/classes/Stage_Compiler.js';
 
+import type { FileSystemType } from './FileSystemType.js';
 import type { Logger } from './Logger.js';
 
 
@@ -109,8 +110,23 @@ export namespace Args {
 
         /**
          * Whether to include this sub-stage.
+         *
+         * The first tuple item is an array of file globs and the second item is
+         * args to pass to the {@link FileSystem.prettier} method, if any.
          */
-        prettify: boolean;
+        prettify: false
+        | {
+            [ K in FileSystemType.Prettier.Format ]?: [ string[] ] | [ string[], undefined | Partial<FileSystemType.Prettier.Args> ];
+        }
+        | (
+            ( stage: Class ) => {
+                [ K in FileSystemType.Prettier.Format ]?:
+                | [ string[] ]
+                | [ string[], undefined | Partial<FileSystemType.Prettier.Args> ]
+                | readonly [ readonly string[] ]
+                | readonly [ readonly string[], undefined | Partial<FileSystemType.Prettier.Args> ];
+            }
+        );
 
         /**
          * Whether to include this sub-stage, or the configuration if so.

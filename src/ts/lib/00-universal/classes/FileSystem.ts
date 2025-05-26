@@ -12,6 +12,7 @@
  */
 
 import { globSync } from 'glob';
+import * as prettier from "prettier";
 
 import {
     escRegExp,
@@ -90,6 +91,8 @@ export class FileSystem extends node.NodeFiles {
 
             copy,
             glob,
+            prettier: FileSystem.prettier.argsDefault,
+
         } as const satisfies FileSystem.Args;
     }
 
@@ -114,10 +117,6 @@ export class FileSystem extends node.NodeFiles {
             // @ts-expect-error - it is initialized in the super constructor
             this.args
         ) ?? this.buildArgs( args );
-
-        this.copy = this.copy.bind( this );
-        this.delete = this.delete.bind( this );
-        this.glob = this.glob.bind( this );
     }
 
 
@@ -184,10 +183,7 @@ export class FileSystem extends node.NodeFiles {
                         'source = ' + source,
                         'destination = ' + this.pathRelative( destination ),
                     ].join( '\n' ),
-                    {
-                        class: 'FileSystem',
-                        method: 'copy',
-                    },
+                    'copy',
                 );
             }
 
@@ -255,18 +251,87 @@ export class FileSystem extends node.NodeFiles {
     }
 
     /** {@inheritDoc internal.FileSystemType.prettier} */
-    public prettier(
+    public async prettier(
         globs: string | string[],
-        format: "css" | "html" | "js" | "scss" | "ts",
-        level: number,
-        args?: FileSystemType.Glob.Args,
-    ): string[] {
-        this.console.log( '(NOT IMPLEMENTED) FileSystem.prettier()', level );
-        this.console.vi.log( { globs }, 1 + level );
-        this.console.vi.log( { format }, 1 + level );
-        this.console.vi.log( { args }, 1 + level );
+        format: FileSystemType.Prettier.Format,
+        args: Partial<FileSystemType.Prettier.Args> = {},
+    ): Promise<string[]> {
 
-        return [];
+        args = mergeArgs(
+            typeof this.args.prettier === 'function' ? this.args.prettier( format ) : this.args.prettier,
+            args,
+            true
+        );
+
+        // throws if no parser can be set
+        if ( !args.parser ) {
+
+            switch ( format ) {
+
+                case 'css':
+                case 'html':
+                case 'mdx':
+                case 'json':
+                case 'scss':
+                case 'yaml':
+                    args.parser = format;
+                    break;
+
+                case 'js':
+                    args.parser = 'babel';
+                    break;
+
+                case 'md':
+                    args.parser = 'markdown';
+                    break;
+
+                case 'ts':
+                    args.parser = 'typescript';
+                    break;
+
+                default:
+                    throw new FileSystem.Error(
+                        'No parser was given or assigned for format "' + format + '"',
+                        'prettier',
+                    );
+                    return [];
+            }
+        }
+
+        const files = this.glob( globs, args.glob )
+            .filter( ( _path ) => this.exists( _path ) && this.isFile( _path ) );
+
+        // returns
+        if ( !files.length ) {
+            return [];
+        }
+
+        const prettified: string[] = [];
+
+        for ( const _path of files ) {
+
+            let _content = this.readFile( _path );
+
+            // continues
+            if ( !_content ) {
+                continue;
+            }
+
+            _content = await prettier.format( _content, args );
+
+            if ( _content ) {
+
+                if ( this.write(
+                    _path,
+                    _content,
+                    { force: true, rename: false },
+                ) ) {
+                    prettified.push( _path );
+                }
+            }
+        }
+
+        return prettified;
     }
 
     /** {@inheritDoc internal.FileSystemType.replaceInFiles} */
@@ -282,8 +347,6 @@ export class FileSystem extends node.NodeFiles {
             this.console.vi.debug( { replace }, ( this.console.params.verbose ? 1 : 0 ) + level );
             return [];
         }
-
-        const replaced: string[] = [];
 
         const replacements = (
             Array.isArray( replace[ 0 ] )
@@ -330,9 +393,11 @@ export class FileSystem extends node.NodeFiles {
             }
         }
 
-        for ( const path of files ) {
+        const replaced: string[] = [];
 
-            let _content = this.readFile( path );
+        for ( const _path of files ) {
+
+            let _content = this.readFile( _path );
             let _write = false;
 
             // continues
@@ -340,11 +405,6 @@ export class FileSystem extends node.NodeFiles {
                 continue;
             }
 
-            // this.console.verbose( 'rewriting ' + this.pathRelative( path ), 1 + level );
-
-            // const _level = ( this.console.params.verbose ? 1 : 0 ) + level;
-
-            // let i = 1;
             for ( const [ find, repl ] of replacements ) {
 
                 const _regex = find instanceof RegExp
@@ -352,26 +412,20 @@ export class FileSystem extends node.NodeFiles {
                     : new RegExp( escRegExp( find ), 'g' );
 
                 if ( !!_content.match( _regex ) ) {
-
-                    // this.console.verbose(
-                    //     'replacements # ' + i + ' — ' + this.console.vi.stringify( { find }, { includePrefix: false } ) + ' → ' + this.console.vi.stringify( { repl }, { includePrefix: false } ),
-                    //     1 + _level,
-                    //     { joiner: '\n', maxWidth: null },
-                    // );
-
                     _content = _content.replace( _regex, escRegExpReplace( String( repl ) ) );
                     _write = true;
                 }
-                // i++;
             }
 
             if ( _write ) {
 
-                this.write(
-                    path,
+                if ( this.write(
+                    _path,
                     _content,
                     { force: true, rename: false },
-                );
+                ) ) {
+                    replaced.push( _path );
+                }
             }
         }
 
@@ -389,59 +443,6 @@ export class FileSystem extends node.NodeFiles {
 export namespace FileSystem {
 
     /**
-     * Arrays of utility globs used within the library.
-     */
-    export namespace globs {
-
-        /** 
-         * 
-         */
-        export const IGNORE_COPIED = ( stage: Stage.Class ) => [
-            `${ stage.config.paths.release.replace( /\/$/g, '' ) }/**`,
-            `${ stage.config.paths.snapshot.replace( /\/$/g, '' ) }/**`,
-        ];
-
-        /** 
-         * Files to ignore 
-         */
-        export const IGNORE_COMPILED = [
-            `./docs/**`,
-            `./dist/**`,
-        ];
-
-        /** 
-         * Files that we probably want to ignore within an npm project.
-         */
-        export const IGNORE_PROJECT = [
-
-            '.git/**',
-            '**/.git/**',
-
-            '.scripts/**',
-            '**/.scripts/**',
-
-            '.vscode/**/*.code-snippets',
-            '.vscode/**/settings.json',
-
-            'node_modules/**',
-            '**/node_modules/**',
-        ];
-
-        /** 
-         * System files that we *never, ever* want to include.
-         */
-        export const SYSTEM = [
-            '._*',
-            '._*/**',
-            '**/._*',
-            '**/._*/**',
-            '**/.DS_Store',
-            '**/.smbdelete**',
-        ];
-
-    };
-
-    /**
      * Optional configuration for {@link FileSystem} class.
      * 
      * @since ___PKG_VERSION___
@@ -457,6 +458,11 @@ export namespace FileSystem {
          * Defaults for the {@link FileSystem.glob} method.
          */
         glob: FileSystemType.Glob.Args;
+
+        /**
+         * Defaults for the {@link FileSystem.prettier} method.
+         */
+        prettier: FileSystemType.Prettier.Args | ( ( format: FileSystemType.Prettier.Format ) => FileSystemType.Prettier.Args );
     };
 
     /**
@@ -492,15 +498,15 @@ export namespace FileSystem {
         /* CONSTRUCTOR
          * ================================================================== */
 
-        // public constructor (
-        //     message: string,
-        //     // code: Error.Code,
-        //     context: null | AbstractError.Context,
-        //     args?: Partial<Error.Args> & { cause?: LocalError.Input; },
-        // ) {
-        //     super( message, context, args );
-        //     // this.code = code;
-        // }
+        public constructor (
+            message: string,
+            // code: Error.Code,
+            method: string,
+            args?: Partial<Error.Args> & { cause?: LocalError.Input; },
+        ) {
+            super( message, { class: 'FileSystem', method }, args );
+            // this.code = code;
+        }
 
 
 
@@ -536,6 +542,107 @@ export namespace FileSystem {
          */
         export interface Args extends LocalError.Args {
         };
+    };
+
+    /**
+     * Arrays of utility globs used within the library.
+     */
+    export namespace globs {
+
+        /** 
+         * Files that are copied into subdirectories (e.g., releases and
+         * snapshots).
+         */
+        export const IGNORE_COPIED = ( stage: Stage.Class ) => [
+            `${ stage.config.paths.release.replace( /\/$/g, '' ) }/**`,
+            `${ stage.config.paths.snapshot.replace( /\/$/g, '' ) }/**`,
+        ];
+
+        /** 
+         * Compiled files to ignore.
+         */
+        export const IGNORE_COMPILED = [
+            `./docs/**`,
+            `./dist/**`,
+        ];
+
+        /** 
+         * Files that we probably want to ignore within an npm project.
+         */
+        export const IGNORE_PROJECT = [
+
+            '.git/**',
+            '**/.git/**',
+
+            '.scripts/**',
+            '**/.scripts/**',
+
+            '.vscode/**/*.code-snippets',
+            '.vscode/**/settings.json',
+
+            'node_modules/**',
+            '**/node_modules/**',
+        ];
+
+        /** 
+         * System files that we *never, ever* want to include.
+         */
+        export const SYSTEM = [
+            '._*',
+            '._*/**',
+            '**/._*',
+            '**/._*/**',
+            '**/.DS_Store',
+            '**/.smbdelete**',
+        ];
+    };
+
+    /**
+     * Utility functions for the {@link FileSystem.prettier} method.
+     */
+    export namespace prettier {
+
+        export function argsDefault( format: FileSystemType.Prettier.Format ) {
+
+            const universal = {
+                bracketSameLine: false,
+                bracketSpacing: true,
+                experimentalOperatorPosition: 'start',
+                experimentalTernaries: false,
+                htmlWhitespaceSensitivity: 'strict',
+                jsxSingleQuote: false,
+                printWidth: 80,
+                proseWrap: 'preserve',
+                semi: true,
+                singleAttributePerLine: true,
+                singleQuote: true,
+                tabWidth: 4,
+                trailingComma: 'all',
+                useTabs: false,
+
+                glob: {},
+            } as const satisfies FileSystemType.Prettier.Args;
+
+            // returns on match
+            switch ( format ) {
+
+                case 'css':
+                    return {
+                        ...universal,
+
+                        singleQuote: false,
+                    } as const satisfies FileSystemType.Prettier.Args;
+
+                case 'html':
+                    return {
+                        ...universal,
+
+                        printWidth: 10000,
+                    } as const satisfies FileSystemType.Prettier.Args;
+            }
+
+            return universal;
+        }
     };
 
     /**

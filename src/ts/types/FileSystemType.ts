@@ -12,6 +12,7 @@
  */
 
 import { GlobOptions } from 'glob';
+import * as prettier from "prettier";
 
 import {
     node,
@@ -85,10 +86,9 @@ export interface FileSystemType extends node.NodeFiles {
      */
     prettier(
         globs: string | string[],
-        format: "css" | "html" | "js" | "scss" | "ts",
-        level: number,
+        format: FileSystemType.Prettier.Format,
         args?: FileSystemType.Glob.Args,
-    ): string[];
+    ): Promise<string[]>;
 
     /**
      * Replaces the given text or regex in the given file globs.
@@ -143,5 +143,38 @@ export namespace FileSystemType {
          */
         export type Args = GlobOptions & Partial<{
         }>;
+    };
+
+    /**
+     * Types for {@link FileSystem.prettier} method.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export namespace Prettier {
+
+        /**
+         * Optional configuration for {@link FileSystem.prettier} method.
+         * 
+         * @since ___PKG_VERSION___
+         * 
+         * @interface
+         */
+        export interface Args extends prettier.Options {
+            glob: Glob.Args;
+        };
+
+        /**
+         * File type options for prettier.
+         */
+        export type Format =
+            | "css"
+            | "html"
+            | "js"
+            | "json"
+            | "mdx"
+            | "scss"
+            | "ts"
+            | "yaml"
+            | "md";
     };
 }

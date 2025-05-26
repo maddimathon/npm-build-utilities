@@ -30,5 +30,15 @@ export var FileSystemType;
     })(Copy = FileSystemType.Copy || (FileSystemType.Copy = {}));
     ;
     ;
+    /**
+     * Types for {@link FileSystem.prettier} method.
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    let Prettier;
+    (function (Prettier) {
+        ;
+    })(Prettier = FileSystemType.Prettier || (FileSystemType.Prettier = {}));
+    ;
 })(FileSystemType || (FileSystemType = {}));
 //# sourceMappingURL=FileSystemType.js.map

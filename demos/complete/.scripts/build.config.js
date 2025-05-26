@@ -8,9 +8,15 @@
  * @license MIT
  */
 
+import { BuildStage } from "@maddimathon/build-utilities";
+
 /**
  * @import { Config } from "@maddimathon/build-utilities"
  */
+
+const _defaults = {
+    build: BuildStage.prototype.ARGS_DEFAULT,
+};
 
 /**
  * @type {Config}
@@ -18,16 +24,8 @@
 const config = {
     title: 'NPM Build Utilities DEMO',
 
-    paths: {
-        src: {
-            scss: [
-                'src/scss/main.scss',
-                'src/scss/secondary.scss',
-            ],
-        },
-    },
-
     stages: {
+
         compile: {
             files: {
 
@@ -36,8 +34,23 @@ const config = {
                 ],
 
                 src: [
-                    'src/files',
+                    'files',
+                    'scss',
                 ],
+            },
+        },
+
+        build: {
+
+            prettify: ( stage ) => {
+
+                return {
+                    ..._defaults.build.prettify( stage ),
+
+                    html: undefined,
+                    json: undefined,
+                    yaml: undefined,
+                };
             },
         },
     },

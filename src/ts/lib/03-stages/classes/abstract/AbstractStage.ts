@@ -286,7 +286,7 @@ export abstract class AbstractStage<
         subStage: SubStage,
         level: number,
     ): boolean {
-        this.params.debug && this.console.progress( `isSubStageIncluded( '${ subStage }' )`, level, { italic: true } );
+        this.params.debug && this.console.verbose( `isSubStageIncluded( '${ subStage }' )`, level, { italic: true } );
 
         // returns
         if ( !( subStage in this ) || typeof this[ subStage as keyof this ] !== 'function' ) {
@@ -309,10 +309,11 @@ export abstract class AbstractStage<
             || this.params.only == subStage
             || this.params.only.includes( subStage )
         );
-        this.console.vi.debug( { include }, 1 + level, { italic: true } );
+        this.params.debug && this.console.vi.verbose( { include }, 1 + level, { italic: true } );
 
-        if ( this.params.verbose && !include ) {
-            this.console.vi.progress( {
+        if ( this.params.debug && this.params.verbose && !include ) {
+
+            this.console.vi.verbose( {
                 include: {
                     isUndefined: only.isUndefined,
                     'this.params.only == subStage': this.params.only == subStage,
@@ -336,8 +337,9 @@ export abstract class AbstractStage<
         );
         this.console.vi.debug( { exclude }, 1 + level, { italic: true } );
 
-        if ( this.params.verbose && exclude ) {
-            this.console.vi.progress( {
+        if ( this.params.debug && this.params.verbose && exclude ) {
+
+            this.console.vi.verbose( {
                 exclude: {
                     isDefined: without.isDefined,
                     'this.params.without == subStage': this.params.without == subStage,
@@ -354,9 +356,10 @@ export abstract class AbstractStage<
 
         this.console.vi.debug( { 'isSubStageIncluded() return': result }, 1 + level, { italic: true } );
 
-        if ( this.params.verbose && !result ) {
-            this.console.vi.progress( {
-                include: {
+        if ( this.params.debug && this.params.verbose && !result ) {
+
+            this.console.vi.verbose( {
+                result: {
                     include,
                     exclude,
                     'this[ subStage as keyof typeof this ]': Boolean( this[ subStage as keyof typeof this ] ),

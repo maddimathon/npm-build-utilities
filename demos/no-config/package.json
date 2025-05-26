@@ -25,6 +25,8 @@
         "package": "build-utils package",
         "release": "build-utils release",
 
+        "dryrun": "build-utils release --dryrun",
+
         "reset": "rm -f .scripts/build.config.js .scripts/tsconfig.json build-utils.config.js tsconfig.json src/tsconfig.json src/ts/tsconfig.json"
     },
 

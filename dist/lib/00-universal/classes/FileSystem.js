@@ -11,6 +11,7 @@
  * @license MIT
  */
 import { globSync } from 'glob';
+import * as prettier from "prettier";
 import { escRegExp, escRegExpReplace, mergeArgs, } from '@maddimathon/utility-typescript/functions';
 import { node } from '@maddimathon/utility-typescript/classes';
 import { AbstractError, } from '../../@internal/index.js';
@@ -58,6 +59,7 @@ export class FileSystem extends node.NodeFiles {
             ...node.NodeFiles.prototype.ARGS_DEFAULT,
             copy,
             glob,
+            prettier: FileSystem.prettier.argsDefault,
         };
     }
     /* CONSTRUCTOR
@@ -74,9 +76,6 @@ export class FileSystem extends node.NodeFiles {
         this.args = (
         // @ts-expect-error - it is initialized in the super constructor
         this.args) ?? this.buildArgs(args);
-        this.copy = this.copy.bind(this);
-        this.delete = this.delete.bind(this);
-        this.glob = this.glob.bind(this);
     }
     /* METHODS
      * ====================================================================== */
@@ -108,10 +107,7 @@ export class FileSystem extends node.NodeFiles {
                     'this.copyFile returned falsey',
                     'source = ' + source,
                     'destination = ' + this.pathRelative(destination),
-                ].join('\n'), {
-                    class: 'FileSystem',
-                    method: 'copy',
-                });
+                ].join('\n'), 'copy');
             }
             output.push(t_output);
         }
@@ -150,12 +146,53 @@ export class FileSystem extends node.NodeFiles {
         return [];
     }
     /** {@inheritDoc internal.FileSystemType.prettier} */
-    prettier(globs, format, level, args) {
-        this.console.log('(NOT IMPLEMENTED) FileSystem.prettier()', level);
-        this.console.vi.log({ globs }, 1 + level);
-        this.console.vi.log({ format }, 1 + level);
-        this.console.vi.log({ args }, 1 + level);
-        return [];
+    async prettier(globs, format, args = {}) {
+        args = mergeArgs(typeof this.args.prettier === 'function' ? this.args.prettier(format) : this.args.prettier, args, true);
+        // throws if no parser can be set
+        if (!args.parser) {
+            switch (format) {
+                case 'css':
+                case 'html':
+                case 'mdx':
+                case 'json':
+                case 'scss':
+                case 'yaml':
+                    args.parser = format;
+                    break;
+                case 'js':
+                    args.parser = 'babel';
+                    break;
+                case 'md':
+                    args.parser = 'markdown';
+                    break;
+                case 'ts':
+                    args.parser = 'typescript';
+                    break;
+                default:
+                    throw new FileSystem.Error('No parser was given or assigned for format "' + format + '"', 'prettier');
+            }
+        }
+        const files = this.glob(globs, args.glob)
+            .filter((_path) => this.exists(_path) && this.isFile(_path));
+        // returns
+        if (!files.length) {
+            return [];
+        }
+        const prettified = [];
+        for (const _path of files) {
+            let _content = this.readFile(_path);
+            // continues
+            if (!_content) {
+                continue;
+            }
+            _content = await prettier.format(_content, args);
+            if (_content) {
+                if (this.write(_path, _content, { force: true, rename: false })) {
+                    prettified.push(_path);
+                }
+            }
+        }
+        return prettified;
     }
     /** {@inheritDoc internal.FileSystemType.replaceInFiles} */
     replaceInFiles(globs, replace, level, args) {
@@ -165,7 +202,6 @@ export class FileSystem extends node.NodeFiles {
             this.console.vi.debug({ replace }, (this.console.params.verbose ? 1 : 0) + level);
             return [];
         }
-        const replaced = [];
         const replacements = (Array.isArray(replace[0])
             ? replace
             : [replace]).filter(([find, repl]) => find && typeof repl !== 'undefined');
@@ -200,33 +236,27 @@ export class FileSystem extends node.NodeFiles {
                 i++;
             }
         }
-        for (const path of files) {
-            let _content = this.readFile(path);
+        const replaced = [];
+        for (const _path of files) {
+            let _content = this.readFile(_path);
             let _write = false;
             // continues
             if (!_content) {
                 continue;
             }
-            // this.console.verbose( 'rewriting ' + this.pathRelative( path ), 1 + level );
-            // const _level = ( this.console.params.verbose ? 1 : 0 ) + level;
-            // let i = 1;
             for (const [find, repl] of replacements) {
                 const _regex = find instanceof RegExp
                     ? find
                     : new RegExp(escRegExp(find), 'g');
                 if (!!_content.match(_regex)) {
-                    // this.console.verbose(
-                    //     'replacements # ' + i + ' — ' + this.console.vi.stringify( { find }, { includePrefix: false } ) + ' → ' + this.console.vi.stringify( { repl }, { includePrefix: false } ),
-                    //     1 + _level,
-                    //     { joiner: '\n', maxWidth: null },
-                    // );
                     _content = _content.replace(_regex, escRegExpReplace(String(repl)));
                     _write = true;
                 }
-                // i++;
             }
             if (_write) {
-                this.write(path, _content, { force: true, rename: false });
+                if (this.write(_path, _content, { force: true, rename: false })) {
+                    replaced.push(_path);
+                }
             }
         }
         return replaced;
@@ -240,20 +270,61 @@ export class FileSystem extends node.NodeFiles {
  * @since 0.1.0-alpha.draft
  */
 (function (FileSystem) {
+    ;
+    /**
+     * An extension of the utilities error used by the {@link FileSystem} class.
+     *
+     * @category Errors
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    class Error extends AbstractError {
+        /* LOCAL PROPERTIES
+         * ================================================================== */
+        // public readonly code: Error.Code;
+        /* Args ===================================== */
+        name = 'FileSystem Error';
+        get ARGS_DEFAULT() {
+            return {
+                ...AbstractError.prototype.ARGS_DEFAULT,
+            };
+        }
+        /* CONSTRUCTOR
+         * ================================================================== */
+        constructor(message, 
+        // code: Error.Code,
+        method, args) {
+            super(message, { class: 'FileSystem', method }, args);
+            // this.code = code;
+        }
+    }
+    FileSystem.Error = Error;
+    /**
+     * Used only for {@link FileSystem.Error}.
+     *
+     * @category Errors
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    (function (Error) {
+        ;
+    })(Error = FileSystem.Error || (FileSystem.Error = {}));
+    ;
     /**
      * Arrays of utility globs used within the library.
      */
     let globs;
     (function (globs) {
         /**
-         *
+         * Files that are copied into subdirectories (e.g., releases and
+         * snapshots).
          */
         globs.IGNORE_COPIED = (stage) => [
             `${stage.config.paths.release.replace(/\/$/g, '')}/**`,
             `${stage.config.paths.snapshot.replace(/\/$/g, '')}/**`,
         ];
         /**
-         * Files to ignore
+         * Compiled files to ignore.
          */
         globs.IGNORE_COMPILED = [
             `./docs/**`,
@@ -285,37 +356,46 @@ export class FileSystem extends node.NodeFiles {
         ];
     })(globs = FileSystem.globs || (FileSystem.globs = {}));
     ;
-    ;
     /**
-     * An extension of the utilities error used by the {@link FileSystem} class.
-     *
-     * @category Errors
-     *
-     * @since 0.1.0-alpha.draft
+     * Utility functions for the {@link FileSystem.prettier} method.
      */
-    class Error extends AbstractError {
-        /* LOCAL PROPERTIES
-         * ================================================================== */
-        // public readonly code: Error.Code;
-        /* Args ===================================== */
-        name = 'FileSystem Error';
-        get ARGS_DEFAULT() {
-            return {
-                ...AbstractError.prototype.ARGS_DEFAULT,
+    let prettier;
+    (function (prettier) {
+        function argsDefault(format) {
+            const universal = {
+                bracketSameLine: false,
+                bracketSpacing: true,
+                experimentalOperatorPosition: 'start',
+                experimentalTernaries: false,
+                htmlWhitespaceSensitivity: 'strict',
+                jsxSingleQuote: false,
+                printWidth: 80,
+                proseWrap: 'preserve',
+                semi: true,
+                singleAttributePerLine: true,
+                singleQuote: true,
+                tabWidth: 4,
+                trailingComma: 'all',
+                useTabs: false,
+                glob: {},
             };
+            // returns on match
+            switch (format) {
+                case 'css':
+                    return {
+                        ...universal,
+                        singleQuote: false,
+                    };
+                case 'html':
+                    return {
+                        ...universal,
+                        printWidth: 10000,
+                    };
+            }
+            return universal;
         }
-    }
-    FileSystem.Error = Error;
-    /**
-     * Used only for {@link FileSystem.Error}.
-     *
-     * @category Errors
-     *
-     * @since 0.1.0-alpha.draft
-     */
-    (function (Error) {
-        ;
-    })(Error = FileSystem.Error || (FileSystem.Error = {}));
+        prettier.argsDefault = argsDefault;
+    })(prettier = FileSystem.prettier || (FileSystem.prettier = {}));
     ;
     ;
 })(FileSystem || (FileSystem = {}));
