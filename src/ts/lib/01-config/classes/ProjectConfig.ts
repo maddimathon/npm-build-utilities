@@ -20,9 +20,10 @@ import {
 
 import type {
     Config,
-    Logger,
     Stage,
 } from '../../../types/index.js';
+
+import type { Logger } from '../../../types/Logger.js';
 
 
 /**
@@ -35,7 +36,7 @@ import type {
  *
  * @since ___PKG_VERSION___
  */
-export class ProjectConfig implements Config.Class {
+export class ProjectConfig implements Objects.Classify<Config> {
 
     static replace( stage: Stage.Class ): Config.Replace {
 
@@ -57,20 +58,20 @@ export class ProjectConfig implements Config.Class {
         const rpl: Config.Replace = {
 
             current: [
-                [ /___CURRENT_DATE___/g, _currentDate ],
-                [ /___CURRENT_DESC(RIPTION)?___/g, stage.pkg.description ?? '' ],
-                [ /___CURRENT_(HOMEPAGE|URL)___/g, stage.pkg.homepage ?? '' ],
-                [ /___CURRENT_VERSION___/g, stage.version.toString( stage.isDraftVersion ) ],
-                [ /___CURRENT_YEAR___/g, _currentYear ],
+                [ /___(CURRENT)_DATE___/g, _currentDate ],
+                [ /___(CURRENT)_DESC(RIPTION)?___/g, stage.pkg.description ?? '' ],
+                [ /___(CURRENT)_(HOMEPAGE|URL)___/g, stage.pkg.homepage ?? '' ],
+                [ /___(CURRENT)_VERSION___/g, stage.version.toString( stage.isDraftVersion ) ],
+                [ /___(CURRENT)_YEAR___/g, _currentYear ],
             ],
 
             package: [
-                [ /___PKG_DATE___/g, _currentDate ],
-                [ /___PKG_VERSION___/g, stage.version.toString( stage.isDraftVersion ) ],
-                [ /___PKG_YEAR___/g, _currentYear ],
+                [ /___(PKG)_DATE___/g, _currentDate ],
+                [ /___(PKG)_VERSION___/g, stage.version.toString( stage.isDraftVersion ) ],
+                [ /___(PKG)_YEAR___/g, _currentYear ],
             ],
         };
-        stage.console.vi.log( { 'ProjectConfig.replace()': rpl }, 1 );
+
         return rpl;
     }
 
@@ -85,8 +86,8 @@ export class ProjectConfig implements Config.Class {
 
     constructor ( config: Config.Internal ) {
         this.clr = config.clr;
-        this.compiler = config.compiler ?? {};
-        this.console = config.console ?? {};
+        this.compiler = config.compiler;
+        this.console = config.console;
         this.fs = config.fs;
         this.paths = config.paths;
         this.replace = config.replace;
@@ -199,7 +200,7 @@ export class ProjectConfig implements Config.Class {
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
      */
-    public toJSON(): Objects.Classify<Config.Internal, never> {
+    public toJSON(): Objects.Classify<Config.Internal> {
         return this;
     }
 

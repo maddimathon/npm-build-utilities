@@ -20,9 +20,10 @@ import { mergeArgs, toTitleCase } from '@maddimathon/utility-typescript/function
 import type {
     CLI,
     Config,
-    LocalError,
     Stage,
 } from '../../../../types/index.js';
+
+import type { LocalError } from '../../../../types/LocalError.js';
 
 import {
     errorHandler,
@@ -74,11 +75,11 @@ export abstract class AbstractStage<
      * 
      * @category Args
      */
-    public static get ARGS_DEFAULT(): Stage.Args {
+    public static get ARGS_DEFAULT() {
 
         return {
             objs: {},
-        };
+        } as const satisfies Stage.Args;
     }
 
 
@@ -143,15 +144,15 @@ export abstract class AbstractStage<
     public get pkg() {
 
         if ( typeof this._pkg === 'undefined' ) {
-            this._pkg = this.try( getPackageJson, 1, [ this.fs ] );
+            this._pkg = this.try( getPackageJson, 1, [ this.fs ] ) as Node.PackageJson;
         }
 
         return {
-            name: this._pkg.name,
-            version: this._pkg.version,
+            name: this._pkg?.name,
+            version: this._pkg?.version,
 
-            description: this._pkg.description,
-            homepage: this._pkg.homepage,
+            description: this._pkg?.description,
+            homepage: this._pkg?.homepage,
         } as const satisfies Node.PackageJson;
     }
 
@@ -246,14 +247,15 @@ export abstract class AbstractStage<
         this.clr = clr;
         this.config = config;
         this.params = params;
-
-        this.args = this.buildArgs( args );
+        this.version = _version;
 
         this.console = new Stage_Console(
             this.clr,
             this.config,
             this.params,
         );
+
+        this.args = this.buildArgs( args );
 
         this.fs = this.args.objs.fs ?? new FileSystem( this.console, this.config.fs );
 
@@ -264,8 +266,6 @@ export abstract class AbstractStage<
             this.fs,
             this.config.compiler,
         );
-
-        this.version = _version;
     }
 
 
@@ -368,7 +368,7 @@ export abstract class AbstractStage<
     }
 
     /** {@inheritDoc Stage.Class.getDistDir} */
-    public getDistDir( subDir?: Config.Paths.SourceDirectory ): string {
+    public getDistDir( subDir?: Config.Paths.DistDirectory ): string {
 
         let result;
 
@@ -559,36 +559,36 @@ export abstract class AbstractStage<
         level: number,
     ): Promise<void> {
 
-        const onlyKey: CLI.ParamOnlyStageKey = `only-${ stage }`;
-        const withoutKey: CLI.ParamWithoutStageKey = `without-${ stage }`;
+        const _onlyKey: CLI.ParamOnlyStageKey = `only-${ stage }`;
+        const _withoutKey: CLI.ParamWithoutStageKey = `without-${ stage }`;
 
-        const subParams: CLI.Params = {
+        const _subParams: CLI.Params = {
             ...this.params,
 
             'log-base-level': level + this.params[ 'log-base-level' ],
 
-            only: this.params[ onlyKey ],
-            without: this.params[ withoutKey ],
+            only: this.params[ _onlyKey ],
+            without: this.params[ _withoutKey ],
         };
 
-        const t_subConsole = new Stage_Console( this.clr, this.config, subParams );
+        const _subConsole = new Stage_Console( this.clr, this.config, _subParams );
 
         const [
             stageClass,
             stageArgs = {},
-        ] = await this.config.getStage( stage, t_subConsole, ) ?? [];
+        ] = await this.config.getStage( stage, _subConsole, ) ?? [];
 
         // returns
         if ( !stageClass ) {
             return;
         }
 
-        this.params.debug && this.console.vi.verbose( { subParams }, level );
+        this.params.debug && this.console.vi.verbose( { _subParams }, level );
 
         return ( new stageClass(
             this.config,
-            subParams,
-            { ...this.args, ...stageArgs },
+            _subParams,
+            stageArgs,
             this._pkg,
             this._version,
         ) ).run();

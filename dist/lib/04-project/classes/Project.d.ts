@@ -10,7 +10,8 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import type { CLI, Config, Logger, Stage } from '../../../types/index.js';
+import type { CLI, Config, Stage } from '../../../types/index.js';
+import type { Logger } from '../../../types/Logger.js';
 import { ProjectConfig } from '../../01-config/index.js';
 import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
 /**

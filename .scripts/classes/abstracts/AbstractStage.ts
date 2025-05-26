@@ -28,8 +28,11 @@ import {
 
 import type {
     Config,
-    LocalError,
 } from '../../../src/ts/index.js';
+
+import {
+    type LocalError,
+} from '../../../src/ts/lib/@internal.js';
 
 import {
     currentReplacements,
@@ -44,14 +47,12 @@ import {
 
     ProjectConfig,
 } from '../../../src/ts/index.js';
-import { FileSystemType } from 'src/ts/types/FileSystemType.js';
 
 
 type CmdArgs = Parameters<cls.node.NodeConsole[ 'cmdArgs' ]>[ 0 ];
 
 
 function getStageConsole(
-    name: string,
     clr: cls.MessageMaker.Colour,
     args: Partial<AbstractStage.Args<string>>,
 ) {
@@ -188,7 +189,7 @@ export abstract class AbstractStage<
         args: Partial<Args>,
         clr: cls.MessageMaker.Colour,
         utils: ConstructorParameters<typeof cls.node.AbstractBuildStage>[ 2 ] = {},
-        public readonly console: internal.Stage_Console = getStageConsole( name, clr, args ),
+        public readonly console: internal.Stage_Console = getStageConsole( clr, args ),
     ) {
         super( args, clr, {
             ...utils,
@@ -206,7 +207,7 @@ export abstract class AbstractStage<
         level: number,
         args?: Partial<LocalError.Handler.Args>,
     ): void {
-        internal.errorHandler( error, level, this.console, this.fns.fs as FileSystemType, args );
+        internal.errorHandler( error, level, this.console, this.fns.fs as internal.FileSystemType, args );
     }
 
 
@@ -277,7 +278,7 @@ export abstract class AbstractStage<
                 error as LocalError.Input,
                 level,
                 this.console,
-                this.fns.fs as FileSystemType,
+                this.fns.fs as internal.FileSystemType,
                 callbackArgs,
             );
 

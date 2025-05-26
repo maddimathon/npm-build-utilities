@@ -21,7 +21,7 @@ import type { Stage_Console } from './Stage_Console.js';
  * Includes a variety of utilities for compiling files (like scss and
  * typescript).
  *
- * @category Utilities
+ * @category Stages
  *
  * @since 0.1.0-alpha.draft
  *
@@ -37,7 +37,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Args
      */
-    protected get ARGS_DEFAULT(): Stage_Compiler.Args;
+    protected get ARGS_DEFAULT(): {};
     /**
      * A completed args object.
      *
@@ -66,16 +66,18 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * Compiles typescript using the
      * {@link https://www.npmjs.com/package/sass | sass npm package}.
      *
+     * @throws {@link ProjectError}  If the tsconfig file doesn’t exist.
+     *
      * @param tsConfig  Path to TS config json used to compile the project.
      * @param level     Depth level for this message (above the value of
-     *                  {@link CLI.Params.log-base-level}).
+     *                  {@link (root).CLI.Params.log-base-level}).
      */
     typescript(tsConfig: string, level: number): Promise<void>;
 }
 /**
  * Used only for {@link Stage_Compiler}.
  *
- * @category Utilities
+ * @category Class-Helpers
  */
 export declare namespace Stage_Compiler {
     /**

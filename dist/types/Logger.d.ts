@@ -11,7 +11,9 @@
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
-import { MessageMaker, node, VariableInspector } from '@maddimathon/utility-typescript/classes';
+import type { MessageMaker, node, VariableInspector } from '@maddimathon/utility-typescript/classes';
+import type * as CLI from './CLI.js';
+import type { Config } from './Config.js';
 /**
  * Shape of a logging utility class to be available within the library.
  *
@@ -24,9 +26,17 @@ import { MessageMaker, node, VariableInspector } from '@maddimathon/utility-type
  */
 export interface Logger extends Objects.Logger<Logger.MethodParams, Logger.ErrorParams, Logger.MessageInput, Logger.ErrorInput> {
     /**
+     * Current project config.
+     */
+    readonly config: Partial<Config | Config.Internal>;
+    /**
      * Instance to use within/out the class.
      */
     readonly nc: node.NodeConsole;
+    /**
+     * Current CLI params.
+     */
+    readonly params: Partial<CLI.Params>;
     /**
      * Adds {@link VariableInspector} capabilities to the logger.
      */

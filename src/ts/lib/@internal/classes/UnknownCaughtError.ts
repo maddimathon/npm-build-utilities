@@ -70,7 +70,7 @@ export class UnknownCaughtError extends AbstractError<UnknownCaughtError.Args> {
 /**
  * Used only for {@link UnknownCaughtError}.
  * 
- * @category Errors
+ * @category Class-Helpers
  * 
  * @since ___PKG_VERSION___
  */

@@ -24,7 +24,19 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  */
 export declare class BuildStage extends AbstractStage<Stage.SubStage.Build, Stage.Args.Build> {
     readonly subStages: Stage.SubStage.Build[];
-    get ARGS_DEFAULT(): Stage.Args.Build;
+    get ARGS_DEFAULT(): {
+        readonly compile: true;
+        readonly document: false;
+        readonly minimize: true;
+        readonly prettify: true;
+        readonly replace: (stage: Stage.Class) => {
+            current: string[];
+            ignore: string[];
+            package: string[];
+        };
+        readonly test: false;
+        readonly objs: {};
+    };
     /**
      * @param config    Complete project configuration.
      * @param params    Current CLI params.

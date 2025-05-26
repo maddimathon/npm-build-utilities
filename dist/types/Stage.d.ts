@@ -21,9 +21,9 @@ import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
 import type { FileSystem, ProjectConfig } from '../lib/index.js';
+import type { SemVer } from '../lib/@internal/classes/SemVer.js';
 import type { Stage_Compiler } from '../lib/02-utils/classes/Stage_Compiler.js';
-import { Logger } from './Logger.js';
-import { SemVer } from '../lib/@internal.js';
+import type { Logger } from './Logger.js';
 /**
  * The required shape for every stage's arguments.
  */
@@ -61,8 +61,50 @@ export declare namespace Args {
     };
     /**
      * The required shape for a build stage.
+     *
+     * @see {@link BuildStage.ARGS_DEFAULT}  For defaults.
      */
     interface Build<SubStage extends string = string> extends Args<SubStage> {
+        /**
+         * Whether to include this sub-stage.
+         */
+        compile: boolean;
+        /**
+         * Whether to include this sub-stage.
+         */
+        document: boolean;
+        /**
+         * Whether to include this sub-stage.
+         */
+        minimize: boolean;
+        /**
+         * Whether to include this sub-stage.
+         */
+        prettify: boolean;
+        /**
+         * Whether to include this sub-stage, or the configuration if so.
+         */
+        replace: false | ((stage: Class) => {
+            /**
+             * File globs for making {@link Config.Replace.current}
+             * replacements.
+             */
+            current?: string[];
+            /**
+             * File globs to ignore while making {@link Config.Replace}
+             * replacements.
+             */
+            ignore?: string[];
+            /**
+             * File globs for making {@link Config.Replace.package}
+             * replacements.
+             */
+            package?: string[];
+        });
+        /**
+         * Whether to include this sub-stage.
+         */
+        test: boolean;
     }
     /**
      * The required shape for a compile stage.
@@ -75,8 +117,6 @@ export declare namespace Args {
          *
          * If an object, paths to files copied to the dist directory during
          * compile.
-         *
-         * @default false
          */
         files: false | {
             /**
@@ -92,14 +132,10 @@ export declare namespace Args {
         };
         /**
          * Whether to include this sub-stage.
-         *
-         * @default true
          */
         scss: boolean;
         /**
          * Whether to include this sub-stage.
-         *
-         * @default true
          */
         ts: boolean;
     }
@@ -165,7 +201,7 @@ export interface Class<SubStage extends string = string, A extends Args = Args> 
      *
      * @category Args
      */
-    readonly config: Config.Class;
+    readonly config: Config.Internal;
     /**
      * Instance used to send messages to the console.
      *

@@ -11,12 +11,12 @@
  * @license MIT
  */
 
-import type {
-    LocalError,
-    Logger,
-} from '../../types/index.js';
-
+// import type {
+// } from '../../types/index.js';
+;
 import type { FileSystemType } from '../../types/FileSystemType.js';
+import type { LocalError } from '../../types/LocalError.js';
+import type { Logger } from '../../types/Logger.js';
 
 import {
     errorHandler,

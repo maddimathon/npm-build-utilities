@@ -53,11 +53,11 @@ export class PackageStage extends AbstractStage<
 
     /* Args ===================================== */
 
-    public get ARGS_DEFAULT(): Stage.Args.Package {
+    public get ARGS_DEFAULT() {
 
         return {
             ...AbstractStage.ARGS_DEFAULT,
-        };
+        } as const satisfies Stage.Args.Package;
     }
 
 

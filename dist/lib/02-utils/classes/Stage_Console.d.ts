@@ -11,14 +11,15 @@
  * @license MIT
  */
 import { MessageMaker, node, VariableInspector } from '@maddimathon/utility-typescript/classes';
-import type { CLI, Logger } from '../../../types/index.js';
+import type { CLI } from '../../../types/index.js';
+import type { Logger } from '../../../types/Logger.js';
 import { ProjectConfig } from '../../01-config/index.js';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
  *
  * Includes a variety of utilities for printing messages to the console.
  *
- * @category Utilities
+ * @category Stages
  *
  * @since 0.1.0-alpha.draft
  *
@@ -90,7 +91,7 @@ export declare class Stage_Console implements Logger {
  *
  * Includes a variety of utilities for printing variable inspections to the console.
  *
- * @category Utilities
+ * @category Stages
  *
  * @since 0.1.0-alpha.draft
  *
@@ -103,10 +104,10 @@ export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     readonly _msgArgs: Stage_Console['msgArgs'];
     protected readonly nc: node.NodeConsole;
     /**
-     * @param config   Current project config.
-     * @param params   Current CLI params.
-     * @param msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
-     * @param nc       Instance to use within the class.
+     * @param config    Current project config.
+     * @param params    Current CLI params.
+     * @param _msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
+     * @param nc        Instance to use within the class.
      */
     constructor(config: ProjectConfig, params: CLI.Params, _msgArgs: Stage_Console['msgArgs'], nc: node.NodeConsole);
     private msgArgs;

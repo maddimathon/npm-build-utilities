@@ -30,7 +30,7 @@ export declare class UnknownCaughtError extends AbstractError<UnknownCaughtError
 /**
  * Used only for {@link UnknownCaughtError}.
  *
- * @category Errors
+ * @category Class-Helpers
  *
  * @since 0.1.0-alpha.draft
  */

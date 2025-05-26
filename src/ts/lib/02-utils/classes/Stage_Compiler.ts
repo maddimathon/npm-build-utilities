@@ -15,13 +15,16 @@
 
 import * as sass from 'sass';
 
+import type { Json } from '@maddimathon/utility-typescript/types';
+
 import type {
     CLI,
     Stage,
 } from '../../../types/index.js';
 
-// import {
-// } from '../../@internal/index.js';
+import {
+    ProjectError,
+} from '../../@internal/index.js';
 
 import {
     catchOrReturn,
@@ -41,7 +44,7 @@ import type { Stage_Console } from './Stage_Console.js';
  * Includes a variety of utilities for compiling files (like scss and
  * typescript).
  * 
- * @category Utilities
+ * @category Stages
  * 
  * @since ___PKG_VERSION___
  * 
@@ -62,8 +65,10 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @category Args
      */
-    protected get ARGS_DEFAULT(): Stage_Compiler.Args {
-        return {};
+    protected get ARGS_DEFAULT() {
+
+        return {
+        } as const satisfies Stage_Compiler.Args;
     }
 
     /**
@@ -121,7 +126,7 @@ export class Stage_Compiler implements Stage.Compiler {
         this.console.vi.debug( { 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true } );
 
         const compiled = sass.compile( input, {
-            ...this.config.compiler.sass,
+            ...this.config.compiler?.sass,
             ...sassOpts,
         } );
 
@@ -153,22 +158,68 @@ export class Stage_Compiler implements Stage.Compiler {
      * Compiles typescript using the 
      * {@link https://www.npmjs.com/package/sass | sass npm package}.
      * 
+     * @throws {@link ProjectError}  If the tsconfig file doesn’t exist.
+     * 
      * @param tsConfig  Path to TS config json used to compile the project.
      * @param level     Depth level for this message (above the value of 
-     *                  {@link CLI.Params.log-base-level}).
+     *                  {@link (root).CLI.Params.log-base-level}).
      */
     public async typescript(
         tsConfig: string,
         level: number,
     ): Promise<void> {
-        this.console.verbose( 'running tsc...', level );
+        this.console.verbose( 'running tsc...', 0 + level );
+
+        // throws
+        if ( !this.fs.exists( tsConfig ) ) {
+
+            throw new ProjectError(
+                'tsConfig path does not exist: ' + tsConfig,
+                {
+                    class: 'Stage_Compiler',
+                    method: 'typescript',
+                },
+            );
+        }
+
+        // throws
+        if ( !this.fs.isFile( tsConfig ) ) {
+
+            throw new ProjectError(
+                'tsConfig path was not a file: ' + tsConfig,
+                {
+                    class: 'Stage_Compiler',
+                    method: 'typescript',
+                },
+            );
+        }
+
+        let config_obj = JSON.parse( this.fs.readFile( tsConfig ) ) as Partial<Json.TsConfig> | string;
+
+        if (
+            typeof config_obj === 'object'
+            && config_obj?.compilerOptions?.noEmit !== true
+            && config_obj?.compilerOptions?.outDir
+        ) {
+            const _output = this.fs.pathResolve(
+                this.fs.dirname( tsConfig ),
+                config_obj.compilerOptions.outDir,
+                '*',
+            );
+
+            this.console.debug(
+                'deleting existing files from ' + this.fs.pathRelative( _output ).replace( ' ', '%20' ) + ' ...',
+                ( this.params.verbose ? 1 : 0 ) + level
+            );
+            this.fs.delete( [ _output ], ( this.params.verbose ? 2 : 0 ) + level + this.console.params[ 'log-base-level' ] );
+        }
 
         catchOrReturn(
             this.console.nc.cmd,
             1 + level,
             this.console,
             this.fs,
-            [ `tsc --project "${ this.fs.pathRelative( tsConfig ).replace( /"/g, '\\"' ) }"` ]
+            [ `tsc --project "${ this.fs.pathRelative( tsConfig ).replace( /"/g, '\\"' ) }"` ],
         );
     }
 }
@@ -176,7 +227,7 @@ export class Stage_Compiler implements Stage.Compiler {
 /**
  * Used only for {@link Stage_Compiler}.
  * 
- * @category Utilities
+ * @category Class-Helpers
  */
 export namespace Stage_Compiler {
 

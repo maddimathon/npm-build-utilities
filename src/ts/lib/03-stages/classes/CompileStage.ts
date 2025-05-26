@@ -54,7 +54,7 @@ export class CompileStage extends AbstractStage<
 
     /* Args ===================================== */
 
-    public get ARGS_DEFAULT(): Stage.Args.Compile {
+    public get ARGS_DEFAULT() {
 
         return {
             ...AbstractStage.ARGS_DEFAULT,
@@ -62,7 +62,7 @@ export class CompileStage extends AbstractStage<
             files: false,
             scss: true,
             ts: true,
-        };
+        } as const satisfies Stage.Args.Compile;
     }
 
 
@@ -108,11 +108,11 @@ export class CompileStage extends AbstractStage<
      * ====================================================================== */
 
     protected async runSubStage( subStage: Stage.SubStage.Compile ) {
+        if ( !this.args[ subStage ] ) { return; }
         await this[ subStage ]();
     }
 
     protected async scss() {
-        if ( !this.args.scss ) { return; }
         this.console.progress( 'compiling scss files...', 1 );
 
         const scssSrcDir = this.getSrcDir( 'scss' );
@@ -203,7 +203,6 @@ export class CompileStage extends AbstractStage<
     }
 
     protected async ts() {
-        if ( !this.args.ts ) { return; }
         this.console.progress( 'compiling typescript files...', 1 );
 
         const tsSrcDir = this.getSrcDir( 'ts' );
@@ -245,8 +244,6 @@ export class CompileStage extends AbstractStage<
             this.console.verbose( 'ⅹ no default files found', 3 );
             return [];
         } ).flat();
-
-        const tsDistDir = this.getDistDir( 'ts' );
 
         // returns if no tsconfig.json is created
         if ( !tsPaths.length ) {
@@ -297,7 +294,11 @@ export class CompileStage extends AbstractStage<
 
             this.console.vi.debug( { baseUrl }, 2 );
 
-            const outDir = this.fs.pathRelative( this.fs.pathResolve( baseUrl, tsDistDir ) );
+            const outDir = this.fs.pathRelative( this.fs.pathResolve(
+                baseUrl,
+                this.getDistDir(),
+                'ts',
+            ) );
 
             this.console.vi.debug( { outDir }, 2 );
 
@@ -307,10 +308,10 @@ export class CompileStage extends AbstractStage<
                     './**/*',
                 ],
 
-                ...this.config.compiler.tsConfig ?? {},
+                ...this.config.compiler?.tsConfig ?? {},
 
                 compilerOptions: {
-                    ...this.config.compiler.tsConfig?.compilerOptions ?? {},
+                    ...this.config.compiler?.tsConfig?.compilerOptions ?? {},
                     outDir,
                     baseUrl,
                 }
@@ -319,22 +320,19 @@ export class CompileStage extends AbstractStage<
             tsPaths.push( tsConfigFile );
         }
 
-        this.console.verbose( 'deleting existing files...', 2 );
-        this.fs.delete( [ tsDistDir ], ( this.params.verbose ? 3 : 2 ) );
-
         this.console.vi.debug( { tsPaths }, ( this.params.verbose ? 3 : 2 ) );
 
         this.console.verbose( 'compiling to javascript...', 2 );
         return Promise.all( tsPaths.map(
             tsc => {
-                this.console.verbose( 'compiling project: ' + tsc, ( this.params.verbose ? 3 : 2 ) );
+                this.console.verbose( 'compiling project: ' + tsc, 3 );
                 return this.cpl.typescript( tsc, ( this.params.verbose ? 4 : 1 ) );
             }
         ) );
     }
 
     protected async files() {
-        if ( !this.args.files ) { return; }
+        if ( !this.args.files ) { return; } // here for typing backup
 
         const distDir = this.getDistDir().trim().replace( /\/$/g, '' );
         this.console.progress( `copying files to ${ distDir }...`, 1 );

@@ -10,7 +10,8 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import type { CLI, Logger } from '../../types/index.js';
+import type { CLI } from '../../types/index.js';
+import type { Logger } from '../../types/Logger.js';
 import { ProjectConfig } from '../../lib/index.js';
 /**
  * Gets the configuration object for the current node package.

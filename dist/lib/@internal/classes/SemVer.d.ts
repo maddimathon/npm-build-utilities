@@ -44,7 +44,7 @@ export declare class SemVer {
 /**
  * Used only for the {@link SemVer} class.
  *
- * @category Config
+ * @category Class-Helpers
  *
  * @since 0.1.0-alpha.draft
  */

@@ -27,9 +27,17 @@ import type {
     Stage,
 } from '../../../types/index.js';
 
-import { SemVer } from '../../@internal/index.js';
+import {
+    SemVer,
+} from '../../@internal/index.js';
 
-import { ProjectConfig } from '../../01-config/index.js';
+import {
+    FileSystem,
+} from '../../00-universal/index.js';
+
+import {
+    ProjectConfig,
+} from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
 
@@ -75,21 +83,10 @@ export class SnapshotStage extends AbstractStage<
             ...AbstractStage.ARGS_DEFAULT,
 
             ignoreGlobs: ( stage: Stage.Class ) => [
-                '.git/**',
-                'node_modules/**',
-                '**/node_modules/**',
-                'dist/**',
-                'docs/**',
-
-                `${ stage.config.paths.release.replace( /\/$/g, '' ) }/**`,
-                `${ stage.config.paths.snapshot.replace( /\/$/g, '' ) }/**`,
-
-                '._*',
-                '._*/**',
-                '**/._*',
-                '**/._*/**',
-                '**/.DS_Store',
-                '**/.smbdelete**',
+                ...FileSystem.globs.IGNORE_COPIED( stage ),
+                ...FileSystem.globs.IGNORE_COMPILED,
+                ...FileSystem.globs.IGNORE_PROJECT,
+                ...FileSystem.globs.SYSTEM,
             ],
         } as const satisfies Stage.Args.Snapshot;
     }
@@ -207,6 +204,11 @@ export class SnapshotStage extends AbstractStage<
         this.console.verbose( 'removing any current folders...', 1 );
 
         const snapDir = this.config.paths.snapshot.replace( /\/$/g, '' ) + '/';
+
+        // returns
+        if ( !this.fs.exists( snapDir ) ) {
+            return;
+        }
 
         const currentFolders = this.fs.readDir( snapDir )
             .map( p => snapDir + p )

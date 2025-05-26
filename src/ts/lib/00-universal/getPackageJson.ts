@@ -13,9 +13,10 @@
 
 import type { Node } from '@maddimathon/utility-typescript/types';
 
-import type {
-    Logger,
-} from '../../types/index.js';
+// import type {
+// } from '../../types/index.js';
+
+import type { Logger } from '../../types/Logger.js';
 
 import {
     ProjectError,
@@ -49,7 +50,7 @@ export function getPackageJson(
         console: Logger,
         fs?: undefined | FileSystem.Args,
     },
-): Node.PackageJson {
+): Partial<Node.PackageJson> {
 
     let fs: FileSystem | undefined;
 

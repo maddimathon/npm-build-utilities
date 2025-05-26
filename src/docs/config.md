@@ -35,13 +35,11 @@ build-utils --config path/to/build.config.js
 import {
     cli,
 
-    parseParamsCLI,
     Project,
+    parseParamsCLI,
 } from '@maddimathon/build-utilities';
 
-const params = parseParamsCLI( {
-    config: 'path/to/build.config.js',
-} );
+const params = parseParamsCLI( { config: 'path/to/build.config.js' } );
 
 const project = new Project( await cli.getConfig( params ), params );
 ```

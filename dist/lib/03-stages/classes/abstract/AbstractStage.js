@@ -98,10 +98,10 @@ export class AbstractStage {
             this._pkg = this.try(getPackageJson, 1, [this.fs]);
         }
         return {
-            name: this._pkg.name,
-            version: this._pkg.version,
-            description: this._pkg.description,
-            homepage: this._pkg.homepage,
+            name: this._pkg?.name,
+            version: this._pkg?.version,
+            description: this._pkg?.description,
+            homepage: this._pkg?.homepage,
         };
     }
     /**
@@ -163,11 +163,11 @@ export class AbstractStage {
         this.clr = clr;
         this.config = config;
         this.params = params;
-        this.args = this.buildArgs(args);
+        this.version = _version;
         this.console = new Stage_Console(this.clr, this.config, this.params);
+        this.args = this.buildArgs(args);
         this.fs = this.args.objs.fs ?? new FileSystem(this.console, this.config.fs);
         this.cpl = this.args.objs.cpl ?? new Stage_Compiler(this.config, this.params, this.console, this.fs, this.config.compiler);
-        this.version = _version;
     }
     /* METHODS
      * ====================================================================== */
@@ -343,22 +343,22 @@ export class AbstractStage {
      * @param level   Depth level to add to {@link CLI.Params.log-base-level | this.params['log-base-level']}.
      */
     async runStage(stage, level) {
-        const onlyKey = `only-${stage}`;
-        const withoutKey = `without-${stage}`;
-        const subParams = {
+        const _onlyKey = `only-${stage}`;
+        const _withoutKey = `without-${stage}`;
+        const _subParams = {
             ...this.params,
             'log-base-level': level + this.params['log-base-level'],
-            only: this.params[onlyKey],
-            without: this.params[withoutKey],
+            only: this.params[_onlyKey],
+            without: this.params[_withoutKey],
         };
-        const t_subConsole = new Stage_Console(this.clr, this.config, subParams);
-        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, t_subConsole) ?? [];
+        const _subConsole = new Stage_Console(this.clr, this.config, _subParams);
+        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, _subConsole) ?? [];
         // returns
         if (!stageClass) {
             return;
         }
-        this.params.debug && this.console.vi.verbose({ subParams }, level);
-        return (new stageClass(this.config, subParams, { ...this.args, ...stageArgs }, this._pkg, this._version)).run();
+        this.params.debug && this.console.vi.verbose({ _subParams }, level);
+        return (new stageClass(this.config, _subParams, stageArgs, this._pkg, this._version)).run();
     }
 }
 //# sourceMappingURL=AbstractStage.js.map

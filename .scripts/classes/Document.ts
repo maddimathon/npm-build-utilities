@@ -176,7 +176,6 @@ export class Document extends AbstractStage<Document.Stages, Document.Args> {
                     'Objects': 'https://maddimathon.github.io/utility-typescript/Types/Objects.html',
                     'Classify': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
                     'Objects.Classify': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
-                    'Logger': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Logger.html',
                     'Objects.Logger': 'https://maddimathon.github.io/utility-typescript/Types/Objects/Logger.html',
                     'RecursivePartial': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
                     'Objects.RecursivePartial': 'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',

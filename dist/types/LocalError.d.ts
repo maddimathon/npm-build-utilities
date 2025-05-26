@@ -15,8 +15,8 @@
  * @license MIT
  */
 import { CustomError, MessageMaker } from '@maddimathon/utility-typescript/classes';
-import { Logger } from './Logger.js';
-import { FileSystemType } from './FileSystemType.js';
+import type { FileSystemType } from './FileSystemType.js';
+import type { Logger } from './Logger.js';
 /**
  * Shape of error classes used in this project.
  *

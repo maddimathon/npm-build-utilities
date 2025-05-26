@@ -74,8 +74,7 @@
     },
 
     "scripts": {
-        "test-utils": "node dist/bin/index.js --verbose --config .new-scripts/build.config.js",
-        "test-utils-ts": "tsx --tsconfig src/ts/tsconfig.json src/ts/bin/index.ts --verbose --config .new-scripts/build.config.js",
+        "test-utils": "tsx --tsconfig src/ts/tsconfig.json src/ts/bin/index.ts --config .new-scripts/build.config.js",
 
         "commit": "sh .scripts/commit.sh",
         

@@ -12,15 +12,18 @@
  */
 
 import {
-    MessageMaker,
     node,
+
+    MessageMaker,
     VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
 
 import type {
     CLI,
-    Logger,
+    Config,
 } from '../../../types/index.js';
+
+import type { Logger } from '../../../types/Logger.js';
 
 
 /**
@@ -35,7 +38,8 @@ export class DummyConsole implements Logger {
 
     public constructor (
         public readonly nc: node.NodeConsole = new node.NodeConsole(),
-        protected readonly params: Partial<CLI.Params> = {},
+        public readonly config: Partial<Config | Config.Internal> = {},
+        public readonly params: Partial<CLI.Params> = {},
     ) {
     }
 
@@ -52,8 +56,8 @@ export class DummyConsole implements Logger {
     public error(
         msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 1 ] = {},
-        timeArgs: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 2 ] = {},
+        msgArgs: Partial<MessageMaker.BulkMsgArgs> = {},
+        timeArgs: Partial<MessageMaker.BulkMsgArgs> = {},
     ) {
         this.nc.timestampLog(
             msg,
@@ -68,8 +72,8 @@ export class DummyConsole implements Logger {
     public log(
         msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 1 ] = {},
-        timeArgs: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 2 ] = {},
+        msgArgs: Partial<MessageMaker.BulkMsgArgs> = {},
+        timeArgs: Partial<MessageMaker.BulkMsgArgs> = {},
     ) {
         this.nc.timestampLog(
             msg,

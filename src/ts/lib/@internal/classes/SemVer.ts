@@ -190,7 +190,7 @@ export class SemVer {
 /**
  * Used only for the {@link SemVer} class.
  * 
- * @category Config
+ * @category Class-Helpers
  * 
  * @since ___PKG_VERSION___
  */

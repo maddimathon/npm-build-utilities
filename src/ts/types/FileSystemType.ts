@@ -44,13 +44,12 @@ export interface FileSystemType extends node.NodeFiles {
     /**
      * Deletes given globs.
      * 
-     * @category Filers
-     * 
-     * @param paths   Paths to delete. Absolute or relative to root dir.
+     * @param globs   Paths to delete.
      * @param level   Depth level for this message (above the value of 
      *                {@link CLI.Params.log-base-level}).
      * @param dryRun  If true, files that would be deleted are printed to the 
      *                console and not deleted.
+     * @param args    Optional glob configuration.
      */
     delete(
         globs: string | string[],
@@ -64,6 +63,40 @@ export interface FileSystemType extends node.NodeFiles {
      */
     glob(
         input: string | string[],
+        args?: FileSystemType.Glob.Args,
+    ): string[];
+
+    /**
+     * Runs minify on the given file globs.
+     */
+    minify(
+        globs: string | string[],
+        format: "css" | "html" | "js" | "scss" | "ts",
+        level: number,
+        args?: FileSystemType.Glob.Args,
+        renamer?: ( ( path: string ) => string ),
+    ): {
+        source: string;
+        output: string;
+    }[];
+
+    /**
+     * Runs prettier on the given file globs.
+     */
+    prettier(
+        globs: string | string[],
+        format: "css" | "html" | "js" | "scss" | "ts",
+        level: number,
+        args?: FileSystemType.Glob.Args,
+    ): string[];
+
+    /**
+     * Replaces the given text or regex in the given file globs.
+     */
+    replaceInFiles(
+        globs: string | string[],
+        replace: [ string | RegExp, string ] | [ string | RegExp, string ][],
+        level: number,
         args?: FileSystemType.Glob.Args,
     ): string[];
 }

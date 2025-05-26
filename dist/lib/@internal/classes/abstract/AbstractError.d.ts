@@ -12,8 +12,8 @@
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
 import { CustomError, MessageMaker } from '@maddimathon/utility-typescript/classes';
-import type { LocalError } from '../../../../types/index.js';
 import type { FileSystemType } from '../../../../types/FileSystemType.js';
+import type { LocalError } from '../../../../types/LocalError.js';
 /**
  * An extension of the utilities error for use within the library.
  *
@@ -77,12 +77,12 @@ export declare abstract class AbstractError<Args extends LocalError.Args> extend
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
      * @see {@link NodeConsole_Error.toJSON | NodeConsole_Error.toJSON()}
      */
-    valueOf(): Objects.Classify<AbstractError.JSON, never>;
+    valueOf(): Objects.Classify<AbstractError.JSON>;
 }
 /**
  * Used only for {@link AbstractError}.
  *
- * @category Errors
+ * @category Class-Helpers
  *
  * @since 0.1.0-alpha.draft
  */

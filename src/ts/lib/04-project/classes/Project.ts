@@ -14,9 +14,10 @@
 import type {
     CLI,
     Config,
-    Logger,
     Stage,
 } from '../../../types/index.js';
+
+import type { Logger } from '../../../types/Logger.js';
 
 import { DummyConsole } from '../../@internal/index.js';
 

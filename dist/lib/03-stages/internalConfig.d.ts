@@ -10,7 +10,8 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { Config, Logger } from '../../types/index.js';
+import { Config } from '../../types/index.js';
+import type { Logger } from '../../types/Logger.js';
 /**
  * Takes a partial {@link Config} object and converts it to a
  * {@link Config.Internal} object.

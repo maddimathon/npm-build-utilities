@@ -24,7 +24,12 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  */
 export declare class CompileStage extends AbstractStage<Stage.SubStage.Compile, Stage.Args.Compile> {
     readonly subStages: Stage.SubStage.Compile[];
-    get ARGS_DEFAULT(): Stage.Args.Compile;
+    get ARGS_DEFAULT(): {
+        readonly files: false;
+        readonly scss: true;
+        readonly ts: true;
+        readonly objs: {};
+    };
     /**
      * @param config  Complete project configuration.
      * @param params  Current CLI params.

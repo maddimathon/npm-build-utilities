@@ -26,12 +26,12 @@ import {
     VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
 
-import type {
-    LocalError,
-    Logger,
-} from '../../types/index.js';
+// import type {
+// } from '../../types/index.js';
 
 import type { FileSystemType } from '../../types/FileSystemType.js';
+import type { LocalError } from '../../types/LocalError.js';
+import type { Logger } from '../../types/Logger.js';
 
 import {
     AbstractError,
@@ -290,7 +290,7 @@ export function _errorStringify(
 
     if ( errorInfo.output ) {
 
-        if ( errorInfo.output.split( '\n' ).length > 300 ) {
+        if ( errorInfo.output.split( '\n' ).length > 250 ) {
 
             const t_outputPath = fs.write(
                 `.scripts/.logs/errors/${ slugify( error.name ) }_${ timestamp( null, { date: true, time: true } ).replace( /[\-:]/g, '' ).replace( /[^\d]+/g, '-' ) }.txt`,

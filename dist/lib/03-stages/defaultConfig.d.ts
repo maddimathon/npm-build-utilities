@@ -11,7 +11,7 @@
  * @license MIT
  */
 import type { Node } from '@maddimathon/utility-typescript/types';
-import type { Logger } from '../../types/index.js';
+import type { Logger } from '../../types/Logger.js';
 import { ProjectConfig } from '../01-config/index.js';
 import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage } from './index.js';
 /**
@@ -70,7 +70,6 @@ export declare function defaultConfig(args?: {
             readonly _: "dist";
             readonly docs: "docs";
             readonly scss: "dist/css";
-            readonly ts: "dist/js";
         };
         readonly src: {
             readonly _: "src";

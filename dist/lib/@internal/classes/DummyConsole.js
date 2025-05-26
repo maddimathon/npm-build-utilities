@@ -19,10 +19,12 @@ import { node, VariableInspector, } from '@maddimathon/utility-typescript/classe
  */
 export class DummyConsole {
     nc;
+    config;
     params;
     vi = new _DummyConsole_VarDump();
-    constructor(nc = new node.NodeConsole(), params = {}) {
+    constructor(nc = new node.NodeConsole(), config = {}, params = {}) {
         this.nc = nc;
+        this.config = config;
         this.params = params;
     }
     debug(msg, level, msgArgs, timeArgs) {

@@ -12,8 +12,7 @@
  */
 // import type typescript from 'typescript';
 import * as sass from 'sass';
-// import {
-// } from '../../@internal/index.js';
+import { ProjectError, } from '../../@internal/index.js';
 import { catchOrReturn, } from '../../00-universal/index.js';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
@@ -21,7 +20,7 @@ import { catchOrReturn, } from '../../00-universal/index.js';
  * Includes a variety of utilities for compiling files (like scss and
  * typescript).
  *
- * @category Utilities
+ * @category Stages
  *
  * @since 0.1.0-alpha.draft
  *
@@ -82,7 +81,7 @@ export class Stage_Compiler {
     async scss(input, output, level, sassOpts) {
         this.console.vi.debug({ 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true });
         const compiled = sass.compile(input, {
-            ...this.config.compiler.sass,
+            ...this.config.compiler?.sass,
             ...sassOpts,
         });
         this.params.debug && this.console.vi.verbose({ compiled }, level);
@@ -100,19 +99,43 @@ export class Stage_Compiler {
      * Compiles typescript using the
      * {@link https://www.npmjs.com/package/sass | sass npm package}.
      *
+     * @throws {@link ProjectError}  If the tsconfig file doesn’t exist.
+     *
      * @param tsConfig  Path to TS config json used to compile the project.
      * @param level     Depth level for this message (above the value of
-     *                  {@link CLI.Params.log-base-level}).
+     *                  {@link (root).CLI.Params.log-base-level}).
      */
     async typescript(tsConfig, level) {
-        this.console.verbose('running tsc...', level);
+        this.console.verbose('running tsc...', 0 + level);
+        // throws
+        if (!this.fs.exists(tsConfig)) {
+            throw new ProjectError('tsConfig path does not exist: ' + tsConfig, {
+                class: 'Stage_Compiler',
+                method: 'typescript',
+            });
+        }
+        // throws
+        if (!this.fs.isFile(tsConfig)) {
+            throw new ProjectError('tsConfig path was not a file: ' + tsConfig, {
+                class: 'Stage_Compiler',
+                method: 'typescript',
+            });
+        }
+        let config_obj = JSON.parse(this.fs.readFile(tsConfig));
+        if (typeof config_obj === 'object'
+            && config_obj?.compilerOptions?.noEmit !== true
+            && config_obj?.compilerOptions?.outDir) {
+            const _output = this.fs.pathResolve(this.fs.dirname(tsConfig), config_obj.compilerOptions.outDir, '*');
+            this.console.debug('deleting existing files from ' + this.fs.pathRelative(_output).replace(' ', '%20') + ' ...', (this.params.verbose ? 1 : 0) + level);
+            this.fs.delete([_output], (this.params.verbose ? 2 : 0) + level + this.console.params['log-base-level']);
+        }
         catchOrReturn(this.console.nc.cmd, 1 + level, this.console, this.fs, [`tsc --project "${this.fs.pathRelative(tsConfig).replace(/"/g, '\\"')}"`]);
     }
 }
 /**
  * Used only for {@link Stage_Compiler}.
  *
- * @category Utilities
+ * @category Class-Helpers
  */
 (function (Stage_Compiler) {
     ;

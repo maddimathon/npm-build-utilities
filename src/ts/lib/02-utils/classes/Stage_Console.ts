@@ -26,8 +26,9 @@ import {
 
 import type {
     CLI,
-    Logger,
 } from '../../../types/index.js';
+
+import type { Logger } from '../../../types/Logger.js';
 
 // import {
 // } from '../../@internal/index.js';
@@ -45,7 +46,7 @@ import {
  *
  * Includes a variety of utilities for printing messages to the console.
  * 
- * @category Utilities
+ * @category Stages
  * 
  * @since ___PKG_VERSION___
  * 
@@ -74,17 +75,13 @@ export class Stage_Console implements Logger {
      * @param config  Current project config.
      * @param params  Current CLI params.
      */
-    //  * @param name    Name for this stage used for notices.
-    //  * @param utils   Optional. Partial argument overrides for classes used 
-    //  *                within this one.
     constructor (
-        // public readonly name: string,
         public readonly clr: MessageMaker.Colour,
         public readonly config: ProjectConfig,
         public readonly params: CLI.Params,
     ) {
         this.nc = new node.NodeConsole( mergeArgs(
-            this.config.console.nc ?? {},
+            this.config.console?.nc ?? {},
             {
                 msgMaker: {
                     msg: {
@@ -331,7 +328,10 @@ export class Stage_Console implements Logger {
         timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
     ): void {
         if ( !this.params.verbose ) { return; }
-        this.log( msg, level, msgArgs, timeArgs );
+        this.log( msg, level, {
+            bold: false,
+            ...msgArgs,
+        }, timeArgs );
     }
 }
 
@@ -341,7 +341,7 @@ export class Stage_Console implements Logger {
  *
  * Includes a variety of utilities for printing variable inspections to the console.
  * 
- * @category Utilities
+ * @category Stages
  * 
  * @since ___PKG_VERSION___
  * 
@@ -356,10 +356,10 @@ export class _Stage_Console_VarInspect implements Logger.VarInspect {
      * ====================================================================== */
 
     /**
-     * @param config   Current project config.
-     * @param params   Current CLI params.
-     * @param msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
-     * @param nc       Instance to use within the class.
+     * @param config    Current project config.
+     * @param params    Current CLI params.
+     * @param _msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
+     * @param nc        Instance to use within the class.
      */
     constructor (
         public readonly config: ProjectConfig,
@@ -451,6 +451,9 @@ export class _Stage_Console_VarInspect implements Logger.VarInspect {
         timeArgs?: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 3 ],
     ): void {
         if ( !this.params.verbose ) { return; }
-        this.log( variable, level, msgArgs, timeArgs );
+        this.log( variable, level, {
+            bold: false,
+            ...msgArgs,
+        }, timeArgs );
     }
 }

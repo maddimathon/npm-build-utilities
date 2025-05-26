@@ -18,9 +18,17 @@ import type {
     Stage,
 } from '../../../types/index.js';
 
-import { SemVer } from '../../@internal/index.js';
+import {
+    SemVer,
+} from '../../@internal/index.js';
 
-import { ProjectConfig } from '../../01-config/index.js';
+import {
+    FileSystem,
+} from '../../00-universal/index.js';
+
+import {
+    ProjectConfig,
+} from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
 
@@ -45,9 +53,9 @@ export class BuildStage extends AbstractStage<
 
     public readonly subStages: Stage.SubStage.Build[] = [
         'compile',
-        'minimize',
         'replace',
         'prettify',
+        'minimize',
         'test',
         'document',
     ];
@@ -55,11 +63,39 @@ export class BuildStage extends AbstractStage<
 
     /* Args ===================================== */
 
-    public get ARGS_DEFAULT(): Stage.Args.Build {
+    public get ARGS_DEFAULT() {
+
+        const replace = ( stage: Stage.Class ) => ( {
+
+            current: [
+                'dist/**/*',
+            ],
+
+            ignore: [
+                ...FileSystem.globs.IGNORE_COPIED( stage ),
+                ...FileSystem.globs.IGNORE_PROJECT,
+                ...FileSystem.globs.SYSTEM,
+
+                '**/.new-scripts/**',
+                '**/.vscode/**',
+            ],
+
+            package: [
+                'dist/**/*',
+            ],
+        } );
 
         return {
             ...AbstractStage.ARGS_DEFAULT,
-        };
+
+            compile: true,
+            document: false,
+            minimize: true,
+            prettify: true,
+            replace,
+            test: false,
+
+        } as const satisfies Stage.Args.Build;
     }
 
 
@@ -105,6 +141,7 @@ export class BuildStage extends AbstractStage<
      * ====================================================================== */
 
     protected async runSubStage( subStage: Stage.SubStage.Build ) {
+        if ( !this.args[ subStage ] ) { return; }
         await this[ subStage ]();
     }
 
@@ -131,7 +168,28 @@ export class BuildStage extends AbstractStage<
     }
 
     protected async replace() {
-        this.console.progress( '(NOT IMPLEMENTED) running replace sub-stage...', 1 );
+        if ( !this.args.replace ) { return; }
+        this.console.progress( 'replacing placeholders...', 1 );
+
+        const paths = this.args.replace( this );
+
+        const replacements = typeof this.config.replace === 'function'
+            ? this.config.replace( this )
+            : this.config.replace;
+
+        if ( paths.current && replacements.current ) {
+
+            this.fs.replaceInFiles( paths.current, replacements.current, 2, {
+                ignore: paths.ignore ?? FileSystem.globs.SYSTEM,
+            } );
+        }
+
+        if ( paths.package && replacements.package ) {
+
+            this.fs.replaceInFiles( paths.package, replacements.package, 2, {
+                ignore: paths.ignore ?? FileSystem.globs.SYSTEM,
+            } );
+        }
     }
 
     /**

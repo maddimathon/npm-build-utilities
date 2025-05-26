@@ -33,7 +33,6 @@ export function defaultConfig(args) {
             _: 'dist',
             docs: 'docs',
             scss: 'dist/css',
-            ts: 'dist/js',
         },
         src: {
             _: 'src',

@@ -34,10 +34,7 @@ export declare class SnapshotStage extends AbstractStage<Stage.SubStage.Snapshot
     readonly subStages: Stage.SubStage.Snapshot[];
     get ARGS_DEFAULT(): {
         readonly ignoreGlobs: (stage: Stage.Class) => string[];
-        readonly objs: {
-            cpl?: import("../../@internal.js").Stage_Compiler;
-            fs?: import("../../index.js").FileSystem;
-        };
+        readonly objs: {};
     };
     /**
      * @param config    Complete project configuration.

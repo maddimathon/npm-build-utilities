@@ -19,7 +19,7 @@ import { node, VariableInspector, } from '@maddimathon/utility-typescript/classe
  *
  * Includes a variety of utilities for printing messages to the console.
  *
- * @category Utilities
+ * @category Stages
  *
  * @since 0.1.0-alpha.draft
  *
@@ -42,16 +42,11 @@ export class Stage_Console {
      * @param config  Current project config.
      * @param params  Current CLI params.
      */
-    //  * @param name    Name for this stage used for notices.
-    //  * @param utils   Optional. Partial argument overrides for classes used 
-    //  *                within this one.
-    constructor(
-    // public readonly name: string,
-    clr, config, params) {
+    constructor(clr, config, params) {
         this.clr = clr;
         this.config = config;
         this.params = params;
-        this.nc = new node.NodeConsole(mergeArgs(this.config.console.nc ?? {}, {
+        this.nc = new node.NodeConsole(mergeArgs(this.config.console?.nc ?? {}, {
             msgMaker: {
                 msg: {
                     clr: this.clr,
@@ -209,7 +204,10 @@ export class Stage_Console {
         if (!this.params.verbose) {
             return;
         }
-        this.log(msg, level, msgArgs, timeArgs);
+        this.log(msg, level, {
+            bold: false,
+            ...msgArgs,
+        }, timeArgs);
     }
 }
 /**
@@ -217,7 +215,7 @@ export class Stage_Console {
  *
  * Includes a variety of utilities for printing variable inspections to the console.
  *
- * @category Utilities
+ * @category Stages
  *
  * @since 0.1.0-alpha.draft
  *
@@ -232,10 +230,10 @@ export class _Stage_Console_VarInspect {
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config   Current project config.
-     * @param params   Current CLI params.
-     * @param msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
-     * @param nc       Instance to use within the class.
+     * @param config    Current project config.
+     * @param params    Current CLI params.
+     * @param _msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
+     * @param nc        Instance to use within the class.
      */
     constructor(config, params, _msgArgs, nc) {
         this.config = config;
@@ -289,7 +287,10 @@ export class _Stage_Console_VarInspect {
         if (!this.params.verbose) {
             return;
         }
-        this.log(variable, level, msgArgs, timeArgs);
+        this.log(variable, level, {
+            bold: false,
+            ...msgArgs,
+        }, timeArgs);
     }
 }
 //# sourceMappingURL=Stage_Console.js.map

@@ -11,8 +11,10 @@
  * @license MIT
  */
 import { node } from '@maddimathon/utility-typescript/classes';
-import type { LocalError, Logger } from '../../../types/index.js';
+import type { Stage } from '../../../types/index.js';
 import type { FileSystemType } from '../../../types/FileSystemType.js';
+import type { LocalError } from '../../../types/LocalError.js';
+import type { Logger } from '../../../types/Logger.js';
 import { AbstractError } from '../../@internal/index.js';
 /**
  * Extends the {@link node.NodeFiles} class with some custom logic useful to this package.
@@ -47,7 +49,7 @@ export declare class FileSystem extends node.NodeFiles {
         readonly glob: {
             readonly absolute: true;
             readonly dot: true;
-            readonly ignore: ["._*", "._**/**", "**/._*", "**/._**/**", "**/.DS_Store", "**/.smbdelete**"];
+            readonly ignore: string[];
         };
         readonly argsRecursive: false;
         readonly copyFileArgs: {
@@ -71,24 +73,54 @@ export declare class FileSystem extends node.NodeFiles {
      */
     constructor(console: Logger, args?: Partial<FileSystem.Args>);
     /**
-     * {@inheritDoc FileSystemType.copy}
+     * {@inheritDoc internal.FileSystemType.copy}
      *
      * @throws {@link FileSystem.Error}
      */
     copy(globs: string | string[], level: number, outputDir: string, sourceDir?: string | null, args?: Partial<FileSystemType.Copy.Args>): false | string[];
-    /** {@inheritDoc FileSystemType.delete} */
+    /** {@inheritDoc internal.FileSystemType.delete} */
     delete(globs: string | string[], level: number, dryRun?: boolean, args?: FileSystemType.Glob.Args): void;
-    /** {@inheritDoc FileSystemType.glob} */
+    /** {@inheritDoc internal.FileSystemType.glob} */
     glob(globs: string | string[], args?: FileSystemType.Glob.Args): string[];
+    /** {@inheritDoc internal.FileSystemType.minify} */
+    minify(globs: string | string[], format: "css" | "html" | "js" | "scss" | "ts", level: number, args?: FileSystemType.Glob.Args, renamer?: ((path: string) => string)): {
+        source: string;
+        output: string;
+    }[];
+    /** {@inheritDoc internal.FileSystemType.prettier} */
+    prettier(globs: string | string[], format: "css" | "html" | "js" | "scss" | "ts", level: number, args?: FileSystemType.Glob.Args): string[];
+    /** {@inheritDoc internal.FileSystemType.replaceInFiles} */
+    replaceInFiles(globs: string | string[], replace: [string | RegExp, string] | [string | RegExp, string][], level: number, args?: FileSystemType.Glob.Args): string[];
 }
 /**
  * Used only for {@link FileSystem}.
  *
- * @category Utilities
+ * @category Class-Helpers
  *
  * @since 0.1.0-alpha.draft
  */
 export declare namespace FileSystem {
+    /**
+     * Arrays of utility globs used within the library.
+     */
+    namespace globs {
+        /**
+         *
+         */
+        const IGNORE_COPIED: (stage: Stage.Class) => string[];
+        /**
+         * Files to ignore
+         */
+        const IGNORE_COMPILED: string[];
+        /**
+         * Files that we probably want to ignore within an npm project.
+         */
+        const IGNORE_PROJECT: string[];
+        /**
+         * System files that we *never, ever* want to include.
+         */
+        const SYSTEM: string[];
+    }
     /**
      * Optional configuration for {@link FileSystem} class.
      *
@@ -114,9 +146,6 @@ export declare namespace FileSystem {
     class Error extends AbstractError<Error.Args> {
         readonly name: string;
         get ARGS_DEFAULT(): any;
-        constructor(message: string, context: null | AbstractError.Context, args?: Partial<Error.Args> & {
-            cause?: LocalError.Input;
-        });
     }
     /**
      * Used only for {@link FileSystem.Error}.

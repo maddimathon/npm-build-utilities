@@ -97,14 +97,12 @@ export function internalConfig(_config, console) {
                 _: config.paths.dist(),
                 docs: config.paths.dist('docs'),
                 scss: config.paths.dist('scss'),
-                ts: config.paths.dist('ts'),
             }
             : (typeof config.paths.dist === 'object'
                 ? {
                     _: 'dist',
                     docs: 'docs',
                     scss: 'dist/scss',
-                    ts: 'dist/js',
                     ...config.paths.dist,
                 }
                 : config.paths.dist),

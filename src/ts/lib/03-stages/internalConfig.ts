@@ -19,9 +19,10 @@ import {
 
 import {
     Config,
-    Logger,
     Stage,
 } from '../../types/index.js';
+
+import type { Logger } from '../../types/Logger.js';
 
 import { defaultConfig } from './defaultConfig.js';
 
@@ -146,14 +147,12 @@ export function internalConfig(
                 _: config.paths.dist(),
                 docs: config.paths.dist( 'docs' ),
                 scss: config.paths.dist( 'scss' ),
-                ts: config.paths.dist( 'ts' ),
             }
             : ( typeof config.paths.dist === 'object'
                 ? {
                     _: 'dist',
                     docs: 'docs',
                     scss: 'dist/scss',
-                    ts: 'dist/js',
 
                     ...config.paths.dist,
                 }

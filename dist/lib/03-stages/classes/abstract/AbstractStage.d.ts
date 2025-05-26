@@ -12,7 +12,8 @@
  */
 import type { Node } from '@maddimathon/utility-typescript/types';
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
-import type { CLI, Config, LocalError, Stage } from '../../../../types/index.js';
+import type { CLI, Config, Stage } from '../../../../types/index.js';
+import type { LocalError } from '../../../../types/LocalError.js';
 import { SemVer } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
 import { ProjectConfig } from '../../../01-config/index.js';
@@ -36,7 +37,9 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      *
      * @category Args
      */
-    static get ARGS_DEFAULT(): Stage.Args;
+    static get ARGS_DEFAULT(): {
+        readonly objs: {};
+    };
     /**
      * {@inheritDoc Stage.Class.clr}
      *
@@ -137,7 +140,7 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
     /** {@inheritDoc Stage.Class.isSubStageIncluded} */
     isSubStageIncluded(subStage: SubStage, level: number): boolean;
     /** {@inheritDoc Stage.Class.getDistDir} */
-    getDistDir(subDir?: Config.Paths.SourceDirectory): string;
+    getDistDir(subDir?: Config.Paths.DistDirectory): string;
     getSrcDir(subDir: Config.Paths.SourceDirectory): string[];
     getSrcDir(subDir?: undefined): string;
     protected handleError(error: any, level: number, args?: Partial<LocalError.Handler.Args>): void;

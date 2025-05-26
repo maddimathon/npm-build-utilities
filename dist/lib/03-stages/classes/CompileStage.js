@@ -62,12 +62,12 @@ export class CompileStage extends AbstractStage {
     /* RUNNING METHODS
      * ====================================================================== */
     async runSubStage(subStage) {
+        if (!this.args[subStage]) {
+            return;
+        }
         await this[subStage]();
     }
     async scss() {
-        if (!this.args.scss) {
-            return;
-        }
         this.console.progress('compiling scss files...', 1);
         const scssSrcDir = this.getSrcDir('scss');
         const scssPaths = scssSrcDir.map((path) => {
@@ -126,9 +126,6 @@ export class CompileStage extends AbstractStage {
         return Promise.all(scssPathArgs.map(({ in: input, out: output }) => this.cpl.scss(input, output, (this.params.verbose ? 3 : 2))));
     }
     async ts() {
-        if (!this.args.ts) {
-            return;
-        }
         this.console.progress('compiling typescript files...', 1);
         const tsSrcDir = this.getSrcDir('ts');
         const tsPaths = tsSrcDir.map((path) => {
@@ -161,7 +158,6 @@ export class CompileStage extends AbstractStage {
             this.console.verbose('ⅹ no default files found', 3);
             return [];
         }).flat();
-        const tsDistDir = this.getDistDir('ts');
         // returns if no tsconfig.json is created
         if (!tsPaths.length) {
             const msgArgs = {
@@ -196,35 +192,33 @@ export class CompileStage extends AbstractStage {
             }
             const baseUrl = tsSrcDir.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
             this.console.vi.debug({ baseUrl }, 2);
-            const outDir = this.fs.pathRelative(this.fs.pathResolve(baseUrl, tsDistDir));
+            const outDir = this.fs.pathRelative(this.fs.pathResolve(baseUrl, this.getDistDir(), 'ts'));
             this.console.vi.debug({ outDir }, 2);
             this.fs.write(this.fs.pathResolve(tsConfigFile), JSON.stringify({
                 extends: '@maddimathon/build-utilities/tsconfig',
                 include: [
                     './**/*',
                 ],
-                ...this.config.compiler.tsConfig ?? {},
+                ...this.config.compiler?.tsConfig ?? {},
                 compilerOptions: {
-                    ...this.config.compiler.tsConfig?.compilerOptions ?? {},
+                    ...this.config.compiler?.tsConfig?.compilerOptions ?? {},
                     outDir,
                     baseUrl,
                 }
             }, null, 4), { force: true });
             tsPaths.push(tsConfigFile);
         }
-        this.console.verbose('deleting existing files...', 2);
-        this.fs.delete([tsDistDir], (this.params.verbose ? 3 : 2));
         this.console.vi.debug({ tsPaths }, (this.params.verbose ? 3 : 2));
         this.console.verbose('compiling to javascript...', 2);
         return Promise.all(tsPaths.map(tsc => {
-            this.console.verbose('compiling project: ' + tsc, (this.params.verbose ? 3 : 2));
+            this.console.verbose('compiling project: ' + tsc, 3);
             return this.cpl.typescript(tsc, (this.params.verbose ? 4 : 1));
         }));
     }
     async files() {
         if (!this.args.files) {
             return;
-        }
+        } // here for typing backup
         const distDir = this.getDistDir().trim().replace(/\/$/g, '');
         this.console.progress(`copying files to ${distDir}...`, 1);
         const rootPaths = this.args.files.root;

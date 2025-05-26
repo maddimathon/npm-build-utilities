@@ -15,22 +15,12 @@ import type { Objects } from '@maddimathon/utility-typescript/types';
 
 import { CustomError, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
 
-import type {
-    LocalError,
-} from '../../../../types/index.js';
+// import type {
+// } from '../../../../types/index.js';
 
 import type { FileSystemType } from '../../../../types/FileSystemType.js';
+import type { LocalError } from '../../../../types/LocalError.js';
 
-// import { DummyConsole } from '../DummyConsole.js';
-
-// import {
-//     errorHandler,
-//     _errorStringify,
-//     DummyConsole,
-// } from '../../index.js';
-
-
-// const _dummyConsole = new DummyConsole();
 
 /**
  * An extension of the utilities error for use within the library.
@@ -186,7 +176,7 @@ export abstract class AbstractError<
 /**
  * Used only for {@link AbstractError}.
  * 
- * @category Errors
+ * @category Class-Helpers
  * 
  * @since ___PKG_VERSION___
  */

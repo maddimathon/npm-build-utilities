@@ -113,8 +113,6 @@ export function _errorStringify(error, args, console, fs, level) {
                         status: error.status,
                         path: error.path,
                         pid: error.pid,
-                        // stderr: error.stderr,
-                        // stdout: error.stdout,
                     },
                 });
                 break;
@@ -175,7 +173,7 @@ export function _errorStringify(error, args, console, fs, level) {
         [`[${errorInfo.name}] ${errorInfo.message ?? ''}`],
     ];
     if (errorInfo.output) {
-        if (errorInfo.output.split('\n').length > 300) {
+        if (errorInfo.output.split('\n').length > 250) {
             const t_outputPath = fs.write(`.scripts/.logs/errors/${slugify(error.name)}_${timestamp(null, { date: true, time: true }).replace(/[\-:]/g, '').replace(/[^\d]+/g, '-')}.txt`, errorInfo.output, { force: false, rename: true });
             if (t_outputPath) {
                 errorInfo.output = 'Long output message written to ' + fs.pathRelative(t_outputPath).replace(' ', '%20');
@@ -202,16 +200,12 @@ export function _errorStringify(error, args, console, fs, level) {
         for (const arr of _msgHeading('Stack')) {
             bulkMsgs.push(arr);
         }
-        const _stackPathRegex = /((?:^|\n)\s*at\s+[^\n]*?\s+)\(([^\(\)]+)\)(?=(?:\s*(?:\n|$)))/;
-        const _trimmedStack = errorInfo.stack
-            // .replace( new RegExp(
-            //     `(?<=[\\(|\\s|\\n])${ escRegExp( fs.pathResolve().replace( /\/\s*$/g, '' ) + '/' ) }`,
-            //     'g'
-            // ), '' )
-            .split('\n').map((path) => {
+        const _stackPathRegex = /(^\s*at\s+[^\n]*?\s+)\(([^\(\)]+)\)(?=(?:\s*$))/;
+        const _trimmedStack = errorInfo.stack.split('\n').map((path) => {
             const _matches = path.match(_stackPathRegex);
             if (_matches && _matches[2]) {
-                path = path.replace(_stackPathRegex, '$1') + `(${fs.pathRelative(_matches[2]).replace(' ', '%20')})`;
+                path = path.replace(_stackPathRegex, '$1')
+                    + `(${fs.pathRelative(_matches[2]).replace(' ', '%20')})`;
             }
             return path;
         });

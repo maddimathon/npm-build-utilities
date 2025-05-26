@@ -18,8 +18,9 @@ import type {
 
 import type {
     Config,
-    Logger,
 } from '../../types/index.js';
+
+import type { Logger } from '../../types/Logger.js';
 
 import {
     DummyConsole,
@@ -76,7 +77,6 @@ export function defaultConfig(
             _: 'dist',
             docs: 'docs',
             scss: 'dist/css',
-            ts: 'dist/js',
         },
 
         src: {

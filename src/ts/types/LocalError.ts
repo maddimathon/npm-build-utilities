@@ -20,8 +20,8 @@ import {
     MessageMaker,
 } from '@maddimathon/utility-typescript/classes';
 
-import type { Logger } from './Logger.js';
 import type { FileSystemType } from './FileSystemType.js';
+import type { Logger } from './Logger.js';
 
 
 /**

@@ -123,7 +123,7 @@ export class ReleaseStage extends AbstractStage {
                     ['✓ ', { flag: false }],
                     ['Released!', { italic: true }],
                     [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
-                    [' 🎉 🎉 🎉', { flag: false }],
+                    ['  🎉 🎉 🎉', { flag: false }],
                     ['\n\n', { flag: false }],
                     [
                         'eventually I will put a link to the github release draft here: ' + 'https://github.com/maddimathon/npm-build-utilities/releases',

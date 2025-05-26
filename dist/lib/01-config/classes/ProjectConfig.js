@@ -38,19 +38,18 @@ export class ProjectConfig {
         });
         const rpl = {
             current: [
-                [/___CURRENT_DATE___/g, _currentDate],
-                [/___CURRENT_DESC(RIPTION)?___/g, stage.pkg.description ?? ''],
-                [/___CURRENT_(HOMEPAGE|URL)___/g, stage.pkg.homepage ?? ''],
-                [/0.1.0-alpha.draft/g, stage.version.toString(stage.isDraftVersion)],
-                [/2025/g, _currentYear],
+                [/___(CURRENT)_DATE___/g, _currentDate],
+                [/___(CURRENT)_DESC(RIPTION)?___/g, stage.pkg.description ?? ''],
+                [/___(CURRENT)_(HOMEPAGE|URL)___/g, stage.pkg.homepage ?? ''],
+                [/___(CURRENT)_VERSION___/g, stage.version.toString(stage.isDraftVersion)],
+                [/___(CURRENT)_YEAR___/g, _currentYear],
             ],
             package: [
-                [/2025-05-25/g, _currentDate],
-                [/0.1.0-alpha.draft/g, stage.version.toString(stage.isDraftVersion)],
-                [/2025/g, _currentYear],
+                [/___(PKG)_DATE___/g, _currentDate],
+                [/___(PKG)_VERSION___/g, stage.version.toString(stage.isDraftVersion)],
+                [/___(PKG)_YEAR___/g, _currentYear],
             ],
         };
-        stage.console.vi.log({ 'ProjectConfig.replace()': rpl }, 1);
         return rpl;
     }
     clr;
@@ -63,8 +62,8 @@ export class ProjectConfig {
     title;
     constructor(config) {
         this.clr = config.clr;
-        this.compiler = config.compiler ?? {};
-        this.console = config.console ?? {};
+        this.compiler = config.compiler;
+        this.console = config.console;
         this.fs = config.fs;
         this.paths = config.paths;
         this.replace = config.replace;

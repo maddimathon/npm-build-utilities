@@ -25,7 +25,7 @@ import type * as Stage from './Stage.js';
 /**
  * Complete configuration object for a project using this library.
  * 
- * @category Types
+ * @category Config
  * 
  * @since ___PKG_VERSION___
  */
@@ -75,29 +75,12 @@ export interface Config {
  */
 export namespace Config {
 
-    /**
-     * Shape for a class implementing the project's complete configuration.
-     * 
-     * @interface
-     */
-    export type Class = {
-        [ K in keyof Internal ]-?:
-        | (
-            Internal[ K ] extends undefined
-            ? ( Internal[ K ] | undefined )
-            : Internal[ K ]
-        )
-        | (
-            K extends Objects.KeysOptional<Internal> ? undefined : never
-        );
-    };
-
     /** 
      * @hidden
      * @internal
      * @expand
      */
-    type Internal_RequiredKeys = "clr" | "replace";
+    type Internal_RequiredKeys = "clr";
 
     /**
      * Complete configuration shape. Requires more properties than
@@ -110,7 +93,7 @@ export namespace Config {
      * @internal
      */
     export type Internal = Objects.RequirePartially<
-        Omit<Config, "fs" | "paths" | "stages">,
+        Omit<Config, "fs" | "paths" | "replace" | "stages">,
         Internal_RequiredKeys
     > & {
         /** {@inheritDoc Config.fs} */
@@ -118,8 +101,14 @@ export namespace Config {
 
         /** {@inheritDoc Config.Paths} */
         paths: {
-            [ K in keyof Required<Config>[ 'paths' ] ]-?: Required<Exclude<Required<Config>[ 'paths' ][ K ], Function>>;
+            [ K in keyof Required<Config>[ 'paths' ] ]-?: Required<Exclude<
+                Required<Config>[ 'paths' ][ K ],
+                Function
+            >>;
         };
+
+        /** {@inheritDoc Config.replace} */
+        replace: Required<Config>[ 'replace' ];
 
         /** 
          * A version of {@link Config.Stages} with more predictable options.
@@ -165,12 +154,11 @@ export namespace Config {
          *     _: 'dist',
          *     docs: 'docs',
          *     scss: 'dist/scss',
-         *     ts: 'dist/js',
          * }
          * ```
          */
-        dist: string | ( ( subDir?: Paths.SourceDirectory ) => string ) | {
-            [ D in "_" | Paths.SourceDirectory ]?: string;
+        dist: string | ( ( subDir?: Paths.DistDirectory ) => string ) | {
+            [ D in "_" | Paths.DistDirectory ]?: string;
         };
 
         /**
@@ -211,6 +199,13 @@ export namespace Config {
      * Types for the {@link Config.Paths} type.
      */
     export namespace Paths {
+
+        /**
+         * Keys for paths in the dist directory.
+         * 
+         * @expand
+         */
+        export type DistDirectory = Exclude<SourceDirectory, "ts">;
 
         /**
          * Keys for paths in the source directory.

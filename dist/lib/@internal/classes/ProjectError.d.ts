@@ -26,7 +26,7 @@ export declare class ProjectError extends AbstractError<ProjectError.Args> {
 /**
  * Used only for {@link ProjectError}.
  *
- * @category Errors
+ * @category Class-Helpers
  *
  * @since 0.1.0-alpha.draft
  */

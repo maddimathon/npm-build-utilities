@@ -18,8 +18,9 @@ import {
 import type {
     CLI,
     Config,
-    Logger,
 } from '../../types/index.js';
+
+import type { Logger } from '../../types/Logger.js';
 
 import { getPackageJson } from '../../lib/00-universal/getPackageJson.js';
 

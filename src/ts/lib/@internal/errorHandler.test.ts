@@ -15,9 +15,7 @@ import type { Test } from '@maddimathon/utility-typescript/types';
 
 import { test } from '@jest/globals';
 
-import type {
-    LocalError,
-} from '../../types/index.js';
+import type { LocalError } from '../../types/LocalError.js';
 
 import { errorHandler } from './errorHandler.js';
 

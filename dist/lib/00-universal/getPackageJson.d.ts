@@ -11,7 +11,7 @@
  * @license MIT
  */
 import type { Node } from '@maddimathon/utility-typescript/types';
-import type { Logger } from '../../types/index.js';
+import type { Logger } from '../../types/Logger.js';
 import { FileSystem } from './classes/index.js';
 /**
  * Gets a copy of the package.json object for the current npm project.
@@ -34,5 +34,5 @@ export declare function getPackageJson(args: FileSystem | {
 } | {
     console: Logger;
     fs?: undefined | FileSystem.Args;
-}): Node.PackageJson;
+}): Partial<Node.PackageJson>;
 //# sourceMappingURL=getPackageJson.d.ts.map

@@ -11,13 +11,6 @@
  * @license MIT
  */
 import { CustomError, VariableInspector } from '@maddimathon/utility-typescript/classes';
-// import { DummyConsole } from '../DummyConsole.js';
-// import {
-//     errorHandler,
-//     _errorStringify,
-//     DummyConsole,
-// } from '../../index.js';
-// const _dummyConsole = new DummyConsole();
 /**
  * An extension of the utilities error for use within the library.
  *
@@ -116,7 +109,7 @@ export class AbstractError extends CustomError {
 /**
  * Used only for {@link AbstractError}.
  *
- * @category Errors
+ * @category Class-Helpers
  *
  * @since 0.1.0-alpha.draft
  */

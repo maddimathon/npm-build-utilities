@@ -11,6 +11,7 @@
  * @license MIT
  */
 import { slugify, timestamp, } from '@maddimathon/utility-typescript/functions';
+import { FileSystem, } from '../../00-universal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
  * Default snapshot stage.
@@ -38,19 +39,10 @@ export class SnapshotStage extends AbstractStage {
         return {
             ...AbstractStage.ARGS_DEFAULT,
             ignoreGlobs: (stage) => [
-                '.git/**',
-                'node_modules/**',
-                '**/node_modules/**',
-                'dist/**',
-                'docs/**',
-                `${stage.config.paths.release.replace(/\/$/g, '')}/**`,
-                `${stage.config.paths.snapshot.replace(/\/$/g, '')}/**`,
-                '._*',
-                '._*/**',
-                '**/._*',
-                '**/._*/**',
-                '**/.DS_Store',
-                '**/.smbdelete**',
+                ...FileSystem.globs.IGNORE_COPIED(stage),
+                ...FileSystem.globs.IGNORE_COMPILED,
+                ...FileSystem.globs.IGNORE_PROJECT,
+                ...FileSystem.globs.SYSTEM,
             ],
         };
     }
@@ -126,6 +118,10 @@ export class SnapshotStage extends AbstractStage {
     async _tidy() {
         this.console.verbose('removing any current folders...', 1);
         const snapDir = this.config.paths.snapshot.replace(/\/$/g, '') + '/';
+        // returns
+        if (!this.fs.exists(snapDir)) {
+            return;
+        }
         const currentFolders = this.fs.readDir(snapDir)
             .map(p => snapDir + p)
             .filter(path => this.fs.isDirectory(path));

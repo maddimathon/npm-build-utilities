@@ -10,8 +10,9 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import type { LocalError, Logger } from '../../types/index.js';
 import type { FileSystemType } from '../../types/FileSystemType.js';
+import type { LocalError } from '../../types/LocalError.js';
+import type { Logger } from '../../types/Logger.js';
 /**
  * @param tryer     Function to run inside the try {}.
  * @param level

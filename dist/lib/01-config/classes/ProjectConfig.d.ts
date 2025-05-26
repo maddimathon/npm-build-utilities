@@ -11,7 +11,8 @@
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
-import type { Config, Logger, Stage } from '../../../types/index.js';
+import type { Config, Stage } from '../../../types/index.js';
+import type { Logger } from '../../../types/Logger.js';
 /**
  * A super-simple class just for the configuration of the entire project.
  *
@@ -22,30 +23,29 @@ import type { Config, Logger, Stage } from '../../../types/index.js';
  *
  * @since 0.1.0-alpha.draft
  */
-export declare class ProjectConfig implements Config.Class {
+export declare class ProjectConfig implements Objects.Classify<Config> {
     static replace(stage: Stage.Class): Config.Replace;
     readonly clr: import("@maddimathon/utility-typescript/classes/MessageMaker").MessageMaker.Colour;
-    readonly compiler: Partial<Stage.Compiler.Args>;
-    readonly console: Partial<Logger.Args>;
+    readonly compiler: Partial<Stage.Compiler.Args> | undefined;
+    readonly console: Partial<Logger.Args> | undefined;
     readonly fs: Partial<import("../../index.js").FileSystem.Args>;
     readonly paths: {
         dist: string | Required<{
-            _?: string | undefined;
-            ts?: string | undefined;
             scss?: string | undefined;
+            _?: string | undefined;
             docs?: string | undefined;
         }>;
         src: Required<{
             _?: string;
         } & {
-            ts?: string | string[] | undefined;
             scss?: string | string[] | undefined;
+            ts?: string | string[] | undefined;
             docs?: string | string[] | undefined;
         }>;
         release: string;
         snapshot: string;
     };
-    readonly replace: {};
+    readonly replace: Config.Replace | ((stage: Stage.Class) => Config.Replace);
     readonly stages: Config.Internal.Stages;
     readonly title: string;
     constructor(config: Config.Internal);
@@ -73,7 +73,7 @@ export declare class ProjectConfig implements Config.Class {
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
      */
-    toJSON(): Objects.Classify<Config.Internal, never>;
+    toJSON(): Objects.Classify<Config.Internal>;
     /**
      * Overrides the default function to return a string representation of this
      * object.
@@ -92,6 +92,6 @@ export declare class ProjectConfig implements Config.Class {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
      * @see {@link ProjectConfig.toJSON | ProjectConfig.toJSON()}
      */
-    valueOf(): Objects.Classify<Config.Internal, never>;
+    valueOf(): Objects.Classify<Config.Internal>;
 }
 //# sourceMappingURL=ProjectConfig.d.ts.map

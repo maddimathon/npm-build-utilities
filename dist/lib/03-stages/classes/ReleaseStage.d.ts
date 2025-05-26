@@ -24,7 +24,9 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  */
 export declare class ReleaseStage extends AbstractStage<Stage.SubStage.Release, Stage.Args.Release> {
     readonly subStages: Stage.SubStage.Release[];
-    get ARGS_DEFAULT(): Stage.Args.Release;
+    get ARGS_DEFAULT(): {
+        readonly objs: {};
+    };
     /**
      * @param config    Complete project configuration.
      * @param params    Current CLI params.

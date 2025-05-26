@@ -51,7 +51,7 @@ export class ProjectError extends AbstractError<ProjectError.Args> {
 /**
  * Used only for {@link ProjectError}.
  * 
- * @category Errors
+ * @category Class-Helpers
  * 
  * @since ___PKG_VERSION___
  */

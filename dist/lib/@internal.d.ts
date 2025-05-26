@@ -23,6 +23,8 @@
  * @license MIT
  */
 export type * from '../types/FileSystemType.js';
+export type * from '../types/LocalError.js';
+export type * from '../types/Logger.js';
 export * from './@internal/classes/abstract/AbstractError.js';
 export * from './@internal/classes/UnknownCaughtError.js';
 export * from './@internal/classes/ProjectError.js';
