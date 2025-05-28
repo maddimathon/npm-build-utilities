@@ -184,7 +184,7 @@ export class Stage_Console implements Logger {
 
     /** {@inheritDoc Logger.error} */
     public error(
-        msg: MessageMaker.BulkMsgs,
+        msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
         msgArgs: Partial<MessageMaker.BulkMsgArgs> = {},
         timeArgs: Partial<MessageMaker.BulkMsgArgs> = {},
@@ -205,7 +205,7 @@ export class Stage_Console implements Logger {
 
     /** {@inheritDoc Logger.notice} */
     public notice(
-        msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
+        msg: Parameters<Stage_Console[ 'log' ]>[ 0 ],
         level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
         msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
         timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
@@ -216,7 +216,7 @@ export class Stage_Console implements Logger {
 
     /** {@inheritDoc Logger.progress} */
     public progress(
-        msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
+        msg: Parameters<Stage_Console[ 'log' ]>[ 0 ],
         level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
         msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
         timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
@@ -312,7 +312,7 @@ export class Stage_Console implements Logger {
      * **Doesn't currently actually warn.**
      */
     public warn(
-        msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
+        msg: Parameters<Stage_Console[ 'log' ]>[ 0 ],
         level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
         msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
         timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
@@ -322,7 +322,7 @@ export class Stage_Console implements Logger {
 
     /** {@inheritDoc Logger.verbose} */
     public verbose(
-        msg: Parameters<Stage_Console[ 'progress' ]>[ 0 ],
+        msg: Parameters<Stage_Console[ 'log' ]>[ 0 ],
         level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
         msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
         timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],

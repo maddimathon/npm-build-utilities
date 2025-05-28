@@ -15,8 +15,7 @@ import type { Objects } from '@maddimathon/utility-typescript/types';
 
 import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
 
-import type { FileSystem } from '../lib/index.js';
-
+import type { FileSystemType } from './FileSystemType.js';
 import type { Logger } from './Logger.js';
 import type * as Stage from './Stage.js';
 
@@ -54,7 +53,7 @@ export interface Config {
     /**
      * Optional arguements to use when constructing {@link FileSystem}.
      */
-    fs?: Partial<FileSystem.Args>;
+    fs?: Partial<FileSystemType.Args>;
 
     /** {@inheritDoc Config.Paths} */
     paths?: Partial<Config.Paths>;
@@ -101,10 +100,13 @@ export namespace Config {
 
         /** {@inheritDoc Config.Paths} */
         paths: {
-            [ K in keyof Required<Config>[ 'paths' ] ]-?: Required<Exclude<
-                Required<Config>[ 'paths' ][ K ],
-                Function
-            >>;
+
+            dist: Required<Exclude<Paths[ 'dist' ], string | ( () => any )>>;
+            scripts: Required<Exclude<Paths[ 'scripts' ], string | ( () => any )>>;
+            src: Required<Exclude<Paths[ 'src' ], string | ( () => any )>>;
+
+            release: Paths[ 'release' ];
+            snapshot: Paths[ 'snapshot' ];
         };
 
         /** {@inheritDoc Config.replace} */
@@ -159,6 +161,22 @@ export namespace Config {
          */
         dist: string | ( ( subDir?: Paths.DistDirectory ) => string ) | {
             [ D in "_" | Paths.DistDirectory ]?: string;
+        };
+
+        /**
+         * Location of build scripts and related files.
+         * 
+         * @default
+         * ```ts
+         * {
+         *     _: '.scripts',
+         *     logs: '.scripts/logs',
+         * }
+         * ```
+         */
+        scripts: string | {
+            _?: string;
+            logs?: string;
         };
 
         /**

@@ -95,7 +95,8 @@ should be in `src/`.
 Files compiled in order to be included in the published package should be
 written to `dist/`.
 
-Files created in order to demo the package should be written as subdirectories in `demos/`.
+Files created in order to demo the package should be written as subdirectories
+in `demos/`.
 
 Documentation should be a valid HTML static site (for use with GitHub Pages)
 with a home page at `docs/index.html`.

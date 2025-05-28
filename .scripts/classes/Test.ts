@@ -79,10 +79,10 @@ export class Test extends AbstractStage<Test.Stages, Test.Args> {
 
             this.console.verbose( 'removing test files from dist...', 2 );
             this.fns.fs.delete( this.glob( [
-                'dist/**/*.test.d.ts',
-                'dist/**/*.test.d.ts.map',
-                'dist/**/*.test.js',
-                'dist/**/*.test.js.map',
+                'dist/js/**/*.test.d.ts',
+                'dist/js/**/*.test.d.ts.map',
+                'dist/js/**/*.test.js',
+                'dist/js/**/*.test.js.map',
             ] ) );
         }
     }

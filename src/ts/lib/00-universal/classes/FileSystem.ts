@@ -12,6 +12,7 @@
  */
 
 import { globSync } from 'glob';
+// import { minify } from 'minify';
 import * as prettier from "prettier";
 
 import {
@@ -32,6 +33,8 @@ import type { Logger } from '../../../types/Logger.js';
 
 import {
     AbstractError,
+
+    logError,
 } from '../../@internal/index.js';
 
 /**
@@ -56,7 +59,7 @@ export class FileSystem extends node.NodeFiles {
      * 
      * @category Args
      */
-    public override readonly args: FileSystem.Args;
+    public override readonly args: FileSystemType.Args;
 
     /**
      * Default args for this class.
@@ -91,9 +94,10 @@ export class FileSystem extends node.NodeFiles {
 
             copy,
             glob,
+            minify: FileSystem.minify.argsDefault,
             prettier: FileSystem.prettier.argsDefault,
 
-        } as const satisfies FileSystem.Args;
+        } as const satisfies FileSystemType.Args;
     }
 
 
@@ -107,7 +111,7 @@ export class FileSystem extends node.NodeFiles {
      */
     public constructor (
         public readonly console: Logger,
-        args: Partial<FileSystem.Args> = {},
+        args: Partial<FileSystemType.Args> = {},
     ) {
         super( args, {
             nc: console.nc,
@@ -210,6 +214,17 @@ export class FileSystem extends node.NodeFiles {
                 && 'message' in error
                 && String( error.message )?.match( /^\s*ENOTEMPTY\b/g )
             ) {
+
+                logError(
+                    'Error (ENOTEMPTY) caught and ignored during FileSystem.delete()',
+                    error,
+                    level,
+                    {
+                        console: this.console,
+                        fs: this,
+                    }
+                );
+
             } else {
                 throw error;
             }
@@ -231,35 +246,123 @@ export class FileSystem extends node.NodeFiles {
     }
 
     /** {@inheritDoc internal.FileSystemType.minify} */
-    public minify(
+    public async minify(
         globs: string | string[],
-        format: "css" | "html" | "js" | "scss" | "ts",
+        format: FileSystemType.Minify.Format,
         level: number,
-        args?: FileSystemType.Glob.Args,
-        renamer?: ( ( path: string ) => string ),
-    ): {
-        source: string;
-        output: string;
-    }[] {
-        this.console.log( '(NOT IMPLEMENTED) FileSystem.minify()', level );
-        this.console.vi.log( { globs }, 1 + level );
-        this.console.vi.log( { format }, 1 + level );
-        this.console.vi.log( { args }, 1 + level );
-        this.console.vi.log( { renamer }, 1 + level );
+        args?: Partial<FileSystemType.Minify.Args>,
+        renamer?: ( path: string ) => string,
+    ) {
+        args = mergeArgs(
+            typeof this.args.minify === 'function' ? this.args.minify( format ) : this.args.minify,
+            args ?? {},
+            true
+        );
 
-        return [];
+        let minimizerFn: ( _p: {
+            path: string,
+            content: string,
+        } ) => string | Promise<string>;
+
+        // returns if no match for minimizer function
+        switch ( format ) {
+
+            case 'css':
+            case 'html':
+            case 'js':
+                // minimizerFn = async ( _p ) => minify[ format ]( _p.content, args[ format ] );
+                // minimizerFn = async ( _p ) => minify( _p.path, args );
+                this.console.log( `minimizing for ${ format } is not yet implemented`, level );
+                return [];
+
+            case 'json':
+                minimizerFn = ( _p ) => JSON.stringify( JSON.parse( _p.content ), null, 0 );
+                break;
+
+            default:
+                this.console.warn( [ [ `minimizing for ${ format } is not yet supported` ] ], level, { italic: true } );
+                return [];
+        }
+
+
+        const files = this.glob( globs, args.glob )
+            .filter( ( _inputPath ) => this.exists( _inputPath ) && this.isFile( _inputPath ) );
+
+        // returns
+        if ( !files.length ) {
+            return [];
+        }
+
+
+        const minimized: {
+            source: string;
+            output: string;
+        }[] = [];
+
+        for ( const _inputPath of files ) {
+
+            let _content: string = this.readFile( _inputPath );
+
+            // continues
+            if ( !_content ) {
+                continue;
+            }
+
+            this.console.params.debug && this.console.verbose( 'minimizing ' + this.pathRelative( _inputPath ) + ' ...', level, { maxWidth: null } );
+
+            try {
+                _content = await minimizerFn( {
+                    path: _inputPath,
+                    content: _content,
+                } );
+            } catch ( _error ) {
+
+                // throws
+                if ( !( _error instanceof TypeError ) ) {
+                    throw _error;
+                }
+
+                logError(
+                    'TypeError caught and ignored during FileSystem.minify() with ' + this.pathRelative( _inputPath ),
+                    _error,
+                    1 + level,
+                    {
+                        console: this.console,
+                        fs: this,
+                    }
+                );
+            }
+
+            if ( _content ) {
+
+                const _outputPath = renamer?.( _inputPath ) ?? _inputPath;
+
+                if ( this.write(
+                    _outputPath,
+                    _content,
+                    { force: true, rename: false },
+                ) ) {
+                    minimized.push( {
+                        source: _inputPath,
+                        output: _outputPath,
+                    } );
+                }
+            }
+        }
+
+        return minimized;
     }
 
     /** {@inheritDoc internal.FileSystemType.prettier} */
     public async prettier(
         globs: string | string[],
         format: FileSystemType.Prettier.Format,
-        args: Partial<FileSystemType.Prettier.Args> = {},
+        args?: Partial<FileSystemType.Prettier.Args>,
     ): Promise<string[]> {
 
         args = mergeArgs(
             typeof this.args.prettier === 'function' ? this.args.prettier( format ) : this.args.prettier,
-            args,
+            args ?? {},
             true
         );
 
@@ -292,7 +395,7 @@ export class FileSystem extends node.NodeFiles {
                 default:
                     throw new FileSystem.Error(
                         'No parser was given or assigned for format "' + format + '"',
-                        'prettier',
+                        'prettify',
                     );
                     return [];
             }
@@ -443,46 +546,13 @@ export class FileSystem extends node.NodeFiles {
 export namespace FileSystem {
 
     /**
-     * Optional configuration for {@link FileSystem} class.
-     * 
-     * @since ___PKG_VERSION___
-     */
-    export interface Args extends node.NodeFiles.Args {
-
-        /**
-         * Defaults for the {@link FileSystem.copy} method.
-         */
-        copy: Partial<FileSystemType.Copy.Args>;
-
-        /**
-         * Defaults for the {@link FileSystem.glob} method.
-         */
-        glob: FileSystemType.Glob.Args;
-
-        /**
-         * Defaults for the {@link FileSystem.prettier} method.
-         */
-        prettier: FileSystemType.Prettier.Args | ( ( format: FileSystemType.Prettier.Format ) => FileSystemType.Prettier.Args );
-    };
-
-    /**
      * An extension of the utilities error used by the {@link FileSystem} class.
      * 
      * @category Errors
      * 
      * @since ___PKG_VERSION___
      */
-    export class Error extends AbstractError<Error.Args> {
-
-
-
-        /* LOCAL PROPERTIES
-         * ================================================================== */
-
-        // public readonly code: Error.Code;
-
-
-        /* Args ===================================== */
+    export class Error extends AbstractError<LocalError.Args> {
 
         public override readonly name: string = 'FileSystem Error';
 
@@ -490,62 +560,22 @@ export namespace FileSystem {
 
             return {
                 ...AbstractError.prototype.ARGS_DEFAULT,
-            } as const satisfies Error.Args;
+            } as const satisfies LocalError.Args;
         }
-
-
-
-        /* CONSTRUCTOR
-         * ================================================================== */
 
         public constructor (
             message: string,
-            // code: Error.Code,
             method: string,
-            args?: Partial<Error.Args> & { cause?: LocalError.Input; },
+            args?: Partial<LocalError.Args> & { cause?: LocalError.Input; },
         ) {
             super( message, { class: 'FileSystem', method }, args );
-            // this.code = code;
         }
-
-
-
-        /* LOCAL METHODS
-         * ================================================================== */
     }
 
     /**
-     * Used only for {@link FileSystem.Error}.
-     * 
-     * @category Errors
+     * Arrays of utility globs used within the library.
      * 
      * @since ___PKG_VERSION___
-     */
-    export namespace Error {
-
-        /**
-         * All allowed error code strings.
-         */
-        export type Code =
-            // | typeof INVALID_INPUT
-            | never;
-
-        // /**
-        //  * Error code for
-        //  */
-        // export const INVALID_INPUT = '4';
-
-        /**
-         * Optional configuration for {@link Error} class.
-         * 
-         * @since ___PKG_VERSION___
-         */
-        export interface Args extends LocalError.Args {
-        };
-    };
-
-    /**
-     * Arrays of utility globs used within the library.
      */
     export namespace globs {
 
@@ -598,7 +628,63 @@ export namespace FileSystem {
     };
 
     /**
+     * Utilities for the {@link FileSystem.minify} method.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export namespace minify {
+
+        export const argsDefault = {
+
+            css: {
+                type: "clean-css",
+                'clean-css': {
+                    compatibility: "*",
+                },
+            },
+
+            html: {
+                collapseBooleanAttributes: false,
+                collapseWhitespace: true,
+                minifyCSS: true,
+                minifyJS: true,
+                removeAttributeQuotes: true,
+                removeCDATASectionsFromCDATA: true,
+                removeComments: true,
+                removeCommentsFromCDATA: true,
+                removeEmptyAttributes: false,
+                removeEmptyElements: false,
+                removeOptionalTags: false,
+                removeRedundantAttributes: false,
+                removeScriptTypeAttributes: false,
+                removeStyleLinkTypeAttributes: false,
+                useShortDoctype: true,
+            },
+
+            js: {
+                type: 'putout',
+                putout: {
+                    quote: "'",
+                    mangle: false,
+                    mangleClassNames: false,
+                    removeUnusedVariables: false,
+                    removeConsole: false,
+                    removeUselessSpread: false,
+                },
+            },
+
+            glob: {
+                ignore: [
+                    ...FileSystem.globs.SYSTEM,
+                ],
+            },
+        } as const satisfies FileSystemType.Minify.Args;
+    };
+
+    /**
      * Utility functions for the {@link FileSystem.prettier} method.
+     * 
+     * @since ___PKG_VERSION___
      */
     export namespace prettier {
 
@@ -643,13 +729,5 @@ export namespace FileSystem {
 
             return universal;
         }
-    };
-
-    /**
-     * Optional class instances to pass to {@link FileSystem} constructor.
-     * 
-     * @since ___PKG_VERSION___
-     */
-    export interface Utils extends Omit<NonNullable<ConstructorParameters<typeof node.NodeFiles>[ 1 ]>, "nc"> {
     };
 }

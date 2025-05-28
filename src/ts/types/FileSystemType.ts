@@ -11,10 +11,11 @@
  * @license MIT
  */
 
-import { GlobOptions } from 'glob';
-import * as prettier from "prettier";
+import type { GlobOptions } from 'glob';
+// import type { Options as MinifyOptions } from 'minify';
+import type * as prettier from "prettier";
 
-import {
+import type {
     node,
 } from '@maddimathon/utility-typescript/classes';
 
@@ -72,14 +73,14 @@ export interface FileSystemType extends node.NodeFiles {
      */
     minify(
         globs: string | string[],
-        format: "css" | "html" | "js" | "scss" | "ts",
+        format: FileSystemType.Minify.Format,
         level: number,
-        args?: FileSystemType.Glob.Args,
-        renamer?: ( ( path: string ) => string ),
-    ): {
+        args?: Partial<FileSystemType.Minify.Args>,
+        renamer?: ( path: string ) => string,
+    ): Promise<{
         source: string;
         output: string;
-    }[];
+    }[]>;
 
     /**
      * Runs prettier on the given file globs.
@@ -87,7 +88,7 @@ export interface FileSystemType extends node.NodeFiles {
     prettier(
         globs: string | string[],
         format: FileSystemType.Prettier.Format,
-        args?: FileSystemType.Glob.Args,
+        args?: FileSystemType.Prettier.Args,
     ): Promise<string[]>;
 
     /**
@@ -109,6 +110,38 @@ export interface FileSystemType extends node.NodeFiles {
  * @internal
  */
 export namespace FileSystemType {
+
+    /**
+     * Optional configuration for {@link FileSystemType} classes.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export interface Args extends node.NodeFiles.Args {
+
+        /**
+         * Defaults for the {@link FileSystemType.copy} method.
+         */
+        copy: Partial<Copy.Args>;
+
+        /**
+         * Defaults for the {@link FileSystemType.glob} method.
+         */
+        glob: Glob.Args;
+
+        /**
+         * Defaults for the {@link FileSystemType.minify} method.
+         */
+        minify:
+        | Partial<Minify.Args>
+        | ( ( format: Minify.Format ) => Partial<Minify.Args> );
+
+        /**
+         * Defaults for the {@link FileSystemType.prettier} method.
+         */
+        prettier:
+        | Partial<Prettier.Args>
+        | ( ( format: Prettier.Format ) => Partial<Prettier.Args> );
+    };
 
     /**
      * Types for {@link FileSystem.copy} method.
@@ -146,6 +179,49 @@ export namespace FileSystemType {
     };
 
     /**
+     * Types for {@link FileSystem.minify} method.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export namespace Minify {
+
+        /**
+         * Optional configuration for {@link FileSystem.minify} method.
+         * 
+         * @since ___PKG_VERSION___
+         * 
+         * @interface
+         */
+        export interface Args {
+
+            css: {
+                type?: string;
+                'clean-css'?: { [ key: string ]: boolean | string | null | undefined; };
+            };
+
+            html: { [ key: string ]: boolean | string | null | undefined; };
+
+            js: {
+                type?: string;
+                putout?: { [ key: string ]: boolean | string | null | undefined; };
+                terser?: { [ key: string ]: boolean | string | null | undefined; };
+                esbuild?: { [ key: string ]: boolean | string | null | undefined; };
+            };
+
+            glob: Glob.Args;
+        };
+
+        /**
+         * File type options for minify.
+         */
+        export type Format =
+            | "css"
+            | "html"
+            | "js"
+            | "json";
+    };
+
+    /**
      * Types for {@link FileSystem.prettier} method.
      * 
      * @since ___PKG_VERSION___
@@ -171,10 +247,10 @@ export namespace FileSystemType {
             | "html"
             | "js"
             | "json"
+            | "md"
             | "mdx"
             | "scss"
             | "ts"
-            | "yaml"
-            | "md";
+            | "yaml";
     };
 }

@@ -238,7 +238,7 @@ export class CompileStage extends AbstractStage<
 
         this.console.verbose( 'compiling to css...', 2 );
         return Promise.all( scssPathArgs.map(
-            ( { in: input, out: output } ) => this.cpl.scss( input, output, ( this.params.verbose ? 3 : 2 ) )
+            ( { in: input, out: output } ) => this.compiler.scss( input, output, ( this.params.verbose ? 3 : 2 ) )
         ) );
     }
 
@@ -366,7 +366,7 @@ export class CompileStage extends AbstractStage<
         return Promise.all( tsPaths.map(
             tsc => {
                 this.console.verbose( 'compiling project: ' + tsc, 3 );
-                return this.cpl.typescript( tsc, ( this.params.verbose ? 4 : 1 ) );
+                return this.compiler.typescript( tsc, ( this.params.verbose ? 4 : 1 ) );
             }
         ) );
     }

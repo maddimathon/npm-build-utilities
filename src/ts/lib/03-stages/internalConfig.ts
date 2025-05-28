@@ -150,14 +150,25 @@ export function internalConfig(
             }
             : ( typeof config.paths.dist === 'object'
                 ? {
-                    _: 'dist',
-                    docs: 'docs',
-                    scss: 'dist/scss',
-
+                    ...def.paths.dist,
                     ...config.paths.dist,
                 }
-                : config.paths.dist
+                : {
+                    _: config.paths.dist,
+                    docs: config.paths.dist.replace( /\/$/gi, '' ) + '/docs',
+                    scss: config.paths.dist.replace( /\/$/gi, '' ) + '/scss',
+                }
             ),
+
+        scripts: typeof config.paths.scripts === 'string'
+            ? {
+                _: config.paths.scripts,
+                logs: config.paths.scripts.replace( /\/$/gi, '' ) + '/logs',
+            }
+            : {
+                _: config.paths.scripts._ ?? def.paths.scripts._,
+                logs: config.paths.scripts.logs ?? def.paths.scripts.logs,
+            },
 
         src: typeof config.paths.src === 'function'
             ? {
@@ -167,11 +178,7 @@ export function internalConfig(
                 ts: config.paths.src( 'ts' ),
             }
             : {
-                _: 'src',
-                docs: 'src/docs',
-                scss: 'src/scss',
-                ts: 'src/ts',
-
+                ...def.paths.src,
                 ...config.paths.src,
             },
     };

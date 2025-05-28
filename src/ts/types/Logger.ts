@@ -88,7 +88,7 @@ export interface Logger extends Objects.Logger<
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
     error(
-        msg: MessageMaker.BulkMsgs,
+        msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
         msgArgs?: Partial<MessageMaker.BulkMsgArgs>,
         timeArgs?: Partial<MessageMaker.BulkMsgArgs>,
@@ -154,7 +154,7 @@ export interface Logger extends Objects.Logger<
      * @param timeArgs  Optional. Argument overrides for the message's timestamp.
      */
     warn(
-        msg: MessageMaker.BulkMsgs,
+        msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
         msgArgs?: Partial<MessageMaker.BulkMsgArgs>,
         timeArgs?: Partial<MessageMaker.BulkMsgArgs>,
@@ -209,7 +209,7 @@ export namespace Logger {
     /**
      * Used for extending {@link Objects.Logger}.
      */
-    export type ErrorInput = MessageMaker.BulkMsgs;
+    export type ErrorInput = string | string[] | MessageMaker.BulkMsgs;
 
     /**
      * Used for extending {@link Objects.Logger}.

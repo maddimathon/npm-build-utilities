@@ -79,6 +79,11 @@ export function defaultConfig(
             scss: 'dist/css',
         },
 
+        scripts: {
+            _: '.scripts',
+            logs: '.scripts/logs',
+        },
+
         src: {
             _: 'src',
             docs: 'src/docs',

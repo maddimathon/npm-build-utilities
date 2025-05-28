@@ -1,0 +1,22 @@
+{
+
+    "Insert @since to docblock": {
+        "prefix": "@since",
+        "body": "@since ___PKG_VERSION___"
+    },
+
+    "Insert @param config": {
+        "prefix": "@param config",
+        "body": "@param config  Current project config."
+    },
+
+    "Insert @param level": {
+        "prefix": "@param level",
+        "body": "@param level  Depth level for output to the console."
+    },
+
+    "Insert @param params": {
+        "prefix": "@param params",
+        "body": "@param params  Current CLI params."
+    },
+}

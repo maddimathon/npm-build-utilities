@@ -40,33 +40,33 @@
         "./tsconfig.base.json"
     ],
 
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "main": "./dist/js/index.js",
+    "types": "./dist/js/index.d.ts",
 
     "bin": {
-        "build-utils": "./dist/bin/index.js"
+        "build-utils": "./dist/js/bin/index.js"
     },
 
     "exports": {
 
-        ".": "./dist/index.js",
-        "./cli": "./dist/bin/lib/index.js",
-        "./internal": "./dist/lib/@internal.js",
+        ".": "./dist/js/index.js",
+        "./cli": "./dist/js/bin/lib/index.js",
+        "./internal": "./dist/js/lib/@internal.js",
 
         "./tsconfig": "./tsconfig.base.json",
-
-        "./*": [
-            "./dist/*.js",
-            "./dist/*/index.js"
-        ],
-        "./*.js": "./dist/*.js",
         
         "./types": "./dist/js/types/index.d.ts",
         "./types/*": [
             "./dist/js/types/*.d.ts",
             "./dist/js/types/*/index.d.ts"
         ],
-        "./types/*.d.ts": "./dist/js/types/*.d.ts"
+        "./types/*.d.ts": "./dist/js/types/*.d.ts",
+
+        "./*": [
+            "./dist/js/*.js",
+            "./dist/js/*/index.js"
+        ],
+        "./*.js": "./dist/js/*.js"
     },
 
     "bugs": {
@@ -74,7 +74,7 @@
     },
 
     "scripts": {
-        "test-utils": "tsx --tsconfig src/ts/tsconfig.json src/ts/bin/index.ts --config .new-scripts/build.config.js",
+        "test-utils": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts --config .new-scripts/build.config.js",
 
         "commit": "sh .scripts/commit.sh",
         
@@ -100,7 +100,7 @@
         
         "package": "tsx --tsconfig .scripts/tsconfig.json .scripts/package.ts",
         
-        "dryrun":  "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts --dryrun --without-pkg snapshot,zip",
+        "dryrun":  "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts --dryrun",
         "release": "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts"
     },
     "dependencies": {
@@ -116,7 +116,6 @@
     "devDependencies": {
         "@types/jest": "29.5.14",
         "@types/luxon": "3.6.2",
-        "@types/minify": "9.1.4",
         "@types/minimist": "1.2.5",
         "@types/node": "22.15.17",
         "@types/semver": "7.7.0",

@@ -113,7 +113,7 @@ export class SnapshotStage extends AbstractStage<
         super( 'snapshot', 'pink', config, params, args, _pkg, _version );
 
         this.filename = [
-            slugify( this.pkg.name.replace( /\//g, '_' ) ),
+            this.pkg.name.replace( /\//g, '_' ).replace( /[^a-z0-9\-_]+/gi, '-' ).replace( /(^\-+|\-+$)/g, '' ),
             slugify( this.version.toString( this.isDraftVersion ).replace( /[\.\+]/g, '-' ) ),
             timestamp( null, { date: true, time: true } ).replace( /[\-:]/g, '' ).replace( /[^\d]+/g, '-' ),
         ].join( '_' );

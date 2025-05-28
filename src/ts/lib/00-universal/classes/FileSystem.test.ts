@@ -24,7 +24,7 @@ import { FileSystem } from './FileSystem.js';
 // gets the expected type
 type _ClassType = ( new (
     console: Logger,
-    args?: Partial<FileSystem.Args>,
+    args?: Partial<FileSystemType.Args>,
 ) => FileSystemType );
 
 // checks if the actual class can be assigned to its class type

@@ -34,6 +34,9 @@ export * from './@internal/classes/ProjectError.js';
 export * from './@internal/classes/SemVer.js';
 
 export * from './@internal/errorHandler.js';
+export * from './@internal/errorStringify.js';
+export * from './@internal/logError.js';
+export * from './@internal/writeLog.js';
 
 export * from './00-universal/getPackageJson.js';
 

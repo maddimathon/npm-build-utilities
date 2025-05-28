@@ -1,0 +1,74 @@
+/**
+ * @since 0.1.0-alpha.draft
+ *
+ * @packageDocumentation
+ */
+/**
+ * @package @maddimathon/build-utilities@0.1.0-alpha.draft
+ */
+/*!
+ * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @license MIT
+ */
+import { errorStringify } from './errorStringify.js';
+import { writeLog } from './writeLog.js';
+import { slugify } from '@maddimathon/utility-typescript/functions/index';
+/**
+ * Writes the content of an error to a msgs file and outputs (to the console) a
+ * confirmation message with the path to the msgs file.
+ *
+ * @param logMsg  Message to prepend to the return for output to the console.
+ * @param error   Caught error to stringify (via {@link errorStringify}) and add
+ *                to the log.
+ * @param level   Depth level for output to the console.
+ * @param args    Extra configuration for the function. See
+ *                {@link logError.Args}.
+ *
+ * @return  Message that was output to the console, with a link to the log file
+ *          if written successfully.
+ *
+ * @since 0.1.0-alpha.draft
+ */
+export function logError(logMsg, error, level, args) {
+    const { console, date = new Date(), errMsg, fs, outputWarning = true, } = args;
+    let msgs = [
+        [(errMsg ?? logMsg) + '\n'],
+        ...errorStringify(error, {}, console, fs, level),
+    ];
+    const filename = typeof error === 'object' && error?.name || 'error';
+    const result = writeLog(msgs, slugify(filename), {
+        config: console.config,
+        date,
+        fs,
+        subDir: ['errors'],
+    });
+    let _returnMsg;
+    if (result) {
+        _returnMsg = [
+            [logMsg],
+            ['log written to: ' + fs.pathRelative(result).replace(' ', '%20'), { italic: true, maxWidth: null }],
+        ];
+    }
+    else {
+        _returnMsg = [
+            [logMsg],
+            [''],
+            ['failure when writing to logs', { bold: true, italic: true }],
+        ];
+        if (errMsg) {
+            _returnMsg.push(['']);
+            _returnMsg.push([errMsg, { maxWidth: null }]);
+        }
+    }
+    outputWarning && console.warn(_returnMsg, level, { joiner: '\n' });
+    return _returnMsg;
+}
+/**
+ * Utility types used only for {@link logError} function.
+ *
+ * @since 0.1.0-alpha.draft
+ */
+(function (logError) {
+    ;
+})(logError || (logError = {}));
+//# sourceMappingURL=logError.js.map

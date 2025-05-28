@@ -13,8 +13,14 @@
 
 import type { Node } from '@maddimathon/utility-typescript/types';
 
-import { MessageMaker } from '@maddimathon/utility-typescript/classes';
-import { mergeArgs, toTitleCase } from '@maddimathon/utility-typescript/functions';
+import {
+    mergeArgs,
+    toTitleCase,
+} from '@maddimathon/utility-typescript/functions';
+
+import {
+    MessageMaker,
+} from '@maddimathon/utility-typescript/classes';
 
 
 import type {
@@ -27,7 +33,10 @@ import type { LocalError } from '../../../../types/LocalError.js';
 
 import {
     errorHandler,
+    writeLog,
+
     SemVer,
+    logError,
 } from '../../../@internal/index.js';
 
 import {
@@ -109,18 +118,18 @@ export abstract class AbstractStage<
     public readonly console: Stage_Console;
 
     /**
-     * Instance used to compile from the src directory.
+     * {@inheritDoc Stage.Class.compiler}
      * 
      * @category Utilities
      */
-    public readonly cpl: Stage_Compiler;
+    public readonly compiler: Stage_Compiler;
 
     /**
-     * Instance used to deal with files and paths.
+     * {@inheritDoc Stage.Class.fs}
      * 
      * @category Utilities
      */
-    protected readonly fs: FileSystem;
+    public readonly fs: FileSystem;
 
     /** 
      * {@inheritDoc Stage.Class.name} 
@@ -230,7 +239,7 @@ export abstract class AbstractStage<
     /**
      * @param name    Name for this stage used for notices.
      * @param clr     Colour used for colour-coding this class.
-     * @param config  Complete project configuration.
+     * @param config  Current project config.
      * @param params  Current CLI params.
      * @param args    Partial overrides for the default stage args.
      */
@@ -259,7 +268,7 @@ export abstract class AbstractStage<
 
         this.fs = this.args.objs.fs ?? new FileSystem( this.console, this.config.fs );
 
-        this.cpl = this.args.objs.cpl ?? new Stage_Compiler(
+        this.compiler = this.args.objs.compiler ?? new Stage_Compiler(
             this.config,
             this.params,
             this.console,
@@ -372,26 +381,18 @@ export abstract class AbstractStage<
 
     /** {@inheritDoc Stage.Class.getDistDir} */
     public getDistDir( subDir?: Config.Paths.DistDirectory ): string {
+        return this.config.paths.dist[ subDir ?? '_' ];
+    }
 
-        let result;
+    /**
+     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
+     */
+    public getScriptsPath( subDir?: "logs", ...subpaths: string[] ) {
 
-        switch ( typeof this.config.paths.dist ) {
-
-            case 'string':
-                const distDir = this.config.paths.dist.trim().replace( /\/$/g, '' );
-
-                // returns
-                if ( !subDir ) {
-                    return distDir;
-                }
-                return distDir + '/' + subDir;
-
-            case 'object':
-                result = this.config.paths.dist[ subDir ?? '_' ];
-                break;
-        }
-
-        return result;
+        return this.fs.pathResolve(
+            this.config.paths.scripts[ subDir ?? '_' ],
+            ...subpaths
+        );
     }
 
     public getSrcDir( subDir: Config.Paths.SourceDirectory ): string[];
@@ -408,6 +409,53 @@ export abstract class AbstractStage<
         const result = this.config.paths.src[ subDir ?? '_' ] ?? [];
 
         return Array.isArray( result ) ? result : [ result ];
+    }
+
+    /**
+     * Alias for {@link internal.logError}.
+     */
+    public logError(
+        logMsg: string,
+        error: unknown,
+        level: number,
+        errMsg?: string,
+        date?: Date,
+    ) {
+
+        return logError(
+            logMsg,
+            error,
+            level,
+            {
+                errMsg,
+                console: this.console,
+                fs: this.fs,
+                date,
+            },
+        );
+    }
+
+    /**
+     * Alias for {@link internal.writeLog}.
+     */
+    public writeLog(
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        filename: string,
+        subDir: string[] = [],
+        date: null | Date = null,
+    ) {
+        if ( !msg.length ) { return; }
+
+        return writeLog(
+            msg,
+            filename,
+            {
+                config: this.config,
+                date: date ?? new Date(),
+                fs: this.fs,
+                subDir,
+            }
+        );
     }
 
 

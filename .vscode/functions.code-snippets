@@ -1,0 +1,18 @@
+{
+
+    "Insert boilerplate logError()": {
+        "scope": "javascript,typescript",
+        "prefix": [ "logError(" ],
+        "body": [
+            "logError(",
+            "    'Error caught and ignored during FileSystem.delete()',",
+            "    error,",
+            "    level,",
+            "    {",
+            "        console: this.console,",
+            "        fs: this,",
+            "    }",
+            ");",
+        ],
+    },
+}

@@ -35,7 +35,9 @@ import type {
     ProjectConfig,
 } from '../lib/index.js';
 
-import type { SemVer } from '../lib/@internal/classes/SemVer.js';
+import type {
+    SemVer,
+} from '../lib/@internal/index.js';
 
 import type { Stage_Compiler } from '../lib/02-utils/classes/Stage_Compiler.js';
 
@@ -54,7 +56,7 @@ export interface Args<
      * Optional class instances to use.
      */
     objs: {
-        cpl?: Stage_Compiler,
+        compiler?: Stage_Compiler,
         fs?: FileSystem,
     };
 };
@@ -106,7 +108,10 @@ export namespace Args {
         /**
          * Whether to include this sub-stage.
          */
-        minimize: boolean;
+        minimize:
+        | false
+        | Build.Minimize
+        | ( ( stage: Class ) => Build.Minimize );
 
         /**
          * Whether to include this sub-stage.
@@ -114,19 +119,10 @@ export namespace Args {
          * The first tuple item is an array of file globs and the second item is
          * args to pass to the {@link FileSystem.prettier} method, if any.
          */
-        prettify: false
-        | {
-            [ K in FileSystemType.Prettier.Format ]?: [ string[] ] | [ string[], undefined | Partial<FileSystemType.Prettier.Args> ];
-        }
-        | (
-            ( stage: Class ) => {
-                [ K in FileSystemType.Prettier.Format ]?:
-                | [ string[] ]
-                | [ string[], undefined | Partial<FileSystemType.Prettier.Args> ]
-                | readonly [ readonly string[] ]
-                | readonly [ readonly string[], undefined | Partial<FileSystemType.Prettier.Args> ];
-            }
-        );
+        prettify:
+        | false
+        | Build.Prettify
+        | ( ( stage: Class ) => Build.Prettify );
 
         /**
          * Whether to include this sub-stage, or the configuration if so.
@@ -157,6 +153,47 @@ export namespace Args {
          */
         test: boolean;
     };
+
+    /**
+     * Types for the {@link Args.Build} interface.
+     */
+    export namespace Build {
+
+        /**
+         * Arguments for the {@link BuildStage.minimize} substage.
+         * 
+         * String array should be globs to minimize.
+         * 
+         * @interface
+         */
+        export type Minimize = {
+            [ K in FileSystemType.Minify.Format ]?:
+            | string[]
+            | {
+                globs: string[];
+                ignore?: string[];
+                args?: Partial<FileSystemType.Minify.Args>;
+
+                /** 
+                 * @see {@link FileSystem.minimize}  Uses this renamer.
+                 */
+                renamer?: ( ( path: string ) => string );
+            }
+        };
+
+        /**
+         * Arguments for the {@link BuildStage.prettify} substage.
+         * 
+         * @interface
+         */
+        export type Prettify = {
+            [ K in FileSystemType.Prettier.Format ]?:
+            | [ string[] ]
+            | [ string[], undefined | Partial<FileSystemType.Prettier.Args> ]
+            | readonly [ readonly string[] ]
+            | readonly [ readonly string[], undefined | Partial<FileSystemType.Prettier.Args> ]
+        };
+    }
 
     /**
      * The required shape for a compile stage.
@@ -283,11 +320,25 @@ export interface Class<
     readonly config: Config.Internal;
 
     /**
+     * Instance used to compile files from the src directory.
+     * 
+     * @category Utilities
+     */
+    readonly compiler: Compiler;
+
+    /**
      * Instance used to send messages to the console.
      * 
      * @category Utilities
      */
     readonly console: Logger;
+
+    /**
+     * Instance used to deal with files and paths.
+     * 
+     * @category Utilities
+     */
+    readonly fs: FileSystem;
 
     /**
      * Wheather the current project version is a draft (e.g., this is not a

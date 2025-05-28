@@ -1,8 +1,4 @@
 {
-    "Insert @since to docblock": {
-        "prefix": "@since",
-        "body": "@since ___PKG_VERSION___"
-    },
 
     "Add full project header (php)": {
         "scope": "php",

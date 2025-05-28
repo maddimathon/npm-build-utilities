@@ -19,7 +19,7 @@ import type {
     Stage,
 } from '../../../types/index.js';
 
-import { FileSystemType } from '../../../types/FileSystemType.js';
+import type { FileSystemType } from '../../../types/FileSystemType.js';
 
 import {
     SemVer,
@@ -67,6 +67,73 @@ export class BuildStage extends AbstractStage<
     /* Args ===================================== */
 
     public get ARGS_DEFAULT() {
+
+        const minimize = ( _stage: Stage.Class ) => {
+
+            const _distDir: {
+                [ D in "_" | Config.Paths.DistDirectory ]: string;
+            } = {
+                _: _stage.getDistDir().replace( /\/$/, '' ),
+                scss: _stage.getDistDir( 'scss' ).replace( /\/$/, '' ),
+                docs: _stage.getDistDir( 'docs' ).replace( /\/$/, '' ),
+            };
+
+            const _renamer = ( _path: string ) => _stage.fs.uniquePath(
+                _stage.fs.changeBaseName(
+                    _path,
+                    _stage.fs.basename( _path ) + '.min',
+                )
+            );
+
+            return {
+
+                css: {
+                    globs: [
+                        `${ _distDir._ }/**/*.css`,
+                        `${ _distDir.scss }/**/*.css`,
+                    ],
+                    ignore: [
+                        `${ _distDir._ }/**/*.min.css`,
+                        `${ _distDir.scss }/**/*.min.css`,
+                        `${ _distDir._ }/**/*.css.map`,
+                        `${ _distDir.scss }/**/*.css.map`,
+                    ],
+                    renamer: _renamer,
+                },
+
+                html: {
+                    globs: [ `${ _distDir._ }/**/*.html`, ],
+                },
+
+                js: {
+                    globs: [
+                        `${ _distDir._ }/**/*.js`,
+                        `${ _distDir._ }/**/*.jsx`,
+                    ],
+                    ignore: [
+                        `${ _distDir._ }/**/*.min.js`,
+                        `${ _distDir._ }/**/*.min.jsx`,
+                        `${ _distDir._ }/**/*.test.js`,
+                        `${ _distDir._ }/**/*.test.jsx`,
+                        `${ _distDir._ }/**/*.js.map`,
+                        `${ _distDir._ }/**/*.jsx.map`,
+                    ],
+                    renamer: _renamer,
+                },
+
+                json: {
+                    globs: [ `${ _distDir._ }/**/*.json`, ],
+                },
+
+            } as const satisfies {
+                [ K in FileSystemType.Minify.Format ]: {
+                    globs: string[];
+                    ignore?: string[];
+                    args?: FileSystemType.Glob.Args;
+                    renamer?: ( ( path: string ) => string );
+                }
+            };
+        };
 
         const prettify = ( _stage: Stage.Class ) => {
 
@@ -136,14 +203,14 @@ export class BuildStage extends AbstractStage<
             };
         };
 
-        const replace = ( stage: Stage.Class ) => ( {
+        const replace = ( _stage: Stage.Class ) => ( {
 
             current: [
                 'dist/**/*',
             ],
 
             ignore: [
-                ...FileSystem.globs.IGNORE_COPIED( stage ),
+                ...FileSystem.globs.IGNORE_COPIED( _stage ),
                 ...FileSystem.globs.IGNORE_PROJECT,
                 ...FileSystem.globs.SYSTEM,
 
@@ -161,7 +228,7 @@ export class BuildStage extends AbstractStage<
 
             compile: true,
             document: false,
-            minimize: true,
+            minimize,
             prettify,
             replace,
             test: false,
@@ -175,7 +242,7 @@ export class BuildStage extends AbstractStage<
      * ====================================================================== */
 
     /**
-     * @param config    Complete project configuration.
+     * @param config    Current project config.
      * @param params    Current CLI params.
      * @param args      Optional. Partial overrides for the default args.
      * @param _pkg      Optional. The current package.json value, if any.
@@ -231,13 +298,76 @@ export class BuildStage extends AbstractStage<
     }
 
     protected async minimize() {
-        // if ( !this.args.minimize ) { return; } // here for typing backup
-        this.console.progress( '(NOT IMPLEMENTED) running minimize sub-stage...', 1 );
+        if ( !this.args.minimize ) { return; } // here for typing backup
+        this.console.progress( 'minimizing built files...', 1 );
+
+        const args = typeof this.args.minimize === 'function'
+            ? this.args.minimize( this )
+            : this.args.minimize;
+
+        // returns
+        if ( !Object.keys( args ).length ) {
+            this.console.verbose( 'empty minimize config, no files to format', 2 );
+            return;
+        }
+
+        for ( const t_format in args ) {
+            const _format = t_format as FileSystemType.Minify.Format;
+
+            // continues
+            if ( typeof args[ _format ] === 'undefined' ) {
+                continue;
+            }
+
+            const _formatArgs = Array.isArray( args[ _format ] )
+                ? { globs: args[ _format ] }
+                : args[ _format ];
+
+            // continues
+            if (
+                !Array.isArray( _formatArgs.globs )
+                || !_formatArgs.globs.length
+            ) {
+                this.console.verbose( `no globs present to minimize ${ _format } files`, 2, { italic: true } );
+                continue;
+            }
+
+
+            this.console.verbose( `minimizing ${ _format } files...`, 2 );
+
+
+            const _minimized = await this.try(
+                this.fs.minify,
+                ( this.params.verbose ? 3 : 2 ),
+                [
+                    _formatArgs.globs,
+                    _format,
+                    ( this.params.verbose ? 3 : 2 ),
+
+                    {
+                        ..._formatArgs.args,
+
+                        glob: {
+                            ignore: _formatArgs.ignore,
+                            ..._formatArgs.args?.glob ?? {},
+                        },
+                    },
+
+                    _formatArgs.renamer,
+                ],
+            );
+
+            this.console.verbose(
+                `minimized ${ _minimized.length } ${ _format } files`,
+                3,
+                { italic: true },
+            );
+        }
     }
 
     protected async prettify() {
         if ( !this.args.prettify ) { return; } // here for typing backup
-        this.console.progress( 'running prettify sub-stage...', 1 );
+        this.console.progress( 'prettifying built files...', 1 );
 
         const args = typeof this.args.prettify === 'function'
             ? this.args.prettify( this )
@@ -245,7 +375,7 @@ export class BuildStage extends AbstractStage<
 
         // returns
         if ( !Object.keys( args ).length ) {
-            this.console.verbose( 'empty prettier args, no files to format', 2 );
+            this.console.verbose( 'empty prettify config, no files to format', 2 );
             return;
         }
 
@@ -275,11 +405,11 @@ export class BuildStage extends AbstractStage<
             ] = args[ _format ];
 
 
-            const _prettified = await this.fs.prettier(
+            const _prettified = await this.try( this.fs.prettier, 3, [
                 _globs,
                 _format,
                 _args,
-            );
+            ] );
 
             this.console.verbose(
                 `prettified ${ _prettified.length } ${ _format } files`,

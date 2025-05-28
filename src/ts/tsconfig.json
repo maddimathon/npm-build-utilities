@@ -8,12 +8,11 @@
         "./src/ts/**/*"
     ],
     "exclude": [
-        "./node_modules/**/*",
-        "../../src/ts/classes/**/*",
-        "./src/ts/classes/**/*"
+        "./node_modules/**/*"
     ],
     "compilerOptions": {
         "baseUrl": "../../",
-        "outDir": "../../dist/"
+        "exactOptionalPropertyTypes": false,
+        "outDir": "../../dist/js/"
     }
 }

@@ -6,6 +6,8 @@ touch .releasenotes.md
 
 commitmsg="[$(date +%Y-%m-%d)] $(cat .gitcommit.md)"
 
+echo "commit msg = ${commitmsg}"
+
 git commit -m "${commitmsg}"
 
 echo "

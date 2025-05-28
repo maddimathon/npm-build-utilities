@@ -26,26 +26,48 @@ const config = {
 
     title: 'NPM Build Utilities',
 
+    paths: {
+
+        release: '@new-releases',
+        snapshot: '.new-snapshots',
+
+        scripts: {
+            _: '.new-scripts',
+            logs: '.new-scripts/.logs',
+        },
+    },
+
     stages: {
 
         compile: {
 
             scss: false,
 
-            files: {
-
-                root: [],
-
-                src: [],
-            },
+            files: false,
+            // files: {
+            //     root: [],
+            //     src: [],
+            // },
         },
 
         build: {
 
-            prettify: ( stage ) => {
+            minimize: false,
+            // minimize: ( _stage ) => {
+            //     const _defaults_minimize = _defaults.build.minimize( _stage );
+            //     return {
+            //         ..._defaults_minimize,
+            //         css: undefined,
+            //         html: undefined,
+            //         js: undefined,
+            //         // json: undefined,
+            //     };
+            // },
+
+            prettify: ( _stage ) => {
 
                 return {
-                    ..._defaults.build.prettify( stage ),
+                    ..._defaults.build.prettify( _stage ),
 
                     css: undefined,
                     html: undefined,
@@ -56,9 +78,9 @@ const config = {
                 };
             },
 
-            replace: ( stage ) => {
+            replace: ( _stage ) => {
 
-                const _obj = _defaults.build.replace( stage );
+                const _obj = _defaults.build.replace( _stage );
 
                 _obj.ignore.push( 'demos/**' );
 
