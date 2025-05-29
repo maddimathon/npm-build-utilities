@@ -74,17 +74,17 @@
     },
 
     "scripts": {
-        "test-utils": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts --config .new-scripts/build.config.js",
+        "test-utils": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts --config .new-scripts/build.config.ts",
 
         "commit": "sh .scripts/commit.sh",
         
-        "snap":     "tsx --tsconfig .scripts/tsconfig.json .scripts/snapshot.ts",
-        "snapshot": "tsx --tsconfig .scripts/tsconfig.json .scripts/snapshot.ts",
+        "snap":     "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts snapshot --config .new-scripts/build.config.ts",
+        "snapshot": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts snapshot --config .new-scripts/build.config.ts",
        
-        "compile": "tsx --tsconfig .scripts/tsconfig.json .scripts/compile.ts",
+        "compile": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts compile --config .new-scripts/build.config.ts",
         
-        "build":       "tsx --tsconfig .scripts/tsconfig.json .scripts/build.ts",
-        "quick-build": "tsx --tsconfig .scripts/tsconfig.json .scripts/build.ts --without minimize,prettify",
+        "build":       "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts build --config .new-scripts/build.config.ts",
+        "quick-build": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts build --config .new-scripts/build.config.ts --without minimize,prettify,readme",
         
         "doc": "tsx --tsconfig .scripts/tsconfig.json .scripts/doc.ts",
 

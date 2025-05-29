@@ -27,6 +27,7 @@ import {
 } from '@maddimathon/utility-typescript';
 
 import type {
+    CLI,
     Config,
 } from '../../../src/ts/index.js';
 
@@ -46,6 +47,8 @@ import {
     parseParamsCLI,
 
     ProjectConfig,
+    Project,
+    cli,
 } from '../../../src/ts/index.js';
 
 
@@ -284,6 +287,38 @@ export abstract class AbstractStage<
 
             throw error;
         }
+    }
+
+    protected async runNewStageCommand(
+        stage: "snapshot" | "build" | "compile",
+        inputParams: Partial<CLI.Params> = {},
+    ) {
+
+        const only = this.args[ `only-${ stage }` ];
+        const without = this.args[ `without-${ stage }` ];
+
+        const params = parseParamsCLI( {
+            config: '.new-scripts/build.config.ts',
+
+            'log-base-level': 1 + ( this.args[ 'log-base-level' ] ?? 0 ),
+
+            only: Array.isArray( only ) ? only.join( ',' ) : only,
+            without: Array.isArray( without ) ? without.join( ',' ) : without,
+
+            starting: !!this.args.starting,
+
+            debug: !!this.args.debug,
+            dryrun: !!this.args.dryrun,
+            notice: !!this.args.notice,
+            progress: !!this.args.progress,
+            verbose: !!this.args.verbose,
+
+            ...inputParams,
+        } );
+
+        const project = new Project( await cli.getConfig( params ), params );
+
+        await project.run( stage );
     }
 
 
@@ -686,6 +721,14 @@ export namespace AbstractStage {
     > = cls.node.AbstractBuildStage.Args<SubStage> & {
 
         _: string[];
+
+        'only-compile'?: string | string[];
+        'only-build'?: string | string[];
+        'only-snapshot'?: string | string[];
+
+        'without-compile'?: string | string[];
+        'without-build'?: string | string[];
+        'without-snapshot'?: string | string[];
 
         /**
          * Passes --update param to sass when compiling; only compiles updates.

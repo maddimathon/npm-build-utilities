@@ -10,8 +10,8 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { slugify, timestamp, } from '@maddimathon/utility-typescript/functions';
-import { FileSystem, } from '../../00-universal/index.js';
+import { slugify, timestamp } from '@maddimathon/utility-typescript/functions';
+import { FileSystem } from '../../00-universal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
  * Default snapshot stage.
@@ -31,9 +31,7 @@ export class SnapshotStage extends AbstractStage {
      * Output directory for the snapshot.
      */
     path;
-    subStages = [
-        'snap',
-    ];
+    subStages = ['snap'];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
@@ -58,11 +56,22 @@ export class SnapshotStage extends AbstractStage {
     constructor(config, params, args, _pkg, _version) {
         super('snapshot', 'pink', config, params, args, _pkg, _version);
         this.filename = [
-            this.pkg.name.replace(/\//g, '_').replace(/[^a-z0-9\-_]+/gi, '-').replace(/(^\-+|\-+$)/g, ''),
-            slugify(this.version.toString(this.isDraftVersion).replace(/[\.\+]/g, '-')),
-            timestamp(null, { date: true, time: true }).replace(/[\-:]/g, '').replace(/[^\d]+/g, '-'),
+            this.pkg.name
+                .replace(/\//g, '_')
+                .replace(/[^a-z0-9\-_]+/gi, '-')
+                .replace(/(^\-+|\-+$)/g, ''),
+            slugify(
+                this.version
+                    .toString(this.isDraftVersion)
+                    .replace(/[\.\+]/g, '-'),
+            ),
+            timestamp(null, { date: true, time: true })
+                .replace(/[\-:]/g, '')
+                .replace(/[^\d]+/g, '-'),
         ].join('_');
-        this.path = this.fs.pathRelative(this.fs.pathResolve(this.config.paths.snapshot, this.filename));
+        this.path = this.fs.pathRelative(
+            this.fs.pathResolve(this.config.paths.snapshot, this.filename),
+        );
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -82,7 +91,7 @@ export class SnapshotStage extends AbstractStage {
             ['Snapshot Complete!', { italic: true }],
             [
                 this.path + '.zip',
-                { bold: false, flag: false, indent: '  ', italic: true }
+                { bold: false, flag: false, indent: '  ', italic: true },
             ],
         ];
         this.console.startOrEnd(_endMsg, which, { maxWidth: null });
@@ -96,12 +105,16 @@ export class SnapshotStage extends AbstractStage {
     async snap() {
         await this._tidy();
         this.console.verbose('copying files...', 1);
-        const copyPaths = this.try(this.fs.glob, 2, ['**/*', {
+        const copyPaths = this.try(this.fs.glob, 2, [
+            '**/*',
+            {
                 follow: false,
-                ignore: typeof this.args.ignoreGlobs === 'function'
-                    ? this.args.ignoreGlobs(this)
-                    : this.args.ignoreGlobs,
-            },]).filter(path => !this.fs.isSymLink(this.fs.pathResolve(path)));
+                ignore:
+                    typeof this.args.ignoreGlobs === 'function'
+                        ? this.args.ignoreGlobs(this)
+                        : this.args.ignoreGlobs,
+            },
+        ]).filter((path) => !this.fs.isSymLink(this.fs.pathResolve(path)));
         this.try(this.fs.copy, this.params.verbose ? 2 : 1, [
             copyPaths,
             this.params.verbose ? 2 : 1,
@@ -113,7 +126,11 @@ export class SnapshotStage extends AbstractStage {
         ]);
         await this._zip();
         this.console.verbose('removing the snapshot folder...', 1);
-        this.try(this.fs.delete, this.params.verbose ? 2 : 1, [this.path, this.params.verbose ? 2 : 1, false]);
+        this.try(this.fs.delete, this.params.verbose ? 2 : 1, [
+            this.path,
+            this.params.verbose ? 2 : 1,
+            false,
+        ]);
     }
     async _tidy() {
         this.console.verbose('removing any current folders...', 1);
@@ -122,14 +139,21 @@ export class SnapshotStage extends AbstractStage {
         if (!this.fs.exists(snapDir)) {
             return;
         }
-        const currentFolders = this.fs.readDir(snapDir)
-            .map(p => snapDir + p)
-            .filter(path => this.fs.isDirectory(path));
-        this.try(this.fs.delete, this.params.verbose ? 2 : 1, [currentFolders, this.params.verbose ? 2 : 1, false]);
+        const currentFolders = this.fs
+            .readDir(snapDir)
+            .map((p) => snapDir + p)
+            .filter((path) => this.fs.isDirectory(path));
+        this.try(this.fs.delete, this.params.verbose ? 2 : 1, [
+            currentFolders,
+            this.params.verbose ? 2 : 1,
+            false,
+        ]);
     }
     async _zip() {
         this.console.verbose('zipping folder...', 1);
-        this.try(this.console.nc.cmd, this.params.verbose ? 2 : 1, [`cd ${this.config.paths.snapshot} && zip -r ${this.filename}.zip ${this.filename}`]);
+        this.try(this.console.nc.cmd, this.params.verbose ? 2 : 1, [
+            `cd ${this.config.paths.snapshot} && zip -r ${this.filename}.zip ${this.filename}`,
+        ]);
     }
 }
 //# sourceMappingURL=SnapshotStage.js.map

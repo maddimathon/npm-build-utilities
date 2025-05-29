@@ -92,6 +92,28 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
         readonly version: string;
         readonly description: string | undefined;
         readonly homepage: string | undefined;
+        readonly config: {
+            [key: string]: any;
+            [key: number]: any;
+        } | undefined;
+        readonly license: string | undefined;
+        readonly repository: string | {
+            type: string;
+            url: string;
+            directory?: string;
+        } | undefined;
+        readonly engines: {
+            [key: string]: string;
+        } | undefined;
+        readonly files: string[] | undefined;
+        readonly main: string | undefined;
+        readonly bin: string | {
+            [key: string]: string;
+        } | undefined;
+        readonly bugs: {
+            url?: string;
+            email?: string;
+        } | undefined;
     };
     /**
      * {@inheritDoc Stage.Class.version}

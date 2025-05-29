@@ -10,7 +10,10 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { escRegExpReplace, softWrapText, } from '@maddimathon/utility-typescript/functions';
+import {
+    escRegExpReplace,
+    softWrapText,
+} from '@maddimathon/utility-typescript/functions';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
  * Default release stage.
@@ -22,14 +25,7 @@ import { AbstractStage } from './abstract/AbstractStage.js';
 export class ReleaseStage extends AbstractStage {
     /* PROPERTIES
      * ====================================================================== */
-    subStages = [
-        'changelog',
-        'package',
-        'replace',
-        'commit',
-        'github',
-        'tidy',
-    ];
+    subStages = ['changelog', 'package', 'replace', 'commit', 'github', 'tidy'];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
@@ -65,41 +61,69 @@ export class ReleaseStage extends AbstractStage {
                 highlight: this.clr,
             },
         };
-        this.params.dryrun = await this.console.nc.prompt.bool({
-            ...promptArgs,
-            message: `Is this a dry run?`,
-            default: !!this.params.dryrun,
-            msgArgs: {
-                ...promptArgs.msgArgs,
-                linesIn: 1 + (promptArgs.msgArgs?.linesIn ?? 0),
-            },
-        }) ?? !!this.params.dryrun;
+        this.params.dryrun =
+            (await this.console.nc.prompt.bool({
+                ...promptArgs,
+                message: `Is this a dry run?`,
+                default: !!this.params.dryrun,
+                msgArgs: {
+                    ...promptArgs.msgArgs,
+                    linesIn: 1 + (promptArgs.msgArgs?.linesIn ?? 0),
+                },
+            })) ?? !!this.params.dryrun;
         // corrects package number
         const inputVersionMessage = 'What version is being released?';
-        const inputVersionIndent = ' '.repeat(this.console.nc.msg.args.msg.tab.length
-            + inputVersionMessage.length
-            + 11);
-        const inputVersion = (await this.console.nc.prompt.input({
-            ...promptArgs ?? {},
-            message: inputVersionMessage,
-            default: this.pkg.version,
-            validate: (value) => (value.trim().match(/^\d+\.\d+\.\d+(\-((alpha|beta)(\.\d+)?|\d+\.\d+\.\d+))?(\+[^\s]+)?$/gi)
-                ? true
-                : softWrapText('The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, another valid version code, or metadata prefixed with `+`.', Math.max(20, (this.console.nc.msg.args.msg.maxWidth ?? 80) - inputVersionIndent.length)).split(/\n/g).join('\n' + inputVersionIndent)),
-        }) ?? '').trim();
+        const inputVersionIndent = ' '.repeat(
+            this.console.nc.msg.args.msg.tab.length
+                + inputVersionMessage.length
+                + 11,
+        );
+        const inputVersion = (
+            (await this.console.nc.prompt.input({
+                ...(promptArgs ?? {}),
+                message: inputVersionMessage,
+                default: this.pkg.version,
+                validate: (value) =>
+                    value
+                        .trim()
+                        .match(
+                            /^\d+\.\d+\.\d+(\-((alpha|beta)(\.\d+)?|\d+\.\d+\.\d+))?(\+[^\s]+)?$/gi,
+                        )
+                        ? true
+                        : softWrapText(
+                              'The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, another valid version code, or metadata prefixed with `+`.',
+                              Math.max(
+                                  20,
+                                  (this.console.nc.msg.args.msg.maxWidth ?? 80)
+                                      - inputVersionIndent.length,
+                              ),
+                          )
+                              .split(/\n/g)
+                              .join('\n' + inputVersionIndent),
+            })) ?? ''
+        ).trim();
         if (inputVersion !== this.pkg.version) {
             const currentPkgJson = this.fs.readFile('package.json');
             this.version = inputVersion;
-            this.fs.write('package.json', currentPkgJson.replace(/"version":\s*"[^"]*"/gi, escRegExpReplace(`"version": "${inputVersion}"`)), { force: true });
+            this.fs.write(
+                'package.json',
+                currentPkgJson.replace(
+                    /"version":\s*"[^"]*"/gi,
+                    escRegExpReplace(`"version": "${inputVersion}"`),
+                ),
+                { force: true },
+            );
         }
         // returns if prep questions fail
         if (!this.params.dryrun && this.isSubStageIncluded('changelog', 1)) {
             // returns
-            if (!await this.console.nc.prompt.bool({
-                ...promptArgs,
-                message: `Is .releasenotes.md updated?`,
-                default: false,
-            })) {
+            if (
+                !(await this.console.nc.prompt.bool({
+                    ...promptArgs,
+                    message: `Is .releasenotes.md updated?`,
+                    default: false,
+                }))
+            ) {
                 process.exit(0);
             }
         }
@@ -126,8 +150,15 @@ export class ReleaseStage extends AbstractStage {
                     ['  🎉 🎉 🎉', { flag: false }],
                     ['\n\n', { flag: false }],
                     [
-                        'eventually I will put a link to the github release draft here: ' + 'https://github.com/maddimathon/npm-build-utilities/releases',
-                        { bold: false, flag: false, indent: '  ', italic: true, maxWidth }
+                        'eventually I will put a link to the github release draft here: '
+                            + 'https://github.com/maddimathon/npm-build-utilities/releases',
+                        {
+                            bold: false,
+                            flag: false,
+                            indent: '  ',
+                            italic: true,
+                            maxWidth,
+                        },
                     ],
                 ];
                 this.console.startOrEnd(_endMsg, which, { maxWidth: null });
@@ -141,13 +172,22 @@ export class ReleaseStage extends AbstractStage {
         await this[subStage]();
     }
     async changelog() {
-        this.console.progress('(NOT IMPLEMENTED) running changelog sub-stage...', 1);
+        this.console.progress(
+            '(NOT IMPLEMENTED) running changelog sub-stage...',
+            1,
+        );
     }
     async commit() {
-        this.console.progress('(NOT IMPLEMENTED) running commit sub-stage...', 1);
+        this.console.progress(
+            '(NOT IMPLEMENTED) running commit sub-stage...',
+            1,
+        );
     }
     async github() {
-        this.console.progress('(NOT IMPLEMENTED) running github sub-stage...', 1);
+        this.console.progress(
+            '(NOT IMPLEMENTED) running github sub-stage...',
+            1,
+        );
     }
     /**
      * Runs the project's package class.
@@ -156,7 +196,10 @@ export class ReleaseStage extends AbstractStage {
         await this.runStage('package', 1);
     }
     async replace() {
-        this.console.progress('(NOT IMPLEMENTED) running replace sub-stage...', 1);
+        this.console.progress(
+            '(NOT IMPLEMENTED) running replace sub-stage...',
+            1,
+        );
     }
     async tidy() {
         this.console.progress('(NOT IMPLEMENTED) running tidy sub-stage...', 1);

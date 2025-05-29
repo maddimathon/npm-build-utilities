@@ -10,10 +10,10 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { VariableInspector, } from '@maddimathon/utility-typescript/classes';
+import { VariableInspector } from '@maddimathon/utility-typescript/classes';
 import { getPackageJson } from '../../lib/00-universal/getPackageJson.js';
-import { FileSystem, Project, ProjectConfig, } from '../../lib/index.js';
-import { isConfigValid, internalConfig, } from '../../lib/@internal.js';
+import { FileSystem, Project, ProjectConfig } from '../../lib/index.js';
+import { isConfigValid, internalConfig } from '../../lib/@internal.js';
 /**
  * Gets the configuration object for the current node package.
  *
@@ -42,10 +42,7 @@ export async function getConfig(params, console = null, level = 0) {
         '.scripts/build.config.js',
         'build-utils.config.js',
     ];
-    const pathsToCheck = [
-        params.config,
-        ...defaultConfigPaths,
-    ];
+    const pathsToCheck = [params.config, ...defaultConfigPaths];
     /** Pulled from an existing config file. */
     let config;
     /** Index of the path currently behind checked. */
@@ -60,7 +57,10 @@ export async function getConfig(params, console = null, level = 0) {
         if (!path) {
             continue;
         }
-        console.debug(`path #${i.toString()}: ${VariableInspector.stringify({ path })}`, 1 + level);
+        console.debug(
+            `path #${i.toString()}: ${VariableInspector.stringify({ path })}`,
+            1 + level,
+        );
         path = fs.pathResolve(path);
         // continues
         if (!fs.exists(path)) {
@@ -77,11 +77,15 @@ export async function getConfig(params, console = null, level = 0) {
         config = {};
     }
     const pkg = getPackageJson(fs);
-    const validConfig = isConfigValid(config !== null && config !== void 0 ? config : {});
+    const validConfig = isConfigValid(
+        config !== null && config !== void 0 ? config : {},
+    );
     // returns
     if (validConfig) {
         console.vi.debug({ 'valid config': config }, 1 + level);
-        const configInstance = new ProjectConfig(internalConfig(validConfig, console));
+        const configInstance = new ProjectConfig(
+            internalConfig(validConfig, console),
+        );
         console.vi.debug({ return: configInstance }, level);
         return configInstance;
     }
@@ -104,7 +108,8 @@ export async function getConfig(params, console = null, level = 0) {
             {
                 name: 'Don’t create a config file and proceed',
                 value: 'proceed',
-                description: 'You will still be prompted for the values of required fields.',
+                description:
+                    'You will still be prompted for the values of required fields.',
             },
             {
                 name: 'Cancel script and exit',
@@ -129,43 +134,57 @@ export async function getConfig(params, console = null, level = 0) {
      * Basic minimum config constructed because no valid config was found.
      */
     let newConfig = {
-        title: await console.nc.prompt.input({
-            message: 'What’s the project’s title? (human-readable, title case)',
-            default: config.title,
-            required: true,
-            msgArgs,
-        }) ?? config.title,
+        title:
+            (await console.nc.prompt.input({
+                message:
+                    'What’s the project’s title? (human-readable, title case)',
+                default: config.title,
+                required: true,
+                msgArgs,
+            })) ?? config.title,
     };
     let newCompleteConfig = undefined;
-    if (await console.nc.prompt.bool({
-        message: 'Do you want to configure optional arguments too?',
-        msgArgs,
-    })) {
+    if (
+        await console.nc.prompt.bool({
+            message: 'Do you want to configure optional arguments too?',
+            msgArgs,
+        })
+    ) {
         msgArgs.linesIn = 1;
         const defaultConfig = internalConfig(newConfig, console);
         newCompleteConfig = {
             ...defaultConfig,
             paths: {
                 ...defaultConfig.paths,
-                release: newConfig.paths?.release ?? await console.nc.prompt.input({
-                    message: 'What is the path for the release directory?',
-                    default: defaultConfig.paths.release,
-                    msgArgs,
-                }) ?? defaultConfig.paths.release,
-                snapshot: newConfig.paths?.snapshot ?? await console.nc.prompt.input({
-                    message: 'What is the path for the snapshot directory?',
-                    default: defaultConfig.paths.snapshot,
-                    msgArgs,
-                }) ?? defaultConfig.paths.snapshot,
+                release:
+                    newConfig.paths?.release
+                    ?? (await console.nc.prompt.input({
+                        message: 'What is the path for the release directory?',
+                        default: defaultConfig.paths.release,
+                        msgArgs,
+                    }))
+                    ?? defaultConfig.paths.release,
+                snapshot:
+                    newConfig.paths?.snapshot
+                    ?? (await console.nc.prompt.input({
+                        message: 'What is the path for the snapshot directory?',
+                        default: defaultConfig.paths.snapshot,
+                        msgArgs,
+                    }))
+                    ?? defaultConfig.paths.snapshot,
             },
             stages: {
                 ...defaultConfig.stages,
-                snapshot: newConfig.paths?.snapshot ?? (defaultConfig.stages.snapshot
-                    && await console.nc.prompt.bool({
-                        message: 'Include snapshot stage?',
-                        default: !!defaultConfig.stages.snapshot,
-                        msgArgs,
-                    })) ? defaultConfig.stages.snapshot : false,
+                snapshot:
+                    (newConfig.paths?.snapshot
+                    ?? (defaultConfig.stages.snapshot
+                        && (await console.nc.prompt.bool({
+                            message: 'Include snapshot stage?',
+                            default: !!defaultConfig.stages.snapshot,
+                            msgArgs,
+                        }))))
+                        ? defaultConfig.stages.snapshot
+                        : false,
             },
         };
     }
@@ -177,17 +196,21 @@ export async function getConfig(params, console = null, level = 0) {
         return configInstance;
     }
     /** Path for writing the config file. */
-    const configPath = await console.nc.prompt.select({
-        message: 'Where should we write the config file?',
-        choices: defaultConfigPaths,
-        msgArgs,
-    }) ?? defaultConfigPaths[0];
+    const configPath =
+        (await console.nc.prompt.select({
+            message: 'Where should we write the config file?',
+            choices: defaultConfigPaths,
+            msgArgs,
+        })) ?? defaultConfigPaths[0];
     /** Whether to force-write the config file. */
     const force = fs.exists(configPath)
-        ? (await console.nc.prompt.bool({
-            message: 'Should the new config file overwrite the current file at `' + configPath + '`?',
-            msgArgs,
-        }))
+        ? await console.nc.prompt.bool({
+              message:
+                  'Should the new config file overwrite the current file at `'
+                  + configPath
+                  + '`?',
+              msgArgs,
+          })
         : true;
     const configFileContent = [
         `#!/usr/bin/env node`,

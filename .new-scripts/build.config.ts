@@ -1,9 +1,5 @@
 #!/usr/bin/env node
-// @ts-check
 'use strict';
-
-import { BuildStage } from '../src/ts/index.js';
-
 /**
  * @package @maddimathon/build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
@@ -11,23 +7,22 @@ import { BuildStage } from '../src/ts/index.js';
  * @license MIT
  */
 
-/**
- * @import { Config } from "../src/ts/types/index.js"
- */
+import type {
+    Config,
+    Stage,
+} from "../src/ts/index.js";
+
+import { Build } from './classes/Build.js';
 
 const _defaults = {
-    build: BuildStage.prototype.ARGS_DEFAULT,
+    build: Build.prototype.ARGS_DEFAULT,
 };
 
-/**
- * @type {Config}
- */
-const config = {
+const config: Config = {
 
     title: 'NPM Build Utilities',
 
     paths: {
-
         release: '@new-releases',
         snapshot: '.new-snapshots',
 
@@ -40,31 +35,15 @@ const config = {
     stages: {
 
         compile: {
-
             scss: false,
-
             files: false,
-            // files: {
-            //     root: [],
-            //     src: [],
-            // },
         },
 
-        build: {
+        build: [ Build, {
 
             minimize: false,
-            // minimize: ( _stage ) => {
-            //     const _defaults_minimize = _defaults.build.minimize( _stage );
-            //     return {
-            //         ..._defaults_minimize,
-            //         css: undefined,
-            //         html: undefined,
-            //         js: undefined,
-            //         // json: undefined,
-            //     };
-            // },
 
-            prettify: ( _stage ) => {
+            prettify: ( _stage: Stage.Class ) => {
 
                 return {
                     ..._defaults.build.prettify( _stage ),
@@ -78,7 +57,7 @@ const config = {
                 };
             },
 
-            replace: ( _stage ) => {
+            replace: ( _stage: Stage.Class ) => {
 
                 const _obj = _defaults.build.replace( _stage );
 
@@ -86,7 +65,7 @@ const config = {
 
                 return _obj;
             },
-        },
+        } ],
     },
 };
 

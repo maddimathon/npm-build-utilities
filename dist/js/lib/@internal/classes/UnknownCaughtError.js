@@ -42,7 +42,7 @@ export class UnknownCaughtError extends AbstractError {
  *
  * @since 0.1.0-alpha.draft
  */
-(function (UnknownCaughtError) {
-    ;
-})(UnknownCaughtError || (UnknownCaughtError = {}));
+(function (UnknownCaughtError) {})(
+    UnknownCaughtError || (UnknownCaughtError = {}),
+);
 //# sourceMappingURL=UnknownCaughtError.js.map

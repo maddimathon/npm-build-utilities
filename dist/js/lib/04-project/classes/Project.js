@@ -11,11 +11,11 @@
  * @license MIT
  */
 import { DummyConsole } from '../../@internal/index.js';
-import { parseParamsCLI, ProjectConfig, } from '../../01-config/index.js';
+import { parseParamsCLI, ProjectConfig } from '../../01-config/index.js';
 // import {
 // } from '../../02-utils/index.js';
 import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
-import { defaultConfig, } from '../../03-stages/defaultConfig.js';
+import { defaultConfig } from '../../03-stages/defaultConfig.js';
 /**
  * Manages and runs a single project (typically used by the cli).
  *
@@ -29,7 +29,8 @@ export class Project {
      * ====================================================================== */
     static async getConsole(opts = {}) {
         const params = opts.params ?? parseParamsCLI({});
-        const config = opts.config ?? new ProjectConfig(defaultConfig(new DummyConsole()));
+        const config =
+            opts.config ?? new ProjectConfig(defaultConfig(new DummyConsole()));
         return new Stage_Console(config.clr, config, params);
     }
     /* LOCAL PROPERTIES
@@ -48,9 +49,10 @@ export class Project {
      */
     constructor(config, params) {
         this.params = params;
-        this.config = config instanceof ProjectConfig
-            ? config
-            : new ProjectConfig(config);
+        this.config =
+            config instanceof ProjectConfig
+                ? config
+                : new ProjectConfig(config);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -62,13 +64,17 @@ export class Project {
         console.progress('[Project] Debugging some info...', level);
         stageClass && console.vi.progress({ stageClass }, 1 + level);
         stageArgs && console.vi.progress({ stageArgs }, 1 + level);
-        stageInstance && console.vi.progress({
-            stageInstance: {
-                // config: stageInstance.config,
-                params: stageInstance.params,
-                args: stageInstance.args,
-            }
-        }, 1 + level);
+        stageInstance
+            && console.vi.progress(
+                {
+                    stageInstance: {
+                        // config: stageInstance.config,
+                        params: stageInstance.params,
+                        args: stageInstance.args,
+                    },
+                },
+                1 + level,
+            );
     }
     /**
      * Runs the given stage with the params.
@@ -83,7 +89,8 @@ export class Project {
         if (stage === 'debug') {
             return this.debug(console, null, null, null);
         }
-        const [stageClass, stageArgs = {},] = await this.config.getStage(stage, console) ?? [];
+        const [stageClass, stageArgs = {}] =
+            (await this.config.getStage(stage, console)) ?? [];
         // returns
         if (!stageClass) {
             if (this.params.debug) {

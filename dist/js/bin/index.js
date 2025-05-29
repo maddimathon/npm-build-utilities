@@ -18,10 +18,10 @@
  */
 import minimist from 'minimist';
 import help from './help.js';
-import { parseParamsCLI, Project, } from '../lib/index.js';
+import { parseParamsCLI, Project } from '../lib/index.js';
 import { getConfig } from './lib/index.js';
 const params = parseParamsCLI(minimist(process.argv.slice(2)));
-const scriptName = (params._?.[0]);
+const scriptName = params._?.[0];
 switch (scriptName) {
     case 'debug':
     case 'snapshot':

@@ -10,7 +10,7 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { mergeArgs, } from '@maddimathon/utility-typescript/functions';
+import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import { defaultConfig } from './defaultConfig.js';
 /**
  * Takes a partial {@link Config} object and converts it to a
@@ -20,119 +20,142 @@ import { defaultConfig } from './defaultConfig.js';
  *
  * @internal
  */
-export function internalConfig(_config, console) {
+export function internalConfig(inputConfig, console) {
     const def = defaultConfig(console);
-    const config = {
-        ...def,
-        ..._config,
-        paths: {
-            ...def.paths,
-            ..._config.paths,
-        },
-        stages: {
-            ...def.stages,
-            ..._config.stages,
-        },
-        compiler: {
-            ...def.compiler,
-            ..._config.compiler ?? {},
-            tsConfig: mergeArgs(def.compiler.tsConfig, _config.compiler?.tsConfig ?? {}, true),
-        },
-    };
     const stages = def.stages;
-    if (config.stages) {
-        for (const _stage in config.stages) {
-            const stage = _stage;
-            const stageConfig = config.stages[stage];
-            // continues
-            if (typeof stageConfig === 'undefined') {
+    if (inputConfig.stages) {
+        for (const t_stage in inputConfig.stages) {
+            const _stage = t_stage;
+            const _input = inputConfig.stages[_stage];
+            // continues - sets stage to false first
+            if (typeof _input === 'undefined' || _input === false) {
+                stages[_stage] = false;
                 continue;
             }
-            let stageClass = def.stages[stage] || undefined;
-            let stageArgs = undefined;
-            // continues
-            if (typeof stageConfig === 'undefined') {
+            // continues - keep defaults
+            if (_input === true) {
                 continue;
             }
-            // continues
-            if (Array.isArray(stageConfig)) {
-                const [tmp_0, tmp_1] = stageConfig;
-                if (tmp_0 && typeof tmp_0 === 'function') {
-                    stageClass = tmp_0;
-                }
-                if (tmp_1 && typeof tmp_1 === 'object') {
-                    stageArgs = tmp_1;
-                }
-                if (stageClass) {
-                    stages[stage] = [stageClass, stageArgs];
+            // continues - this is a class input
+            if (typeof _input === 'function') {
+                if (typeof _input.prototype !== 'undefined') {
+                    stages[_stage] = _input;
                 }
                 continue;
             }
+            // continues - this is a class + args input
+            if (Array.isArray(_input)) {
+                // confirms this is a class
+                if (
+                    typeof _input[0] === 'function'
+                    && typeof _input[0].prototype !== 'undefined'
+                ) {
+                    stages[_stage] = _input[1]
+                        ? [_input[0], _input[1]]
+                        : _input[0];
+                }
+                continue;
+            }
+            // continues - the args were input
+            if (def.stages[_stage]) {
+                stages[_stage] = [def.stages[_stage], _input];
+                continue;
+            }
+        }
+    }
+    const paths = def.paths;
+    if (inputConfig.paths) {
+        for (const t_path in inputConfig.paths) {
+            const _path = t_path;
             // continues
-            switch (typeof stageConfig) {
-                case 'boolean':
-                    if (!stageConfig) {
-                        stages[stage] = false;
+            if (typeof inputConfig.paths[_path] === 'undefined') {
+                continue;
+            }
+            switch (_path) {
+                case 'dist':
+                    switch (typeof inputConfig.paths[_path]) {
+                        case 'function':
+                            paths[_path] = {
+                                _: inputConfig.paths[_path](),
+                                docs: inputConfig.paths[_path]('docs'),
+                                scss: inputConfig.paths[_path]('scss'),
+                            };
+                            break;
+                        case 'string':
+                            const _distDirString = inputConfig.paths[
+                                _path
+                            ].replace(/\/$/gi, '');
+                            paths[_path] = {
+                                _: _distDirString,
+                                docs: _distDirString + '/docs',
+                                scss: _distDirString + '/scss',
+                            };
+                            break;
+                        case 'object':
+                            paths[_path] = {
+                                ...def.paths[_path],
+                                ...inputConfig.paths[_path],
+                            };
+                            break;
                     }
-                    continue;
                     break;
-                case 'object':
-                    // is an args object
-                    if (stageClass) {
-                        stages[stage] = [stageClass, stageConfig];
+                case 'scripts':
+                    switch (typeof inputConfig.paths[_path]) {
+                        case 'string':
+                            const _distDirString = inputConfig.paths[
+                                _path
+                            ].replace(/\/$/gi, '');
+                            paths[_path] = {
+                                _: _distDirString,
+                                logs: _distDirString + '/logs',
+                            };
+                            break;
+                        case 'object':
+                            paths[_path] = {
+                                ...def.paths[_path],
+                                ...inputConfig.paths[_path],
+                            };
+                            break;
                     }
-                    continue;
+                    break;
+                case 'src':
+                    switch (typeof inputConfig.paths[_path]) {
+                        case 'function':
+                            paths[_path] = {
+                                _: inputConfig.paths[_path](),
+                                docs: inputConfig.paths[_path]('docs'),
+                                scss: inputConfig.paths[_path]('scss'),
+                                ts: inputConfig.paths[_path]('ts'),
+                            };
+                            break;
+                        case 'object':
+                            paths[_path] = {
+                                ...def.paths[_path],
+                                ...inputConfig.paths[_path],
+                            };
+                            break;
+                    }
                     break;
                 default:
-                    stages[stage] = stageConfig;
-                    continue;
+                    paths[_path] = inputConfig.paths[_path];
                     break;
             }
         }
     }
-    const paths = {
-        ...config.paths,
-        dist: typeof config.paths.dist === 'function'
-            ? {
-                _: config.paths.dist(),
-                docs: config.paths.dist('docs'),
-                scss: config.paths.dist('scss'),
-            }
-            : (typeof config.paths.dist === 'object'
-                ? {
-                    ...def.paths.dist,
-                    ...config.paths.dist,
-                }
-                : {
-                    _: config.paths.dist,
-                    docs: config.paths.dist.replace(/\/$/gi, '') + '/docs',
-                    scss: config.paths.dist.replace(/\/$/gi, '') + '/scss',
-                }),
-        scripts: typeof config.paths.scripts === 'string'
-            ? {
-                _: config.paths.scripts,
-                logs: config.paths.scripts.replace(/\/$/gi, '') + '/logs',
-            }
-            : {
-                _: config.paths.scripts._ ?? def.paths.scripts._,
-                logs: config.paths.scripts.logs ?? def.paths.scripts.logs,
-            },
-        src: typeof config.paths.src === 'function'
-            ? {
-                _: config.paths.src(),
-                docs: config.paths.src('docs'),
-                scss: config.paths.src('scss'),
-                ts: config.paths.src('ts'),
-            }
-            : {
-                ...def.paths.src,
-                ...config.paths.src,
-            },
-    };
     return {
-        ...config,
+        ...def,
+        ...inputConfig,
         paths,
         stages,
+        compiler: {
+            ...def.compiler,
+            ...(inputConfig.compiler ?? {}),
+            tsConfig: mergeArgs(
+                def.compiler.tsConfig,
+                inputConfig.compiler?.tsConfig ?? {},
+                true,
+            ),
+        },
     };
 }
 //# sourceMappingURL=internalConfig.js.map

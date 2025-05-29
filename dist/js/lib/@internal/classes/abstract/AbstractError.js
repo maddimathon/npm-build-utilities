@@ -10,7 +10,10 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { CustomError, VariableInspector } from '@maddimathon/utility-typescript/classes';
+import {
+    CustomError,
+    VariableInspector,
+} from '@maddimathon/utility-typescript/classes';
 /**
  * An extension of the utilities error for use within the library.
  *
@@ -104,7 +107,9 @@ export class AbstractError extends CustomError {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
      * @see {@link NodeConsole_Error.toJSON | NodeConsole_Error.toJSON()}
      */
-    valueOf() { return this.toJSON(); }
+    valueOf() {
+        return this.toJSON();
+    }
 }
 /**
  * Used only for {@link AbstractError}.
@@ -113,8 +118,5 @@ export class AbstractError extends CustomError {
  *
  * @since 0.1.0-alpha.draft
  */
-(function (AbstractError) {
-    ;
-    ;
-})(AbstractError || (AbstractError = {}));
+(function (AbstractError) {})(AbstractError || (AbstractError = {}));
 //# sourceMappingURL=AbstractError.js.map

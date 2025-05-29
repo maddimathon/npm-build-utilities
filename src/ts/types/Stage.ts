@@ -168,6 +168,8 @@ export namespace Args {
          */
         export type Minimize = {
             [ K in FileSystemType.Minify.Format ]?:
+            | false
+            | undefined
             | string[]
             | {
                 globs: string[];
@@ -188,6 +190,8 @@ export namespace Args {
          */
         export type Prettify = {
             [ K in FileSystemType.Prettier.Format ]?:
+            | false
+            | undefined
             | [ string[] ]
             | [ string[], undefined | Partial<FileSystemType.Prettier.Args> ]
             | readonly [ readonly string[] ]

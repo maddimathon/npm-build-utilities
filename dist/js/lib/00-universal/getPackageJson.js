@@ -10,8 +10,8 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { ProjectError, } from '../@internal/index.js';
-import { FileSystem, } from './classes/index.js';
+import { ProjectError } from '../@internal/index.js';
+import { FileSystem } from './classes/index.js';
 /**
  * Gets a copy of the package.json object for the current npm project.
  *
@@ -31,20 +31,22 @@ export function getPackageJson(args) {
     let fs;
     if (args instanceof FileSystem) {
         fs = args;
-    }
-    else {
+    } else {
         if (args.fs instanceof FileSystem) {
             fs = args.fs;
-        }
-        else if (args.console) {
+        } else if (args.console) {
             fs = new FileSystem(args.console, args.fs);
         }
     }
     // throws
     if (!fs) {
-        throw new ProjectError('No appropriate FileSystem instance found or constructable.', {
-            function: 'getPackageJson',
-        }, 0);
+        throw new ProjectError(
+            'No appropriate FileSystem instance found or constructable.',
+            {
+                function: 'getPackageJson',
+            },
+            0,
+        );
     }
     return JSON.parse(fs.readFile('package.json'));
 }

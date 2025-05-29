@@ -10,11 +10,17 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { DummyConsole, } from '../@internal/index.js';
+import { DummyConsole } from '../@internal/index.js';
 import { getPackageJson } from '../00-universal/getPackageJson.js';
-import { catchOrReturn, FileSystem, } from '../00-universal/index.js';
-import { ProjectConfig, } from '../01-config/index.js';
-import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage, } from './index.js';
+import { catchOrReturn, FileSystem } from '../00-universal/index.js';
+import { ProjectConfig } from '../01-config/index.js';
+import {
+    BuildStage,
+    CompileStage,
+    PackageStage,
+    ReleaseStage,
+    SnapshotStage,
+} from './index.js';
 const _dummyConsole = new DummyConsole();
 /**
  * Complete, default configuration for the library.
@@ -22,10 +28,11 @@ const _dummyConsole = new DummyConsole();
  * @category Config
  */
 export function defaultConfig(args) {
-    const fs = new FileSystem((args && !('pkg' in args)) ? args : _dummyConsole);
-    const pkg = (args && ('pkg' in args))
-        ? args.pkg
-        : catchOrReturn(getPackageJson, 0, fs.console, fs, [fs]);
+    const fs = new FileSystem(args && !('pkg' in args) ? args : _dummyConsole);
+    const pkg =
+        args && 'pkg' in args
+            ? args.pkg
+            : catchOrReturn(getPackageJson, 0, fs.console, fs, [fs]);
     const paths = {
         release: '@releases',
         snapshot: '.snapshots',
@@ -55,12 +62,8 @@ export function defaultConfig(args) {
         test: false,
     };
     const tsConfig = {
-        extends: [
-            '@tsconfig/node20/tsconfig.json',
-        ],
-        exclude: [
-            '**/node_modules/**/*',
-        ],
+        extends: ['@tsconfig/node20/tsconfig.json'],
+        exclude: ['**/node_modules/**/*'],
         compilerOptions: {
             allowJs: true,
             checkJs: true,

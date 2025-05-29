@@ -122,7 +122,7 @@ export declare namespace Args {
          * @interface
          */
         type Minimize = {
-            [K in FileSystemType.Minify.Format]?: string[] | {
+            [K in FileSystemType.Minify.Format]?: false | undefined | string[] | {
                 globs: string[];
                 ignore?: string[];
                 args?: Partial<FileSystemType.Minify.Args>;
@@ -138,7 +138,7 @@ export declare namespace Args {
          * @interface
          */
         type Prettify = {
-            [K in FileSystemType.Prettier.Format]?: [string[]] | [string[], undefined | Partial<FileSystemType.Prettier.Args>] | readonly [readonly string[]] | readonly [readonly string[], undefined | Partial<FileSystemType.Prettier.Args>];
+            [K in FileSystemType.Prettier.Format]?: false | undefined | [string[]] | [string[], undefined | Partial<FileSystemType.Prettier.Args>] | readonly [readonly string[]] | readonly [readonly string[], undefined | Partial<FileSystemType.Prettier.Args>];
         };
     }
     /**

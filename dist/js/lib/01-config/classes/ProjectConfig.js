@@ -10,7 +10,7 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { timestamp, typeOf, } from '@maddimathon/utility-typescript/functions';
+import { timestamp, typeOf } from '@maddimathon/utility-typescript/functions';
 /**
  * A super-simple class just for the configuration of the entire project.
  *
@@ -39,14 +39,23 @@ export class ProjectConfig {
         const rpl = {
             current: [
                 [/___(CURRENT)_DATE___/g, _currentDate],
-                [/___(CURRENT)_DESC(RIPTION)?___/g, stage.pkg.description ?? ''],
+                [
+                    /___(CURRENT)_DESC(RIPTION)?___/g,
+                    stage.pkg.description ?? '',
+                ],
                 [/___(CURRENT)_(HOMEPAGE|URL)___/g, stage.pkg.homepage ?? ''],
-                [/___(CURRENT)_VERSION___/g, stage.version.toString(stage.isDraftVersion)],
+                [
+                    /___(CURRENT)_VERSION___/g,
+                    stage.version.toString(stage.isDraftVersion),
+                ],
                 [/___(CURRENT)_YEAR___/g, _currentYear],
             ],
             package: [
                 [/___(PKG)_DATE___/g, _currentDate],
-                [/___(PKG)_VERSION___/g, stage.version.toString(stage.isDraftVersion)],
+                [
+                    /___(PKG)_VERSION___/g,
+                    stage.version.toString(stage.isDraftVersion),
+                ],
                 [/___(PKG)_YEAR___/g, _currentYear],
             ],
         };
@@ -69,17 +78,23 @@ export class ProjectConfig {
         this.replace = config.replace;
         this.stages = config.stages;
         this.title = config.title;
-        if (this.stages.compile
-            && Array.isArray(this.stages.compile)) {
+        if (this.stages.compile && Array.isArray(this.stages.compile)) {
             // const _compileArgs = this.stages.compile[ 1 ] ?? {};
             if (!this.stages.compile[1]) {
                 this.stages.compile[1] = {};
             }
-            if (this.stages.compile[1].files
-                && typeof this.stages.compile[1].files === 'object') {
-                const totalPathCount = Object.values(this.stages.compile[1].files)
-                    .map(arr => arr.length)
-                    .reduce((runningTotal = 0, current = 0) => runningTotal + current);
+            if (
+                this.stages.compile[1].files
+                && typeof this.stages.compile[1].files === 'object'
+            ) {
+                const totalPathCount = Object.values(
+                    this.stages.compile[1].files,
+                )
+                    .map((arr) => arr.length)
+                    .reduce(
+                        (runningTotal = 0, current = 0) =>
+                            runningTotal + current,
+                    );
                 if (totalPathCount < 1) {
                     this.stages.compile[1].files = false;
                 }
@@ -102,26 +117,31 @@ export class ProjectConfig {
         const stageConfig = this.stages[stage];
         // returns
         if (!stageConfig) {
-            console.debug(`no ${stage} stage config found, skipping...`, 0, { italic: true });
+            console.debug(`no ${stage} stage config found, skipping...`, 0, {
+                italic: true,
+            });
             return undefined;
         }
         let stageClass;
         let stageArgs;
         if (Array.isArray(stageConfig)) {
-            const [_stageClass, _stageArgs,] = stageConfig;
+            const [_stageClass, _stageArgs] = stageConfig;
             if (_stageClass && typeOf(_stageClass) === 'class') {
                 stageClass = _stageClass;
             }
             if (_stageArgs && typeof _stageArgs === 'object') {
                 stageArgs = _stageArgs;
             }
-        }
-        else if (stageConfig) {
+        } else if (stageConfig) {
             stageClass = stageConfig;
         }
         // returns
         if (!stageClass) {
-            console.progress(`no valid ${stage} stage class found, skipping...`, 0, { italic: true });
+            console.progress(
+                `no valid ${stage} stage class found, skipping...`,
+                0,
+                { italic: true },
+            );
             return undefined;
         }
         return [stageClass, stageArgs ?? {}];
@@ -156,7 +176,9 @@ export class ProjectConfig {
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString | Object.prototype.toString()}
      */
-    toString() { return JSON.stringify(this, null, 4); }
+    toString() {
+        return JSON.stringify(this, null, 4);
+    }
     /**
      * Overrides the default function to return an object representation of this
      * object.
@@ -166,6 +188,8 @@ export class ProjectConfig {
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
      * @see {@link ProjectConfig.toJSON | ProjectConfig.toJSON()}
      */
-    valueOf() { return this.toJSON(); }
+    valueOf() {
+        return this.toJSON();
+    }
 }
 //# sourceMappingURL=ProjectConfig.js.map

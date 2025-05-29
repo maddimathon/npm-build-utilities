@@ -29,9 +29,8 @@ export var LocalError;
      * @since 0.1.0-alpha.draft
      */
     let Handler;
-    (function (Handler) {
-        ;
-    })(Handler = LocalError.Handler || (LocalError.Handler = {}));
-    ;
+    (function (Handler) {})(
+        (Handler = LocalError.Handler || (LocalError.Handler = {})),
+    );
 })(LocalError || (LocalError = {}));
 //# sourceMappingURL=LocalError.js.map

@@ -37,13 +37,16 @@ export class SemVer {
      */
     get regex() {
         if (typeof this.#regex === 'undefined') {
-            this.#regex = new RegExp([
-                '^',
-                '(\\d+)\\.(\\d+)\\.(\\d+)', // major.minor.patch
-                '(?:-((?:\\d+|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:\\d+|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?', // prerelease
-                '(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?', // release notes
-                '$',
-            ].join(''), 'i');
+            this.#regex = new RegExp(
+                [
+                    '^',
+                    '(\\d+)\\.(\\d+)\\.(\\d+)', // major.minor.patch
+                    '(?:-((?:\\d+|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:\\d+|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?', // prerelease
+                    '(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?', // release notes
+                    '$',
+                ].join(''),
+                'i',
+            );
         }
         return this.#regex;
     }
@@ -53,16 +56,21 @@ export class SemVer {
     constructor(input, console) {
         this.input = input;
         this.console = console;
-        const matches = (input.match(this.regex)
+        const matches =
+            input.match(this.regex)
             ?? node_SemVer.clean(input)?.match(this.regex)
             ?? node_SemVer.valid(node_SemVer.coerce(input))?.match(this.regex)
-            ?? null); // we're confident in this tuple because of the regex match
+            ?? null; // we're confident in this tuple because of the regex match
         // throws
         if (matches === null) {
-            throw new SemVer.Error('Version string is invalid: ' + input, SemVer.Error.INVALID_INPUT, {
-                class: 'SemVer',
-                method: 'constructor',
-            });
+            throw new SemVer.Error(
+                'Version string is invalid: ' + input,
+                SemVer.Error.INVALID_INPUT,
+                {
+                    class: 'SemVer',
+                    method: 'constructor',
+                },
+            );
         }
         this.major = Number(matches[1]);
         this.minor = Number(matches[2]);
@@ -70,14 +78,19 @@ export class SemVer {
         // throws if not a number
         for (const prop of ['major', 'minor', 'patch']) {
             if (Number.isNaN(this[prop])) {
-                throw new SemVer.Error(`${toTitleCase(prop)} version is not a number: ` + this[prop], SemVer.Error.INVALID_VERSION, {
-                    class: 'SemVer',
-                    method: 'constructor',
-                });
+                throw new SemVer.Error(
+                    `${toTitleCase(prop)} version is not a number: `
+                        + this[prop],
+                    SemVer.Error.INVALID_VERSION,
+                    {
+                        class: 'SemVer',
+                        method: 'constructor',
+                    },
+                );
             }
         }
         this.prerelease = matches[4]?.includes('.')
-            ? matches[4].split('.').filter(val => val.length)
+            ? matches[4].split('.').filter((val) => val.length)
             : matches[4];
         if (!this.prerelease?.length) {
             this.prerelease = undefined;
@@ -86,21 +99,36 @@ export class SemVer {
         if (!this.meta?.length) {
             this.meta = undefined;
         }
-        this.console.debug([
-            ['new SemVer()', { bold: true }],
-            [this.console.vi.stringify({ matches })],
-            [this.console.vi.stringify({
-                    'this': {
-                        major: this.major,
-                        minor: this.minor,
-                        patch: this.patch,
-                        prerelease: this.prerelease,
-                        meta: this.meta,
-                    }
-                })],
-            [this.console.vi.stringify({ 'this.toString()': this.toString() })],
-            [this.console.vi.stringify({ 'this.toString( true )': this.toString(true) })],
-        ], 0, { bold: false, italic: false }, { bold: true });
+        this.console.debug(
+            [
+                ['new SemVer()', { bold: true }],
+                [this.console.vi.stringify({ matches })],
+                [
+                    this.console.vi.stringify({
+                        this: {
+                            major: this.major,
+                            minor: this.minor,
+                            patch: this.patch,
+                            prerelease: this.prerelease,
+                            meta: this.meta,
+                        },
+                    }),
+                ],
+                [
+                    this.console.vi.stringify({
+                        'this.toString()': this.toString(),
+                    }),
+                ],
+                [
+                    this.console.vi.stringify({
+                        'this.toString( true )': this.toString(true),
+                    }),
+                ],
+            ],
+            0,
+            { bold: false, italic: false },
+            { bold: true },
+        );
     }
     toString(draft = false) {
         let version = [
@@ -113,21 +141,21 @@ export class SemVer {
         if (draft) {
             if (!prerelease) {
                 prerelease = 'draft';
-            }
-            else if (!Array.isArray(prerelease)) {
+            } else if (!Array.isArray(prerelease)) {
                 prerelease = [prerelease, 'draft'];
-            }
-            else if (!meta) {
+            } else if (!meta) {
                 meta = 'draft';
-            }
-            else {
+            } else {
                 meta = meta + '--draft';
             }
         }
         if (prerelease) {
-            version = version + '-' + (Array.isArray(prerelease)
-                ? prerelease.join('.')
-                : prerelease);
+            version =
+                version
+                + '-'
+                + (Array.isArray(prerelease)
+                    ? prerelease.join('.')
+                    : prerelease);
         }
         if (meta) {
             version = version + '+' + meta;
@@ -195,7 +223,6 @@ export class SemVer {
          * patch versions.
          */
         Error.INVALID_VERSION = '1';
-        ;
-    })(Error = SemVer.Error || (SemVer.Error = {}));
+    })((Error = SemVer.Error || (SemVer.Error = {})));
 })(SemVer || (SemVer = {}));
 //# sourceMappingURL=SemVer.js.map

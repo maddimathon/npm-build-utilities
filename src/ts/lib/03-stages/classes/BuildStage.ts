@@ -279,7 +279,6 @@ export class BuildStage extends AbstractStage<
      * ====================================================================== */
 
     protected async runSubStage( subStage: Stage.SubStage.Build ) {
-        if ( !this.args[ subStage ] ) { return; }
         await this[ subStage ]();
     }
 
@@ -315,7 +314,10 @@ export class BuildStage extends AbstractStage<
             const _format = t_format as FileSystemType.Minify.Format;
 
             // continues
-            if ( typeof args[ _format ] === 'undefined' ) {
+            if (
+                typeof args[ _format ] === 'undefined'
+                || args[ _format ] === false
+            ) {
                 continue;
             }
 

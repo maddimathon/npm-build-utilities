@@ -12,8 +12,7 @@
  */
 // import type {
 // } from '../../types/index.js';
-;
-import { errorHandler, } from '../@internal/index.js';
+import { errorHandler } from '../@internal/index.js';
 /**
  * Runs a function, with parameters as applicable, and catches (& handles)
  * anything thrown.
@@ -24,16 +23,21 @@ import { errorHandler, } from '../@internal/index.js';
  *
  * @experimental
  */
-export function catchOrReturn(tryer, level, console, fs, params, callback = null) {
+export function catchOrReturn(
+    tryer,
+    level,
+    console,
+    fs,
+    params,
+    callback = null,
+) {
     try {
         return tryer(...(params ?? []));
-    }
-    catch (error) {
+    } catch (error) {
         let callbackArgs = {};
         if (!callback) {
             callback = errorHandler;
-        }
-        else if (Array.isArray(callback)) {
+        } else if (Array.isArray(callback)) {
             callbackArgs = callback[1];
             callback = callback[0];
         }

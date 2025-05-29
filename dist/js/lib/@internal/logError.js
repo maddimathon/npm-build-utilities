@@ -30,12 +30,18 @@ import { slugify } from '@maddimathon/utility-typescript/functions/index';
  * @since 0.1.0-alpha.draft
  */
 export function logError(logMsg, error, level, args) {
-    const { console, date = new Date(), errMsg, fs, outputWarning = true, } = args;
+    const {
+        console,
+        date = new Date(),
+        errMsg,
+        fs,
+        outputWarning = true,
+    } = args;
     let msgs = [
         [(errMsg ?? logMsg) + '\n'],
         ...errorStringify(error, {}, console, fs, level),
     ];
-    const filename = typeof error === 'object' && error?.name || 'error';
+    const filename = (typeof error === 'object' && error?.name) || 'error';
     const result = writeLog(msgs, slugify(filename), {
         config: console.config,
         date,
@@ -46,10 +52,13 @@ export function logError(logMsg, error, level, args) {
     if (result) {
         _returnMsg = [
             [logMsg],
-            ['log written to: ' + fs.pathRelative(result).replace(' ', '%20'), { italic: true, maxWidth: null }],
+            [
+                'log written to: '
+                    + fs.pathRelative(result).replace(' ', '%20'),
+                { italic: true, maxWidth: null },
+            ],
         ];
-    }
-    else {
+    } else {
         _returnMsg = [
             [logMsg],
             [''],
@@ -68,7 +77,5 @@ export function logError(logMsg, error, level, args) {
  *
  * @since 0.1.0-alpha.draft
  */
-(function (logError) {
-    ;
-})(logError || (logError = {}));
+(function (logError) {})(logError || (logError = {}));
 //# sourceMappingURL=logError.js.map

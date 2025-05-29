@@ -36,7 +36,5 @@ export class ProjectError extends AbstractError {
  *
  * @since 0.1.0-alpha.draft
  */
-(function (ProjectError) {
-    ;
-})(ProjectError || (ProjectError = {}));
+(function (ProjectError) {})(ProjectError || (ProjectError = {}));
 //# sourceMappingURL=ProjectError.js.map

@@ -12,8 +12,11 @@
  */
 // import type {
 // } from '@maddimathon/utility-typescript/types';
-import { mergeArgs, } from '@maddimathon/utility-typescript/functions';
-import { node, VariableInspector, } from '@maddimathon/utility-typescript/classes';
+import { mergeArgs } from '@maddimathon/utility-typescript/functions';
+import {
+    node,
+    VariableInspector,
+} from '@maddimathon/utility-typescript/classes';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
  *
@@ -46,17 +49,27 @@ export class Stage_Console {
         this.clr = clr;
         this.config = config;
         this.params = params;
-        this.nc = new node.NodeConsole(mergeArgs(this.config.console?.nc ?? {}, {
-            msgMaker: {
-                msg: {
-                    clr: this.clr,
+        this.nc = new node.NodeConsole(
+            mergeArgs(
+                this.config.console?.nc ?? {},
+                {
+                    msgMaker: {
+                        msg: {
+                            clr: this.clr,
+                        },
+                    },
                 },
-            },
-        }, true));
+                true,
+            ),
+        );
         this.msgArgs = this.msgArgs.bind(this);
         this.vi = new _Stage_Console_VarInspect(
-        // this.name,
-        this.config, this.params, this.msgArgs, this.nc);
+            // this.name,
+            this.config,
+            this.params,
+            this.msgArgs,
+            this.nc,
+        );
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -154,19 +167,20 @@ export class Stage_Console {
             linesIn: 0,
             linesOut: 0,
         };
-        const bulkMsgs = typeof msg === 'string'
-            ? [[msg]]
-            : msg.map((item) => {
-                // returns
-                if (typeof item === 'string') {
-                    return [item, itemArgs];
-                }
-                item[1] = {
-                    ...(item[1] ?? {}),
-                    ...itemArgs,
-                };
-                return item;
-            });
+        const bulkMsgs =
+            typeof msg === 'string'
+                ? [[msg]]
+                : msg.map((item) => {
+                      // returns
+                      if (typeof item === 'string') {
+                          return [item, itemArgs];
+                      }
+                      item[1] = {
+                          ...(item[1] ?? {}),
+                          ...itemArgs,
+                      };
+                      return item;
+                  });
         switch (which) {
             case 'start':
                 linesOut = 0;
@@ -204,10 +218,15 @@ export class Stage_Console {
         if (!this.params.verbose) {
             return;
         }
-        this.log(msg, level, {
-            bold: false,
-            ...msgArgs,
-        }, timeArgs);
+        this.log(
+            msg,
+            level,
+            {
+                bold: false,
+                ...msgArgs,
+            },
+            timeArgs,
+        );
     }
 }
 /**
@@ -244,13 +263,17 @@ export class _Stage_Console_VarInspect {
     /* LOCAL METHODS
      * ====================================================================== */
     msgArgs(level = 0, msgArgs = {}, timeArgs = {}) {
-        return this._msgArgs(level, {
-            bold: false,
-            flag: false,
-            italic: false,
-            ...msgArgs,
-            maxWidth: null,
-        }, timeArgs);
+        return this._msgArgs(
+            level,
+            {
+                bold: false,
+                flag: false,
+                italic: false,
+                ...msgArgs,
+                maxWidth: null,
+            },
+            timeArgs,
+        );
     }
     /** {@inheritDoc Logger.VarInspect.debug} */
     debug(variable, level, msgArgs, timeArgs) {
@@ -280,17 +303,25 @@ export class _Stage_Console_VarInspect {
     }
     /** {@inheritDoc Logger.VarInspect.stringify} */
     stringify(variable, args) {
-        return VariableInspector.stringify(variable, args).replace(/\n\s*\n/gi, '\n');
+        return VariableInspector.stringify(variable, args).replace(
+            /\n\s*\n/gi,
+            '\n',
+        );
     }
     /** {@inheritDoc Logger.VarInspect.verbose} */
     verbose(variable, level, msgArgs, timeArgs) {
         if (!this.params.verbose) {
             return;
         }
-        this.log(variable, level, {
-            bold: false,
-            ...msgArgs,
-        }, timeArgs);
+        this.log(
+            variable,
+            level,
+            {
+                bold: false,
+                ...msgArgs,
+            },
+            timeArgs,
+        );
     }
 }
 //# sourceMappingURL=Stage_Console.js.map

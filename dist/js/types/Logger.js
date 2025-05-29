@@ -18,9 +18,5 @@
  * @since 0.1.0-alpha.draft
  */
 export var Logger;
-(function (Logger) {
-    ;
-    ;
-})(Logger || (Logger = {}));
-;
+(function (Logger) {})(Logger || (Logger = {}));
 //# sourceMappingURL=Logger.js.map

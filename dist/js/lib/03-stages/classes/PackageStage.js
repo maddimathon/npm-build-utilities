@@ -9,8 +9,7 @@
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
- */ ;
-import { AbstractStage } from './abstract/AbstractStage.js';
+ */ import { AbstractStage } from './abstract/AbstractStage.js';
 /**
  * Default package stage.
  *
@@ -21,12 +20,7 @@ import { AbstractStage } from './abstract/AbstractStage.js';
 export class PackageStage extends AbstractStage {
     /* PROPERTIES
      * ====================================================================== */
-    subStages = [
-        'snapshot',
-        'build',
-        'copy',
-        'zip',
-    ];
+    subStages = ['snapshot', 'build', 'copy', 'zip'];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
@@ -43,7 +37,15 @@ export class PackageStage extends AbstractStage {
      * @param _version  Optional. Current version object, if any.
      */
     constructor(config, params, args, _pkg, _version) {
-        super('package', params?.releasing ? 'orange' : 'purple', config, params, args, _pkg, _version);
+        super(
+            'package',
+            params?.releasing ? 'orange' : 'purple',
+            config,
+            params,
+            args,
+            _pkg,
+            _version,
+        );
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -58,17 +60,23 @@ export class PackageStage extends AbstractStage {
         // returns
         switch (which) {
             case 'start':
-                this.console.startOrEnd([
-                    ['PACKAGING...'],
-                    [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
-                ], which);
+                this.console.startOrEnd(
+                    [
+                        ['PACKAGING...'],
+                        [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
+                    ],
+                    which,
+                );
                 return;
             case 'end':
-                this.console.startOrEnd([
-                    ['✓ ', { flag: false }],
-                    ['Packaged!', { italic: true }],
-                    [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
-                ], which);
+                this.console.startOrEnd(
+                    [
+                        ['✓ ', { flag: false }],
+                        ['Packaged!', { italic: true }],
+                        [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
+                    ],
+                    which,
+                );
                 return;
         }
         return super.startEndNotice(which, false);

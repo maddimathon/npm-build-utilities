@@ -162,6 +162,17 @@ export abstract class AbstractStage<
 
             description: this._pkg?.description,
             homepage: this._pkg?.homepage,
+
+            config: this._pkg?.config,
+
+            license: this._pkg?.license,
+            repository: this._pkg?.repository,
+            engines: this._pkg?.engines,
+            files: this._pkg?.files,
+            main: this._pkg?.main,
+            bin: this._pkg?.bin,
+            bugs: this._pkg?.bugs,
+
         } as const satisfies Node.PackageJson;
     }
 

@@ -13,8 +13,8 @@ import NodeFS from 'node:fs';
 
 import { AbstractStage } from './abstracts/AbstractStage.js';
 
-import { Snapshot } from './Snapshot.js';
-import { Build } from './Build.js';
+// import { Snapshot } from './Snapshot.js';
+// import { Build } from './Build.js';
 
 import {
     currentReplacements,
@@ -136,35 +136,11 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
      * ====================================================================== */
 
     protected async snapshot() {
-
-        const snap = new Snapshot( {
-            ...this.args as Snapshot.Args,
-
-            'log-base-level': 1 + ( this.args[ 'log-base-level' ] ?? 0 ),
-
-            only: this.args[ 'only-snap' ],
-            without: this.args[ 'without-snap' ],
-
-            packaging: true,
-        } );
-
-        await snap.run();
+        await this.runNewStageCommand( 'snapshot', { packaging: true } );
     }
 
     protected async build() {
-
-        const build = new Build( {
-            ...this.args as Build.Args,
-
-            'log-base-level': 1 + ( this.args[ 'log-base-level' ] ?? 0 ),
-
-            only: this.args[ 'only-build' ],
-            without: this.args[ 'without-build' ],
-
-            packaging: true,
-        } );
-
-        await build.run();
+        await this.runNewStageCommand( 'build', { packaging: true } );
     }
 
 
@@ -347,12 +323,6 @@ export class Package extends AbstractStage<Package.Stages, Package.Args> {
 export namespace Package {
 
     export type Args = AbstractStage.Args<Package.Stages> & {
-
-        'only-build'?: Build.Stages | Build.Stages[];
-        'only-snap'?: Snapshot.Stages | Snapshot.Stages[];
-
-        'without-build'?: Build.Stages | Build.Stages[];
-        'without-snap'?: Snapshot.Stages | Snapshot.Stages[];
     };
 
     export type Stages = typeof packageSubStages[ number ];
