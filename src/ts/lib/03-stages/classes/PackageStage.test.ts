@@ -17,16 +17,14 @@ import type { Stage } from '../../../types/index.js';
 
 import { PackageStage } from './PackageStage.js';
 
-// gets the expected type
-type PackageClassType = Stage.ClassType.Package;
 
 // checks if the actual class can be assigned to its class type
-const testStage: PackageClassType = PackageStage;
+const testStage: Stage.ClassType.Package = PackageStage;
 
 // double-checks that the types match
 type TypeTest = [
-    Test.Expect<Test.Satisfies<typeof PackageStage, PackageClassType>>,
-    Test.ExpectNot<Test.Exactly<typeof PackageStage, PackageClassType>>,
+    Test.Expect<Test.Satisfies<typeof PackageStage, Stage.ClassType.Package>>,
+    Test.ExpectNot<Test.Exactly<typeof PackageStage, Stage.ClassType.Package>>,
 ];
 
 // only here so that these are used and don’t throw errors

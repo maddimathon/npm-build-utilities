@@ -13,7 +13,9 @@
 export * from './abstract/index.js';
 export * from './BuildStage.js';
 export * from './CompileStage.js';
+export * from './DocumentStage.js';
 export * from './PackageStage.js';
 export * from './ReleaseStage.js';
 export * from './SnapshotStage.js';
+export * from './TestStage.js';
 //# sourceMappingURL=index.d.ts.map

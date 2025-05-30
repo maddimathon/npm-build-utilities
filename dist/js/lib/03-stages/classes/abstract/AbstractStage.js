@@ -357,8 +357,18 @@ export class AbstractStage {
         });
     }
     /* ERRORS ===================================== */
-    handleError(error, level, args) {
-        errorHandler(error, level, this.console, this.fs, args);
+    /**
+     * Alias for {@link errorHandler}.
+     */
+    handleError(error, level, args, exitProcess) {
+        return errorHandler(
+            error,
+            level,
+            this.console,
+            this.fs,
+            args,
+            exitProcess,
+        );
     }
     /**
      * Runs a function, with parameters as applicable, and catches (& handles)
@@ -370,12 +380,12 @@ export class AbstractStage {
      *
      * @experimental
      */
-    try(tryer, level, params) {
+    try(tryer, level, params, handlerArgs, exitProcess) {
         try {
             return tryer(...(params ?? []));
         } catch (error) {
-            this.handleError(error, level);
-            throw error;
+            this.handleError(error, level, handlerArgs, exitProcess);
+            return 'FAILED';
         }
     }
     /* MESSAGES ===================================== */

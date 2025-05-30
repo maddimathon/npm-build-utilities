@@ -281,7 +281,18 @@ export namespace Args {
      */
     export interface Test<
         SubStage extends string = string,
-    > extends Args<SubStage> { };
+    > extends Args<SubStage> {
+
+        js: false | {
+
+            /**
+             * File globs to be removed after tests are complete.
+             */
+            tidy: string[];
+        },
+
+        scss: boolean;
+    };
 }
 
 /**
@@ -645,9 +656,7 @@ export namespace SubStage {
     /**
      * Default substage names for a document stage.
      */
-    export type Document =
-        | "SUBSTAGE_SIMPLE"
-        | "SUBSTAGE_STAGE";
+    export type Document = "typeDoc";
 
     /**
      * Default substage names for a package stage.
@@ -677,7 +686,7 @@ export namespace SubStage {
     /**
      * Default substage names for a test stage.
      */
-    export type Test = "scss" | "ts";
+    export type Test = "scss" | "js";
 };
 
 /**
@@ -693,4 +702,4 @@ export type WithDefaultClass = Exclude<Name, WithAbstractClass>;
  * 
  * @expand
  */
-export type WithAbstractClass = ( "document" | "test" | "test-string" ) & Name;
+export type WithAbstractClass = ( never ) & Name;

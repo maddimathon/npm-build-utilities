@@ -472,12 +472,23 @@ export abstract class AbstractStage<
 
     /* ERRORS ===================================== */
 
+    /**
+     * Alias for {@link errorHandler}.
+     */
     protected handleError(
         error: any,
         level: number,
         args?: Partial<LocalError.Handler.Args>,
-    ): void {
-        errorHandler( error, level, this.console, this.fs, args );
+        exitProcess?: boolean,
+    ) {
+        return errorHandler(
+            error,
+            level,
+            this.console,
+            this.fs,
+            args,
+            exitProcess,
+        );
     }
 
 
@@ -493,6 +504,30 @@ export abstract class AbstractStage<
         tryer: ( ...params: Params ) => Return,
         level: number,
         params?: Params,
+        handlerArgs?: Partial<LocalError.Handler.Args>,
+        exitProcess?: true | undefined,
+    ): Return;
+
+    protected try<
+        Params extends never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params: Params,
+        handlerArgs: Partial<LocalError.Handler.Args>,
+        exitProcess: false,
+    ): Return | "FAILED";
+
+    protected try<
+        Params extends unknown[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params: Params,
+        handlerArgs?: Partial<LocalError.Handler.Args>,
+        exitProcess?: true | undefined,
     ): Return;
 
     protected try<
@@ -502,7 +537,20 @@ export abstract class AbstractStage<
         tryer: ( ...params: Params ) => Return,
         level: number,
         params: Params,
-    ): Return;
+        handlerArgs: Partial<LocalError.Handler.Args>,
+        exitProcess: false,
+    ): Return | "FAILED";
+
+    protected try<
+        Params extends unknown[] | never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Return,
+        level: number,
+        params?: Params,
+        handlerArgs?: Partial<LocalError.Handler.Args>,
+        exitProcess?: boolean,
+    ): Return | "FAILED";
 
     /**
      * Runs a function, with parameters as applicable, and catches (& handles)
@@ -521,15 +569,24 @@ export abstract class AbstractStage<
         tryer: ( ...params: Params ) => Return,
         level: number,
         params?: Params,
-    ): Return {
+        handlerArgs?: Partial<LocalError.Handler.Args>,
+        exitProcess?: boolean,
+    ): Return | "FAILED" {
 
         try {
 
             return tryer( ...( params ?? [] as Params ) );
 
         } catch ( error ) {
-            this.handleError( error as LocalError.Input, level );
-            throw error;
+
+            this.handleError(
+                error as LocalError.Input,
+                level,
+                handlerArgs,
+                exitProcess,
+            );
+
+            return 'FAILED';
         }
     }
 

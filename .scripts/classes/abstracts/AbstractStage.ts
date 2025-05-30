@@ -205,12 +205,23 @@ export abstract class AbstractStage<
     /* LOCAL METHODS
      * ====================================================================== */
 
+    /**
+     * Alias for {@link internal.errorHandler}.
+     */
     protected handleError(
         error: any,
         level: number,
         args?: Partial<LocalError.Handler.Args>,
-    ): void {
-        internal.errorHandler( error, level, this.console, this.fns.fs as internal.FileSystemType, args );
+        exitProcess: boolean = true,
+    ) {
+        return internal.errorHandler(
+            error,
+            level,
+            this.console,
+            this.fns.fs as internal.FileSystemType,
+            args,
+            exitProcess,
+        );
     }
 
 

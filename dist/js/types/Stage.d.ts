@@ -204,6 +204,13 @@ export declare namespace Args {
      * The required shape for a test stage.
      */
     interface Test<SubStage extends string = string> extends Args<SubStage> {
+        js: false | {
+            /**
+             * File globs to be removed after tests are complete.
+             */
+            tidy: string[];
+        };
+        scss: boolean;
     }
 }
 /**
@@ -491,7 +498,7 @@ export declare namespace SubStage {
     /**
      * Default substage names for a document stage.
      */
-    type Document = "SUBSTAGE_SIMPLE" | "SUBSTAGE_STAGE";
+    type Document = "typeDoc";
     /**
      * Default substage names for a package stage.
      */
@@ -507,7 +514,7 @@ export declare namespace SubStage {
     /**
      * Default substage names for a test stage.
      */
-    type Test = "scss" | "ts";
+    type Test = "scss" | "js";
 }
 /**
  * Stages included in the library with default classes (i.e., required no

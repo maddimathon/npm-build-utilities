@@ -16,9 +16,23 @@ import { errorStringify } from './errorStringify.js';
  *
  * @category Errors
  *
+ * @param error
+ * @param level
+ * @param console
+ * @param fs
+ * @param args         Optional.
+ * @param exitProcess  Optional. Whether to exit the process after handling. Default true.
+ *
  * @internal
  */
-export function errorHandler(error, level, console, fs, args) {
+export function errorHandler(
+    error,
+    level,
+    console,
+    fs,
+    args,
+    exitProcess = true,
+) {
     args = {
         bold: true,
         clr: 'red',
@@ -28,6 +42,11 @@ export function errorHandler(error, level, console, fs, args) {
         ...(args ?? {}),
     };
     const bulkMsgs = errorStringify(error, args, console, fs, 0);
+    // returns
+    if (!exitProcess) {
+        console.warn(bulkMsgs, level, args);
+        return;
+    }
     console.error(bulkMsgs, level, args);
     process.exit(process.exitCode ?? 0);
 }

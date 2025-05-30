@@ -17,16 +17,14 @@ import type { Stage } from '../../../types/index.js';
 
 import { BuildStage } from './BuildStage.js';
 
-// gets the expected type
-type BuildClassType = Stage.ClassType.Build;
 
 // checks if the actual class can be assigned to its class type
-const testStage: BuildClassType = BuildStage;
+const testStage: Stage.ClassType.Build = BuildStage;
 
 // double-checks that the types match
 type TypeTest = [
-    Test.Expect<Test.Satisfies<typeof BuildStage, BuildClassType>>,
-    Test.ExpectNot<Test.Exactly<typeof BuildStage, BuildClassType>>,
+    Test.Expect<Test.Satisfies<typeof BuildStage, Stage.ClassType.Build>>,
+    Test.ExpectNot<Test.Exactly<typeof BuildStage, Stage.ClassType.Build>>,
 ];
 
 // only here so that these are used and don’t throw errors

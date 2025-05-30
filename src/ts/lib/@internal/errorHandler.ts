@@ -26,6 +26,13 @@ import { errorStringify } from './errorStringify.js';
  * 
  * @category Errors
  * 
+ * @param error        
+ * @param level        
+ * @param console      
+ * @param fs           
+ * @param args         Optional.
+ * @param exitProcess  Optional. Whether to exit the process after handling. Default true.
+ * 
  * @internal
  */
 export function errorHandler(
@@ -34,6 +41,7 @@ export function errorHandler(
     console: Logger,
     fs: FileSystemType,
     args?: Partial<LocalError.Handler.Args>,
+    exitProcess: boolean = true,
 ) {
     args = {
         bold: true,
@@ -47,6 +55,12 @@ export function errorHandler(
     };
 
     const bulkMsgs = errorStringify( error, args, console, fs, 0 );
+
+    // returns
+    if ( !exitProcess ) {
+        console.warn( bulkMsgs, level, args );
+        return;
+    }
 
     console.error( bulkMsgs, level, args );
     process.exit( process.exitCode ?? 0 );

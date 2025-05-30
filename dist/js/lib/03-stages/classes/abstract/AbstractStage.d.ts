@@ -177,14 +177,20 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      * Alias for {@link internal.writeLog}.
      */
     writeLog(msg: string | string[] | MessageMaker.BulkMsgs, filename: string, subDir?: string[], date?: null | Date): string | false | undefined;
-    protected handleError(error: any, level: number, args?: Partial<LocalError.Handler.Args>): void;
+    /**
+     * Alias for {@link errorHandler}.
+     */
+    protected handleError(error: any, level: number, args?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): void;
     /**
      * @param tryer     Function to run inside the try {}.
      * @param level     Depth level for the error handler.
      * @param params    Parameters passed to the tryer function, if any.
      */
-    protected try<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params?: Params): Return;
-    protected try<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params): Return;
+    protected try<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Return;
+    protected try<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Return | "FAILED";
+    protected try<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Return;
+    protected try<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Return | "FAILED";
+    protected try<Params extends unknown[] | never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): Return | "FAILED";
     /** {@inheritDoc Stage.Class.startEndNotice} */
     startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean): void | Promise<void>;
     /**

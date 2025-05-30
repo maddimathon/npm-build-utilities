@@ -18,7 +18,14 @@ import type { Logger } from '../../types/Logger.js';
  *
  * @category Errors
  *
+ * @param error
+ * @param level
+ * @param console
+ * @param fs
+ * @param args         Optional.
+ * @param exitProcess  Optional. Whether to exit the process after handling. Default true.
+ *
  * @internal
  */
-export declare function errorHandler(error: LocalError.Input, level: number, console: Logger, fs: FileSystemType, args?: Partial<LocalError.Handler.Args>): void;
+export declare function errorHandler(error: LocalError.Input, level: number, console: Logger, fs: FileSystemType, args?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): void;
 //# sourceMappingURL=errorHandler.d.ts.map

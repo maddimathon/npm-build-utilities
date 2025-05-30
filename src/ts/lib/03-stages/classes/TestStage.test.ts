@@ -15,16 +15,16 @@ import type { Test } from '@maddimathon/utility-typescript/types';
 
 import type { Stage } from '../../../types/index.js';
 
-import { ReleaseStage } from './ReleaseStage.js';
+import { TestStage } from './TestStage.js';
 
 
 // checks if the actual class can be assigned to its class type
-const testStage: Stage.ClassType.Release = ReleaseStage;
+const testStage: Stage.ClassType.Test = TestStage;
 
 // double-checks that the types match
 type TypeTest = [
-    Test.Expect<Test.Satisfies<typeof ReleaseStage, Stage.ClassType.Release>>,
-    Test.ExpectNot<Test.Exactly<typeof ReleaseStage, Stage.ClassType.Release>>,
+    Test.Expect<Test.Satisfies<typeof TestStage, Stage.ClassType.Test>>,
+    Test.ExpectNot<Test.Exactly<typeof TestStage, Stage.ClassType.Test>>,
 ];
 
 // only here so that these are used and don’t throw errors
@@ -32,4 +32,4 @@ true as TypeTest[ 0 ];
 testStage;
 
 // TODO tests
-test.todo( 'ReleaseStage JS tests' );
+test.todo( 'TestStage JS tests' );

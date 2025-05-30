@@ -17,16 +17,14 @@ import type { Stage } from '../../../types/index.js';
 
 import { CompileStage } from './CompileStage.js';
 
-// gets the expected type
-type CompileClassType = Stage.ClassType.Compile;
 
 // checks if the actual class can be assigned to its class type
-const testStage: CompileClassType = CompileStage;
+const testStage: Stage.ClassType.Compile = CompileStage;
 
 // double-checks that the types match
 type TypeTest = [
-    Test.Expect<Test.Satisfies<typeof CompileStage, CompileClassType>>,
-    Test.ExpectNot<Test.Exactly<typeof CompileStage, CompileClassType>>,
+    Test.Expect<Test.Satisfies<typeof CompileStage, Stage.ClassType.Compile>>,
+    Test.ExpectNot<Test.Exactly<typeof CompileStage, Stage.ClassType.Compile>>,
 ];
 
 // only here so that these are used and don’t throw errors

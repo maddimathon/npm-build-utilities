@@ -17,16 +17,14 @@ import type { Stage } from '../../../types/index.js';
 
 import { SnapshotStage } from './SnapshotStage.js';
 
-// gets the expected type
-type SnapshotClassType = Stage.ClassType.Snapshot;
 
 // checks if the actual class can be assigned to its class type
-const testStage: SnapshotClassType = SnapshotStage;
+const testStage: Stage.ClassType.Snapshot = SnapshotStage;
 
 // double-checks that the types match
 type TypeTest = [
-    Test.Expect<Test.Satisfies<typeof SnapshotStage, SnapshotClassType>>,
-    Test.ExpectNot<Test.Exactly<typeof SnapshotStage, SnapshotClassType>>,
+    Test.Expect<Test.Satisfies<typeof SnapshotStage, Stage.ClassType.Snapshot>>,
+    Test.ExpectNot<Test.Exactly<typeof SnapshotStage, Stage.ClassType.Snapshot>>,
 ];
 
 // only here so that these are used and don’t throw errors

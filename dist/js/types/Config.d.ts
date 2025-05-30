@@ -255,9 +255,7 @@ export declare namespace Config {
      * @interface
      */
     export type Stages = {
-        [S in Stage.WithDefaultClass]: boolean | Partial<Stage.Args.All[S]> | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
-    } & {
-        [S in Stage.WithAbstractClass]?: false | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
+        [S in Stage.Name]: boolean | Partial<Stage.Args.All[S]> | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
     };
     export {};
 }

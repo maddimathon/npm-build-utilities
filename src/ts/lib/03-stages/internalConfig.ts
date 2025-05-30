@@ -24,6 +24,13 @@ import {
 import type { Logger } from '../../types/Logger.js';
 
 import { defaultConfig } from './defaultConfig.js';
+import { CompileStage } from './classes/CompileStage.js';
+import { BuildStage } from './classes/BuildStage.js';
+import { DocumentStage } from './classes/DocumentStage.js';
+import { PackageStage } from './classes/PackageStage.js';
+import { ReleaseStage } from './classes/ReleaseStage.js';
+import { SnapshotStage } from './classes/SnapshotStage.js';
+import { TestStage } from './classes/TestStage.js';
 
 /**
  * Takes a partial {@link Config} object and converts it to a
@@ -66,8 +73,40 @@ export function internalConfig(
                 continue;
             }
 
-            // continues - keep defaults
+            // continues - use default class
             if ( _input === true ) {
+
+                switch ( _stage ) {
+
+                    case 'compile':
+                        stages[ _stage ] = CompileStage;
+                        continue;
+
+                    case 'build':
+                        stages[ _stage ] = BuildStage;
+                        continue;
+
+                    case 'document':
+                        stages[ _stage ] = DocumentStage;
+                        continue;
+
+                    case 'package':
+                        stages[ _stage ] = PackageStage;
+                        continue;
+
+                    case 'release':
+                        stages[ _stage ] = ReleaseStage;
+                        continue;
+
+                    case 'snapshot':
+                        stages[ _stage ] = SnapshotStage;
+                        continue;
+
+                    case 'test':
+                        stages[ _stage ] = TestStage;
+                        continue;
+                }
+
                 continue;
             }
 

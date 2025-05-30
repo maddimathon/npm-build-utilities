@@ -66,6 +66,10 @@ const config: Config = {
                 return _obj;
             },
         } ],
+
+        test: true,
+
+        // document: true,
     },
 };
 
