@@ -141,6 +141,8 @@ export class CompileStage extends AbstractStage<
 
             // returns
             if ( _stats.isFile() ) {
+                _path = this.fs.pathRelative( _path );
+
                 this.console.verbose( '✓ configured scss source _path found: ' + _path, 2, { italic: true } );
                 return _path;
             }
@@ -192,7 +194,8 @@ export class CompileStage extends AbstractStage<
                     3,
                     { italic: true },
                 );
-                return _globResults;
+
+                return _relativePaths;
             }
 
             this.console.verbose( 'ⅹ no default files found', 3 );
@@ -205,40 +208,44 @@ export class CompileStage extends AbstractStage<
             return;
         }
 
-        const scssDistDir = this.getDistDir( 'scss' );
+        const scssDistDir = this.fs.pathRelative( this.getDistDir( 'scss' ) );
+        // this.console.vi.verbose( { scssDistDir }, ( this.params.verbose ? 3 : 2 ) );
 
         this.console.verbose( 'deleting existing files...', 2 );
         this.fs.delete( [ scssDistDir ], 3 );
 
         this.console.verbose( 'building path arguments...', 2 );
 
-        const scssPathArgs = scssPaths.map( ( path ) => {
+        const scssPathArgs = scssPaths.map( ( _path ) => {
 
-            const srcDirRegex = new RegExp( escRegExp(
+            const _srcDirRegex = new RegExp( escRegExp(
                 this.fs.pathRelative(
-                    this.fs.pathResolve( path, '../' )
+                    this.fs.isFile( _path ) ? this.fs.dirname( _path ) : _path
                 ).replace( /\/$/g, '' ) + '/'
             ), 'g' );
 
-            const out = path.replace(
-                srcDirRegex,
-                escRegExpReplace( scssDistDir.replace( /\/$/g, '' ) + '/' )
-            ).replace(
-                /\.scss$/gi,
-                '.css'
-            );
+            const _output = this.fs.pathRelative( _path )
+                .replace(
+                    _srcDirRegex,
+                    escRegExpReplace( scssDistDir.replace( /\/$/g, '' ) + '/' )
+                )
+                .replace(
+                    /\.scss$/gi,
+                    '.css'
+                );
 
             return {
-                in: path,
-                out: out,
+                input: _path,
+                output: _output,
             };
         } );
 
         this.console.vi.debug( { scssPathArgs }, ( this.params.verbose ? 3 : 2 ) );
 
         this.console.verbose( 'compiling to css...', 2 );
+
         return Promise.all( scssPathArgs.map(
-            ( { in: input, out: output } ) => this.compiler.scss( input, output, ( this.params.verbose ? 3 : 2 ) )
+            ( { input, output } ) => this.compiler.scss( input, output, ( this.params.verbose ? 3 : 2 ) )
         ) );
     }
 
@@ -260,7 +267,7 @@ export class CompileStage extends AbstractStage<
                 return path;
             }
 
-            this.console.verbose( 'configured ts source path is a directory: ' + path, 2, { italic: true } );
+            this.console.verbose( 'configured ts source path is a directory: ' + this.fs.pathRelative( path ), 2, { italic: true } );
 
             const testSubPaths = [
                 'tsconfig.json',
@@ -307,7 +314,7 @@ export class CompileStage extends AbstractStage<
 
             const tsSrcDir = this.getSrcDir( 'ts' )[ 0 ];
 
-            const _tsConfigDefault = this.fs.pathRelative( this.fs.pathResolve(
+            const _tsConfigDefaultPath = this.fs.pathRelative( this.fs.pathResolve(
                 tsSrcDir,
                 './tsconfig.json'
             ) );
@@ -315,7 +322,7 @@ export class CompileStage extends AbstractStage<
             const tsConfigFile = await this.console.nc.prompt.input( {
                 message: 'Where should the tsconfig.json be written?',
 
-                default: _tsConfigDefault,
+                default: _tsConfigDefaultPath,
                 msgArgs: {
                     ...msgArgs,
                     linesOut: 1,
@@ -342,20 +349,11 @@ export class CompileStage extends AbstractStage<
 
             this.console.vi.debug( { outDir }, 2 );
 
-            this.fs.write( this.fs.pathResolve( tsConfigFile ), JSON.stringify( {
-                extends: '@maddimathon/build-utilities/tsconfig',
-                include: [
-                    './**/*',
-                ],
-
-                ...this.config.compiler?.tsConfig ?? {},
-
-                compilerOptions: {
-                    ...this.config.compiler?.tsConfig?.compilerOptions ?? {},
-                    outDir,
-                    baseUrl,
-                }
-            }, null, 4 ), { force: true } );
+            this.fs.write(
+                this.fs.pathResolve( tsConfigFile ),
+                JSON.stringify( this.compiler.tsConfig, null, 4 ),
+                { force: true },
+            );
 
             tsPaths.push( tsConfigFile );
         }

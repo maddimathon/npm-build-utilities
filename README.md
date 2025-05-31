@@ -17,6 +17,7 @@ Opinionated utilities for easy build systems in npm projects.
 <!--/README_DESC-->
 
 Not meant for use in production/client-side, only during development/build.
+**Unit testing is not yet properly implemented.**
 
 This library is fairly opinionated and targeted entirely towards my personal
 needs/preferences rather than to (web) developers in general.

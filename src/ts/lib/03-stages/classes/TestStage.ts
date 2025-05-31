@@ -18,9 +18,13 @@ import type {
     Stage,
 } from '../../../types/index.js';
 
-import { SemVer } from '../../@internal/index.js';
+import {
+    SemVer,
+} from '../../@internal/index.js';
 
-import { ProjectConfig } from '../../01-config/index.js';
+import {
+    ProjectConfig,
+} from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
 

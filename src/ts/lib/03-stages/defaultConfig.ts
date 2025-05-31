@@ -12,9 +12,12 @@
  */
 
 import type {
-    Json,
     Node,
 } from '@maddimathon/utility-typescript/types';
+
+import {
+    timestamp,
+} from '@maddimathon/utility-typescript/functions';
 
 import type {
     Config,
@@ -38,13 +41,8 @@ import {
     ProjectConfig,
 } from '../01-config/index.js';
 
-import {
-    BuildStage,
-    CompileStage,
-    PackageStage,
-    ReleaseStage,
-    SnapshotStage,
-} from './index.js';
+import { getDefaultStageClass } from './getDefaultStageClass.js';
+
 
 const _dummyConsole = new DummyConsole();
 
@@ -93,52 +91,14 @@ export function defaultConfig(
     } as const satisfies Config.Internal[ 'paths' ];
 
     const stages = {
-        compile: CompileStage,
-        build: BuildStage,
+        compile: getDefaultStageClass( 'compile' ),
+        build: getDefaultStageClass( 'build' ),
         document: false,
-        package: PackageStage,
-        release: ReleaseStage,
-        snapshot: SnapshotStage,
+        package: getDefaultStageClass( 'package' ),
+        release: getDefaultStageClass( 'release' ),
+        snapshot: getDefaultStageClass( 'snapshot' ),
         test: false,
     } as const satisfies Config.Internal.Stages;
-
-
-    const tsConfig = {
-
-        extends: [
-            '@tsconfig/node20/tsconfig.json',
-        ],
-        exclude: [
-            '**/node_modules/**/*',
-        ],
-
-        compilerOptions: {
-            allowJs: true,
-            checkJs: true,
-            declaration: true,
-            declarationMap: true,
-            esModuleInterop: true,
-            exactOptionalPropertyTypes: false,
-            forceConsistentCasingInFileNames: true,
-            lib: [ 'ES2022' ],
-            module: 'node18',
-            moduleResolution: 'node16',
-            noFallthroughCasesInSwitch: true,
-            noImplicitAny: true,
-            noImplicitOverride: true,
-            noImplicitReturns: true,
-            noImplicitThis: true,
-            noUnusedLocals: true,
-            pretty: true,
-            removeComments: false,
-            resolveJsonModule: true,
-            skipLibCheck: true,
-            sourceMap: true,
-            strict: true,
-            strictBindCallApply: true,
-            target: 'es2022',
-        },
-    } as const satisfies Json.TsConfig;
 
     const sass = {
         charset: true,
@@ -156,10 +116,15 @@ export function defaultConfig(
 
         compiler: {
             sass,
-            tsConfig,
         },
 
         fs: {},
+
+        launchYear: timestamp( null, {
+            date: false,
+            time: true,
+            format: { time: { year: 'numeric' } },
+        } ),
 
         paths,
         replace: ProjectConfig.replace,

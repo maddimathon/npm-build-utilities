@@ -21,6 +21,13 @@ import type { CLI } from '../../types/index.js';
  * @return  A completed version of the params object.
  */
 export declare function parseParamsCLI(input: Partial<CLI.Params>): CLI.Params;
+/**
+ * Utilities for {@link parseParamsCLI} function.
+ *
+ * @category Function-Helpers
+ *
+ * @since 0.1.0-alpha.draft
+ */
 export declare namespace parseParamsCLI {
     const ARGS_DEFAULT: (input: Partial<CLI.Params>) => {
         readonly _: [];

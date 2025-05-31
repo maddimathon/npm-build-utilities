@@ -26,6 +26,8 @@ import { slugify } from '@maddimathon/utility-typescript/functions/index';
 /**
  * Writes the content of an error to a msgs file and outputs (to the console) a
  * confirmation message with the path to the msgs file.
+ * 
+ * @category Errors
  *
  * @param logMsg  Message to prepend to the return for output to the console.
  * @param error   Caught error to stringify (via {@link errorStringify}) and add
@@ -106,7 +108,9 @@ export function logError(
 }
 
 /**
- * Utility types used only for {@link logError} function.
+ * Utilities used only for {@link logError} function.
+ * 
+ * @category Function-Helpers
  * 
  * @since ___PKG_VERSION___
  */

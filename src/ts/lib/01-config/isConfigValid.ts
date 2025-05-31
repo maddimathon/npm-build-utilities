@@ -35,6 +35,7 @@ export function isConfigValid( test: Config | Partial<Config> ): false | Config 
         [ K in Objects.KeysRequired<Config> ]: ValueType | ValueType[];
     } = {
         title: 'string',
+        launchYear: 'string',
     };
 
     // returns on mismatch

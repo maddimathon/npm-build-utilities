@@ -251,13 +251,13 @@ export function errorStringify(error, args, console, fs, level) {
             bulkMsgs.push(arr);
         }
         const _stackPathRegex =
-            /(^\s*at\s+[^\n]*?\s+)\(([^\(\)]+)\)(?=(?:\s*$))/;
+            /(^\s*at\s+[^\n]*?\s+)\((?:file\:\/\/)?([^\(\)]+)\)(?=(?:\s*$))/;
         const _trimmedStack = errorInfo.stack.split('\n').map((path) => {
             const _matches = path.match(_stackPathRegex);
             if (_matches && _matches[2]) {
                 path =
                     path.replace(_stackPathRegex, '$1')
-                    + `(${fs.pathRelative(_matches[2]).replace(' ', '%20')})`;
+                    + `(${fs.pathRelative(decodeURI(_matches[2])).replace(' ', '%20')})`;
             }
             return path;
         });

@@ -25,6 +25,10 @@ import type {
 
 import type { Logger } from '../../../types/Logger.js';
 
+import {
+    FileSystem,
+} from '../../00-universal/index.js';
+
 
 /**
  * A super-simple class just for the configuration of the entire project.
@@ -79,6 +83,7 @@ export class ProjectConfig implements Objects.Classify<Config> {
     public readonly compiler;
     public readonly console;
     public readonly fs;
+    public readonly launchYear;
     public readonly paths;
     public readonly replace;
     public readonly stages;
@@ -89,6 +94,7 @@ export class ProjectConfig implements Objects.Classify<Config> {
         this.compiler = config.compiler;
         this.console = config.console;
         this.fs = config.fs;
+        this.launchYear = config.launchYear;
         this.paths = config.paths;
         this.replace = config.replace;
         this.stages = config.stages;
@@ -123,6 +129,91 @@ export class ProjectConfig implements Objects.Classify<Config> {
 
     /* LOCAL METHODS
      * ====================================================================== */
+
+    /**
+     * Gets the paths from the config for the given dist sub directory.
+     * 
+     * @param fs        Instance used to resolve path.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    public getDistDir(
+        fs: FileSystem,
+        subDir?: Config.Paths.DistDirectory,
+        ...subpaths: string[]
+    ): string {
+
+        return fs.pathResolve(
+            this.paths.dist[ subDir ?? '_' ],
+            ...subpaths
+        );
+    }
+
+    /**
+     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
+     * 
+     * @param fs        Instance used to resolve path.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    public getScriptsPath(
+        fs: FileSystem,
+        subDir?: "logs",
+        ...subpaths: string[]
+    ) {
+
+        return fs.pathResolve(
+            this.paths.scripts[ subDir ?? '_' ],
+            ...subpaths
+        );
+    }
+
+    /**
+     * @param fs        Instance used to resolve path.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    public getSrcDir(
+        fs: FileSystem,
+        subDir: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string[];
+
+    public getSrcDir(
+        fs: FileSystem,
+        subDir?: undefined,
+        ...subpaths: string[]
+    ): string;
+
+    public getSrcDir(
+        fs: FileSystem,
+        subDir?: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string | string[];
+
+    /**
+     * Gets the paths from the config for the given src sub directory.
+     */
+    public getSrcDir(
+        fs: FileSystem,
+        subDir?: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string | string[] {
+
+        if ( !subDir ) {
+
+            return fs.pathResolve(
+                this.paths.src._,
+                ...subpaths
+            );
+        }
+
+        const result = this.paths.src[ subDir ?? '_' ] ?? [];
+
+        return (
+            Array.isArray( result ) ? result : [ result ]
+        ).map( ( _path ) => fs.pathResolve( _path, ...subpaths ) );
+    }
 
     /**
      * Gets the instance for the given stage.
@@ -185,6 +276,7 @@ export class ProjectConfig implements Objects.Classify<Config> {
     public minimum(): Config {
         return {
             title: this.title,
+            launchYear: this.launchYear,
         };
     }
 

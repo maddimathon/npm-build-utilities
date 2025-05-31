@@ -16,6 +16,7 @@
  */
 
 import * as sass from 'sass';
+import * as typeDoc from "typedoc";
 import typescript from 'typescript';
 
 import type {
@@ -242,10 +243,52 @@ export namespace Args {
 
     /**
      * The required shape for a document stage.
+     * 
+     * @see {@link DocumentStage.ARGS_DEFAULT}  For defaults.
      */
     export interface Document<
         SubStage extends string = string,
-    > extends Args<SubStage> { };
+    > extends Args<SubStage> {
+
+        /**
+         * Passed to typeDoc options.
+         * 
+         * If null, entry point is taken from package.json’s `main`.
+         */
+        entryPoints: string[] | null;
+
+        /**
+         * Whether to include this sub-stage, or the configuration if so.
+         */
+        replace: false | ( ( _stage: Class ) => {
+
+            /**
+             * File globs for making {@link Config.Replace.current}
+             * replacements.
+             */
+            current?: string[];
+
+            /**
+             * File globs to ignore while making {@link Config.Replace}
+             * replacements.
+             */
+            ignore?: string[];
+
+            /**
+             * File globs for making {@link Config.Replace.package}
+             * replacements.
+             */
+            package?: string[];
+        } );
+
+        /**
+         * Default configuration for typeDoc.  Some configuration is added in
+         * {@link DocumentStage.typeDoc}.
+         */
+        typeDoc:
+        | Partial<Omit<typeDoc.TypeDocOptions, "entryPoints">>
+        | ( ( _stage: Class ) => Partial<Omit<typeDoc.TypeDocOptions, "entryPoints">> );
+    };
 
     /**
      * The required shape for a package stage.
@@ -278,6 +321,8 @@ export namespace Args {
 
     /**
      * The required shape for a test stage.
+     * 
+     * @see {@link TestStage.ARGS_DEFAULT}  For defaults.
      */
     export interface Test<
         SubStage extends string = string,
@@ -440,18 +485,51 @@ export interface Class<
      * 
      * @category Utilities
      * 
-     * @param subDir  Sub-path to get.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
      */
-    getDistDir( subDir?: Config.Paths.SourceDirectory ): string;
+    getDistDir(
+        subDir?: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string;
+
+
+    /**
+     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
+     * 
+     * @category Utilities
+     * 
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    getScriptsPath(
+        subDir?: "logs",
+        ...subpaths: string[]
+    ): string;
+
 
     /**
      * Gets the paths from the config for the given src sub directory.
      * 
      * @category Utilities
      * 
-     * @param subDir  Sub-path to get.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
      */
-    getSrcDir( subDir?: Config.Paths.SourceDirectory ): string | string[];
+    getSrcDir(
+        subDir: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string[];
+
+    getSrcDir(
+        subDir?: undefined,
+        ...subpaths: string[]
+    ): string;
+
+    getSrcDir(
+        subDir?: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string | string[];
 
     /**
      * Prints a message to the console signalling the start or end of this build
@@ -561,6 +639,11 @@ export namespace ClassType {
  * Shape of the utility class for compiling file types.
  */
 export interface Compiler {
+
+    /**
+     * Default TS config file.
+     */
+    tsConfig: Json.TsConfig;
 };
 
 /**
@@ -589,10 +672,10 @@ export namespace Compiler {
          */
         ts: typescript.CompilerOptions,
 
-        /**
-         * Optional default configuration for a tsConfig file.
-         */
-        tsConfig: Json.TsConfig;
+        // /**
+        //  * Optional default configuration for a tsConfig file.
+        //  */
+        // tsConfig: Json.TsConfig;
     };
 };
 
@@ -656,7 +739,7 @@ export namespace SubStage {
     /**
      * Default substage names for a document stage.
      */
-    export type Document = "typeDoc";
+    export type Document = "replace" | "typeDoc";
 
     /**
      * Default substage names for a package stage.

@@ -28,6 +28,10 @@ export interface Config {
      */
     title: string;
     /**
+     * A four-digit year string representing the launch date of the project.
+     */
+    launchYear: string;
+    /**
      * Default output colour to the terminal.
      */
     clr?: MessageMaker.Colour;
@@ -255,7 +259,9 @@ export declare namespace Config {
      * @interface
      */
     export type Stages = {
-        [S in Stage.Name]: boolean | Partial<Stage.Args.All[S]> | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
+        [S in Stage.WithDefaultClass]: boolean | Partial<Stage.Args.All[S]> | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
+    } & {
+        [S in Stage.WithAbstractClass]?: false | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
     };
     export {};
 }

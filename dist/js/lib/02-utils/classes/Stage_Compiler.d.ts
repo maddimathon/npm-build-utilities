@@ -32,6 +32,15 @@ export declare class Stage_Compiler implements Stage.Compiler {
     readonly params: CLI.Params;
     readonly console: Stage_Console;
     readonly fs: FileSystem;
+    get tsConfig(): {
+        readonly extends: "@maddimathon/build-utilities/tsconfig";
+        readonly exclude: ["**/node_modules/**/*"];
+        readonly compilerOptions: {
+            readonly exactOptionalPropertyTypes: false;
+            readonly outDir: string;
+            readonly baseUrl: string;
+        };
+    };
     /**
      * Default values for the args property.
      *

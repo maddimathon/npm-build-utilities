@@ -23,6 +23,7 @@ const _defaults = {
  */
 const config = {
     title: 'NPM Build Utilities DEMO',
+    launchYear: '2025',
 
     stages: {
 

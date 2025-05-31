@@ -24,6 +24,7 @@ export function isConfigValid(test) {
      */
     const requiredKeys = {
         title: 'string',
+        launchYear: 'string',
     };
     // returns on mismatch
     for (const _key in requiredKeys) {

@@ -28,19 +28,9 @@ export declare class BuildStage extends AbstractStage<Stage.SubStage.Build, Stag
         readonly compile: true;
         readonly document: false;
         readonly minimize: (_stage: Stage.Class) => {
-            readonly css: {
-                readonly globs: [`${string}/**/*.css`, `${string}/**/*.css`];
-                readonly ignore: [`${string}/**/*.min.css`, `${string}/**/*.min.css`, `${string}/**/*.css.map`, `${string}/**/*.css.map`];
-                readonly renamer: (_path: string) => string;
-            };
-            readonly html: {
-                readonly globs: [`${string}/**/*.html`];
-            };
-            readonly js: {
-                readonly globs: [`${string}/**/*.js`, `${string}/**/*.jsx`];
-                readonly ignore: [`${string}/**/*.min.js`, `${string}/**/*.min.jsx`, `${string}/**/*.test.js`, `${string}/**/*.test.jsx`, `${string}/**/*.js.map`, `${string}/**/*.jsx.map`];
-                readonly renamer: (_path: string) => string;
-            };
+            readonly css: false;
+            readonly html: false;
+            readonly js: false;
             readonly json: {
                 readonly globs: [`${string}/**/*.json`];
             };
@@ -64,6 +54,8 @@ export declare class BuildStage extends AbstractStage<Stage.SubStage.Build, Stag
         readonly test: false;
         readonly objs: {};
     };
+    /** {@inheritDoc AbstractStage.buildArgs} */
+    buildArgs(args?: Partial<Stage.Args.Build>): Stage.Args.Build<string> & Partial<Stage.Args.Build<string>>;
     /**
      * @param config    Current project config.
      * @param params    Current CLI params.

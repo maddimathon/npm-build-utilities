@@ -63,8 +63,6 @@ import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
  * @category Stages
  * 
  * @since ___PKG_VERSION___
- * 
- * {@include ./AbstractStage.example.md}
  */
 export abstract class AbstractStage<
     SubStage extends string = string,
@@ -124,12 +122,32 @@ export abstract class AbstractStage<
      */
     public readonly compiler: Stage_Compiler;
 
+    /** @hidden */
+    private _fs: FileSystem | undefined;
+
     /**
      * {@inheritDoc Stage.Class.fs}
      * 
      * @category Utilities
      */
-    public readonly fs: FileSystem;
+    public get fs(): FileSystem {
+
+        // returns
+        if ( typeof this._fs === 'undefined' ) {
+            return new FileSystem( this.console, this.config.fs );
+        }
+
+        return this._fs;
+    }
+
+    /**
+     * {@inheritDoc Stage.Class.fs}
+     * 
+     * @category Utilities
+     */
+    public set fs( fs: FileSystem | undefined ) {
+        this._fs = fs ?? new FileSystem( this.console, this.config.fs );
+    }
 
     /** 
      * {@inheritDoc Stage.Class.name} 
@@ -156,7 +174,12 @@ export abstract class AbstractStage<
             this._pkg = this.try( getPackageJson, 1, [ this.fs ] ) as Node.PackageJson;
         }
 
+        const repository = typeof this._pkg?.repository === 'string'
+            ? this._pkg?.repository
+            : this._pkg?.repository?.url;
+
         return {
+
             name: this._pkg?.name,
             version: this._pkg?.version,
 
@@ -166,7 +189,9 @@ export abstract class AbstractStage<
             config: this._pkg?.config,
 
             license: this._pkg?.license,
-            repository: this._pkg?.repository,
+
+            repository,
+
             engines: this._pkg?.engines,
             files: this._pkg?.files,
             main: this._pkg?.main,
@@ -277,7 +302,7 @@ export abstract class AbstractStage<
 
         this.args = this.buildArgs( args );
 
-        this.fs = this.args.objs.fs ?? new FileSystem( this.console, this.config.fs );
+        this.fs = this.args.objs.fs;
 
         this.compiler = this.args.objs.compiler ?? new Stage_Compiler(
             this.config,
@@ -296,6 +321,70 @@ export abstract class AbstractStage<
     /** {@inheritDoc Stage.Class.isDraftVersion} */
     public get isDraftVersion(): boolean {
         return !( this.params?.packaging || this.params?.releasing ) || !!this.params?.dryrun;
+    }
+
+    /**
+     * Replaces placeholders in files as defined by {@link Config.replace}.
+     * 
+     * @return  Paths to files where placeholders were replaced.
+     */
+    public replaceInFiles(
+        globs: string[],
+        version: "current" | "package",
+        level: number,
+        ignore: string[] = [],
+    ): string[] {
+
+        const replacements = typeof this.config.replace === 'function'
+            ? this.config.replace( this )[ version ]
+            : this.config.replace[ version ];
+
+        // returns
+        if ( !replacements ) {
+            return [];
+        }
+
+        this.console.verbose( `making ${ version } replacements...`, level );
+
+        const replaced = this.fs.replaceInFiles(
+            globs,
+            replacements,
+            ( this.params.verbose ? 1 : 0 ) + level,
+            {
+                ignore: ignore ?? FileSystem.globs.SYSTEM,
+            },
+        );
+
+        this.console.verbose(
+            `replaced ${ version } placeholders in ${ replaced.length } files`,
+            1 + level,
+            { italic: true },
+        );
+
+        return replaced;
+    }
+
+    /**
+     * Alias for {@link internal.writeLog}.
+     */
+    public writeLog(
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        filename: string,
+        subDir: string[] = [],
+        date: null | Date = null,
+    ) {
+        if ( !msg.length ) { return; }
+
+        return writeLog(
+            msg,
+            filename,
+            {
+                config: this.config,
+                date: date ?? new Date(),
+                fs: this.fs,
+                subDir,
+            }
+        );
     }
 
 
@@ -391,35 +480,59 @@ export abstract class AbstractStage<
     }
 
     /** {@inheritDoc Stage.Class.getDistDir} */
-    public getDistDir( subDir?: Config.Paths.DistDirectory ): string {
-        return this.config.paths.dist[ subDir ?? '_' ];
+    public getDistDir(
+        subDir?: Config.Paths.DistDirectory,
+        ...subpaths: string[]
+    ): string {
+        return this.config.getDistDir( this.fs, subDir, ...subpaths );
     }
 
-    /**
-     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
-     */
-    public getScriptsPath( subDir?: "logs", ...subpaths: string[] ) {
-
-        return this.fs.pathResolve(
-            this.config.paths.scripts[ subDir ?? '_' ],
-            ...subpaths
-        );
+    /** {@inheritDoc Stage.Class.getScriptsPath} */
+    public getScriptsPath(
+        subDir?: "logs",
+        ...subpaths: string[]
+    ) {
+        return this.config.getScriptsPath( this.fs, subDir, ...subpaths );
     }
 
-    public getSrcDir( subDir: Config.Paths.SourceDirectory ): string[];
-    public getSrcDir( subDir?: undefined ): string;
+    public getSrcDir(
+        subDir: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string[];
+
+    public getSrcDir(
+        subDir?: undefined,
+        ...subpaths: string[]
+    ): string;
 
     /** {@inheritDoc Stage.Class.getSrcDir} */
-    public getSrcDir( subDir?: Config.Paths.SourceDirectory ): string | string[] {
+    public getSrcDir(
+        subDir?: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string | string[] {
+        return this.config.getSrcDir( this.fs, subDir, ...subpaths );
+    }
 
-        if ( !subDir ) {
-            const result: string = this.config.paths.src._;
-            return result;
-        }
 
-        const result = this.config.paths.src[ subDir ?? '_' ] ?? [];
+    /* ERRORS ===================================== */
 
-        return Array.isArray( result ) ? result : [ result ];
+    /**
+     * Alias for {@link errorHandler}.
+     */
+    protected handleError(
+        error: any,
+        level: number,
+        args?: Partial<LocalError.Handler.Args>,
+        exitProcess?: boolean,
+    ) {
+        return errorHandler(
+            error,
+            level,
+            this.console,
+            this.fs,
+            args,
+            exitProcess,
+        );
     }
 
     /**
@@ -443,51 +556,6 @@ export abstract class AbstractStage<
                 fs: this.fs,
                 date,
             },
-        );
-    }
-
-    /**
-     * Alias for {@link internal.writeLog}.
-     */
-    public writeLog(
-        msg: string | string[] | MessageMaker.BulkMsgs,
-        filename: string,
-        subDir: string[] = [],
-        date: null | Date = null,
-    ) {
-        if ( !msg.length ) { return; }
-
-        return writeLog(
-            msg,
-            filename,
-            {
-                config: this.config,
-                date: date ?? new Date(),
-                fs: this.fs,
-                subDir,
-            }
-        );
-    }
-
-
-    /* ERRORS ===================================== */
-
-    /**
-     * Alias for {@link errorHandler}.
-     */
-    protected handleError(
-        error: any,
-        level: number,
-        args?: Partial<LocalError.Handler.Args>,
-        exitProcess?: boolean,
-    ) {
-        return errorHandler(
-            error,
-            level,
-            this.console,
-            this.fs,
-            args,
-            exitProcess,
         );
     }
 
@@ -576,6 +644,105 @@ export abstract class AbstractStage<
         try {
 
             return tryer( ...( params ?? [] as Params ) );
+
+        } catch ( error ) {
+
+            this.handleError(
+                error as LocalError.Input,
+                level,
+                handlerArgs,
+                exitProcess,
+            );
+
+            return 'FAILED';
+        }
+    }
+
+
+    /**
+     * @param tryer     Function to run inside the try {}.
+     * @param level     Depth level for the error handler.
+     * @param params    Parameters passed to the tryer function, if any.
+     */
+    protected async atry<
+        Params extends never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Promise<Return>,
+        level: number,
+        params?: Params,
+        handlerArgs?: Partial<LocalError.Handler.Args>,
+        exitProcess?: true | undefined,
+    ): Promise<Return>;
+
+    protected async atry<
+        Params extends never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Promise<Return>,
+        level: number,
+        params: Params,
+        handlerArgs: Partial<LocalError.Handler.Args>,
+        exitProcess: false,
+    ): Promise<Return | "FAILED">;
+
+    protected async atry<
+        Params extends unknown[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Promise<Return>,
+        level: number,
+        params: Params,
+        handlerArgs?: Partial<LocalError.Handler.Args>,
+        exitProcess?: true | undefined,
+    ): Promise<Return>;
+
+    protected async atry<
+        Params extends unknown[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Promise<Return>,
+        level: number,
+        params: Params,
+        handlerArgs: Partial<LocalError.Handler.Args>,
+        exitProcess: false,
+    ): Promise<Return | "FAILED">;
+
+    protected async atry<
+        Params extends unknown[] | never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Promise<Return>,
+        level: number,
+        params?: Params,
+        handlerArgs?: Partial<LocalError.Handler.Args>,
+        exitProcess?: boolean,
+    ): Promise<Return | "FAILED">;
+
+    /**
+     * Runs a function, with parameters as applicable, and catches (& handles)
+     * anything thrown.
+     * 
+     * Overloaded for better function param typing.
+     * 
+     * @category Errors
+     * 
+     * @experimental
+     */
+    protected async atry<
+        Params extends unknown[] | never[],
+        Return extends unknown,
+    >(
+        tryer: ( ...params: Params ) => Promise<Return>,
+        level: number,
+        params?: Params,
+        handlerArgs?: Partial<LocalError.Handler.Args>,
+        exitProcess?: boolean,
+    ): Promise<Return | "FAILED"> {
+
+        try {
+
+            return await tryer( ...( params ?? [] as Params ) );
 
         } catch ( error ) {
 

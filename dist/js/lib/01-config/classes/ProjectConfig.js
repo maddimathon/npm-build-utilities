@@ -65,6 +65,7 @@ export class ProjectConfig {
     compiler;
     console;
     fs;
+    launchYear;
     paths;
     replace;
     stages;
@@ -74,6 +75,7 @@ export class ProjectConfig {
         this.compiler = config.compiler;
         this.console = config.console;
         this.fs = config.fs;
+        this.launchYear = config.launchYear;
         this.paths = config.paths;
         this.replace = config.replace;
         this.stages = config.stages;
@@ -103,6 +105,38 @@ export class ProjectConfig {
     }
     /* LOCAL METHODS
      * ====================================================================== */
+    /**
+     * Gets the paths from the config for the given dist sub directory.
+     *
+     * @param fs        Instance used to resolve path.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    getDistDir(fs, subDir, ...subpaths) {
+        return fs.pathResolve(this.paths.dist[subDir ?? '_'], ...subpaths);
+    }
+    /**
+     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
+     *
+     * @param fs        Instance used to resolve path.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    getScriptsPath(fs, subDir, ...subpaths) {
+        return fs.pathResolve(this.paths.scripts[subDir ?? '_'], ...subpaths);
+    }
+    /**
+     * Gets the paths from the config for the given src sub directory.
+     */
+    getSrcDir(fs, subDir, ...subpaths) {
+        if (!subDir) {
+            return fs.pathResolve(this.paths.src._, ...subpaths);
+        }
+        const result = this.paths.src[subDir ?? '_'] ?? [];
+        return (Array.isArray(result) ? result : [result]).map((_path) =>
+            fs.pathResolve(_path, ...subpaths),
+        );
+    }
     /**
      * Gets the instance for the given stage.
      *
@@ -154,6 +188,7 @@ export class ProjectConfig {
     minimum() {
         return {
             title: this.title,
+            launchYear: this.launchYear,
         };
     }
     /* DEFAULT METHODS

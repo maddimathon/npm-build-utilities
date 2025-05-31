@@ -26,8 +26,6 @@ import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
  * @category Stages
  *
  * @since 0.1.0-alpha.draft
- *
- * {@include ./AbstractStage.example.md}
  */
 export declare abstract class AbstractStage<SubStage extends string = string, Args extends Stage.Args = Stage.Args> implements Stage.Class<SubStage, Args> {
     protected _pkg: Node.PackageJson | undefined;
@@ -64,12 +62,20 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      * @category Utilities
      */
     readonly compiler: Stage_Compiler;
+    /** @hidden */
+    private _fs;
     /**
      * {@inheritDoc Stage.Class.fs}
      *
      * @category Utilities
      */
-    readonly fs: FileSystem;
+    get fs(): FileSystem;
+    /**
+     * {@inheritDoc Stage.Class.fs}
+     *
+     * @category Utilities
+     */
+    set fs(fs: FileSystem | undefined);
     /**
      * {@inheritDoc Stage.Class.name}
      *
@@ -97,11 +103,7 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
             [key: number]: any;
         } | undefined;
         readonly license: string | undefined;
-        readonly repository: string | {
-            type: string;
-            url: string;
-            directory?: string;
-        } | undefined;
+        readonly repository: string | undefined;
         readonly engines: {
             [key: string]: string;
         } | undefined;
@@ -159,28 +161,32 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
     constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<Args>, _pkg: Node.PackageJson | undefined, _version: SemVer | undefined);
     /** {@inheritDoc Stage.Class.isDraftVersion} */
     get isDraftVersion(): boolean;
-    /** {@inheritDoc Stage.Class.isSubStageIncluded} */
-    isSubStageIncluded(subStage: SubStage, level: number): boolean;
-    /** {@inheritDoc Stage.Class.getDistDir} */
-    getDistDir(subDir?: Config.Paths.DistDirectory): string;
     /**
-     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
+     * Replaces placeholders in files as defined by {@link Config.replace}.
+     *
+     * @return  Paths to files where placeholders were replaced.
      */
-    getScriptsPath(subDir?: "logs", ...subpaths: string[]): string;
-    getSrcDir(subDir: Config.Paths.SourceDirectory): string[];
-    getSrcDir(subDir?: undefined): string;
-    /**
-     * Alias for {@link internal.logError}.
-     */
-    logError(logMsg: string, error: unknown, level: number, errMsg?: string, date?: Date): MessageMaker.BulkMsgs;
+    replaceInFiles(globs: string[], version: "current" | "package", level: number, ignore?: string[]): string[];
     /**
      * Alias for {@link internal.writeLog}.
      */
     writeLog(msg: string | string[] | MessageMaker.BulkMsgs, filename: string, subDir?: string[], date?: null | Date): string | false | undefined;
+    /** {@inheritDoc Stage.Class.isSubStageIncluded} */
+    isSubStageIncluded(subStage: SubStage, level: number): boolean;
+    /** {@inheritDoc Stage.Class.getDistDir} */
+    getDistDir(subDir?: Config.Paths.DistDirectory, ...subpaths: string[]): string;
+    /** {@inheritDoc Stage.Class.getScriptsPath} */
+    getScriptsPath(subDir?: "logs", ...subpaths: string[]): string;
+    getSrcDir(subDir: Config.Paths.SourceDirectory, ...subpaths: string[]): string[];
+    getSrcDir(subDir?: undefined, ...subpaths: string[]): string;
     /**
      * Alias for {@link errorHandler}.
      */
     protected handleError(error: any, level: number, args?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): void;
+    /**
+     * Alias for {@link internal.logError}.
+     */
+    logError(logMsg: string, error: unknown, level: number, errMsg?: string, date?: Date): MessageMaker.BulkMsgs;
     /**
      * @param tryer     Function to run inside the try {}.
      * @param level     Depth level for the error handler.
@@ -191,6 +197,16 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
     protected try<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Return;
     protected try<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Return | "FAILED";
     protected try<Params extends unknown[] | never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): Return | "FAILED";
+    /**
+     * @param tryer     Function to run inside the try {}.
+     * @param level     Depth level for the error handler.
+     * @param params    Parameters passed to the tryer function, if any.
+     */
+    protected atry<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Promise<Return>;
+    protected atry<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Promise<Return | "FAILED">;
+    protected atry<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Promise<Return>;
+    protected atry<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Promise<Return | "FAILED">;
+    protected atry<Params extends unknown[] | never[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): Promise<Return | "FAILED">;
     /** {@inheritDoc Stage.Class.startEndNotice} */
     startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean): void | Promise<void>;
     /**

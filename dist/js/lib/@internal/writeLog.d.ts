@@ -16,8 +16,19 @@ import type { FileSystemType } from '../../types/FileSystemType.js';
 /**
  * Gets a relative or absolute path to the {@link Config.Paths.scripts}
  * directories.
+ *
+ * @category Errors
+ *
+ * @since 0.1.0-alpha.draft
  */
 export declare function writeLog(msg: string | string[] | MessageMaker.BulkMsgs, filename: string, t_args: writeLog.Args): false | string;
+/**
+ * Utilities used only for {@link writeLog} function.
+ *
+ * @category Function-Helpers
+ *
+ * @since 0.1.0-alpha.draft
+ */
 export declare namespace writeLog {
     const ARGS_DEFAULT: {};
     interface Args {

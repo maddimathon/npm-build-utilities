@@ -57,6 +57,34 @@ export class Stage_Compiler implements Stage.Compiler {
     /* LOCAL PROPERTIES
      * ====================================================================== */
 
+    public get tsConfig() {
+
+        const tsSrcDir = this.config.getSrcDir( this.fs, 'ts' )[ 0 ];
+
+        const baseUrl = tsSrcDir.replace( /(?<=^|\/)[^\/]+(\/|$)/g, '..\/' );
+
+        const outDir = this.fs.pathRelative( this.fs.pathResolve(
+            baseUrl,
+            this.config.getDistDir( this.fs ),
+            'ts',
+        ) );
+
+        return {
+
+            extends: '@maddimathon/build-utilities/tsconfig',
+
+            exclude: [
+                '**/node_modules/**/*',
+            ],
+
+            compilerOptions: {
+                exactOptionalPropertyTypes: false,
+                outDir,
+                baseUrl,
+            },
+        } as const satisfies Json.TsConfig;
+    }
+
 
     /* Args ===================================== */
 

@@ -37,6 +37,13 @@ export function parseParamsCLI(input) {
     }
     return parsed;
 }
+/**
+ * Utilities for {@link parseParamsCLI} function.
+ *
+ * @category Function-Helpers
+ *
+ * @since 0.1.0-alpha.draft
+ */
 (function (parseParamsCLI) {
     parseParamsCLI.ARGS_DEFAULT = (input) => {
         const stage = input._?.[0];

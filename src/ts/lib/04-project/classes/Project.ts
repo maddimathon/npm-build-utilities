@@ -152,7 +152,7 @@ export class Project {
         if ( !stageClass ) {
 
             if ( this.params.debug ) {
-                await this.debug( console, stageClass, stageArgs ?? null, null );
+                await this.debug( console, stageClass ?? null, stageArgs ?? null, null );
             }
             return;
         }

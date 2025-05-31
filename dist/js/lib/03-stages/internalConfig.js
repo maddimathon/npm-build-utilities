@@ -10,15 +10,8 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import { defaultConfig } from './defaultConfig.js';
-import { CompileStage } from './classes/CompileStage.js';
-import { BuildStage } from './classes/BuildStage.js';
-import { DocumentStage } from './classes/DocumentStage.js';
-import { PackageStage } from './classes/PackageStage.js';
-import { ReleaseStage } from './classes/ReleaseStage.js';
-import { SnapshotStage } from './classes/SnapshotStage.js';
-import { TestStage } from './classes/TestStage.js';
+import { getDefaultStageClass } from './getDefaultStageClass.js';
 /**
  * Takes a partial {@link Config} object and converts it to a
  * {@link Config.Internal} object.
@@ -43,25 +36,13 @@ export function internalConfig(inputConfig, console) {
             if (_input === true) {
                 switch (_stage) {
                     case 'compile':
-                        stages[_stage] = CompileStage;
-                        continue;
                     case 'build':
-                        stages[_stage] = BuildStage;
-                        continue;
                     case 'document':
-                        stages[_stage] = DocumentStage;
-                        continue;
                     case 'package':
-                        stages[_stage] = PackageStage;
-                        continue;
                     case 'release':
-                        stages[_stage] = ReleaseStage;
-                        continue;
                     case 'snapshot':
-                        stages[_stage] = SnapshotStage;
-                        continue;
                     case 'test':
-                        stages[_stage] = TestStage;
+                        stages[_stage] = getDefaultStageClass(_stage);
                         continue;
                 }
                 continue;
@@ -86,9 +67,10 @@ export function internalConfig(inputConfig, console) {
                 }
                 continue;
             }
+            const _defaultStage = getDefaultStageClass(_stage);
             // continues - the args were input
-            if (def.stages[_stage]) {
-                stages[_stage] = [def.stages[_stage], _input];
+            if (_defaultStage) {
+                stages[_stage] = [_defaultStage, _input];
                 continue;
             }
         }
@@ -180,11 +162,6 @@ export function internalConfig(inputConfig, console) {
         compiler: {
             ...def.compiler,
             ...(inputConfig.compiler ?? {}),
-            tsConfig: mergeArgs(
-                def.compiler.tsConfig,
-                inputConfig.compiler?.tsConfig ?? {},
-                true,
-            ),
         },
     };
 }

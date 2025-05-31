@@ -34,5 +34,6 @@ export * from './00-universal/getPackageJson.js';
 export * from './01-config/isConfigValid.js';
 export * from './02-utils/classes/Stage_Compiler.js';
 export * from './02-utils/classes/Stage_Console.js';
+export * from './03-stages/getDefaultStageClass.js';
 export * from './03-stages/internalConfig.js';
 //# sourceMappingURL=@internal.js.map

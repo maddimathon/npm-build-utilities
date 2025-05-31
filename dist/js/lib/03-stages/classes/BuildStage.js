@@ -10,6 +10,7 @@
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
+import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import { FileSystem } from '../../00-universal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
@@ -38,42 +39,47 @@ export class BuildStage extends AbstractStage {
                 scss: _stage.getDistDir('scss').replace(/\/$/, ''),
                 docs: _stage.getDistDir('docs').replace(/\/$/, ''),
             };
-            const _renamer = (_path) =>
-                _stage.fs.uniquePath(
-                    _stage.fs.changeBaseName(
-                        _path,
-                        _stage.fs.basename(_path) + '.min',
-                    ),
-                );
+            // const _renamer = ( _path: string ) => _stage.fs.uniquePath(
+            //     _stage.fs.changeBaseName(
+            //         _path,
+            //         _stage.fs.basename( _path ) + '.min',
+            //     )
+            // );
             return {
-                css: {
-                    globs: [
-                        `${_distDir._}/**/*.css`,
-                        `${_distDir.scss}/**/*.css`,
-                    ],
-                    ignore: [
-                        `${_distDir._}/**/*.min.css`,
-                        `${_distDir.scss}/**/*.min.css`,
-                        `${_distDir._}/**/*.css.map`,
-                        `${_distDir.scss}/**/*.css.map`,
-                    ],
-                    renamer: _renamer,
-                },
-                html: {
-                    globs: [`${_distDir._}/**/*.html`],
-                },
-                js: {
-                    globs: [`${_distDir._}/**/*.js`, `${_distDir._}/**/*.jsx`],
-                    ignore: [
-                        `${_distDir._}/**/*.min.js`,
-                        `${_distDir._}/**/*.min.jsx`,
-                        `${_distDir._}/**/*.test.js`,
-                        `${_distDir._}/**/*.test.jsx`,
-                        `${_distDir._}/**/*.js.map`,
-                        `${_distDir._}/**/*.jsx.map`,
-                    ],
-                    renamer: _renamer,
-                },
+                // css: {
+                //     globs: [
+                //         `${ _distDir._ }/**/*.css`,
+                //         `${ _distDir.scss }/**/*.css`,
+                //     ],
+                //     ignore: [
+                //         `${ _distDir._ }/**/*.min.css`,
+                //         `${ _distDir.scss }/**/*.min.css`,
+                //         `${ _distDir._ }/**/*.css.map`,
+                //         `${ _distDir.scss }/**/*.css.map`,
+                //     ],
+                //     renamer: _renamer,
+                // },
+                // html: {
+                //     globs: [ `${ _distDir._ }/**/*.html`, ],
+                // },
+                // js: {
+                //     globs: [
+                //         `${ _distDir._ }/**/*.js`,
+                //         `${ _distDir._ }/**/*.jsx`,
+                //     ],
+                //     ignore: [
+                //         `${ _distDir._ }/**/*.min.js`,
+                //         `${ _distDir._ }/**/*.min.jsx`,
+                //         `${ _distDir._ }/**/*.test.js`,
+                //         `${ _distDir._ }/**/*.test.jsx`,
+                //         `${ _distDir._ }/**/*.js.map`,
+                //         `${ _distDir._ }/**/*.jsx.map`,
+                //     ],
+                //     renamer: _renamer,
+                // },
+                css: false,
+                html: false,
+                js: false,
                 json: {
                     globs: [`${_distDir._}/**/*.json`],
                 },
@@ -133,6 +139,45 @@ export class BuildStage extends AbstractStage {
             replace,
             test: false,
         };
+    }
+    /** {@inheritDoc AbstractStage.buildArgs} */
+    buildArgs(args = {}) {
+        const _defaults = this.ARGS_DEFAULT;
+        const merged = mergeArgs(_defaults, args, true);
+        if (
+            typeof _defaults.minimize === 'function'
+            && merged.minimize
+            && typeof merged.minimize !== 'function'
+        ) {
+            merged.minimize = mergeArgs(
+                _defaults.minimize(this),
+                merged.minimize,
+                false,
+            );
+        }
+        if (
+            typeof _defaults.prettify === 'function'
+            && merged.prettify
+            && typeof merged.prettify !== 'function'
+        ) {
+            merged.prettify = mergeArgs(
+                _defaults.prettify(this),
+                merged.prettify,
+                false,
+            );
+        }
+        if (
+            typeof _defaults.replace === 'function'
+            && merged.replace
+            && typeof merged.replace !== 'function'
+        ) {
+            merged.replace = mergeArgs(
+                _defaults.replace(this),
+                merged.replace,
+                false,
+            );
+        }
+        return merged;
     }
     /* CONSTRUCTOR
      * ====================================================================== */
@@ -216,7 +261,7 @@ export class BuildStage extends AbstractStage {
                 continue;
             }
             this.console.verbose(`minimizing ${_format} files...`, 2);
-            const _minimized = await this.try(
+            const _minimized = await this.atry(
                 this.fs.minify,
                 this.params.verbose ? 3 : 2,
                 [
@@ -274,7 +319,7 @@ export class BuildStage extends AbstractStage {
             }
             this.console.verbose(`prettifying ${_format} files...`, 2);
             const [_globs, _args = {}] = args[_format];
-            const _prettified = await this.try(this.fs.prettier, 3, [
+            const _prettified = await this.atry(this.fs.prettier, 3, [
                 _globs,
                 _format,
                 _args,
@@ -289,30 +334,15 @@ export class BuildStage extends AbstractStage {
     async replace() {
         if (!this.args.replace) {
             return;
-        } // here for typing backup
+        }
         this.console.progress('replacing placeholders...', 1);
         const paths = this.args.replace(this);
-        const replacements =
-            typeof this.config.replace === 'function'
-                ? this.config.replace(this)
-                : this.config.replace;
         for (const _key of ['current', 'package']) {
-            if (paths[_key] && replacements[_key]) {
-                this.console.verbose(`making ${_key} replacements...`, 2);
-                const _currentReplaced = this.fs.replaceInFiles(
-                    paths[_key],
-                    replacements[_key],
-                    this.params.verbose ? 3 : 2,
-                    {
-                        ignore: paths.ignore ?? FileSystem.globs.SYSTEM,
-                    },
-                );
-                this.console.verbose(
-                    `replaced ${_key} placeholders in ${_currentReplaced.length} files`,
-                    3,
-                    { italic: true },
-                );
+            // continues
+            if (!paths[_key]) {
+                continue;
             }
+            this.replaceInFiles(paths[_key], _key, 2, paths.ignore);
         }
     }
     /**

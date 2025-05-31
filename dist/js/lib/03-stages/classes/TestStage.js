@@ -101,7 +101,7 @@ export class TestStage extends AbstractStage {
             this.params.packaging && !this.params.dryrun,
         );
         this.testStatus = result !== 'FAILED';
-        if (this.params.packaging && !this.params.dryrun) {
+        if (this.params.releasing || this.params.packaging) {
             this.console.verbose('removing test files from dist...', 2);
             this.fs.delete(this.args.js.tidy, this.params.verbose ? 3 : 2);
         }

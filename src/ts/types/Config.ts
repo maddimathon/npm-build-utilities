@@ -36,6 +36,11 @@ export interface Config {
     title: string;
 
     /**
+     * A four-digit year string representing the launch date of the project.
+     */
+    launchYear: string;
+
+    /**
      * Default output colour to the terminal.
      */
     clr?: MessageMaker.Colour;

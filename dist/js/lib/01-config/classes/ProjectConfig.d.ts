@@ -13,6 +13,7 @@
 import type { Objects } from '@maddimathon/utility-typescript/types';
 import type { Config, Stage } from '../../../types/index.js';
 import type { Logger } from '../../../types/Logger.js';
+import { FileSystem } from '../../00-universal/index.js';
 /**
  * A super-simple class just for the configuration of the entire project.
  *
@@ -29,6 +30,7 @@ export declare class ProjectConfig implements Objects.Classify<Config> {
     readonly compiler: Partial<Stage.Compiler.Args> | undefined;
     readonly console: Partial<Logger.Args> | undefined;
     readonly fs: Partial<import("../../@internal.js").FileSystemType.Args>;
+    readonly launchYear: string;
     readonly paths: {
         dist: Required<Exclude<Config.Paths["dist"], string | (() => any)>>;
         scripts: Required<Exclude<Config.Paths["scripts"], string | (() => any)>>;
@@ -40,6 +42,30 @@ export declare class ProjectConfig implements Objects.Classify<Config> {
     readonly stages: Config.Internal.Stages;
     readonly title: string;
     constructor(config: Config.Internal);
+    /**
+     * Gets the paths from the config for the given dist sub directory.
+     *
+     * @param fs        Instance used to resolve path.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    getDistDir(fs: FileSystem, subDir?: Config.Paths.DistDirectory, ...subpaths: string[]): string;
+    /**
+     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
+     *
+     * @param fs        Instance used to resolve path.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    getScriptsPath(fs: FileSystem, subDir?: "logs", ...subpaths: string[]): string;
+    /**
+     * @param fs        Instance used to resolve path.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    getSrcDir(fs: FileSystem, subDir: Config.Paths.SourceDirectory, ...subpaths: string[]): string[];
+    getSrcDir(fs: FileSystem, subDir?: undefined, ...subpaths: string[]): string;
+    getSrcDir(fs: FileSystem, subDir?: Config.Paths.SourceDirectory, ...subpaths: string[]): string | string[];
     /**
      * Gets the instance for the given stage.
      *

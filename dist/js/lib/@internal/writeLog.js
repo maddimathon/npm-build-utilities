@@ -20,6 +20,10 @@ let _writeLog_msgMaker = new MessageMaker({ painter: null });
 /**
  * Gets a relative or absolute path to the {@link Config.Paths.scripts}
  * directories.
+ *
+ * @category Errors
+ *
+ * @since 0.1.0-alpha.draft
  */
 export function writeLog(msg, filename, t_args) {
     const {
@@ -58,6 +62,13 @@ export function writeLog(msg, filename, t_args) {
         { force: false, rename: true },
     );
 }
+/**
+ * Utilities used only for {@link writeLog} function.
+ *
+ * @category Function-Helpers
+ *
+ * @since 0.1.0-alpha.draft
+ */
 (function (writeLog) {
     writeLog.ARGS_DEFAULT = {};
 })(writeLog || (writeLog = {}));

@@ -15,6 +15,7 @@
  * @license MIT
  */
 import * as sass from 'sass';
+import * as typeDoc from "typedoc";
 import typescript from 'typescript';
 import type { Json, Node } from '@maddimathon/utility-typescript/types';
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -176,8 +177,41 @@ export declare namespace Args {
     }
     /**
      * The required shape for a document stage.
+     *
+     * @see {@link DocumentStage.ARGS_DEFAULT}  For defaults.
      */
     interface Document<SubStage extends string = string> extends Args<SubStage> {
+        /**
+         * Passed to typeDoc options.
+         *
+         * If null, entry point is taken from package.json’s `main`.
+         */
+        entryPoints: string[] | null;
+        /**
+         * Whether to include this sub-stage, or the configuration if so.
+         */
+        replace: false | ((_stage: Class) => {
+            /**
+             * File globs for making {@link Config.Replace.current}
+             * replacements.
+             */
+            current?: string[];
+            /**
+             * File globs to ignore while making {@link Config.Replace}
+             * replacements.
+             */
+            ignore?: string[];
+            /**
+             * File globs for making {@link Config.Replace.package}
+             * replacements.
+             */
+            package?: string[];
+        });
+        /**
+         * Default configuration for typeDoc.  Some configuration is added in
+         * {@link DocumentStage.typeDoc}.
+         */
+        typeDoc: Partial<Omit<typeDoc.TypeDocOptions, "entryPoints">> | ((_stage: Class) => Partial<Omit<typeDoc.TypeDocOptions, "entryPoints">>);
     }
     /**
      * The required shape for a package stage.
@@ -202,6 +236,8 @@ export declare namespace Args {
     }
     /**
      * The required shape for a test stage.
+     *
+     * @see {@link TestStage.ARGS_DEFAULT}  For defaults.
      */
     interface Test<SubStage extends string = string> extends Args<SubStage> {
         js: false | {
@@ -335,17 +371,30 @@ export interface Class<SubStage extends string = string, A extends Args = Args> 
      *
      * @category Utilities
      *
-     * @param subDir  Sub-path to get.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
      */
-    getDistDir(subDir?: Config.Paths.SourceDirectory): string;
+    getDistDir(subDir?: Config.Paths.SourceDirectory, ...subpaths: string[]): string;
+    /**
+     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
+     *
+     * @category Utilities
+     *
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
+     */
+    getScriptsPath(subDir?: "logs", ...subpaths: string[]): string;
     /**
      * Gets the paths from the config for the given src sub directory.
      *
      * @category Utilities
      *
-     * @param subDir  Sub-path to get.
+     * @param subDir    Sub-path to get.
+     * @param subpaths  Optional additional subpaths.
      */
-    getSrcDir(subDir?: Config.Paths.SourceDirectory): string | string[];
+    getSrcDir(subDir: Config.Paths.SourceDirectory, ...subpaths: string[]): string[];
+    getSrcDir(subDir?: undefined, ...subpaths: string[]): string;
+    getSrcDir(subDir?: Config.Paths.SourceDirectory, ...subpaths: string[]): string | string[];
     /**
      * Prints a message to the console signalling the start or end of this build
      * stage.
@@ -427,6 +476,10 @@ export declare namespace ClassType {
  * Shape of the utility class for compiling file types.
  */
 export interface Compiler {
+    /**
+     * Default TS config file.
+     */
+    tsConfig: Json.TsConfig;
 }
 /**
  * Type utilities for {@link Compiler} classes.
@@ -450,10 +503,6 @@ export declare namespace Compiler {
          * Optional default configuration to use when compiling typescript.
          */
         ts: typescript.CompilerOptions;
-        /**
-         * Optional default configuration for a tsConfig file.
-         */
-        tsConfig: Json.TsConfig;
     }
 }
 /**
@@ -498,7 +547,7 @@ export declare namespace SubStage {
     /**
      * Default substage names for a document stage.
      */
-    type Document = "typeDoc";
+    type Document = "replace" | "typeDoc";
     /**
      * Default substage names for a package stage.
      */
@@ -528,5 +577,5 @@ export type WithDefaultClass = Exclude<Name, WithAbstractClass>;
  *
  * @expand
  */
-export type WithAbstractClass = ("document" | "test" | "test-string") & Name;
+export type WithAbstractClass = (never) & Name;
 //# sourceMappingURL=Stage.d.ts.map

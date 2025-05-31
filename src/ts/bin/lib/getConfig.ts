@@ -12,6 +12,10 @@
  */
 
 import {
+    timestamp,
+} from '@maddimathon/utility-typescript/functions';
+
+import {
     VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
 
@@ -78,7 +82,7 @@ export async function getConfig(
     ];
 
     /** Pulled from an existing config file. */
-    let config;
+    let config: Partial<Config> | undefined;
 
     /** Index of the path currently behind checked. */
     let i = 0;
@@ -178,6 +182,12 @@ export async function getConfig(
         linesIn: 0,
     };
 
+    const currentYear = timestamp( null, {
+        date: false,
+        time: true,
+        format: { time: { year: 'numeric' } },
+    } );
+
     // the basic minimum object
     /**
      * Basic minimum config constructed because no valid config was found.
@@ -189,7 +199,14 @@ export async function getConfig(
             default: config.title,
             required: true,
             msgArgs,
-        } ) ?? config.title,
+        } ) ?? '',
+
+        launchYear: await console.nc.prompt.input( {
+            message: 'What’s the project’s launch year? (four digits)',
+            default: config.launchYear ?? currentYear,
+            required: true,
+            msgArgs,
+        } ) ?? currentYear,
     };
 
     let newCompleteConfig: Config.Internal | undefined = undefined;

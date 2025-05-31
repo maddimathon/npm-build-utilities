@@ -32,6 +32,10 @@ let _writeLog_msgMaker = new MessageMaker( { painter: null } );
 /**
  * Gets a relative or absolute path to the {@link Config.Paths.scripts}
  * directories.
+ * 
+ * @category Errors
+ * 
+ * @since ___PKG_VERSION___
  */
 export function writeLog(
     msg: string | string[] | MessageMaker.BulkMsgs,
@@ -87,6 +91,13 @@ export function writeLog(
     );
 }
 
+/**
+ * Utilities used only for {@link writeLog} function.
+ * 
+ * @category Function-Helpers
+ * 
+ * @since ___PKG_VERSION___
+ */
 export namespace writeLog {
 
     export const ARGS_DEFAULT = {

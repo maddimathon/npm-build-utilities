@@ -13,7 +13,6 @@
 import type { Node } from '@maddimathon/utility-typescript/types';
 import type { Logger } from '../../types/Logger.js';
 import { ProjectConfig } from '../01-config/index.js';
-import { BuildStage, CompileStage, PackageStage, ReleaseStage, SnapshotStage } from './index.js';
 /**
  * Complete, default configuration for the library.
  *
@@ -31,38 +30,9 @@ export declare function defaultConfig(args?: {
             readonly sourceMapIncludeSources: true;
             readonly style: "expanded";
         };
-        readonly tsConfig: {
-            readonly extends: ["@tsconfig/node20/tsconfig.json"];
-            readonly exclude: ["**/node_modules/**/*"];
-            readonly compilerOptions: {
-                readonly allowJs: true;
-                readonly checkJs: true;
-                readonly declaration: true;
-                readonly declarationMap: true;
-                readonly esModuleInterop: true;
-                readonly exactOptionalPropertyTypes: false;
-                readonly forceConsistentCasingInFileNames: true;
-                readonly lib: ["ES2022"];
-                readonly module: "node18";
-                readonly moduleResolution: "node16";
-                readonly noFallthroughCasesInSwitch: true;
-                readonly noImplicitAny: true;
-                readonly noImplicitOverride: true;
-                readonly noImplicitReturns: true;
-                readonly noImplicitThis: true;
-                readonly noUnusedLocals: true;
-                readonly pretty: true;
-                readonly removeComments: false;
-                readonly resolveJsonModule: true;
-                readonly skipLibCheck: true;
-                readonly sourceMap: true;
-                readonly strict: true;
-                readonly strictBindCallApply: true;
-                readonly target: "es2022";
-            };
-        };
     };
     readonly fs: {};
+    readonly launchYear: string;
     readonly paths: {
         readonly release: "@releases";
         readonly snapshot: ".snapshots";
@@ -84,12 +54,12 @@ export declare function defaultConfig(args?: {
     };
     readonly replace: typeof ProjectConfig.replace;
     readonly stages: {
-        readonly compile: typeof CompileStage;
-        readonly build: typeof BuildStage;
+        readonly compile: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
+        readonly build: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
         readonly document: false;
-        readonly package: typeof PackageStage;
-        readonly release: typeof ReleaseStage;
-        readonly snapshot: typeof SnapshotStage;
+        readonly package: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
+        readonly release: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
+        readonly snapshot: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
         readonly test: false;
     };
 };

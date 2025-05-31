@@ -17,6 +17,8 @@ import type { Logger } from '../../types/Logger.js';
  * Writes the content of an error to a msgs file and outputs (to the console) a
  * confirmation message with the path to the msgs file.
  *
+ * @category Errors
+ *
  * @param logMsg  Message to prepend to the return for output to the console.
  * @param error   Caught error to stringify (via {@link errorStringify}) and add
  *                to the log.
@@ -31,7 +33,9 @@ import type { Logger } from '../../types/Logger.js';
  */
 export declare function logError(logMsg: string, error: unknown, level: number, args: logError.Args): MessageMaker.BulkMsgs;
 /**
- * Utility types used only for {@link logError} function.
+ * Utilities used only for {@link logError} function.
+ *
+ * @category Function-Helpers
  *
  * @since 0.1.0-alpha.draft
  */

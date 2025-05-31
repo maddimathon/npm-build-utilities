@@ -22,6 +22,8 @@ const config: Config = {
 
     title: 'NPM Build Utilities',
 
+    launchYear: '2025',
+
     paths: {
         release: '@new-releases',
         snapshot: '.new-snapshots',
@@ -69,7 +71,30 @@ const config: Config = {
 
         test: true,
 
-        // document: true,
+        document: {
+
+            entryPoints: [
+                'src/ts/index.ts',
+                'src/ts/lib/@internal.ts',
+                'src/ts/bin/lib/index.ts',
+            ],
+
+            typeDoc: {
+
+                // navigation: {
+                //     includeCategories: true,
+                //     includeGroups: false,
+                //     includeFolders: true,
+                //     compactFolders: false,
+                //     excludeReferences: true,
+                // },
+
+                projectDocuments: [
+                    'README.md',
+                    'src/docs/*.md',
+                ],
+            },
+        },
     },
 };
 

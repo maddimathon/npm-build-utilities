@@ -33,8 +33,6 @@ import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
  * @category Stages
  *
  * @since 0.1.0-alpha.draft
- *
- * {@include ./AbstractStage.example.md}
  */
 export class AbstractStage {
     _pkg;
@@ -78,12 +76,28 @@ export class AbstractStage {
      * @category Utilities
      */
     compiler;
+    /** @hidden */
+    _fs;
     /**
      * {@inheritDoc Stage.Class.fs}
      *
      * @category Utilities
      */
-    fs;
+    get fs() {
+        // returns
+        if (typeof this._fs === 'undefined') {
+            return new FileSystem(this.console, this.config.fs);
+        }
+        return this._fs;
+    }
+    /**
+     * {@inheritDoc Stage.Class.fs}
+     *
+     * @category Utilities
+     */
+    set fs(fs) {
+        this._fs = fs ?? new FileSystem(this.console, this.config.fs);
+    }
     /**
      * {@inheritDoc Stage.Class.name}
      *
@@ -105,6 +119,10 @@ export class AbstractStage {
         if (typeof this._pkg === 'undefined') {
             this._pkg = this.try(getPackageJson, 1, [this.fs]);
         }
+        const repository =
+            typeof this._pkg?.repository === 'string'
+                ? this._pkg?.repository
+                : this._pkg?.repository?.url;
         return {
             name: this._pkg?.name,
             version: this._pkg?.version,
@@ -112,7 +130,7 @@ export class AbstractStage {
             homepage: this._pkg?.homepage,
             config: this._pkg?.config,
             license: this._pkg?.license,
-            repository: this._pkg?.repository,
+            repository,
             engines: this._pkg?.engines,
             files: this._pkg?.files,
             main: this._pkg?.main,
@@ -185,8 +203,7 @@ export class AbstractStage {
         this.version = _version;
         this.console = new Stage_Console(this.clr, this.config, this.params);
         this.args = this.buildArgs(args);
-        this.fs =
-            this.args.objs.fs ?? new FileSystem(this.console, this.config.fs);
+        this.fs = this.args.objs.fs;
         this.compiler =
             this.args.objs.compiler
             ?? new Stage_Compiler(
@@ -205,6 +222,50 @@ export class AbstractStage {
             !(this.params?.packaging || this.params?.releasing)
             || !!this.params?.dryrun
         );
+    }
+    /**
+     * Replaces placeholders in files as defined by {@link Config.replace}.
+     *
+     * @return  Paths to files where placeholders were replaced.
+     */
+    replaceInFiles(globs, version, level, ignore = []) {
+        const replacements =
+            typeof this.config.replace === 'function'
+                ? this.config.replace(this)[version]
+                : this.config.replace[version];
+        // returns
+        if (!replacements) {
+            return [];
+        }
+        this.console.verbose(`making ${version} replacements...`, level);
+        const replaced = this.fs.replaceInFiles(
+            globs,
+            replacements,
+            (this.params.verbose ? 1 : 0) + level,
+            {
+                ignore: ignore ?? FileSystem.globs.SYSTEM,
+            },
+        );
+        this.console.verbose(
+            `replaced ${version} placeholders in ${replaced.length} files`,
+            1 + level,
+            { italic: true },
+        );
+        return replaced;
+    }
+    /**
+     * Alias for {@link internal.writeLog}.
+     */
+    writeLog(msg, filename, subDir = [], date = null) {
+        if (!msg.length) {
+            return;
+        }
+        return writeLog(msg, filename, {
+            config: this.config,
+            date: date ?? new Date(),
+            fs: this.fs,
+            subDir,
+        });
     }
     /* CONFIG & ARGS ===================================== */
     /** {@inheritDoc Stage.Class.isSubStageIncluded} */
@@ -310,51 +371,16 @@ export class AbstractStage {
         return result;
     }
     /** {@inheritDoc Stage.Class.getDistDir} */
-    getDistDir(subDir) {
-        return this.config.paths.dist[subDir ?? '_'];
+    getDistDir(subDir, ...subpaths) {
+        return this.config.getDistDir(this.fs, subDir, ...subpaths);
     }
-    /**
-     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
-     */
+    /** {@inheritDoc Stage.Class.getScriptsPath} */
     getScriptsPath(subDir, ...subpaths) {
-        return this.fs.pathResolve(
-            this.config.paths.scripts[subDir ?? '_'],
-            ...subpaths,
-        );
+        return this.config.getScriptsPath(this.fs, subDir, ...subpaths);
     }
     /** {@inheritDoc Stage.Class.getSrcDir} */
-    getSrcDir(subDir) {
-        if (!subDir) {
-            const result = this.config.paths.src._;
-            return result;
-        }
-        const result = this.config.paths.src[subDir ?? '_'] ?? [];
-        return Array.isArray(result) ? result : [result];
-    }
-    /**
-     * Alias for {@link internal.logError}.
-     */
-    logError(logMsg, error, level, errMsg, date) {
-        return logError(logMsg, error, level, {
-            errMsg,
-            console: this.console,
-            fs: this.fs,
-            date,
-        });
-    }
-    /**
-     * Alias for {@link internal.writeLog}.
-     */
-    writeLog(msg, filename, subDir = [], date = null) {
-        if (!msg.length) {
-            return;
-        }
-        return writeLog(msg, filename, {
-            config: this.config,
-            date: date ?? new Date(),
-            fs: this.fs,
-            subDir,
-        });
+    getSrcDir(subDir, ...subpaths) {
+        return this.config.getSrcDir(this.fs, subDir, ...subpaths);
     }
     /* ERRORS ===================================== */
     /**
@@ -371,6 +397,17 @@ export class AbstractStage {
         );
     }
     /**
+     * Alias for {@link internal.logError}.
+     */
+    logError(logMsg, error, level, errMsg, date) {
+        return logError(logMsg, error, level, {
+            errMsg,
+            console: this.console,
+            fs: this.fs,
+            date,
+        });
+    }
+    /**
      * Runs a function, with parameters as applicable, and catches (& handles)
      * anything thrown.
      *
@@ -383,6 +420,24 @@ export class AbstractStage {
     try(tryer, level, params, handlerArgs, exitProcess) {
         try {
             return tryer(...(params ?? []));
+        } catch (error) {
+            this.handleError(error, level, handlerArgs, exitProcess);
+            return 'FAILED';
+        }
+    }
+    /**
+     * Runs a function, with parameters as applicable, and catches (& handles)
+     * anything thrown.
+     *
+     * Overloaded for better function param typing.
+     *
+     * @category Errors
+     *
+     * @experimental
+     */
+    async atry(tryer, level, params, handlerArgs, exitProcess) {
+        try {
+            return await tryer(...(params ?? []));
         } catch (error) {
             this.handleError(error, level, handlerArgs, exitProcess);
             return 'FAILED';

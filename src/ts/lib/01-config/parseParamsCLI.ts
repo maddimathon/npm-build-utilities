@@ -48,6 +48,13 @@ export function parseParamsCLI( input: Partial<CLI.Params> ): CLI.Params {
     return parsed;
 }
 
+/**
+ * Utilities for {@link parseParamsCLI} function.
+ * 
+ * @category Function-Helpers
+ * 
+ * @since ___PKG_VERSION___
+ */
 export namespace parseParamsCLI {
 
     export const ARGS_DEFAULT = ( input: Partial<CLI.Params> ) => {
