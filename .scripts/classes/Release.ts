@@ -230,18 +230,10 @@ export class Release extends AbstractStage<Release.Stages, Release.Args> {
 
     protected async package() {
 
-        const pkg = new Package( {
-            ...this.args as Package.Args,
-
-            'log-base-level': 1 + ( this.args[ 'log-base-level' ] ?? 0 ),
-
-            only: this.args[ 'only-pkg' ],
-            without: this.args[ 'without-pkg' ],
-
+        await this.runNewStageCommand( 'package', {
+            packaging: true,
             releasing: true,
         } );
-
-        await pkg.run();
     }
 
     protected async replace() {

@@ -77,6 +77,7 @@ export class FileSystem extends node.NodeFiles {
             glob: {
                 absolute: false,
                 dot: true,
+                filesOnly: false,
             },
 
         } as const satisfies FileSystemType.Copy.Args;
@@ -240,9 +241,14 @@ export class FileSystem extends node.NodeFiles {
         args = mergeArgs( this.args.glob, args, false );
 
         const globResult = globSync( globs, args )
-            .map( res => typeof res === 'object' ? res.fullpath() : res );
+            .map( res => typeof res === 'object' ? res.fullpath() : res )
+            .filter( path => !path.match( /(^|\/)\._/g ) );
 
-        return globResult.filter( path => !path.match( /(^|\/)\._/g ) );
+        if ( args.filesOnly ) {
+            return globResult.filter( this.isFile );
+        }
+
+        return globResult;
     }
 
     /** {@inheritDoc internal.FileSystemType.minify} */
@@ -478,7 +484,7 @@ export class FileSystem extends node.NodeFiles {
 
         // returns
         if ( !files.length ) {
-            this.console.verbose( 'FileSystem.replaceInFiles() - no files matched by globs', level );
+            // this.console.verbose( 'FileSystem.replaceInFiles() - no files matched by globs', level );
             this.console.vi.debug( { globs }, ( this.console.params.verbose ? 1 : 0 ) + level );
             return [];
         }

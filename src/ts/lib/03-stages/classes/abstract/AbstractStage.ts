@@ -123,7 +123,7 @@ export abstract class AbstractStage<
     public readonly compiler: Stage_Compiler;
 
     /** @hidden */
-    private _fs: FileSystem | undefined;
+    #fs: FileSystem | undefined;
 
     /**
      * {@inheritDoc Stage.Class.fs}
@@ -133,11 +133,11 @@ export abstract class AbstractStage<
     public get fs(): FileSystem {
 
         // returns
-        if ( typeof this._fs === 'undefined' ) {
+        if ( typeof this.#fs === 'undefined' ) {
             return new FileSystem( this.console, this.config.fs );
         }
 
-        return this._fs;
+        return this.#fs;
     }
 
     /**
@@ -146,7 +146,7 @@ export abstract class AbstractStage<
      * @category Utilities
      */
     public set fs( fs: FileSystem | undefined ) {
-        this._fs = fs ?? new FileSystem( this.console, this.config.fs );
+        this.#fs = fs ?? new FileSystem( this.console, this.config.fs );
     }
 
     /** 
@@ -199,6 +199,28 @@ export abstract class AbstractStage<
             bugs: this._pkg?.bugs,
 
         } as const satisfies Node.PackageJson;
+    }
+
+    /** @hidden */
+    #releaseDir: string | undefined;
+
+    /**
+     * Path to release directory for building a package for the current version.
+     */
+    public get releaseDir(): string {
+
+        if ( this.#releaseDir === undefined ) {
+
+            const name = this.pkg.name.replace( /^@([^\/]+)\//, '$1_' );
+            const version = this.version.toString( this.isDraftVersion ).replace( /\./gi, '-' );
+
+            this.#releaseDir = this.fs.pathRelative( this.fs.pathResolve(
+                this.config.paths.release,
+                `${ name }@${ version }`
+            ) );
+        }
+
+        return this.#releaseDir;
     }
 
     /** 

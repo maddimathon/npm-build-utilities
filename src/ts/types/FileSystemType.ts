@@ -151,7 +151,7 @@ export namespace FileSystemType {
     export namespace Copy {
 
         /**
-         * Optional configuration for {@link FileSystem.copy} method.
+         * Optional configuration for {@link FileSystemType.copy} method.
          * 
          * @since ___PKG_VERSION___
          */
@@ -175,6 +175,7 @@ export namespace FileSystemType {
          * @interface
          */
         export type Args = GlobOptions & Partial<{
+            filesOnly: boolean;
         }>;
     };
 

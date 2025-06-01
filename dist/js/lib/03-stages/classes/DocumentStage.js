@@ -33,7 +33,7 @@ export class DocumentStage extends AbstractStage {
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         const replace = (_stage) => ({
-            current: ['docs/**/*'],
+            current: ['docs/**'],
             ignore: [
                 ...FileSystem.globs.IGNORE_COPIED(_stage),
                 ...FileSystem.globs.IGNORE_PROJECT,
@@ -41,7 +41,7 @@ export class DocumentStage extends AbstractStage {
                 '**/.new-scripts/**',
                 '**/.vscode/**',
             ],
-            package: ['docs/**/*'],
+            package: ['docs/**'],
         });
         const typeDocOpts = (_stage) => {
             const _homepage = _stage.pkg.homepage?.replace(/\/+$/gi, '');

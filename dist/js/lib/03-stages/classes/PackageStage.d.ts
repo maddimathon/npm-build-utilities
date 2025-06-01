@@ -24,12 +24,16 @@ export declare class PackageStage extends AbstractStage<Stage.SubStage.Package, 
      */
     constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Package>, _pkg?: Node.PackageJson, _version?: SemVer);
     /**
+     * Runs the prompters to confirm before starting the substages.
+     */
+    protected startPrompters(): Promise<void>;
+    /**
      * Prints a message to the console signalling the start or end of this
      * build stage.
      *
      * @param which  Whether we are starting or ending.
      */
-    startEndNotice(which: "start" | "end" | null): void | Promise<void>;
+    startEndNotice(which: "start" | "end" | null): Promise<void>;
     protected runSubStage(subStage: Stage.SubStage.Package): Promise<void>;
     /**
      * Runs the project's build class.

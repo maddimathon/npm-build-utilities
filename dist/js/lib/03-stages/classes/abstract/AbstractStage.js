@@ -77,7 +77,7 @@ export class AbstractStage {
      */
     compiler;
     /** @hidden */
-    _fs;
+    #fs;
     /**
      * {@inheritDoc Stage.Class.fs}
      *
@@ -85,10 +85,10 @@ export class AbstractStage {
      */
     get fs() {
         // returns
-        if (typeof this._fs === 'undefined') {
+        if (typeof this.#fs === 'undefined') {
             return new FileSystem(this.console, this.config.fs);
         }
-        return this._fs;
+        return this.#fs;
     }
     /**
      * {@inheritDoc Stage.Class.fs}
@@ -96,7 +96,7 @@ export class AbstractStage {
      * @category Utilities
      */
     set fs(fs) {
-        this._fs = fs ?? new FileSystem(this.console, this.config.fs);
+        this.#fs = fs ?? new FileSystem(this.console, this.config.fs);
     }
     /**
      * {@inheritDoc Stage.Class.name}
@@ -137,6 +137,26 @@ export class AbstractStage {
             bin: this._pkg?.bin,
             bugs: this._pkg?.bugs,
         };
+    }
+    /** @hidden */
+    #releasePath;
+    /**
+     * Path to release directory for building a package for the current version.
+     */
+    get releasePath() {
+        if (this.#releasePath === undefined) {
+            const name = this.pkg.name.replace(/^@([^\/]+)\//, '$1_');
+            const version = this.version
+                .toString(this.isDraftVersion)
+                .replace(/\./gi, '-');
+            this.#releasePath = this.fs.pathRelative(
+                this.fs.pathResolve(
+                    this.config.paths.release,
+                    `${name}@${version}`,
+                ),
+            );
+        }
+        return this.#releasePath;
     }
     /**
      * {@inheritDoc Stage.Class.version}

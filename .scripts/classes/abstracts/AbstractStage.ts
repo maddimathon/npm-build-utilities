@@ -301,7 +301,7 @@ export abstract class AbstractStage<
     }
 
     protected async runNewStageCommand(
-        stage: "snapshot" | "build" | "compile",
+        stage: "snapshot" | "build" | "compile" | "document" | "test" | "package",
         inputParams: Partial<CLI.Params> = {},
     ) {
 
@@ -735,11 +735,17 @@ export namespace AbstractStage {
 
         'only-compile'?: string | string[];
         'only-build'?: string | string[];
+        'only-document'?: string | string[];
+        'only-package'?: string | string[];
         'only-snapshot'?: string | string[];
+        'only-test'?: string | string[];
 
         'without-compile'?: string | string[];
         'without-build'?: string | string[];
+        'without-document'?: string | string[];
+        'without-package'?: string | string[];
         'without-snapshot'?: string | string[];
+        'without-test'?: string | string[];
 
         /**
          * Passes --update param to sass when compiling; only compiles updates.

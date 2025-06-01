@@ -98,7 +98,7 @@ export declare namespace FileSystemType {
      */
     namespace Copy {
         /**
-         * Optional configuration for {@link FileSystem.copy} method.
+         * Optional configuration for {@link FileSystemType.copy} method.
          *
          * @since 0.1.0-alpha.draft
          */

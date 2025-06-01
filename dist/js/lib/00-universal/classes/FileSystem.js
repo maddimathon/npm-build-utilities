@@ -371,10 +371,7 @@ export class FileSystem extends node.NodeFiles {
         });
         // returns
         if (!files.length) {
-            this.console.verbose(
-                'FileSystem.replaceInFiles() - no files matched by globs',
-                level,
-            );
+            // this.console.verbose( 'FileSystem.replaceInFiles() - no files matched by globs', level );
             this.console.vi.debug(
                 { globs },
                 (this.console.params.verbose ? 1 : 0) + level,

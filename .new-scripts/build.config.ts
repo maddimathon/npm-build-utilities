@@ -25,8 +25,8 @@ const config: Config = {
     launchYear: '2025',
 
     paths: {
-        release: '@new-releases',
-        snapshot: '.new-snapshots',
+        release: '@releases',
+        snapshot: '.snapshots',
 
         scripts: {
             _: '.new-scripts',

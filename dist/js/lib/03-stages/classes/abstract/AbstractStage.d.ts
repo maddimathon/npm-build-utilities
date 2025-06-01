@@ -28,6 +28,7 @@ import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
  * @since 0.1.0-alpha.draft
  */
 export declare abstract class AbstractStage<SubStage extends string = string, Args extends Stage.Args = Stage.Args> implements Stage.Class<SubStage, Args> {
+    #private;
     protected _pkg: Node.PackageJson | undefined;
     protected _version: SemVer | undefined;
     /**
@@ -62,8 +63,6 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      * @category Utilities
      */
     readonly compiler: Stage_Compiler;
-    /** @hidden */
-    private _fs;
     /**
      * {@inheritDoc Stage.Class.fs}
      *
@@ -117,6 +116,10 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
             email?: string;
         } | undefined;
     };
+    /**
+     * Path to release directory for building a package for the current version.
+     */
+    get releasePath(): string;
     /**
      * {@inheritDoc Stage.Class.version}
      *

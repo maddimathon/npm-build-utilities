@@ -72,7 +72,7 @@ export class DocumentStage extends AbstractStage<Stage.SubStage.Document, Stage.
         const replace = ( _stage: Stage.Class ) => ( {
 
             current: [
-                'docs/**/*',
+                'docs/**',
             ],
 
             ignore: [
@@ -85,7 +85,7 @@ export class DocumentStage extends AbstractStage<Stage.SubStage.Document, Stage.
             ],
 
             package: [
-                'docs/**/*',
+                'docs/**',
             ],
         } );
 

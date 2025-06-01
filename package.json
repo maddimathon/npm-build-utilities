@@ -98,7 +98,7 @@
             "watch:js":   "watch -p 'src/ts/**/*'                  -c 'npm run --silent quick-build -- --compile-only js --watchedWatcher \"watch:js\" --watchedChange --watchedFilename \"$FILENAME\" --watchedEvent \"$EVENT\"'",
         
         
-        "package": "tsx --tsconfig .scripts/tsconfig.json .scripts/package.ts",
+        "package": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts package --config .new-scripts/build.config.ts",
         
         "dryrun":  "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts --dryrun",
         "release": "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts"
