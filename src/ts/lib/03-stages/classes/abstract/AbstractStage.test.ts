@@ -3,15 +3,14 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-// import type { Test } from '@maddimathon/utility-typescript/types';
+// import type {
+//     Test,
+// } from '@maddimathon/utility-typescript/types';
 
 // import { AbstractStage } from './AbstractStage.js';
 

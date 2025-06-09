@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -17,20 +14,15 @@ import { errorHandler } from '../@internal/index.js';
  * Runs a function, with parameters as applicable, and catches (& handles)
  * anything thrown.
  *
- * Overloaded for better function param typing.
+ * Overloaded for better param typing.
  *
  * @category Errors
  *
- * @experimental
+ * @throws  Any errors thrown in the `tryer` function.
+ *
+ * @since 0.1.0-alpha.draft
  */
-export function catchOrReturn(
-    tryer,
-    level,
-    console,
-    fs,
-    params,
-    callback = null,
-) {
+export function catchOrReturn(tryer, level, console, fs, params, callback) {
     try {
         return tryer(...(params ?? []));
     } catch (error) {

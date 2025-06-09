@@ -4,9 +4,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -18,7 +15,7 @@ export default async function (_params, level = 0, console) {
         console = await Project.getConsole({ params });
     }
     // TODO finish me
-    console.notice(
+    console.log(
         'Hello!  I am the help function.  I am not yet useful, sorry.',
         level,
         { linesOut: 2 },

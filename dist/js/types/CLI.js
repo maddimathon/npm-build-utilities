@@ -1,14 +1,16 @@
 /**
- * Types for the CLI.
+ * Types for the cli.
  *
  * @category Types
  *
  * @since 0.1.0-alpha.draft
  *
+ * @example
+ * ```ts
+ * import type { CLI } from '@maddimathon/build-utilities';
+ * ```
+ *
  * @packageDocumentation
- */
-/**
- * @package @maddimathon / npm - build - utilities@0.1.0-alpha.draft
  */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft

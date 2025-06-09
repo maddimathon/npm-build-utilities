@@ -3,15 +3,10 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-// import type {
-// } from '@maddimathon/utility-typescript/types';
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import {
     node,
@@ -81,8 +76,8 @@ export class Stage_Console {
      *
      * @param level     Depth level for this message (above the value of
      *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @param msgArgs   Argument overrides for the message.
+     * @param timeArgs  Argument overrides for the message's timestamp.
      *
      * @return  An object with arguments separated by message (`msg`) and time.
      */
@@ -132,13 +127,6 @@ export class Stage_Console {
         const args = this.msgArgs(level, msgArgs, timeArgs);
         this.nc.timestampLog(msg, args.msg, args.time);
     }
-    /** {@inheritDoc Logger.notice} */
-    notice(msg, level, msgArgs, timeArgs) {
-        if (!this.params.notice) {
-            return;
-        }
-        this.log(msg, level, msgArgs, timeArgs);
-    }
     /** {@inheritDoc Logger.progress} */
     progress(msg, level, msgArgs, timeArgs) {
         if (!this.params.progress) {
@@ -148,17 +136,13 @@ export class Stage_Console {
     }
     /**
      * Prints a message to the console signalling the start or end of this build
-     * stage if {@link Stage_Console['params']['notice']} is truthy.  Uses
-     * {@link Stage_Console['notice']}.
+     * stage.  Uses {@link Stage_Consolelog}.
      *
-     * @param msg    Text to display as start/end notice.
+     * @param msg    Text to display as start/end message.
      * @param which  Whether we are starting or ending.
-     * @param args   Optional. Message argument overrides.
+     * @param args   Message argument overrides.
      */
     startOrEnd(msg, which, args = {}) {
-        if (!this.params.notice) {
-            return;
-        }
         const depth = this.params['log-base-level'];
         let linesIn = args.linesIn ?? 2;
         let linesOut = args.linesOut ?? 1;
@@ -194,7 +178,7 @@ export class Stage_Console {
                 }
                 break;
         }
-        this.notice(bulkMsgs, 0, {
+        this.log(bulkMsgs, 0, {
             bold: true,
             italic: false,
             flag: true,
@@ -207,7 +191,7 @@ export class Stage_Console {
     /**
      * {@inheritDoc Logger.debug}
      *
-     * @todo
+     * @TODO
      * **Doesn't currently actually warn.**
      */
     warn(msg, level, msgArgs, timeArgs) {
@@ -286,13 +270,6 @@ export class _Stage_Console_VarInspect {
     log(variable, level, msgArgs, timeArgs) {
         const args = this.msgArgs(level, msgArgs, timeArgs);
         this.nc.timestampLog(this.stringify(variable), args.msg, args.time);
-    }
-    /** {@inheritDoc Logger.VarInspect.notice} */
-    notice(variable, level, msgArgs, timeArgs) {
-        if (!this.params.notice) {
-            return;
-        }
-        this.log(variable, level, msgArgs, timeArgs);
     }
     /** {@inheritDoc Logger.VarInspect.progress} */
     progress(variable, level, msgArgs, timeArgs) {

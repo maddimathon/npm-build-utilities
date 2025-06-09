@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -13,28 +10,78 @@
 
 import node_SemVer from 'semver';
 
-import type { LocalError } from '../../../types/LocalError.js';
+import {
+    toTitleCase,
+} from '@maddimathon/utility-typescript/functions';
+
 import type { Logger } from '../../../types/Logger.js';
 
-import { AbstractError } from './abstract/AbstractError.js';
-import { toTitleCase } from '@maddimathon/utility-typescript/functions/index';
+import {
+    AbstractError,
+} from './abstract/index.js';
 
 /**
  * For parsing and validating semantic version strings.
  * 
+ * Here temporarily; this will likely move to 
+ * {@link https://maddimathon.github.io/utility-typescript/ | utility-typescript}
+ * eventually.
+ * 
  * @category Config
+ * 
+ * @see {@link https://semver.org/spec/v2.0.0.html | Semantic Version 2.0.0 spec}
+ * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json | Node’s package.json documentation}
+ * @see {@link https://www.npmjs.com/package/semver | Node’s semver package}
  * 
  * @since ___PKG_VERSION___
  * 
+ * @experimental
  * @internal
  */
 export class SemVer {
 
+    /**
+     * Version number representing the current major release.
+     * 
+     * Incremented “when you make incompatible API changes”.
+     */
     public readonly major: number;
+
+    /**
+     * Version number representing the current minor release.
+     * 
+     * Incremented “when you add functionality in a backward compatible manner”.
+     */
     public readonly minor: number;
+
+    /**
+     * Version number representing the current patch release.
+     * 
+     * Incremented “when you make backward compatible bug fixes”.
+     */
     public readonly patch: number;
 
-    public readonly prerelease?: string | [ string, string ];
+    /**
+     * The pre-release version string(s), if any. If an array, the strings are
+     * joined with `'.'`.
+     *
+     * > Identifiers MUST comprise only ASCII alphanumerics and hyphens
+     * > [0-9A-Za-z-]. Identifiers MUST NOT be empty.
+     *
+     * > A pre-release version indicates that the version is unstable and might
+     * > not satisfy the intended compatibility requirements as denoted by its
+     * > associated normal version.
+     */
+    public readonly prerelease?: string | string[];
+
+    /**
+     * Build metadata, if any.
+     *
+     * > Identifiers MUST comprise only ASCII alphanumerics and hyphens
+     * > [0-9A-Za-z-]. Identifiers MUST NOT be empty. Build metadata MUST be
+     * > ignored when determining version precedence. Thus two versions that
+     * > differ only in the build metadata, have the same precedence.
+     */
     public readonly meta?: string;
 
     /** @hidden */
@@ -60,7 +107,11 @@ export class SemVer {
     }
 
     /**
-     * @throws {@link SemVer.Error}  If input string is valid and cannot be corrected.
+     * @throws {@link SemVer.Error} — If input string is not valid and cannot be 
+     *                                corrected.
+     * 
+     * @param input    Version string to parse.
+     * @param console  Instance used to log messages and debugging info.
      */
     constructor (
         protected readonly input: string,
@@ -71,7 +122,6 @@ export class SemVer {
             input.match( this.regex )
             ?? node_SemVer.clean( input )?.match( this.regex )
             ?? node_SemVer.valid( node_SemVer.coerce( input ) )?.match( this.regex )
-            ?? null
         ) as null | [
             string,
             string,
@@ -118,12 +168,14 @@ export class SemVer {
             ? matches[ 4 ].split( '.' ).filter( val => val.length ) as [ string, string ]
             : matches[ 4 ];
 
+        // if it's empty, it should be undefined
         if ( !this.prerelease?.length ) {
             this.prerelease = undefined;
         }
 
         this.meta = matches[ 5 ];
 
+        // if it's empty, it should be undefined
         if ( !this.meta?.length ) {
             this.meta = undefined;
         }
@@ -141,10 +193,18 @@ export class SemVer {
                 }
             } ) ],
             [ this.console.vi.stringify( { 'this.toString()': this.toString() } ) ],
-            [ this.console.vi.stringify( { 'this.toString( true )': this.toString( true ) } ) ],
+            [ this.console.vi.stringify( { 'this.toString( false )': this.toString( false ) } ) ],
         ], 0, { bold: false, italic: false }, { bold: true } );
     }
 
+    /**
+     * Returns a valid version string representation of this instance.
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString | Object.prototype.toString()}
+     * 
+     * @param draft  Whether to include a draft marker in the version string. 
+     *               Default false.
+     */
     public toString( draft: boolean = false ): string {
 
         let version = [
@@ -163,10 +223,8 @@ export class SemVer {
                 prerelease = 'draft';
             } else if ( !Array.isArray( prerelease ) ) {
                 prerelease = [ prerelease, 'draft' ];
-            } else if ( !meta ) {
-                meta = 'draft';
             } else {
-                meta = meta + '--draft';
+                prerelease.push( 'draft' );
             }
         }
 
@@ -190,7 +248,7 @@ export class SemVer {
 /**
  * Used only for the {@link SemVer} class.
  * 
- * @category Class-Helpers
+ * @category Config
  * 
  * @since ___PKG_VERSION___
  */
@@ -203,46 +261,21 @@ export namespace SemVer {
      * 
      * @since ___PKG_VERSION___
      */
-    export class Error extends AbstractError<Error.Args> {
-
-
-
-        /* LOCAL PROPERTIES
-         * ================================================================== */
+    export class Error extends AbstractError {
 
         public readonly code: Error.Code;
 
-
-        /* Args ===================================== */
-
         public override readonly name: string = 'SemVer Error';
-
-        public get ARGS_DEFAULT() {
-
-            return {
-                ...AbstractError.prototype.ARGS_DEFAULT,
-            } as const satisfies Error.Args;
-        }
-
-
-
-        /* CONSTRUCTOR
-         * ================================================================== */
 
         public constructor (
             message: string,
             code: Error.Code,
             context: null | AbstractError.Context,
-            args?: Partial<Error.Args> & { cause?: LocalError.Input; },
+            cause?: AbstractError.Input,
         ) {
-            super( message, context, args );
+            super( message, context, cause );
             this.code = code;
         }
-
-
-
-        /* LOCAL METHODS
-         * ================================================================== */
     }
 
     /**
@@ -256,6 +289,8 @@ export namespace SemVer {
 
         /**
          * All allowed error code strings.
+         * 
+         * @since ___PKG_VERSION___
          */
         export type Code =
             | typeof INVALID_INPUT
@@ -266,31 +301,31 @@ export namespace SemVer {
         /**
          * Error code for input version strings that cannot be coerced into a
          * valid version.
+         * 
+         * @since ___PKG_VERSION___
          */
         export const INVALID_INPUT = '4';
 
         /**
          * Error code for invalid build meta strings.
+         * 
+         * @since ___PKG_VERSION___
          */
         export const INVALID_META = '3';
 
         /**
          * Error code for invalid prerelease strings.
+         * 
+         * @since ___PKG_VERSION___
          */
         export const INVALID_PRERELEASE = '2';
 
         /**
          * Error code for invalid, missing, or non-matching major, minor, or
          * patch versions.
-         */
-        export const INVALID_VERSION = '1';
-
-        /**
-         * Optional configuration for {@link Error} class.
          * 
          * @since ___PKG_VERSION___
          */
-        export interface Args extends LocalError.Args {
-        };
+        export const INVALID_VERSION = '1';
     }
 }

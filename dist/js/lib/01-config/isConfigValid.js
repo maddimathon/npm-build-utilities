@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -15,6 +12,13 @@
  * valid {@link Config} object.
  *
  * @category Config
+ *
+ * @param test  The config object to check for completeness.
+ *
+ * @return  False if any required properties are missing or the wrong type.
+ *          Otherwise, this returns a {@link Config} object for nice typing.
+ *
+ * @since 0.1.0-alpha.draft
  *
  * @internal
  */
@@ -34,7 +38,7 @@ export function isConfigValid(test) {
             return false;
         }
         // continues - this passes because it is defined and has no defined type
-        if (!requiredKeys[key]) {
+        if (requiredKeys[key] === null) {
             continue;
         }
         const allowedTypes = Array.isArray(requiredKeys[key])
@@ -43,6 +47,10 @@ export function isConfigValid(test) {
         // continues - this passes because it is defined and has no defined type
         if (!allowedTypes.length) {
             continue;
+        }
+        // returns - type mismatch
+        if (!allowedTypes.includes(typeof test[key])) {
+            return false;
         }
     }
     return test;

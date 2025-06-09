@@ -3,19 +3,19 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type {
+    Json,
+} from '@maddimathon/utility-typescript/types';
 
 import {
     escRegExpReplace,
     softWrapText,
+    timestamp,
 } from '@maddimathon/utility-typescript/functions';
 
 import type {
@@ -34,6 +34,7 @@ import { SemVer } from '../../@internal/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
+import { FileSystem } from '../../00-universal/index.js';
 
 
 
@@ -45,8 +46,8 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since ___PKG_VERSION___
  */
 export class ReleaseStage extends AbstractStage<
-    Stage.SubStage.Release,
-    Stage.Args.Release
+    Stage.Args.Release,
+    Stage.SubStage.Release
 > {
 
 
@@ -54,6 +55,68 @@ export class ReleaseStage extends AbstractStage<
     /* PROPERTIES
      * ====================================================================== */
 
+    /**
+     * Default content for an empty, markdown changelog file.
+     * 
+     * @category Constants
+     */
+    public get DEFAULT_CHANGELOG() {
+
+        return [
+            `---`,
+            `title: Changelog`,
+            `---`,
+            ``,
+            `# ${ this.config.title } Changelog`,
+            ``,
+            `All notable changes to this project will be documented in this file after/on`,
+            `each release.`,
+            ``,
+            `The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),`,
+            `and this project adheres to `,
+            `[Semantic Versioning](https://semver.org/spec/v2.0.0.html), i.e.:`,
+            `> Given a version number ${ '`MAJOR`.`MINOR`.`PATCH`' }, increment the:`,
+            `> - ${ '`MAJOR`' } version when you make incompatible changes`,
+            `> - ${ '`MINOR`' } version when you add backwards-compatible functionality`,
+            `> - ${ '`PATCH`' } version when you make backwards-compatible bug fixes`,
+        ].join( '\n' );
+    }
+
+    /**
+     * Default content for an empty, markdown release notes file.
+     * 
+     * @category Constants
+     */
+    public get DEFAULT_RELEASE_NOTES() {
+
+        return [
+            '',
+            '### Breaking',
+            '- ',
+            '',
+            '### Added',
+            '- ',
+            '',
+            '### Changed',
+            '- ',
+            '',
+            '### Fixed',
+            '- ',
+            '',
+            '### Removed',
+            '- ',
+            '',
+            '',
+        ].join( '\n' );
+    }
+
+    /**
+     * {@inheritDoc AbstractStage.subStages}
+     * 
+     * @category Running
+     * 
+     * @source
+     */
     public readonly subStages: Stage.SubStage.Release[] = [
         'changelog',
         'package',
@@ -68,8 +131,34 @@ export class ReleaseStage extends AbstractStage<
 
     public get ARGS_DEFAULT() {
 
+        const replace = ( ( _stage: Stage ) => {
+
+            return {
+
+                ignore: [
+                    ...FileSystem.globs.IGNORE_PROJECT,
+                    ...FileSystem.globs.SYSTEM,
+
+                    '**/.vscode/**',
+                    '**/*.zip',
+                ],
+
+                package: [
+                    _stage.getSrcDir().replace( /\/$/gi, '' ) + '/**/*',
+                    _stage.config.paths.release.replace( /\/$/gi, '' ) + '/**/*',
+                    _stage.config.paths.changelog,
+                    _stage.config.paths.readme,
+                ],
+
+            } as const;
+
+        } ) satisfies Exclude<Stage.Args.Release[ 'replace' ], boolean>;
+
         return {
-            ...AbstractStage.ARGS_DEFAULT,
+            utils: {},
+
+            replace,
+
         } as const satisfies Stage.Args.Release;
     }
 
@@ -79,20 +168,22 @@ export class ReleaseStage extends AbstractStage<
      * ====================================================================== */
 
     /**
-     * @param config    Complete project configuration.
-     * @param params    Current CLI params.
-     * @param args      Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     * 
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Release>,
-        _pkg?: Node.PackageJson,
-        _version?: SemVer,
+        pkg?: Json.PackageJson,
+        version?: SemVer,
     ) {
-        super( 'release', 'purple', config, params, args, _pkg, _version );
+        super( 'release', 'purple', config, params, args, pkg, version );
     }
 
 
@@ -102,6 +193,8 @@ export class ReleaseStage extends AbstractStage<
 
     /**
      * Runs the prompters to confirm before starting the substages.
+     * 
+     * @category Running
      */
     protected async startPrompters() {
 
@@ -173,29 +266,8 @@ export class ReleaseStage extends AbstractStage<
                 { force: true }
             );
         }
-
-        // returns if prep questions fail
-        if ( !this.params.dryrun && this.isSubStageIncluded( 'changelog', 1 ) ) {
-
-            // returns
-            if (
-                ! await this.console.nc.prompt.bool( {
-                    ...promptArgs,
-                    message: `Is .releasenotes.md updated?`,
-                    default: false,
-                } )
-            ) {
-                process.exit( 0 );
-            }
-        }
     }
 
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     public override async startEndNotice( which: "start" | "end" | null ) {
 
         const version = this.version.toString( this.isDraftVersion );
@@ -238,30 +310,326 @@ export class ReleaseStage extends AbstractStage<
         await this[ subStage ]();
     }
 
+    /**
+     * Add updates in the release notes file to the changelog.
+     * 
+     * @category Sub-Stages
+     */
     protected async changelog() {
-        this.console.progress( '(NOT IMPLEMENTED) running changelog sub-stage...', 1 );
+        this.console.progress( 'updating changelog...', 1 );
+
+        const promptArgs: Omit<node.NodeConsole_Prompt.SelectConfig<any>, "choices" | "message"> = {
+
+            msgArgs: {
+                bold: false,
+                clr: this.clr,
+                depth: 2,
+                linesIn: 1,
+                maxWidth: null,
+            },
+
+            styleClrs: {
+                highlight: this.clr,
+            },
+        };
+
+        const releaseNotesPath = this.config.paths.notes.release;
+
+        // exits
+        if ( !this.fs.exists( releaseNotesPath ) ) {
+
+            this.console.log( 'No release notes file was found, so the release cannot continue.', 2 );
+
+            if ( await this.console.nc.prompt.bool( {
+                ...promptArgs,
+                message: 'Do you want to create a release notes file from the template?',
+                default: true,
+            } ) ) {
+                this.fs.write( releaseNotesPath, this.DEFAULT_RELEASE_NOTES, { force: true } );
+            }
+
+            process.exit();
+
+        } else if ( ! await this.console.nc.prompt.bool( {
+            ...promptArgs,
+            message: 'Is the release notes file at ' + releaseNotesPath.replace( / /g, '%20' ) + ' updated?',
+            default: false,
+        } ) && !this.params.dryrun ) {
+            this.console.log( 'Exiting since release notes are required for release.', 2 );
+            process.exit();
+        }
+
+        const changelogPath = this.config.paths.changelog;
+
+        const changelogExists = this.fs.exists( changelogPath );
+
+        // exits if not creating a changelog
+        if ( !changelogExists ) {
+
+            /**
+             * What to do since no changelog was found.
+             */
+            const _noChangelogPrompt = await this.console.nc.prompt.select( {
+                ...promptArgs,
+                message: `No changelog was found at configured path (${ changelogPath }).  What next?`,
+                choices: [
+                    {
+                        name: 'Create new changelog file',
+                        value: 'create-new',
+                    },
+                    {
+                        name: 'Cancel and exit',
+                        value: 'cancel',
+                    },
+                ],
+            } );
+
+            // returns
+            if ( _noChangelogPrompt === 'cancel' ) {
+                process.exit();
+            }
+        }
+
+        let t_currentChangelog = changelogExists
+            ? this.fs.readFile( changelogPath )
+            : this.DEFAULT_CHANGELOG + '\n\n\n<!--CHANGELOG_NEW-->\n';
+
+        const newEntryRegex = /(\n+)\s*<!--CHANGELOG_NEW-->\s*(\n|$)/g;
+
+        // exits if not adding pleaceholder
+        if ( changelogExists && t_currentChangelog.match( newEntryRegex ) === null ) {
+
+            this.console.log( [
+                [ 'The new entry placeholder was not found in the config file.' ],
+                [ 'The placeholder (`<!--CHANGELOG_NEW-->`) must be on its own line with no extra spaces and is case-sensitive.', { bold: false } ],
+            ], 2, { bold: true } );
+
+            const _noNewEntryPlaceholderPrompt = {
+                ...promptArgs,
+                message: 'Once you’ve added the placeholder, please hit continue.',
+                choices: [
+                    {
+                        name: 'Continue',
+                        value: 'continue',
+                    },
+                    {
+                        name: 'Cancel and exit',
+                        value: 'cancel',
+                    },
+                ],
+            };
+
+            do {
+                const _noNewEntryPlaceholder = await this.console.nc.prompt.select( _noNewEntryPlaceholderPrompt );
+
+                // exits
+                if ( _noNewEntryPlaceholder === 'cancel' ) {
+                    process.exit();
+                }
+
+                _noNewEntryPlaceholderPrompt.message = 'The placeholder still wasn’t found, please check again and hit continue.';
+
+                t_currentChangelog = this.fs.readFile( changelogPath );
+
+            } while ( t_currentChangelog.match( newEntryRegex ) === null );
+        }
+
+        const currentChangelog = t_currentChangelog;
+
+        const releaseNotes = this.fs.readFile( releaseNotesPath );
+
+        const newChangeLogEntry =
+            '<!--CHANGELOG_NEW-->\n\n\n'
+            + `## **${ this.version.toString( false ) }** -- ${ timestamp( null, { date: true, time: false } ) }`
+            + '\n\n'
+            + releaseNotes.trim()
+            + '\n\n\n';
+
+        // returns
+        if ( this.params.dryrun ) {
+
+            if ( !changelogExists ) {
+                this.console.verbose( 'writing changelog template...', 2 );
+                this.fs.write( changelogPath, currentChangelog, { force: true } );
+            }
+
+            this.console.vi.debug( { newChangeLogEntry: '\n' + newChangeLogEntry }, 2, { maxWidth: null } );
+            this.console.verbose( 'skipping changelog update during dryrun...', 2 );
+            return;
+        }
+
+        this.console.verbose( 'writing updated changelog...', 2 );
+        this.fs.write(
+            changelogPath,
+            currentChangelog.replace(
+                newEntryRegex,
+                '$1' + escRegExpReplace( newChangeLogEntry )
+            ).trim(),
+            { force: true }
+        );
     }
 
+    /**
+     * Git commits files changed and created during build and package.
+     * 
+     * @category Sub-Stages
+     */
     protected async commit() {
-        this.console.progress( '(NOT IMPLEMENTED) running commit sub-stage...', 1 );
+        this.console.progress( 'commiting any new changes...', 1 );
+
+        const version = this.version.toString();
+
+        /** To add to commit. */
+        let updatedPaths = [
+            this.getDistDir(),
+            this.getDistDir( 'docs' ),
+            this.getDistDir( 'scss' ),
+            this.config.paths.release.replace( /\/+$/g, '' ) + '/*.zip',
+            this.config.paths.changelog,
+            this.config.paths.readme,
+        ];
+
+        // adds replaced files to the commit too
+        if ( this.args.replace ) {
+            updatedPaths = updatedPaths.concat( this.args.replace( this ).package );
+        }
+
+        updatedPaths = updatedPaths.map( this.fs.pathRelative );
+
+        const gitCmd = `git add "${ updatedPaths.join( '" "' ) }"`
+            + ' && '
+            + `git commit -a --allow-empty -m "[${ timestamp( null, { date: true, time: false } ) }] release: ${ version }"`;
+
+        // returns
+        if ( this.params.dryrun ) {
+            this.console.verbose( 'skipping git commit during dryrun...', 2 );
+            this.console.vi.verbose( { gitCmd }, 3, { maxWidth: null } );
+            this.console.vi.debug( { gitCmd }, ( this.params.verbose ? 3 : 2 ), { maxWidth: null } );
+            return;
+        }
+
+        this.console.vi.debug( { gitCmd }, 2, { maxWidth: null } );
+
+        // commit, tag, and push tags
+        for ( const _cmd of [
+            gitCmd,
+            `git tag -a -f ${ version } -m "release: ${ version }"`,
+            `git push --tags || echo ''`,
+        ] ) {
+            this.try(
+                this.console.nc.cmd,
+                2,
+                [ _cmd ]
+            );
+        }
+
+        this.console.verbose( 'pushing to origin...', 2 );
+        this.try(
+            this.console.nc.cmd,
+            2,
+            [ 'git push' ]
+        );
     }
 
+    /**
+     * Uses GitHub API to update repo meta and draft a release.
+     * 
+     * @category Sub-Stages
+     */
     protected async github() {
-        this.console.progress( '(NOT IMPLEMENTED) running github sub-stage...', 1 );
+        this.console.progress( 'publishing to github...', 1 );
+
+        const version = this.version.toString( false );
+
+
+        this.console.verbose( 'updating repo metadata...', 2 );
+        const repoUpdateCmd = `gh repo edit ${ this.console.nc.cmdArgs( {
+            description: this.pkg.description ?? null,
+            homepage: this.pkg.homepage ?? null,
+        }, false, false ) }`;
+
+        if ( this.params.dryrun ) {
+            this.console.verbose( 'skipping repo updates during dryrun...', 3 );
+            this.console.vi.debug( { repoUpdateCmd }, ( this.params.verbose ? 4 : 2 ), { maxWidth: null } );
+        } else {
+
+            this.try(
+                this.console.nc.cmd,
+                2,
+                [ repoUpdateCmd ]
+            );
+        }
+
+
+        this.console.verbose( 'creating github release...', 2 );
+
+        const releaseAttachment = `"${ this.releaseDir.replace( /\/*$/g, '' ) + '.zip' }#${ this.pkg.name }@${ version }"`;
+
+        const releaseCmd = `gh release create ${ version } ${ releaseAttachment } ${ this.console.nc.cmdArgs( {
+            draft: true,
+            'notes-file': '.releasenotes.md',
+            title: `${ version } — ${ timestamp( null, { date: true, time: false } ) }`,
+        }, false, false ) }`;
+
+        this.console.vi.debug( { releaseCmd }, ( this.params.verbose ? 3 : 2 ), { maxWidth: null } );
+
+        if ( this.params.dryrun ) {
+            this.console.verbose( 'skipping github release during dryrun...', 3 );
+        } else {
+
+            this.try(
+                this.console.nc.cmd,
+                2,
+                [ releaseCmd ]
+            );
+        }
     }
 
     /**
      * Runs the project's package class.
+     * 
+     * @category Sub-Stages
      */
     protected async package() {
         await this.runStage( 'package', 1 );
     }
 
+    /**
+     * Replaces package placeholders in the source.
+     * 
+     * @category Sub-Stages
+     */
     protected async replace() {
-        this.console.progress( '(NOT IMPLEMENTED) running replace sub-stage...', 1 );
+        if ( !this.args.replace ) { return; }
+        this.console.progress( 'replacing placeholders in source...', 1 );
+
+        // returns
+        if ( this.params.dryrun ) {
+            this.console.progress( 'skipping replacements during dryrun...', 2 );
+            return;
+        }
+
+        const globs = this.args.replace( this );
+
+        this.replaceInFiles(
+            globs.package,
+            'package',
+            2,
+            globs.ignore ?? [ ...FileSystem.globs.SYSTEM ],
+        );
     }
 
+    /**
+     * Resets the release notes file.
+     * 
+     * @category Sub-Stages
+     */
     protected async tidy() {
-        this.console.progress( '(NOT IMPLEMENTED) running tidy sub-stage...', 1 );
+        this.console.progress( 'tidying up...', 1 );
+
+        if ( !this.params.dryrun ) {
+            this.console.verbose( 'resetting release notes...', 2 );
+            this.fs.write( this.config.paths.notes.release, this.DEFAULT_RELEASE_NOTES, { force: true } );
+        }
     }
 }

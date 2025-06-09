@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -20,13 +17,11 @@ import { isConfigValid, internalConfig } from '../../lib/@internal.js';
  *
  * Prompts the user in the terminal as needed to complete the configuration.
  *
- * @category Config
- *
- * @since 0.1.0-draft
+ * @since 0.1.0-alpha.draft
  *
  * @param params   Input CLI params to convert.
- * @param console  Optional. And instance of the console class to use for outputting messages.
- * @param level    Optional. Depth level for this message (above the value of {@link CLI.Params.log-base-level}).
+ * @param console  Instance used to log messages and debugging info.
+ * @param level    Depth level for this message (above the value of {@link CLI.Params.log-base-level}).
  */
 export async function getConfig(params, console = null, level = 0) {
     if (!console) {

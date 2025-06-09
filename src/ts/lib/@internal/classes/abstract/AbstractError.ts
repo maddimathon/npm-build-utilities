@@ -3,23 +3,29 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-import type { Objects } from '@maddimathon/utility-typescript/types';
+import type {
+    Objects,
+} from '@maddimathon/utility-typescript/types';
 
-import { CustomError, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
+import {
+    MessageMaker,
+    VariableInspector,
+} from '@maddimathon/utility-typescript/classes';
+
+import {
+    mergeArgs,
+} from '@maddimathon/utility-typescript/functions';
 
 // import type {
 // } from '../../../../types/index.js';
 
-import type { FileSystemType } from '../../../../types/FileSystemType.js';
-import type { LocalError } from '../../../../types/LocalError.js';
+import { FileSystemType } from '../../../../types/FileSystemType.js';
+import { Logger } from '../../../../types/Logger.js';
 
 
 /**
@@ -27,56 +33,54 @@ import type { LocalError } from '../../../../types/LocalError.js';
  * 
  * @category Errors
  * 
+ * @typeParam T_Args  Complete {@link AbstractError.args} object for this instance.
+ * 
  * @since ___PKG_VERSION___
  */
 export abstract class AbstractError<
-    Args extends LocalError.Args,
-> extends CustomError<Args> implements LocalError<Args> {
-
-
-
-    /* STATIC
-     * ====================================================================== */
-
-    /**
-     * Adds this error information to a log file according to the project
-     * configuration.
-     *
-     * @return  If false, writing a log file failed. Else, this is the path to
-     *          the log file.
-     */
-    public static log(
-        error: unknown,
-        fs: FileSystemType,
-        args?: Partial<LocalError.Handler.Args>,
-    ): false | string {
-
-        return String( error );
-    }
+    T_Args extends object | never = never,
+> extends Error {
 
 
 
     /* LOCAL PROPERTIES
      * ====================================================================== */
 
+    /** {@inheritDoc internal.AbstractError.Context} */
     public readonly context: null | AbstractError.Context;
 
 
     /* Args ===================================== */
 
     /**
+     * Represents the cause of the error (e.g., a different exception that was
+     * caught).
+     *
+     * @see {@link Error.cause}
+     */
+    public override readonly cause?: unknown;
+
+    /**
      * Represents the name for the type of error.
      * 
-     * @category Args
-     * 
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name | MDN docs}
+     * @see {@link !Error.name | Error.name}
      */
     public abstract override readonly name: string;
 
     /**
-     * @category Args
+     * Additional arguments for this instance, if any.
      */
-    public abstract override get ARGS_DEFAULT(): Args;
+    public readonly args: Partial<T_Args>;
+
+    /**
+     * Default args object, if applicable.
+     */
+    protected readonly ARGS_DEFAULT?: T_Args;
+
+    /** @hidden */
+    private buildArgs( args?: Partial<T_Args> ): Partial<T_Args> {
+        return mergeArgs( this.ARGS_DEFAULT ?? {}, args ?? {}, true );
+    }
 
 
 
@@ -86,9 +90,13 @@ export abstract class AbstractError<
     public constructor (
         message: string,
         context: null | AbstractError.Context,
-        args?: Partial<Args> & { cause?: LocalError.Input; },
+        cause?: AbstractError.Input,
+        args?: Partial<T_Args>,
     ) {
-        super( message, args?.cause, args );
+        super( message );
+
+        this.args = this.buildArgs( args );
+        this.cause = cause;
         this.context = context;
     }
 
@@ -118,12 +126,10 @@ export abstract class AbstractError<
 
     /**
      * The object shape used when converting to JSON.
-     * 
-     * @category Exporters
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
      */
-    public toJSON(): Objects.Classify<AbstractError.JSON> {
+    public toJSON(): AbstractError.JSON {
 
         return {
             name: this.name,
@@ -138,8 +144,6 @@ export abstract class AbstractError<
     /**
      * Overrides the default function to return a string representation of this
      * object.
-     * 
-     * @category Exporters
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString | Object.prototype.toString()}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/toString | Error.prototype.toString()}
@@ -164,21 +168,20 @@ export abstract class AbstractError<
     /**
      * Overrides the default function to return an object representation of this
      * object.
-     * 
-     * @category Exporters
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
-     * @see {@link NodeConsole_Error.toJSON | NodeConsole_Error.toJSON()}
      */
     public override valueOf() { return this.toJSON(); }
 }
 
 /**
- * Used only for {@link AbstractError}.
+ * Types used for {@link AbstractError} classes.
  * 
- * @category Class-Helpers
+ * @category Types
  * 
  * @since ___PKG_VERSION___
+ * 
+ * @internal
  */
 export namespace AbstractError {
 
@@ -200,44 +203,129 @@ export namespace AbstractError {
     export namespace Context {
 
         /**
-         * @interface
+         * Basic context information for a thrown error.
+         * 
+         * @since ___PKG_VERSION___
          */
-        export type Basic = {
+        export interface Basic {
             file: string;
             line?: string;
             module?: string;
         };
 
         /**
-         * @interface
+         * Context information for an error thrown in a class.
+         * 
+         * @since ___PKG_VERSION___
          */
-        export type Class = Partial<Basic> & {
+        export interface Class extends Partial<Basic> {
             class: string;
             method: string;
         };
 
         /**
-         * @interface
+         * Context information for an error thrown in a function.
+         * 
+         * @since ___PKG_VERSION___
          */
-        export type Function = Partial<Basic> & {
+        export interface Function extends Partial<Basic> {
             function: string;
         };
     };
 
     /**
-     * Export shape for a plain {@link AbstractError} object.
+     * Function for handling errors.
+     * 
+     * **Should exit the node process.**
+     * 
+     * @param error    Error to handle.
+     * @param level    Depth level for output to the console.
+     * @param console  Instance used to log messages and debugging info.
+     * @param fs       Instance used to work with paths and files.
+     * @param args     Overrides for default options.
+     * 
+     * @since ___PKG_VERSION___
      */
-    export interface JSON extends Omit<CustomError, "ARGS_DEFAULT"> {
+    export type Handler = (
+        error: Input,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args?: Partial<Handler.Args>,
+    ) => void;
 
-        context: null | Context;
-        message: string;
-        name: string;
+    /** 
+     * Types for handling errors in a variety of contexts.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export namespace Handler {
+
+        /**
+         * Optional configuration for {@link Handler} function types.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        export interface Args extends MessageMaker.BulkMsgArgs {
+
+            /**
+             * Whether to exit the process after handling.
+             * 
+             * @default true
+             */
+            exitProcess: boolean;
+        };
+    };
+
+    /**
+     * Expected error input types for Handler funtions.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export type Input =
+        // | {}
+        | null
+        | boolean
+        | number
+        | string
+        | string[]
+        | { [ key: string ]: any; }
+        | Error & { [ key: string ]: any; }
+        | NodeCliError;
+
+    /**
+     * Export shape for a plain {@link AbstractError} object.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export interface JSON extends Objects.Classify<Omit<
+        AbstractError,
+        "args" | "getOutput" | "toJSON" | "toString" | "valueOf"
+    >> {
 
         /**
          * Result of this.toString().
          */
         string: string;
+    };
 
-        cause?: unknown;
+    /**
+     * An approximation of the error thrown by node run via npm, which I can't
+     * find the proper type for despite a ton of search keywords.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export interface NodeCliError extends Partial<Error> {
+
+        name?: string;
+
+        code?: string;
+        output?: ( null | string )[];
+        path?: string;
+        pid?: number;
+        signal?: null | unknown;
+        status?: number;
+        stderr?: string;
+        stdout?: string;
     };
 }

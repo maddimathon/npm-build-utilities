@@ -3,17 +3,14 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
 import {
-    RecursivePartial,
-} from '@maddimathon/utility-typescript/types/objects';
+    Objects,
+} from '@maddimathon/utility-typescript/types';
 
 import {
     slugify,
@@ -29,7 +26,6 @@ import {
 // } from '../../types/index.js';
 
 import type { FileSystemType } from '../../types/FileSystemType.js';
-import type { LocalError } from '../../types/LocalError.js';
 import type { Logger } from '../../types/Logger.js';
 
 import {
@@ -47,14 +43,14 @@ const _msgMaker = new MessageMaker();
  * error.
  *
  * @internal
- * @private
+ * @hidden
  */
 function _errorStringifyInternal(
-    error: LocalError.Input,
-    args: Partial<LocalError.Handler.Args>,
+    error: AbstractError.Input,
+    level: number,
     console: Logger,
     fs: FileSystemType,
-    level: number,
+    args: Partial<AbstractError.Handler.Args>,
 ): MessageMaker.BulkMsgs {
     args = {
         ...args,
@@ -74,10 +70,10 @@ function _errorStringifyInternal(
     let i = 0;
     for ( const [ _msg, _args ] of errorStringify(
         error,
-        args,
+        1 + level,
         console,
         fs,
-        1 + level,
+        args,
     ) ) {
 
         bulkMsgs.push( [ _msg, {
@@ -92,18 +88,26 @@ function _errorStringifyInternal(
 }
 
 /**
- * Returns a string(s) representation of the error for logging.
+ * Returns a string(s) representation of an error for logging.
  * 
  * @category Errors
+ * 
+ * @param error    Error to convery.
+ * @param level    Depth level for output to the console.
+ * @param console  Instance used to log messages and debugging info.
+ * @param fs       Instance used to work with paths and files.
+ * @param args     Overrides for default options.
+ * 
+ * @since ___PKG_VERSION___
  * 
  * @internal
  */
 export function errorStringify(
-    error: LocalError.Input,
-    args: Partial<LocalError.Handler.Args>,
+    error: AbstractError.Input,
+    level: number,
     console: Logger,
     fs: FileSystemType,
-    level: number,
+    args: Partial<AbstractError.Handler.Args>,
 ): MessageMaker.BulkMsgs {
 
     /**
@@ -144,10 +148,10 @@ export function errorStringify(
             const causeString = err.cause
                 ? _msgMaker.msgs( _errorStringifyInternal(
                     err.cause,
-                    args,
+                    1 + level,
                     console,
                     fs,
-                    1 + level,
+                    args,
                 ) )
                 : '';
 
@@ -214,7 +218,7 @@ export function errorStringify(
 
                 error = new UnknownCaughtError(
                     `<${ errorType }> \n${ String( error ) }`,
-                    { cause: error }
+                    error,
                 );
 
                 t_errorInfo = _defaultErrorInfo( error );
@@ -334,10 +338,10 @@ export function errorStringify(
 
         for ( const arr of _errorStringifyInternal(
             errorInfo.cause,
-            args,
+            1 + level,
             console,
             fs,
-            1 + level,
+            args,
         ) ) {
             bulkMsgs.push( arr );
         }
@@ -378,7 +382,7 @@ export function errorStringify(
         for ( const key in errorInfo.details ) {
 
             const _inspectArgs = {
-                childArgs: {} as RecursivePartial<VariableInspector.Args[ 'childArgs' ]>,
+                childArgs: {} as Objects.RecursivePartial<VariableInspector.Args[ 'childArgs' ]>,
             };
 
             if (
@@ -413,7 +417,7 @@ export function errorStringify(
         }
 
         const _inspectArgs = {
-            childArgs: {} as RecursivePartial<VariableInspector.Args[ 'childArgs' ]>,
+            childArgs: {} as Objects.RecursivePartial<VariableInspector.Args[ 'childArgs' ]>,
         };
 
         if (

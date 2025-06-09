@@ -3,22 +3,23 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import type { Objects } from '@maddimathon/utility-typescript/types';
 import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { FileSystemType } from './FileSystemType.js';
 import type { Logger } from './Logger.js';
-import type * as Stage from './Stage.js';
+import type { Stage } from './Stage.js';
 /**
- * Complete configuration object for a project using this library.
+ * An input configuration object for a project using this library.
  *
- * @category Config
+ * Non-required properties are optional here.  For the type of the completed
+ * object used within this library, see {@link Config.Internal}.
+ *
+ * For default values, see {@link defaultConfig}.
+ *
+ * @category Types
  *
  * @since 0.1.0-alpha.draft
  */
@@ -36,26 +37,26 @@ export interface Config {
      */
     clr?: MessageMaker.Colour;
     /**
-     * Optional arguements to use when constructing {@link Stage.Compiler}.
+     * Optional arguments to use when constructing {@link Stage.Compiler}.
      */
     compiler?: Partial<Stage.Compiler.Args>;
     /**
-     * Optional arguements to use when constructing {@link Logger}.
+     * Optional arguments to use when constructing {@link Logger}.
      */
     console?: Partial<Logger.Args>;
     /**
-     * Optional arguements to use when constructing {@link FileSystem}.
+     * Optional arguments to use when constructing {@link FileSystem}.
      */
     fs?: Partial<FileSystemType.Args>;
     /** {@inheritDoc Config.Paths} */
     paths?: Partial<Config.Paths>;
     /** {@inheritDoc Config.Replace} */
-    replace?: Config.Replace | ((stage: Stage.Class) => Config.Replace);
+    replace?: Config.Replace | ((stage: Stage) => Config.Replace);
     /** {@inheritDoc Config.Stages} */
     stages?: Partial<Config.Stages>;
 }
 /**
- * Types used for project configuration.
+ * Utility types for the {@link Config} interface.
  *
  * @category Types
  *
@@ -63,87 +64,99 @@ export interface Config {
  */
 export declare namespace Config {
     /**
-     * @hidden
-     * @internal
-     * @expand
-     */
-    type Internal_RequiredKeys = "clr";
-    /**
      * Complete configuration shape. Requires more properties than
      * {@link Config}.
+     *
+     * **These properties are properly defined in {@link Config}.**
      *
      * @since 0.1.0-alpha.draft
      *
      * @interface
-     *
      * @internal
      */
-    export type Internal = Objects.RequirePartially<Omit<Config, "fs" | "paths" | "replace" | "stages">, Internal_RequiredKeys> & {
+    type Internal = {
+        [_Key in Exclude<keyof Config, "clr" | "fs" | "paths" | "replace" | "stages">]: Config[_Key];
+    } & {
+        /** {@inheritDoc Config.clr} */
+        clr: Required<Config>['clr'];
         /** {@inheritDoc Config.fs} */
         fs: Required<Config>['fs'];
-        /** {@inheritDoc Config.Paths} */
-        paths: {
-            dist: Required<Exclude<Paths['dist'], string | (() => any)>>;
-            scripts: Required<Exclude<Paths['scripts'], string | (() => any)>>;
-            src: Required<Exclude<Paths['src'], string | (() => any)>>;
-            release: Paths['release'];
-            snapshot: Paths['snapshot'];
-        };
-        /** {@inheritDoc Config.replace} */
+        /** {@inheritDoc Config.Internal.Paths} */
+        paths: Internal.Paths;
+        /** {@inheritDoc Config.Replace} */
         replace: Required<Config>['replace'];
-        /**
-         * A version of {@link Config.Stages} with more predictable options.
-         */
+        /** {@inheritDoc Config.Internal.Stages} */
         stages: Internal.Stages;
     };
     /**
      * Types for the {@link Config.Internal} type.
+     *
+     * @since 0.1.0-alpha.draft
      */
-    export namespace Internal {
+    namespace Internal {
         /**
-         * @interface
+         * A version of {@link Config.Paths} with more limited, predictable
+         * options.
          *
-         * @expandType Stage
-         * @expandType Stage.Args
-         * @expandType Args
-         * @expandType Stage.ClassType
-         * @expandType ClassType
+         * @since 0.1.0-alpha.draft
+         *
+         * @interface
+         */
+        interface Paths extends Omit<Config.Paths, "dist" | "notes" | "scripts" | "src"> {
+            /** {@inheritDoc Config.Paths.dist} */
+            dist: {
+                [P in keyof Exclude<Config.Paths['dist'], string | (() => any)>]-?: Exclude<Config.Paths['dist'], string | (() => any)>[P];
+            };
+            /** {@inheritDoc Config.Paths.notes} */
+            notes: {
+                [P in keyof Config.Paths['notes']]-?: Config.Paths['notes'][P];
+            };
+            /** {@inheritDoc Config.Paths.scripts} */
+            scripts: {
+                [P in keyof Exclude<Config.Paths['scripts'], string>]-?: Exclude<Config.Paths['scripts'], string>[P];
+            };
+            /** {@inheritDoc Config.Paths.src} */
+            src: {
+                [P in keyof Exclude<Config.Paths['src'], (() => any)>]-?: Exclude<Config.Paths['src'], (() => any)>[P];
+            };
+        }
+        /**
+         * A version of {@link Config.Stages} with more limited, predictable
+         * options.
+         *
+         * @since 0.1.0-alpha.draft
          */
         type Stages = {
-            [K in Stage.Name]: false | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[K]>];
+            [S in Stage.Name]: false | [Stage.Class] | [Stage.Class, undefined | Partial<Stage.Args.All[S]>];
         };
     }
     /**
      * Paths to files or directories.
      *
      * Absolute *or* relative to node’s cwd.
+     *
+     * @since 0.1.0-alpha.draft
      */
-    export interface Paths {
+    interface Paths {
         /**
-         * Destination for compiled files.
-         *
-         * @default
-         * ```ts
-         * {
-         *     _: 'dist',
-         *     docs: 'docs',
-         *     scss: 'dist/scss',
-         * }
-         * ```
+         * Destination directories for compiled files.
          */
         dist: string | ((subDir?: Paths.DistDirectory) => string) | {
             [D in "_" | Paths.DistDirectory]?: string;
         };
         /**
+         * Relative path to notes files used during development.
+         */
+        notes: {
+            /**
+             * Release notes file.
+             *
+             * Used for updating the changelog and the github release notes.
+             */
+            release?: string;
+        };
+        /**
          * Location of build scripts and related files.
-         *
-         * @default
-         * ```ts
-         * {
-         *     _: '.scripts',
-         *     logs: '.scripts/logs',
-         * }
-         * ```
          */
         scripts: string | {
             _?: string;
@@ -156,16 +169,6 @@ export declare namespace Config {
          * - `docs` expects a directory (or array of such)
          * - `scss` expects a directory, file path, or globs (or array of such)
          * - `ts` expects a directory or file path (or array of such)
-         *
-         * @default
-         * ```ts
-         * {
-         *     _: 'src',
-         *     docs: 'src/docs',
-         *     scss: 'src/scss',
-         *     ts: 'src/ts',
-         * }
-         * ```
          */
         src: Paths.SourceFunction | ({
             _?: string;
@@ -173,38 +176,46 @@ export declare namespace Config {
             [D in Paths.SourceDirectory]?: string | string[];
         });
         /**
+         * Relative path to changelog file.
+         */
+        changelog: string;
+        /**
+         * Relative path to readme file.
+         */
+        readme: string;
+        /**
          * Directory for release zip files.
-         *
-         * @default '@releases'
          */
         release: string;
         /**
          * Directory for snapshot zip files.
-         *
-         * @default '.snapshots'
          */
         snapshot: string;
     }
     /**
      * Types for the {@link Config.Paths} type.
+     *
+     * @since 0.1.0-alpha.draft
      */
-    export namespace Paths {
+    namespace Paths {
         /**
          * Keys for paths in the dist directory.
          *
-         * @expand
+         * @since 0.1.0-alpha.draft
          */
         type DistDirectory = Exclude<SourceDirectory, "ts">;
         /**
          * Keys for paths in the source directory.
          *
-         * @expand
+         * @since 0.1.0-alpha.draft
          */
         type SourceDirectory = "docs" | "scss" | "ts";
         /**
          * Function overloads for configuring the source path via function.
          *
-         * @expand
+         * @since 0.1.0-alpha.draft
+         *
+         * @function
          */
         interface SourceFunction {
             (subDir: SourceDirectory): string[];
@@ -215,9 +226,9 @@ export declare namespace Config {
     /**
      * Placeholders to be replaced during the build processes.
      *
-     * For default values, see {@link defaultConfig}.
+     * @since 0.1.0-alpha.draft
      */
-    export interface Replace {
+    interface Replace {
         /**
          * These placeholders are only ever replaced in compiled files and
          * should never be replaced in the source.
@@ -227,42 +238,26 @@ export declare namespace Config {
          */
         current?: [string | RegExp, string][];
         /**
-         * These placeholders are replaced in the source ONLY during a non-dryrun release stage.
+         * These placeholders are replaced in the source ONLY during a
+         * non-dryrun release stage.
          *
-         * This is handy for e.g., the package version in a doc comment's @since tag for a new function/class/etc.
+         * This is handy for e.g., the package version in a doc comment's
+         * `@since` tag for a new function/class/etc.
          */
         package?: [string | RegExp, string][];
     }
-    /**
-     * A generic for the allowed input types for stage configuration.
-     *
-     * @internal
-     * @expand
-     */
-    export type StageOpts<C extends Stage.ClassType = Stage.ClassType, A extends Stage.Args = Stage.Args, B extends boolean | never = boolean> = B | Partial<A> | C | [C, undefined | Partial<A>];
-    /**
-     * A generic for the allowed input types for stage configuration where only
-     * an abstract is included in this package (test, document).
-     *
-     * @internal
-     */
-    export type StageOptsAbstract<Stage extends Stage.Name, B extends boolean | never = false, A extends Stage.Args.All[Stage] = Stage.Args.All[Stage]> = B | Stage.ClassType.All[Stage] | [Stage.ClassType.All[Stage]] | [
-        Stage.ClassType.All[Stage],
-        undefined | Partial<A>
-    ];
     /**
      * All build stages and whether or not they run, including custom
      * implementations.
      *
      * If true, the default class is run.  If false, it is not run at all.
      *
+     * @since 0.1.0-alpha.draft
+     *
      * @interface
      */
-    export type Stages = {
-        [S in Stage.WithDefaultClass]: boolean | Partial<Stage.Args.All[S]> | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
-    } & {
-        [S in Stage.WithAbstractClass]?: false | Stage.ClassType | [Stage.ClassType, undefined | Partial<Stage.Args.All[S]>];
+    type Stages = {
+        [S in Stage.Name]: boolean | Partial<Stage.Args.All[S]> | Stage.Class | [Stage.Class, undefined | Partial<Stage.Args.All[S]>];
     };
-    export {};
 }
 //# sourceMappingURL=Config.d.ts.map

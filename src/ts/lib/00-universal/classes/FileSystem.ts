@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -15,20 +12,25 @@ import { globSync } from 'glob';
 // import { minify } from 'minify';
 import * as prettier from "prettier";
 
+import type {
+    Objects,
+} from '@maddimathon/utility-typescript/types';
+
 import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
 } from '@maddimathon/utility-typescript/functions';
 
-import { node } from '@maddimathon/utility-typescript/classes';
+import {
+    node,
+} from '@maddimathon/utility-typescript/classes';
 
 import type {
     Stage,
 } from '../../../types/index.js';
 
 import type { FileSystemType } from '../../../types/FileSystemType.js';
-import type { LocalError } from '../../../types/LocalError.js';
 import type { Logger } from '../../../types/Logger.js';
 
 import {
@@ -51,21 +53,18 @@ export class FileSystem extends node.NodeFiles {
     /* LOCAL PROPERTIES
      * ====================================================================== */
 
+    /**
+     * Instance used to log messages within the class.
+     * 
+     * @category Classes
+     */
+    public readonly console: Logger;
+
 
     /* Args ===================================== */
 
-    /**
-     * A completed args object.
-     * 
-     * @category Args
-     */
-    public override readonly args: FileSystemType.Args;
+    public override readonly args: FileSystem.Args;
 
-    /**
-     * Default args for this class.
-     * 
-     * @category Args
-     */
     public override get ARGS_DEFAULT() {
 
         const copy = {
@@ -88,17 +87,81 @@ export class FileSystem extends node.NodeFiles {
             ignore: [
                 ...FileSystem.globs.SYSTEM,
             ],
-        } as const satisfies FileSystemType.Glob.Args;
+        } as const satisfies Partial<FileSystemType.Glob.Args>;
 
         return {
             ...node.NodeFiles.prototype.ARGS_DEFAULT,
+            argsRecursive: true,
 
             copy,
             glob,
-            minify: FileSystem.minify.argsDefault,
-            prettier: FileSystem.prettier.argsDefault,
+            minify: FileSystem.minify.ARGS_DEFAULT,
+            prettier: FileSystem.prettier.ARGS_DEFAULT,
 
         } as const satisfies FileSystemType.Args;
+    }
+
+    public override buildArgs( args?: Partial<FileSystemType.Args> | Objects.RecursivePartial<FileSystemType.Args> ): FileSystem.Args {
+
+        const merged = mergeArgs(
+            this.ARGS_DEFAULT as FileSystemType.Args,
+            args,
+            true
+        );
+
+        let prettier: FileSystem.Args[ 'prettier' ];
+
+        if ( typeof merged.prettier === 'function' ) {
+
+            prettier = {
+                css: merged.prettier( 'css' ),
+                html: merged.prettier( 'html' ),
+                js: merged.prettier( 'js' ),
+                json: merged.prettier( 'json' ),
+                md: merged.prettier( 'md' ),
+                mdx: merged.prettier( 'mdx' ),
+                scss: merged.prettier( 'scss' ),
+                ts: merged.prettier( 'ts' ),
+                yaml: merged.prettier( 'yaml' ),
+            };
+
+        } else if ( !( '_' in merged.prettier ) || !merged.prettier._ ) {
+
+            const _mergedPrettier = merged.prettier as FileSystemType.Prettier.Args;
+
+            prettier = {
+                css: _mergedPrettier,
+                html: _mergedPrettier,
+                js: _mergedPrettier,
+                json: _mergedPrettier,
+                md: _mergedPrettier,
+                mdx: _mergedPrettier,
+                scss: _mergedPrettier,
+                ts: _mergedPrettier,
+                yaml: _mergedPrettier,
+            };
+
+        } else {
+
+            const _mergedPrettier = merged.prettier as FileSystemType.Prettier.Args.MultiFormat;
+
+            prettier = {
+                css: mergeArgs( _mergedPrettier._, _mergedPrettier.css, true ),
+                html: mergeArgs( _mergedPrettier._, _mergedPrettier.html, true ),
+                js: mergeArgs( _mergedPrettier._, _mergedPrettier.js, true ),
+                json: mergeArgs( _mergedPrettier._, _mergedPrettier.json, true ),
+                md: mergeArgs( _mergedPrettier._, _mergedPrettier.md, true ),
+                mdx: mergeArgs( _mergedPrettier._, _mergedPrettier.mdx, true ),
+                scss: mergeArgs( _mergedPrettier._, _mergedPrettier.scss, true ),
+                ts: mergeArgs( _mergedPrettier._, _mergedPrettier.ts, true ),
+                yaml: mergeArgs( _mergedPrettier._, _mergedPrettier.yaml, true ),
+            };
+        }
+
+        return {
+            ...merged,
+            prettier,
+        };
     }
 
 
@@ -107,16 +170,20 @@ export class FileSystem extends node.NodeFiles {
      * ====================================================================== */
 
     /**
-     * @param console   Used to output messages within the class.
-     * @param args  
+     * @category Constructor
+     * 
+     * @param console  Instance used to log messages and debugging info.
+     * @param args     Override arguments.
      */
     public constructor (
-        public readonly console: Logger,
+        console: Logger,
         args: Partial<FileSystemType.Args> = {},
     ) {
         super( args, {
             nc: console.nc,
         } );
+
+        this.console = console;
 
         this.args = (
             // @ts-expect-error - it is initialized in the super constructor
@@ -132,15 +199,17 @@ export class FileSystem extends node.NodeFiles {
     /** 
      * {@inheritDoc internal.FileSystemType.copy}
      * 
-     * @throws {@link FileSystem.Error}
+     * @category Filers
+     * 
+     * @throws {@link FileSystem.Error} — If copying a file fails.
      */
     public copy(
         globs: string | string[],
         level: number,
         outputDir: string,
-        sourceDir: string | null = null,
-        args: Partial<FileSystemType.Copy.Args> = {},
-    ): false | string[] {
+        sourceDir?: string | null,
+        args?: Partial<FileSystemType.Copy.Args>,
+    ) {
         args = mergeArgs( this.args.copy, args, true );
 
         outputDir = './' + outputDir.replace( /(^\.\/|\/$)/g, '' ) + '/';
@@ -198,12 +267,25 @@ export class FileSystem extends node.NodeFiles {
         return output;
     }
 
-    /** {@inheritDoc internal.FileSystemType.delete} */
+    /** 
+     * Deletes given globs (via {@link node.NodeFiles}.delete).
+     * 
+     * This catches any errors from {@link node.NodeFiles}.delete, ignores
+     * ENOTEMPTY errors, and re-throws the rest.
+     *
+     * @category Filers
+     * 
+     * @param globs   Glob patterns for paths to delete.
+     * @param level   Depth level for output to the console.
+     * @param dryRun  If true, files that would be deleted are printed to the 
+     *                console and not deleted.
+     * @param args    Optional glob configuration.
+     */
     public override delete(
         globs: string | string[],
         level: number,
         dryRun?: boolean,
-        args: FileSystemType.Glob.Args = {},
+        args?: Partial<FileSystemType.Glob.Args>,
     ) {
         try {
             return super.delete( this.glob( globs, args ), level, dryRun );
@@ -232,11 +314,18 @@ export class FileSystem extends node.NodeFiles {
         }
     }
 
-    /** {@inheritDoc internal.FileSystemType.glob} */
+    /** 
+     * {@inheritDoc internal.FileSystemType.glob}
+     *
+     * @category Path-makers
+     */
     public glob(
         globs: string | string[],
-        args: FileSystemType.Glob.Args = {},
+        args: Partial<FileSystemType.Glob.Args> = {},
     ): string[] {
+        if ( !Array.isArray( globs ) ) {
+            globs = [ globs ];
+        }
 
         args = mergeArgs( this.args.glob, args, false );
 
@@ -251,7 +340,11 @@ export class FileSystem extends node.NodeFiles {
         return globResult;
     }
 
-    /** {@inheritDoc internal.FileSystemType.minify} */
+    /** 
+     * {@inheritDoc internal.FileSystemType.minify}
+     * 
+     * @category Transformers
+     */
     public async minify(
         globs: string | string[],
         format: FileSystemType.Minify.Format,
@@ -278,7 +371,7 @@ export class FileSystem extends node.NodeFiles {
             case 'js':
                 // minimizerFn = async ( _p ) => minify[ format ]( _p.content, args[ format ] );
                 // minimizerFn = async ( _p ) => minify( _p.path, args );
-                this.console.log( `minimizing for ${ format } is not yet implemented`, level );
+                this.console.log( `minimizing for ${ format } is not yet implemented`, level, { italic: true } );
                 return [];
 
             case 'json':
@@ -291,8 +384,9 @@ export class FileSystem extends node.NodeFiles {
         }
 
 
-        const files = this.glob( globs, args.glob )
-            .filter( ( _inputPath ) => this.exists( _inputPath ) && this.isFile( _inputPath ) );
+        const files = this.glob( globs, args.glob ).filter(
+            ( _inputPath ) => this.exists( _inputPath ) && this.isFile( _inputPath )
+        );
 
         // returns
         if ( !files.length ) {
@@ -359,7 +453,15 @@ export class FileSystem extends node.NodeFiles {
         return minimized;
     }
 
-    /** {@inheritDoc internal.FileSystemType.prettier} */
+    /** 
+     * {@inheritDoc internal.FileSystemType.prettier}
+     *
+     * @category Transformers
+     *
+     * @throws {@link FileSystem.Error} — If no parser was given or could be
+     *         automatically assigned based on the format (this is unlikely if 
+     *         you respect the {@link FileSystemType.Prettier.Format} type).
+     */
     public async prettier(
         globs: string | string[],
         format: FileSystemType.Prettier.Format,
@@ -367,7 +469,7 @@ export class FileSystem extends node.NodeFiles {
     ): Promise<string[]> {
 
         args = mergeArgs(
-            typeof this.args.prettier === 'function' ? this.args.prettier( format ) : this.args.prettier,
+            this.args.prettier[ format ],
             args ?? {},
             true
         );
@@ -443,12 +545,16 @@ export class FileSystem extends node.NodeFiles {
         return prettified;
     }
 
-    /** {@inheritDoc internal.FileSystemType.replaceInFiles} */
+    /** 
+     * {@inheritDoc internal.FileSystemType.replaceInFiles}
+     * 
+     * @category Transformers
+     */
     public replaceInFiles(
         globs: string | string[],
         replace: [ string | RegExp, string ] | [ string | RegExp, string ][],
         level: number,
-        args?: FileSystemType.Glob.Args,
+        args?: Partial<FileSystemType.Glob.Args>,
     ): string[] {
         // returns
         if ( !replace.length ) {
@@ -484,7 +590,6 @@ export class FileSystem extends node.NodeFiles {
 
         // returns
         if ( !files.length ) {
-            // this.console.verbose( 'FileSystem.replaceInFiles() - no files matched by globs', level );
             this.console.vi.debug( { globs }, ( this.console.params.verbose ? 1 : 0 ) + level );
             return [];
         }
@@ -545,11 +650,29 @@ export class FileSystem extends node.NodeFiles {
 /**
  * Used only for {@link FileSystem}.
  * 
- * @category Class-Helpers
+ * @category Utilities
  * 
  * @since ___PKG_VERSION___
  */
 export namespace FileSystem {
+
+    /**
+     * Rather than the input arguments (i.e., {@link FileSystemType.Args}), this
+     * is the shape of the object built by {@link FileSystem.buildArgs}.
+     * 
+     * @since ___PKG_VERSION___
+     * 
+     * @internal
+     */
+    export interface Args extends Omit<FileSystemType.Args, "prettier"> {
+
+        /**
+         * Defaults for the {@link FileSystemType.prettier} method.
+         */
+        prettier: {
+            [ F in FileSystemType.Prettier.Format ]: Partial<FileSystemType.Prettier.Args>;
+        };
+    };
 
     /**
      * An extension of the utilities error used by the {@link FileSystem} class.
@@ -558,21 +681,14 @@ export namespace FileSystem {
      * 
      * @since ___PKG_VERSION___
      */
-    export class Error extends AbstractError<LocalError.Args> {
+    export class Error extends AbstractError {
 
         public override readonly name: string = 'FileSystem Error';
-
-        public get ARGS_DEFAULT() {
-
-            return {
-                ...AbstractError.prototype.ARGS_DEFAULT,
-            } as const satisfies LocalError.Args;
-        }
 
         public constructor (
             message: string,
             method: string,
-            args?: Partial<LocalError.Args> & { cause?: LocalError.Input; },
+            args?: { cause?: AbstractError.Input; },
         ) {
             super( message, { class: 'FileSystem', method }, args );
         }
@@ -581,6 +697,8 @@ export namespace FileSystem {
     /**
      * Arrays of utility globs used within the library.
      * 
+     * @category Utilities
+     * 
      * @since ___PKG_VERSION___
      */
     export namespace globs {
@@ -588,22 +706,33 @@ export namespace FileSystem {
         /** 
          * Files that are copied into subdirectories (e.g., releases and
          * snapshots).
+         * 
+         * @since ___PKG_VERSION___
+         * 
+         * @source
          */
-        export const IGNORE_COPIED = ( stage: Stage.Class ) => [
-            `${ stage.config.paths.release.replace( /\/$/g, '' ) }/**`,
-            `${ stage.config.paths.snapshot.replace( /\/$/g, '' ) }/**`,
+        export const IGNORE_COPIED = ( stage: Stage ) => [
+            stage.config.paths.release.replace( /\/$/g, '' ) + '/**',
+            stage.config.paths.snapshot.replace( /\/$/g, '' ) + '/**',
         ];
 
         /** 
          * Compiled files to ignore.
+         * 
+         * @since ___PKG_VERSION___
+         * 
+         * @source
          */
-        export const IGNORE_COMPILED = [
-            `./docs/**`,
-            `./dist/**`,
+        export const IGNORE_COMPILED = ( stage: Stage ) => [
+            stage.getDistDir().replace( /\/$/g, '' ) + '/**',
+            stage.getDistDir( 'docs' ).replace( /\/$/g, '' ) + '/**',
+            stage.getDistDir( 'scss' ).replace( /\/$/g, '' ) + '/**',
         ];
 
         /** 
          * Files that we probably want to ignore within an npm project.
+         * 
+         * @since ___PKG_VERSION___
          */
         export const IGNORE_PROJECT = [
 
@@ -618,10 +747,12 @@ export namespace FileSystem {
 
             'node_modules/**',
             '**/node_modules/**',
-        ];
+        ] as const;
 
         /** 
          * System files that we *never, ever* want to include.
+         * 
+         * @since ___PKG_VERSION___
          */
         export const SYSTEM = [
             '._*',
@@ -630,73 +761,86 @@ export namespace FileSystem {
             '**/._*/**',
             '**/.DS_Store',
             '**/.smbdelete**',
-        ];
+        ] as const;
     };
 
     /**
-     * Utilities for the {@link FileSystem.minify} method.
+     * Utility functions and constants for the {@link FileSystem.minify} method.
+     * 
+     * @category Transformers
      * 
      * @since ___PKG_VERSION___
      */
     export namespace minify {
 
-        export const argsDefault = {
+        /**
+         * Default args for the {@link FileSystem.minify} method
+         * 
+         * @since ___PKG_VERSION___
+         */
+        export const ARGS_DEFAULT = {
 
             css: {
-                type: "clean-css",
-                'clean-css': {
-                    compatibility: "*",
-                },
+                // type: "clean-css",
+                // 'clean-css': {
+                //     compatibility: "*",
+                // },
             },
 
             html: {
-                collapseBooleanAttributes: false,
-                collapseWhitespace: true,
-                minifyCSS: true,
-                minifyJS: true,
-                removeAttributeQuotes: true,
-                removeCDATASectionsFromCDATA: true,
-                removeComments: true,
-                removeCommentsFromCDATA: true,
-                removeEmptyAttributes: false,
-                removeEmptyElements: false,
-                removeOptionalTags: false,
-                removeRedundantAttributes: false,
-                removeScriptTypeAttributes: false,
-                removeStyleLinkTypeAttributes: false,
-                useShortDoctype: true,
+                // collapseBooleanAttributes: false,
+                // collapseWhitespace: true,
+                // minifyCSS: true,
+                // minifyJS: true,
+                // removeAttributeQuotes: true,
+                // removeCDATASectionsFromCDATA: true,
+                // removeComments: true,
+                // removeCommentsFromCDATA: true,
+                // removeEmptyAttributes: false,
+                // removeEmptyElements: false,
+                // removeOptionalTags: false,
+                // removeRedundantAttributes: false,
+                // removeScriptTypeAttributes: false,
+                // removeStyleLinkTypeAttributes: false,
+                // useShortDoctype: true,
             },
 
             js: {
-                type: 'putout',
-                putout: {
-                    quote: "'",
-                    mangle: false,
-                    mangleClassNames: false,
-                    removeUnusedVariables: false,
-                    removeConsole: false,
-                    removeUselessSpread: false,
-                },
+                // type: 'putout',
+                // putout: {
+                //     quote: "'",
+                //     mangle: false,
+                //     mangleClassNames: false,
+                //     removeUnusedVariables: false,
+                //     removeConsole: false,
+                //     removeUselessSpread: false,
+                // },
             },
 
-            glob: {
-                ignore: [
-                    ...FileSystem.globs.SYSTEM,
-                ],
-            },
+            json: {},
+
+            glob: {},
+
         } as const satisfies FileSystemType.Minify.Args;
     };
 
     /**
      * Utility functions for the {@link FileSystem.prettier} method.
      * 
+     * @category Transformers
+     * 
      * @since ___PKG_VERSION___
      */
     export namespace prettier {
 
-        export function argsDefault( format: FileSystemType.Prettier.Format ) {
+        /**
+         * Default args for the {@link FileSystem.prettier} method
+         * 
+         * @since ___PKG_VERSION___
+         */
+        export const ARGS_DEFAULT = {
 
-            const universal = {
+            _: {
                 bracketSameLine: false,
                 bracketSpacing: true,
                 experimentalOperatorPosition: 'start',
@@ -713,27 +857,16 @@ export namespace FileSystem {
                 useTabs: false,
 
                 glob: {},
-            } as const satisfies FileSystemType.Prettier.Args;
+            },
 
-            // returns on match
-            switch ( format ) {
+            css: {
+                singleQuote: false,
+            },
 
-                case 'css':
-                    return {
-                        ...universal,
+            html: {
+                printWidth: 10000,
+            },
 
-                        singleQuote: false,
-                    } as const satisfies FileSystemType.Prettier.Args;
-
-                case 'html':
-                    return {
-                        ...universal,
-
-                        printWidth: 10000,
-                    } as const satisfies FileSystemType.Prettier.Args;
-            }
-
-            return universal;
-        }
+        } as const satisfies FileSystemType.Prettier.Args.MultiFormat;
     };
 }

@@ -36,22 +36,21 @@ There are seven commands for running build stages:
 
 These options are defined and documented by {@link CLI.Params}.
 
-| Option        | Type    | Default                                       | Notes                                                 |
-| :------------ | :------ | :-------------------------------------------- | :---------------------------------------------------- |
-| `--config`    | string  | *see [config page](../config.md) for details* | Path to the configuration file for the project.       |
-| `--debug`     | boolean | `false`                                       | Whether to display debugging messages.                |
-| `--notice`    | boolean | `true`                                        | Whether to display notice (stage start/end) messages. |
-| `--progress`  | boolean | `true`                                        | Whether to display progress messages.                 |
-| `--verbose`   | boolean | `false`                                       | Whether to display extra logging information.         |
-|               |         |                                               |                                                       |
-| `--only`      | boolean | `false`                                       | Only sub-stages to run during the stage.              |
-| `--without`   | boolean | `false`                                       | Sub-stages to skip when running the stage.            |
-|               |         |                                               |                                                       |
-| `--building`  | boolean | `false`                                       |                                                       |
-| `--dryrun`    | boolean | `false`                                       |                                                       |
-| `--packaging` | boolean | `false`                                       |                                                       |
-| `--releasing` | boolean | `false`                                       |                                                       |
-| `--starting`  | boolean | `false`                                       |                                                       |
+| Option        | Type    | Default                                       | Notes                                           |
+| :------------ | :------ | :-------------------------------------------- | :---------------------------------------------- |
+| `--config`    | string  | *see [config page](../config.md) for details* | Path to the configuration file for the project. |
+| `--debug`     | boolean | `false`                                       | Whether to display debugging messages.          |
+| `--progress`  | boolean | `true`                                        | Whether to display progress messages.           |
+| `--verbose`   | boolean | `false`                                       | Whether to display extra logging information.   |
+|               |         |                                               |                                                 |
+| `--only`      | boolean | `false`                                       | Only sub-stages to run during the stage.        |
+| `--without`   | boolean | `false`                                       | Sub-stages to skip when running the stage.      |
+|               |         |                                               |                                                 |
+| `--building`  | boolean | `false`                                       |                                                 |
+| `--dryrun`    | boolean | `false`                                       |                                                 |
+| `--packaging` | boolean | `false`                                       |                                                 |
+| `--releasing` | boolean | `false`                                       |                                                 |
+| `--starting`  | boolean | `false`                                       |                                                 |
 
 
 ## Examples

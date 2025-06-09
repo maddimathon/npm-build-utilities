@@ -3,92 +3,81 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type { Json } from '@maddimathon/utility-typescript/types';
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { CLI, Config, Stage } from '../../../../types/index.js';
-import type { LocalError } from '../../../../types/LocalError.js';
-import { SemVer } from '../../../@internal/index.js';
+import { type AbstractError, SemVer } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
 import { ProjectConfig } from '../../../01-config/index.js';
-import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
 import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
+import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
 /**
  * Abstract class for a single build stage, along with a variety of utilities
  * for building projects.
  *
  * @category Stages
  *
+ * @typeParam T_Args      Argument object for this stage.
+ * @typeParam T_SubStage  String literal of substages to run within this stage.
+ *
  * @since 0.1.0-alpha.draft
  */
-export declare abstract class AbstractStage<SubStage extends string = string, Args extends Stage.Args = Stage.Args> implements Stage.Class<SubStage, Args> {
+export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStage extends string> implements Stage<T_Args, T_SubStage> {
     #private;
-    protected _pkg: Node.PackageJson | undefined;
-    protected _version: SemVer | undefined;
     /**
-     * Default values for {@link Stage.Args}.
+     * {@inheritDoc Stage.clr}
      *
-     * @category Args
-     */
-    static get ARGS_DEFAULT(): {
-        readonly objs: {};
-    };
-    /**
-     * {@inheritDoc Stage.Class.clr}
-     *
-     * @category Args
+     * @category Config
      */
     readonly clr: MessageMaker.Colour;
     /**
-     * {@inheritDoc Stage.Class.config}
+     * {@inheritDoc Stage.config}
      *
-     * @category Args
+     * @category Config
      */
     readonly config: ProjectConfig;
     /**
-     * {@inheritDoc Stage.Class.console}
+     * {@inheritDoc Stage.console}
      *
      * @category Utilities
      */
     readonly console: Stage_Console;
     /**
-     * {@inheritDoc Stage.Class.compiler}
+     * {@inheritDoc Stage.compiler}
      *
      * @category Utilities
      */
     readonly compiler: Stage_Compiler;
     /**
-     * {@inheritDoc Stage.Class.fs}
+     * {@inheritDoc Stage.fs}
      *
      * @category Utilities
      */
     get fs(): FileSystem;
     /**
-     * {@inheritDoc Stage.Class.fs}
+     * {@inheritDoc Stage.fs}
      *
      * @category Utilities
      */
     set fs(fs: FileSystem | undefined);
     /**
-     * {@inheritDoc Stage.Class.name}
+     * {@inheritDoc Stage.name}
      *
-     * @category Args
+     * @category Config
      */
     readonly name: string;
     /**
-     * {@inheritDoc Stage.Class.params}
+     * {@inheritDoc Stage.params}
      *
-     * @category Args
+     * @category Config
      */
     readonly params: CLI.Params;
     /**
-     * {@inheritDoc Stage.Class.pkg}
+     * {@inheritDoc Stage.pkg}
      *
      * @category Project
      */
@@ -118,99 +107,212 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
     };
     /**
      * Path to release directory for building a package for the current version.
+     *
+     * @category Config
      */
-    get releasePath(): string;
+    get releaseDir(): string;
     /**
-     * {@inheritDoc Stage.Class.version}
+     * {@inheritDoc Stage.subStages}
+     *
+     * @category Running
+     */
+    abstract readonly subStages: T_SubStage[];
+    /**
+     * {@inheritDoc Stage.version}
      *
      * @category Project
      */
     get version(): SemVer;
-    protected set version(input: string | SemVer | undefined);
     /**
-     * {@inheritDoc Stage.Class.subStages}
-     *
-     * @category Args
+     * If undefined, nothing is set.  Otherwise, a {@link SemVer} is created and
+     * the value of {@link AbstractStage.pkg}.version is updated.
      */
-    abstract readonly subStages: SubStage[];
+    protected set version(input: string | SemVer | undefined);
     /**
      * Builds a complete version of this class' args, falling back to defaults
      * as needed.
      *
      * Uses {@link mergeArgs} recursively.
      *
-     * @category Args
+     * @category Config
      */
-    buildArgs(args?: Partial<Args>): Args;
+    buildArgs(args?: Partial<T_Args>): T_Args;
     /**
-     * {@inheritDoc Stage.Class.args}
+     * {@inheritDoc Stage.args}
      *
-     * @category Args
+     * @category Config
      */
-    readonly args: Args;
+    readonly args: T_Args;
     /**
-     * {@inheritDoc Stage.Class.ARGS_DEFAULT}
+     * {@inheritDoc Stage.ARGS_DEFAULT}
      *
-     * @category Args
+     * @category Config
      */
-    abstract get ARGS_DEFAULT(): Args;
+    abstract get ARGS_DEFAULT(): T_Args;
     /**
-     * @param name    Name for this stage used for notices.
-     * @param clr     Colour used for colour-coding this class.
-     * @param config  Current project config.
-     * @param params  Current CLI params.
-     * @param args    Partial overrides for the default stage args.
+     * @category Constructor
+     *
+     * @param name     Name for this stage used for notices.
+     * @param clr      Colour used for colour-coding this class.
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default stage args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
-    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<Args>, _pkg: Node.PackageJson | undefined, _version: SemVer | undefined);
-    /** {@inheritDoc Stage.Class.isDraftVersion} */
+    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<T_Args>, pkg: Json.PackageJson | undefined, version: SemVer | undefined);
+    /** {@inheritDoc Stage.isDraftVersion} */
     get isDraftVersion(): boolean;
     /**
      * Replaces placeholders in files as defined by {@link Config.replace}.
      *
-     * @return  Paths to files where placeholders were replaced.
+     * @category Utilities
+     *
+     * @param globs     Where to find & replace placeholders.
+     * @param version   Which version of the replacements to run.
+     * @param level     Depth level for output to the console.
+     * @param ignore    Globs to ignore while replacing. Default {@link FileSystem.globs.SYSTEM}.
+     * @param docsMode  Whether to make the replacements in 'docs' mode (i.e.,
+     *                  assumes markdown in comments was converted to HTML).
+     *
+     * @return  Paths where placeholders were replaced.
      */
-    replaceInFiles(globs: string[], version: "current" | "package", level: number, ignore?: string[]): string[];
+    replaceInFiles(globs: string[], version: "current" | "package", level: number, ignore?: string[], docsMode?: boolean): string[];
     /**
      * Alias for {@link internal.writeLog}.
+     *
+     * @category Errors
+     *
+     * @param msg       Log message to write.
+     * @param filename  File name for the log.
+     * @param subDir    Subdirectories used for the path to write the log file.
+     * @param date      Used for the timestamp.
+     *
+     * @return  If false, writing the log failed. Otherwise, this is the path to
+     *          the written log file.
      */
-    writeLog(msg: string | string[] | MessageMaker.BulkMsgs, filename: string, subDir?: string[], date?: null | Date): string | false | undefined;
-    /** {@inheritDoc Stage.Class.isSubStageIncluded} */
-    isSubStageIncluded(subStage: SubStage, level: number): boolean;
-    /** {@inheritDoc Stage.Class.getDistDir} */
+    writeLog(msg: string | string[] | MessageMaker.BulkMsgs, filename: string, subDir?: string[], date?: null | Date): string | false;
+    /**
+     * {@inheritDoc Stage.isSubStageIncluded}
+     *
+     * @category Config
+     */
+    isSubStageIncluded(subStage: T_SubStage, level: number): boolean;
+    /**
+     * {@inheritDoc Stage.getDistDir}
+     *
+     * @category Config
+     */
     getDistDir(subDir?: Config.Paths.DistDirectory, ...subpaths: string[]): string;
-    /** {@inheritDoc Stage.Class.getScriptsPath} */
+    /**
+     * {@inheritDoc Stage.getScriptsPath}
+     *
+     * @category Config
+     */
     getScriptsPath(subDir?: "logs", ...subpaths: string[]): string;
     getSrcDir(subDir: Config.Paths.SourceDirectory, ...subpaths: string[]): string[];
     getSrcDir(subDir?: undefined, ...subpaths: string[]): string;
     /**
      * Alias for {@link errorHandler}.
+     *
+     * @category Errors
+     *
+     * @param error    Error to handle.
+     * @param level    Depth level for output to the console.
+     * @param args     Overrides for default options.
      */
-    protected handleError(error: any, level: number, args?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): void;
+    protected handleError(error: any, level: number, args?: Partial<AbstractError.Handler.Args>): void;
     /**
      * Alias for {@link internal.logError}.
+     *
+     * @category Errors
+     *
+     * @param logMsg  Message to prepend to the return for output to the console.
+     * @param error   Caught error to log.
+     * @param level   Depth level for output to the console.
+     * @param errMsg  See {@link logError.Args.errMsg}.
+     * @param date    Used for the timestamp.
      */
     logError(logMsg: string, error: unknown, level: number, errMsg?: string, date?: Date): MessageMaker.BulkMsgs;
     /**
+     * If the `tryer` function has no params, then they are optional.
+     *
+     * If the handler must exit, then 'FAILED' is not possible.
+     *
      * @param tryer     Function to run inside the try {}.
      * @param level     Depth level for the error handler.
      * @param params    Parameters passed to the tryer function, if any.
+     *
+     * @return  The `tryer` function’s return, or 'FAILED' if an error is caught
+     *          and the process isn’t exited.
      */
-    protected try<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Return;
-    protected try<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Return | "FAILED";
-    protected try<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Return;
-    protected try<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Return | "FAILED";
-    protected try<Params extends unknown[] | never[], Return extends unknown>(tryer: (...params: Params) => Return, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): Return | "FAILED";
+    protected try<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return, level: number, params?: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
+        exitProcess?: false;
+    }): T_Return;
     /**
+     * If the `tryer` function *has* params, then they are required.
+     *
+     * If the handler must exit, then 'FAILED' is not possible.
+     */
+    protected try<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return, level: number, params: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
+        exitProcess?: false;
+    }): T_Return;
+    /**
+     * If the `tryer` function has no params, then they are optional.
+     *
+     * If the handler won't exit, then 'FAILED' is possible.
+     */
+    protected try<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return, level: number, params: NoInfer<T_Params> | undefined, handlerArgs: Partial<AbstractError.Handler.Args> & {
+        exitProcess: true | boolean;
+    }): T_Return | "FAILED";
+    /**
+     * If the `tryer` function *has* params, then they are required.
+     */
+    protected try<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return, level: number, params: NoInfer<T_Params>, handlerArgs: Partial<AbstractError.Handler.Args> & {
+        exitProcess: true | boolean;
+    }): T_Return | "FAILED";
+    /**
+     * If the `tryer` function has no params, then they are optional.
+     *
+     * If the handler must exit, then 'FAILED' is not possible.
+     *
      * @param tryer     Function to run inside the try {}.
      * @param level     Depth level for the error handler.
      * @param params    Parameters passed to the tryer function, if any.
+     *
+     * @return  The `tryer` function’s return, or 'FAILED' if an error is caught
+     *          and the process isn’t exited.
      */
-    protected atry<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Promise<Return>;
-    protected atry<Params extends never[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Promise<Return | "FAILED">;
-    protected atry<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: true | undefined): Promise<Return>;
-    protected atry<Params extends unknown[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params: Params, handlerArgs: Partial<LocalError.Handler.Args>, exitProcess: false): Promise<Return | "FAILED">;
-    protected atry<Params extends unknown[] | never[], Return extends unknown>(tryer: (...params: Params) => Promise<Return>, level: number, params?: Params, handlerArgs?: Partial<LocalError.Handler.Args>, exitProcess?: boolean): Promise<Return | "FAILED">;
-    /** {@inheritDoc Stage.Class.startEndNotice} */
+    protected atry<T_Params extends never[], T_Return extends unknown>(tryer: () => Promise<T_Return>, level: number, params?: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
+        exitProcess?: false;
+    }): Promise<T_Return>;
+    /**
+     * If the `tryer` function *has* params, then they are required.
+     *
+     * If the handler must exit, then 'FAILED' is not possible.
+     */
+    protected atry<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => Promise<T_Return>, level: number, params: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
+        exitProcess?: false;
+    }): Promise<T_Return>;
+    /**
+     * If the `tryer` function has no params, then they are optional.
+     *
+     * If the handler won't exit, then 'FAILED' is possible.
+     */
+    protected atry<T_Params extends never[], T_Return extends unknown>(tryer: () => Promise<T_Return>, level: number, params: NoInfer<T_Params> | undefined, handlerArgs: Partial<AbstractError.Handler.Args> & {
+        exitProcess: true | boolean;
+    }): Promise<T_Return | "FAILED">;
+    /**
+     * If the `tryer` function *has* params, then they are required.
+     */
+    protected atry<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => Promise<T_Return>, level: number, params: NoInfer<T_Params>, handlerArgs: Partial<AbstractError.Handler.Args> & {
+        exitProcess: true | boolean;
+    }): Promise<T_Return | "FAILED">;
+    /**
+     * {@inheritDoc Stage.startEndNotice}
+     *
+     * @category Running
+     */
     startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean): void | Promise<void>;
     /**
      * Runs the entire stage (asynchronously).
@@ -220,6 +322,8 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      *
      * Cycles through each substage and runs {@link AbstractStage.runSubStage}
      * if {@link AbstractStage.isSubStageIncluded} returns true.
+     *
+     * @category Running
      */
     run(): Promise<void>;
     /**
@@ -227,14 +331,18 @@ export declare abstract class AbstractStage<SubStage extends string = string, Ar
      *
      * **This method should probably not be overwritten.**
      *
-     * @param stage   Stage to run as a substage.
-     * @param level   Depth level to add to {@link CLI.Params.log-base-level | this.params['log-base-level']}.
+     * @param stage  Stage to run as a substage.
+     * @param level  Depth level for output to the console.
+     *
+     * @category Running
      */
-    protected runStage<S extends Stage.Name>(stage: S, level: number): Promise<void>;
+    protected runStage(stage: Stage.Name, level: number): Promise<void>;
     /**
      * Used to run a single stage within this class; used by
      * {@link AbstractStage.run}.
+     *
+     * @category Running
      */
-    protected abstract runSubStage(subStage: SubStage): Promise<void>;
+    protected abstract runSubStage(subStage: T_SubStage): Promise<void>;
 }
 //# sourceMappingURL=AbstractStage.d.ts.map

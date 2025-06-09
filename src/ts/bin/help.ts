@@ -4,9 +4,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -37,6 +34,6 @@ export default async function (
     }
 
     // TODO finish me
-    console.notice( 'Hello!  I am the help function.  I am not yet useful, sorry.', level, { linesOut: 2 } );
+    console.log( 'Hello!  I am the help function.  I am not yet useful, sorry.', level, { linesOut: 2 } );
     console.vi.debug( { params }, level, { bold: false, linesOut: 2 } );
 };

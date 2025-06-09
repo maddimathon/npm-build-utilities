@@ -50,23 +50,27 @@
     "exports": {
 
         ".": "./dist/js/index.js",
-        "./cli": "./dist/js/bin/lib/index.js",
+        "./bin": "./dist/js/bin/lib/index.js",
         "./internal": "./dist/js/lib/@internal.js",
 
         "./tsconfig": "./tsconfig.base.json",
-        
+
         "./types": "./dist/js/types/index.d.ts",
         "./types/*": [
             "./dist/js/types/*.d.ts",
-            "./dist/js/types/*/index.d.ts"
+            "./dist/js/types/*/index.d.ts",
+            "./dist/js/types/*"
         ],
-        "./types/*.d.ts": "./dist/js/types/*.d.ts",
 
         "./*": [
             "./dist/js/*.js",
-            "./dist/js/*/index.js"
+            "./dist/js/*/index.js",
+            "./dist/js/*"
         ],
-        "./*.js": "./dist/js/*.js"
+        "./*.js": [
+            "./dist/js/*.js",
+            "./dist/js/*/index.js"
+        ]
     },
 
     "bugs": {
@@ -74,37 +78,37 @@
     },
 
     "scripts": {
-        "test-utils": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts --config .new-scripts/build.config.ts",
+        "test-utils": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts --config .scripts/build.config.ts",
 
         "commit": "sh .scripts/commit.sh",
         
-        "snap":     "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts snapshot --config .new-scripts/build.config.ts",
-        "snapshot": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts snapshot --config .new-scripts/build.config.ts",
+        "snap":     "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts snapshot --config .scripts/build.config.ts",
+        "snapshot": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts snapshot --config .scripts/build.config.ts",
        
-        "compile": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts compile --config .new-scripts/build.config.ts",
+        "compile": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts compile --config .scripts/build.config.ts",
         
-        "build":       "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts build --config .new-scripts/build.config.ts",
-        "quick-build": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts build --config .new-scripts/build.config.ts --without minimize,prettify,readme",
+        "build":       "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts build --config .scripts/build.config.ts",
+        "quick-build": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts build --config .scripts/build.config.ts --without minimize,prettify,readme",
         
-        "doc": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts document --config .new-scripts/build.config.ts",
+        "doc": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts document --config .scripts/build.config.ts",
 
-        "test": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts test --config .new-scripts/build.config.ts",
+        "test": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts test --config .scripts/build.config.ts",
         
         
         "prewatch": "npm run --silent quick-build -- --starting",
         
         "watch": "run-p --silent watch:*",
             "watch:docs": "watch -p 'src/docs/**/*' -p 'README.md' -c 'npm run --silent quick-build --   --only document --watchedWatcher \"watch:js\" --watchedChange --watchedFilename \"$FILENAME\" --watchedEvent \"$EVENT\"'",
-            "watch:js":   "watch -p 'src/ts/**/*'                  -c 'npm run --silent quick-build -- --compile-only js --watchedWatcher \"watch:js\" --watchedChange --watchedFilename \"$FILENAME\" --watchedEvent \"$EVENT\"'",
+            "watch:js":   "watch -p 'src/ts/**/*'                  -c 'npm run --silent quick-build -- --only-compile js --watchedWatcher \"watch:js\" --watchedChange --watchedFilename \"$FILENAME\" --watchedEvent \"$EVENT\"'",
         
         
-        "package": "tsx --tsconfig .new-scripts/tsconfig.json src/ts/bin/index.ts package --config .new-scripts/build.config.ts",
+        "package": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts package --config .scripts/build.config.ts",
         
-        "dryrun":  "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts --dryrun",
-        "release": "tsx --tsconfig .scripts/tsconfig.json .scripts/release.ts"
+        "dryrun":  "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts release --config .scripts/build.config.ts --dryrun --without-package zip",
+        "release": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts release --config .scripts/build.config.ts"
     },
     "dependencies": {
-        "@maddimathon/utility-typescript": "file:../utility-typescript",
+        "@maddimathon/utility-typescript": "2.0.0-alpha",
         "@tsconfig/node20": "20.1.5",
         "glob": "11.0.2",
         "minimist": "1.2.8",

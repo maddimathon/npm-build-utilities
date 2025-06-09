@@ -3,14 +3,11 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type { Json } from '@maddimathon/utility-typescript/types';
 import type { CLI, Stage } from '../../../types/index.js';
 import { SemVer } from '../../@internal/index.js';
 import { ProjectConfig } from '../../01-config/index.js';
@@ -22,12 +19,19 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  *
  * @since 0.1.0-alpha.draft
  */
-export declare class BuildStage extends AbstractStage<Stage.SubStage.Build, Stage.Args.Build> {
+export declare class BuildStage extends AbstractStage<Stage.Args.Build, Stage.SubStage.Build> {
+    /**
+     * {@inheritDoc AbstractStage.subStages}
+     *
+     * @category Running
+     *
+     * @source
+     */
     readonly subStages: Stage.SubStage.Build[];
     get ARGS_DEFAULT(): {
         readonly compile: true;
         readonly document: false;
-        readonly minimize: (_stage: Stage.Class) => {
+        readonly minimize: (_stage: Stage) => {
             readonly css: false;
             readonly html: false;
             readonly js: false;
@@ -35,7 +39,7 @@ export declare class BuildStage extends AbstractStage<Stage.SubStage.Build, Stag
                 readonly globs: [`${string}/**/*.json`];
             };
         };
-        readonly prettify: (_stage: Stage.Class) => {
+        readonly prettify: (_stage: Stage) => {
             readonly css: readonly [readonly [`${string}/**/*.css`, `${string}/**/*.css`]];
             readonly html: readonly [readonly [`${string}/**/*.html`]];
             readonly js: readonly [readonly [`${string}/**/*.js`, `${string}/**/*.jsx`, `${string}/**/*.js`, `${string}/**/*.jsx`]];
@@ -46,45 +50,61 @@ export declare class BuildStage extends AbstractStage<Stage.SubStage.Build, Stag
             readonly ts: readonly [readonly [`${string}/**/*.ts`, `${string}/**/*.tsx`, `${string}/**/*.ts`, `${string}/**/*.tsx`]];
             readonly yaml: readonly [readonly [`${string}/**/*.yaml`]];
         };
-        readonly replace: (_stage: Stage.Class) => {
-            current: string[];
-            ignore: string[];
-            package: string[];
+        readonly replace: (stage: Stage) => {
+            current?: string[];
+            ignore?: string[];
+            package?: string[];
         };
         readonly test: false;
-        readonly objs: {};
+        readonly utils: {};
     };
-    /** {@inheritDoc AbstractStage.buildArgs} */
-    buildArgs(args?: Partial<Stage.Args.Build>): Stage.Args.Build<string> & Partial<Stage.Args.Build<string>>;
+    buildArgs(args?: Partial<Stage.Args.Build>): Stage.Args.Build & Partial<Stage.Args.Build>;
     /**
-     * @param config    Current project config.
-     * @param params    Current CLI params.
-     * @param args      Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
-     */
-    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Build>, _pkg?: Node.PackageJson, _version?: SemVer);
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
+     * @category Constructor
      *
-     * @param which  Whether we are starting or ending.
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
+    constructor(config: ProjectConfig, params: CLI.Params, args: Partial<Stage.Args.Build>, pkg?: Json.PackageJson, version?: SemVer);
     startEndNotice(which: "start" | "end" | null): void | Promise<void>;
     protected runSubStage(subStage: Stage.SubStage.Build): Promise<void>;
     /**
      * Runs the project's compile class.
+     *
+     * @category Sub-Stages
      */
     protected compile(): Promise<void>;
     /**
      * Runs the project's document class.
+     *
+     * @category Sub-Stages
      */
     protected document(): Promise<void>;
+    /**
+     * Minimizes files.
+     *
+     * @category Sub-Stages
+     */
     protected minimize(): Promise<void>;
+    /**
+     * Runs prettier to format files.
+     *
+     * @category Sub-Stages
+     */
     protected prettify(): Promise<void>;
+    /**
+     * Replaces placeholders in the built files and directories.
+     *
+     * @category Sub-Stages
+     */
     protected replace(): Promise<void>;
     /**
      * Runs the project's test class.
+     *
+     * @category Sub-Stages
      */
     protected test(): Promise<void>;
 }

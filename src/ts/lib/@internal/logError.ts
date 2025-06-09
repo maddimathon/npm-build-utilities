@@ -3,29 +3,32 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
 import {
+    slugify,
+} from '@maddimathon/utility-typescript/functions';
+
+import {
     MessageMaker,
 } from '@maddimathon/utility-typescript/classes';
 
 import type { FileSystemType } from '../../types/FileSystemType.js';
-import type { LocalError } from '../../types/LocalError.js';
 import type { Logger } from '../../types/Logger.js';
+
+import {
+    type AbstractError,
+} from './classes/index.js';
 
 import { errorStringify } from './errorStringify.js';
 import { writeLog } from './writeLog.js';
-import { slugify } from '@maddimathon/utility-typescript/functions/index';
 
 /**
- * Writes the content of an error to a msgs file and outputs (to the console) a
- * confirmation message with the path to the msgs file.
+ * Writes the content of an error to a log file and outputs (to the console) a
+ * confirmation message with the path to the log file.
  * 
  * @category Errors
  *
@@ -40,6 +43,8 @@ import { slugify } from '@maddimathon/utility-typescript/functions/index';
  *          if written successfully.
  *
  * @since ___PKG_VERSION___
+ * 
+ * @internal
  */
 export function logError(
     logMsg: string,
@@ -60,11 +65,11 @@ export function logError(
         [ ( errMsg ?? logMsg ) + '\n' ],
 
         ...errorStringify(
-            error as LocalError.Input,
-            {},
+            error as AbstractError.Input,
+            level,
             console,
             fs,
-            level,
+            {},
         ),
     ];
 
@@ -110,14 +115,18 @@ export function logError(
 /**
  * Utilities used only for {@link logError} function.
  * 
- * @category Function-Helpers
+ * @category Errors
  * 
  * @since ___PKG_VERSION___
+ * 
+ * @internal
  */
 export namespace logError {
 
     /**
      * Input configuration for {@link logError} function.
+     * 
+     * @since ___PKG_VERSION___
      */
     export interface Args {
 
@@ -135,12 +144,8 @@ export namespace logError {
         fs: FileSystemType,
 
         /**
-         * Optional. The date object to use for the error log.
-         * 
-         * @default 
-         * ```ts
-         * new Date()
-         * ```
+         * The date object to use for the error log. Otherwise constructs a new
+         * date object.
          */
         date?: Date;
 

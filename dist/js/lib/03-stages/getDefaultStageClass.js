@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -22,7 +19,13 @@ import {
 /**
  * Gets the default class for the given stage.
  *
+ * Overloaded for exact class typing.
+ *
  * @category Stages
+ *
+ * @param stage  Name of the stage to fetch (lowercase).
+ *
+ * @return  The default stage class.
  *
  * @since 0.1.0-alpha.draft
  *

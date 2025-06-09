@@ -3,14 +3,12 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import {
+    escRegExp,
     mergeArgs,
     toTitleCase,
 } from '@maddimathon/utility-typescript/functions';
@@ -22,56 +20,42 @@ import {
 } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
 import { getPackageJson } from '../../../00-universal/getPackageJson.js';
-// import {
-// } from '../../../02-utils/index.js';
-import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
 import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
+import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
 /**
  * Abstract class for a single build stage, along with a variety of utilities
  * for building projects.
  *
  * @category Stages
  *
+ * @typeParam T_Args      Argument object for this stage.
+ * @typeParam T_SubStage  String literal of substages to run within this stage.
+ *
  * @since 0.1.0-alpha.draft
  */
 export class AbstractStage {
-    _pkg;
-    _version;
-    /* STATIC
-     * ====================================================================== */
-    /* Args ===================================== */
-    /**
-     * Default values for {@link Stage.Args}.
-     *
-     * @category Args
-     */
-    static get ARGS_DEFAULT() {
-        return {
-            objs: {},
-        };
-    }
     /* PROPERTIES
      * ====================================================================== */
     /**
-     * {@inheritDoc Stage.Class.clr}
+     * {@inheritDoc Stage.clr}
      *
-     * @category Args
+     * @category Config
      */
     clr;
     /**
-     * {@inheritDoc Stage.Class.config}
+     * {@inheritDoc Stage.config}
      *
-     * @category Args
+     * @category Config
      */
     config;
     /**
-     * {@inheritDoc Stage.Class.console}
+     * {@inheritDoc Stage.console}
      *
      * @category Utilities
      */
     console;
     /**
-     * {@inheritDoc Stage.Class.compiler}
+     * {@inheritDoc Stage.compiler}
      *
      * @category Utilities
      */
@@ -79,7 +63,7 @@ export class AbstractStage {
     /** @hidden */
     #fs;
     /**
-     * {@inheritDoc Stage.Class.fs}
+     * {@inheritDoc Stage.fs}
      *
      * @category Utilities
      */
@@ -91,7 +75,7 @@ export class AbstractStage {
         return this.#fs;
     }
     /**
-     * {@inheritDoc Stage.Class.fs}
+     * {@inheritDoc Stage.fs}
      *
      * @category Utilities
      */
@@ -99,91 +83,101 @@ export class AbstractStage {
         this.#fs = fs ?? new FileSystem(this.console, this.config.fs);
     }
     /**
-     * {@inheritDoc Stage.Class.name}
+     * {@inheritDoc Stage.name}
      *
-     * @category Args
+     * @category Config
      */
     name;
     /**
-     * {@inheritDoc Stage.Class.params}
+     * {@inheritDoc Stage.params}
      *
-     * @category Args
+     * @category Config
      */
     params;
+    /** @hidden */
+    #pkg;
     /**
-     * {@inheritDoc Stage.Class.pkg}
+     * {@inheritDoc Stage.pkg}
      *
      * @category Project
      */
     get pkg() {
-        if (typeof this._pkg === 'undefined') {
-            this._pkg = this.try(getPackageJson, 1, [this.fs]);
+        if (typeof this.#pkg === 'undefined') {
+            this.#pkg = this.try(getPackageJson, 1, [this.fs]);
         }
         const repository =
-            typeof this._pkg?.repository === 'string'
-                ? this._pkg?.repository
-                : this._pkg?.repository?.url;
+            typeof this.#pkg?.repository === 'string'
+                ? this.#pkg?.repository
+                : this.#pkg?.repository?.url;
         return {
-            name: this._pkg?.name,
-            version: this._pkg?.version,
-            description: this._pkg?.description,
-            homepage: this._pkg?.homepage,
-            config: this._pkg?.config,
-            license: this._pkg?.license,
+            name: this.#pkg?.name,
+            version: this.#pkg?.version,
+            description: this.#pkg?.description,
+            homepage: this.#pkg?.homepage,
+            config: this.#pkg?.config,
+            license: this.#pkg?.license,
             repository,
-            engines: this._pkg?.engines,
-            files: this._pkg?.files,
-            main: this._pkg?.main,
-            bin: this._pkg?.bin,
-            bugs: this._pkg?.bugs,
+            engines: this.#pkg?.engines,
+            files: this.#pkg?.files,
+            main: this.#pkg?.main,
+            bin: this.#pkg?.bin,
+            bugs: this.#pkg?.bugs,
         };
     }
     /** @hidden */
-    #releasePath;
+    #releaseDir;
     /**
      * Path to release directory for building a package for the current version.
+     *
+     * @category Config
      */
-    get releasePath() {
-        if (this.#releasePath === undefined) {
+    get releaseDir() {
+        if (this.#releaseDir === undefined) {
             const name = this.pkg.name.replace(/^@([^\/]+)\//, '$1_');
             const version = this.version
                 .toString(this.isDraftVersion)
                 .replace(/\./gi, '-');
-            this.#releasePath = this.fs.pathRelative(
+            this.#releaseDir = this.fs.pathRelative(
                 this.fs.pathResolve(
                     this.config.paths.release,
                     `${name}@${version}`,
                 ),
             );
         }
-        return this.#releasePath;
+        return this.#releaseDir;
     }
+    /** @hidden */
+    #version;
     /**
-     * {@inheritDoc Stage.Class.version}
+     * {@inheritDoc Stage.version}
      *
      * @category Project
      */
     get version() {
-        if (typeof this._version === 'undefined') {
-            this._version = new SemVer(
+        if (typeof this.#version === 'undefined') {
+            this.#version = new SemVer(
                 this.pkg.version ?? '0.0.0',
                 this.console,
             );
         }
-        return this._version;
+        return this.#version;
     }
+    /**
+     * If undefined, nothing is set.  Otherwise, a {@link SemVer} is created and
+     * the value of {@link AbstractStage.pkg}.version is updated.
+     */
     set version(input) {
         if (!input) {
             return;
         }
         // returns
         if (input instanceof SemVer) {
-            this._version = input;
+            this.#version = input;
             return;
         }
-        this._version = new SemVer(input, this.console);
-        if (this._pkg) {
-            this._pkg.version = this._version.toString();
+        this.#version = new SemVer(input, this.console);
+        if (this.#pkg) {
+            this.#pkg.version = this.#version.toString();
         }
     }
     /* Args ===================================== */
@@ -193,50 +187,52 @@ export class AbstractStage {
      *
      * Uses {@link mergeArgs} recursively.
      *
-     * @category Args
+     * @category Config
      */
     buildArgs(args) {
         return mergeArgs(this.ARGS_DEFAULT, args ?? {}, true);
     }
     /**
-     * {@inheritDoc Stage.Class.args}
+     * {@inheritDoc Stage.args}
      *
-     * @category Args
+     * @category Config
      */
     args;
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param name    Name for this stage used for notices.
-     * @param clr     Colour used for colour-coding this class.
-     * @param config  Current project config.
-     * @param params  Current CLI params.
-     * @param args    Partial overrides for the default stage args.
+     * @category Constructor
+     *
+     * @param name     Name for this stage used for notices.
+     * @param clr      Colour used for colour-coding this class.
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default stage args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
-    constructor(name, clr, config, params, args, _pkg, _version) {
-        this._pkg = _pkg;
-        this._version = _version;
+    constructor(name, clr, config, params, args, pkg, version) {
+        this.#pkg = pkg;
         this.name = name;
         this.clr = clr;
         this.config = config;
         this.params = params;
-        this.version = _version;
+        this.version = version;
         this.console = new Stage_Console(this.clr, this.config, this.params);
         this.args = this.buildArgs(args);
-        this.fs = this.args.objs.fs;
+        this.fs = this.args.utils.fs;
         this.compiler =
-            this.args.objs.compiler
+            this.args.utils.compiler
             ?? new Stage_Compiler(
                 this.config,
                 this.params,
                 this.console,
                 this.fs,
-                this.config.compiler,
             );
     }
     /* METHODS
      * ====================================================================== */
-    /** {@inheritDoc Stage.Class.isDraftVersion} */
+    /** {@inheritDoc Stage.isDraftVersion} */
     get isDraftVersion() {
         return (
             !(this.params?.packaging || this.params?.releasing)
@@ -246,10 +242,19 @@ export class AbstractStage {
     /**
      * Replaces placeholders in files as defined by {@link Config.replace}.
      *
-     * @return  Paths to files where placeholders were replaced.
+     * @category Utilities
+     *
+     * @param globs     Where to find & replace placeholders.
+     * @param version   Which version of the replacements to run.
+     * @param level     Depth level for output to the console.
+     * @param ignore    Globs to ignore while replacing. Default {@link FileSystem.globs.SYSTEM}.
+     * @param docsMode  Whether to make the replacements in 'docs' mode (i.e.,
+     *                  assumes markdown in comments was converted to HTML).
+     *
+     * @return  Paths where placeholders were replaced.
      */
-    replaceInFiles(globs, version, level, ignore = []) {
-        const replacements =
+    replaceInFiles(globs, version, level, ignore = [], docsMode = false) {
+        let replacements =
             typeof this.config.replace === 'function'
                 ? this.config.replace(this)[version]
                 : this.config.replace[version];
@@ -258,6 +263,44 @@ export class AbstractStage {
             return [];
         }
         this.console.verbose(`making ${version} replacements...`, level);
+        if (docsMode) {
+            this.console.verbose(`running in docs mode`, 1 + level);
+            replacements = replacements.map(([_find, _repl]) => {
+                // returns
+                if (typeof _find !== 'string') {
+                    const _findString = _find
+                        .toString()
+                        .replace(/(^\/|\/[a-z]+$)/g, '');
+                    // returns
+                    if (_findString.match(/^___[^\s]+___$/g) === null) {
+                        return [_find, _repl];
+                    }
+                    const _findHTML =
+                        '<em><strong>'
+                        + _findString.replace(/(^___|___$)/g, '')
+                        + '<\\/strong><\\/em>';
+                    const _regex = new RegExp(
+                        `(${_findString}|${_findHTML})`,
+                        _find.toString().match(/(^\/|(?<=\/)([a-z]+)$)/g)?.[1]
+                            || 'g',
+                    );
+                    return [_regex, _repl];
+                }
+                // returns
+                if (_find.match(/^___[^\s]+___$/g) === null) {
+                    return [_find, _repl];
+                }
+                const _findHTML =
+                    '<em><strong>'
+                    + _find.replace(/(^___|___$)/g, '')
+                    + '</strong></em>';
+                const _regex = new RegExp(
+                    `(${escRegExp(_find)}|${escRegExp(_findHTML)})`,
+                    'g',
+                );
+                return [_regex, _repl];
+            });
+        }
         const replaced = this.fs.replaceInFiles(
             globs,
             replacements,
@@ -275,10 +318,20 @@ export class AbstractStage {
     }
     /**
      * Alias for {@link internal.writeLog}.
+     *
+     * @category Errors
+     *
+     * @param msg       Log message to write.
+     * @param filename  File name for the log.
+     * @param subDir    Subdirectories used for the path to write the log file.
+     * @param date      Used for the timestamp.
+     *
+     * @return  If false, writing the log failed. Otherwise, this is the path to
+     *          the written log file.
      */
     writeLog(msg, filename, subDir = [], date = null) {
         if (!msg.length) {
-            return;
+            return false;
         }
         return writeLog(msg, filename, {
             config: this.config,
@@ -288,7 +341,11 @@ export class AbstractStage {
         });
     }
     /* CONFIG & ARGS ===================================== */
-    /** {@inheritDoc Stage.Class.isSubStageIncluded} */
+    /**
+     * {@inheritDoc Stage.isSubStageIncluded}
+     *
+     * @category Config
+     */
     isSubStageIncluded(subStage, level) {
         this.params.debug
             && this.console.verbose(
@@ -390,34 +447,53 @@ export class AbstractStage {
         }
         return result;
     }
-    /** {@inheritDoc Stage.Class.getDistDir} */
+    /**
+     * {@inheritDoc Stage.getDistDir}
+     *
+     * @category Config
+     */
     getDistDir(subDir, ...subpaths) {
-        return this.config.getDistDir(this.fs, subDir, ...subpaths);
+        return this.config.getDistDir(this.fs, subDir, ...(subpaths ?? []));
     }
-    /** {@inheritDoc Stage.Class.getScriptsPath} */
+    /**
+     * {@inheritDoc Stage.getScriptsPath}
+     *
+     * @category Config
+     */
     getScriptsPath(subDir, ...subpaths) {
-        return this.config.getScriptsPath(this.fs, subDir, ...subpaths);
+        return this.config.getScriptsPath(this.fs, subDir, ...(subpaths ?? []));
     }
-    /** {@inheritDoc Stage.Class.getSrcDir} */
+    /**
+     * {@inheritDoc Stage.getSrcDir}
+     *
+     * @category Config
+     */
     getSrcDir(subDir, ...subpaths) {
-        return this.config.getSrcDir(this.fs, subDir, ...subpaths);
+        return this.config.getSrcDir(this.fs, subDir, ...(subpaths ?? []));
     }
     /* ERRORS ===================================== */
     /**
      * Alias for {@link errorHandler}.
+     *
+     * @category Errors
+     *
+     * @param error    Error to handle.
+     * @param level    Depth level for output to the console.
+     * @param args     Overrides for default options.
      */
-    handleError(error, level, args, exitProcess) {
-        return errorHandler(
-            error,
-            level,
-            this.console,
-            this.fs,
-            args,
-            exitProcess,
-        );
+    handleError(error, level, args) {
+        return errorHandler(error, level, this.console, this.fs, args);
     }
     /**
      * Alias for {@link internal.logError}.
+     *
+     * @category Errors
+     *
+     * @param logMsg  Message to prepend to the return for output to the console.
+     * @param error   Caught error to log.
+     * @param level   Depth level for output to the console.
+     * @param errMsg  See {@link logError.Args.errMsg}.
+     * @param date    Used for the timestamp.
      */
     logError(logMsg, error, level, errMsg, date) {
         return logError(logMsg, error, level, {
@@ -431,23 +507,27 @@ export class AbstractStage {
      * Runs a function, with parameters as applicable, and catches (& handles)
      * anything thrown.
      *
+     * For the asynchronous method, see {@link AbstractStage.atry}.
+     *
      * Overloaded for better function param typing.
      *
      * @category Errors
      *
      * @experimental
      */
-    try(tryer, level, params, handlerArgs, exitProcess) {
+    try(tryer, level, params, handlerArgs) {
         try {
             return tryer(...(params ?? []));
         } catch (error) {
-            this.handleError(error, level, handlerArgs, exitProcess);
+            this.handleError(error, level, handlerArgs);
             return 'FAILED';
         }
     }
     /**
-     * Runs a function, with parameters as applicable, and catches (& handles)
-     * anything thrown.
+     * Runs a function (asynchronously), with parameters as applicable, and
+     * catches (& handles) anything thrown.
+     *
+     * For the synchronous method, see {@link AbstractStage.try}.
      *
      * Overloaded for better function param typing.
      *
@@ -455,20 +535,21 @@ export class AbstractStage {
      *
      * @experimental
      */
-    async atry(tryer, level, params, handlerArgs, exitProcess) {
+    async atry(tryer, level, params, handlerArgs) {
         try {
             return await tryer(...(params ?? []));
         } catch (error) {
-            this.handleError(error, level, handlerArgs, exitProcess);
+            this.handleError(error, level, handlerArgs);
             return 'FAILED';
         }
     }
     /* MESSAGES ===================================== */
-    /** {@inheritDoc Stage.Class.startEndNotice} */
+    /**
+     * {@inheritDoc Stage.startEndNotice}
+     *
+     * @category Running
+     */
     startEndNotice(which, watcherVersion = false) {
-        if (!this.params.notice) {
-            return;
-        }
         const uppercase = {
             name: this.name.toUpperCase(),
             which: which?.toUpperCase() ?? '',
@@ -520,6 +601,8 @@ export class AbstractStage {
      *
      * Cycles through each substage and runs {@link AbstractStage.runSubStage}
      * if {@link AbstractStage.isSubStageIncluded} returns true.
+     *
+     * @category Running
      */
     async run() {
         /* start */
@@ -550,8 +633,10 @@ export class AbstractStage {
      *
      * **This method should probably not be overwritten.**
      *
-     * @param stage   Stage to run as a substage.
-     * @param level   Depth level to add to {@link CLI.Params.log-base-level | this.params['log-base-level']}.
+     * @param stage  Stage to run as a substage.
+     * @param level  Depth level for output to the console.
+     *
+     * @category Running
      */
     async runStage(stage, level) {
         const _onlyKey = `only-${stage}`;
@@ -578,8 +663,8 @@ export class AbstractStage {
             this.config,
             _subParams,
             stageArgs,
-            this._pkg,
-            this._version,
+            this.#pkg,
+            this.#version,
         ).run();
     }
 }

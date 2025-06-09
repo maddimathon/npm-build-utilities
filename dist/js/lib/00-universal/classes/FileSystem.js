@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -28,21 +25,16 @@ import { AbstractError, logError } from '../../@internal/index.js';
  * @since 0.1.0-alpha.draft
  */
 export class FileSystem extends node.NodeFiles {
-    console;
     /* LOCAL PROPERTIES
      * ====================================================================== */
+    /**
+     * Instance used to log messages within the class.
+     *
+     * @category Classes
+     */
+    console;
     /* Args ===================================== */
-    /**
-     * A completed args object.
-     *
-     * @category Args
-     */
     args;
-    /**
-     * Default args for this class.
-     *
-     * @category Args
-     */
     get ARGS_DEFAULT() {
         const copy = {
             force: true,
@@ -51,6 +43,7 @@ export class FileSystem extends node.NodeFiles {
             glob: {
                 absolute: false,
                 dot: true,
+                filesOnly: false,
             },
         };
         const glob = {
@@ -60,17 +53,67 @@ export class FileSystem extends node.NodeFiles {
         };
         return {
             ...node.NodeFiles.prototype.ARGS_DEFAULT,
+            argsRecursive: true,
             copy,
             glob,
-            minify: FileSystem.minify.argsDefault,
-            prettier: FileSystem.prettier.argsDefault,
+            minify: FileSystem.minify.ARGS_DEFAULT,
+            prettier: FileSystem.prettier.ARGS_DEFAULT,
+        };
+    }
+    buildArgs(args) {
+        const merged = mergeArgs(this.ARGS_DEFAULT, args, true);
+        let prettier;
+        if (typeof merged.prettier === 'function') {
+            prettier = {
+                css: merged.prettier('css'),
+                html: merged.prettier('html'),
+                js: merged.prettier('js'),
+                json: merged.prettier('json'),
+                md: merged.prettier('md'),
+                mdx: merged.prettier('mdx'),
+                scss: merged.prettier('scss'),
+                ts: merged.prettier('ts'),
+                yaml: merged.prettier('yaml'),
+            };
+        } else if (!('_' in merged.prettier) || !merged.prettier._) {
+            const _mergedPrettier = merged.prettier;
+            prettier = {
+                css: _mergedPrettier,
+                html: _mergedPrettier,
+                js: _mergedPrettier,
+                json: _mergedPrettier,
+                md: _mergedPrettier,
+                mdx: _mergedPrettier,
+                scss: _mergedPrettier,
+                ts: _mergedPrettier,
+                yaml: _mergedPrettier,
+            };
+        } else {
+            const _mergedPrettier = merged.prettier;
+            prettier = {
+                css: mergeArgs(_mergedPrettier._, _mergedPrettier.css, true),
+                html: mergeArgs(_mergedPrettier._, _mergedPrettier.html, true),
+                js: mergeArgs(_mergedPrettier._, _mergedPrettier.js, true),
+                json: mergeArgs(_mergedPrettier._, _mergedPrettier.json, true),
+                md: mergeArgs(_mergedPrettier._, _mergedPrettier.md, true),
+                mdx: mergeArgs(_mergedPrettier._, _mergedPrettier.mdx, true),
+                scss: mergeArgs(_mergedPrettier._, _mergedPrettier.scss, true),
+                ts: mergeArgs(_mergedPrettier._, _mergedPrettier.ts, true),
+                yaml: mergeArgs(_mergedPrettier._, _mergedPrettier.yaml, true),
+            };
+        }
+        return {
+            ...merged,
+            prettier,
         };
     }
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param console   Used to output messages within the class.
-     * @param args
+     * @category Constructor
+     *
+     * @param console  Instance used to log messages and debugging info.
+     * @param args     Override arguments.
      */
     constructor(console, args = {}) {
         super(args, {
@@ -86,9 +129,11 @@ export class FileSystem extends node.NodeFiles {
     /**
      * {@inheritDoc internal.FileSystemType.copy}
      *
-     * @throws {@link FileSystem.Error}
+     * @category Filers
+     *
+     * @throws {@link FileSystem.Error} — If copying a file fails.
      */
-    copy(globs, level, outputDir, sourceDir = null, args = {}) {
+    copy(globs, level, outputDir, sourceDir, args) {
         args = mergeArgs(this.args.copy, args, true);
         outputDir = './' + outputDir.replace(/(^\.\/|\/$)/g, '') + '/';
         if (sourceDir) {
@@ -139,8 +184,21 @@ export class FileSystem extends node.NodeFiles {
         }
         return output;
     }
-    /** {@inheritDoc internal.FileSystemType.delete} */
-    delete(globs, level, dryRun, args = {}) {
+    /**
+     * Deletes given globs (via {@link node.NodeFiles}.delete).
+     *
+     * This catches any errors from {@link node.NodeFiles}.delete, ignores
+     * ENOTEMPTY errors, and re-throws the rest.
+     *
+     * @category Filers
+     *
+     * @param globs   Glob patterns for paths to delete.
+     * @param level   Depth level for output to the console.
+     * @param dryRun  If true, files that would be deleted are printed to the
+     *                console and not deleted.
+     * @param args    Optional glob configuration.
+     */
+    delete(globs, level, dryRun, args) {
         try {
             return super.delete(this.glob(globs, args), level, dryRun);
         } catch (error) {
@@ -164,15 +222,29 @@ export class FileSystem extends node.NodeFiles {
             }
         }
     }
-    /** {@inheritDoc internal.FileSystemType.glob} */
+    /**
+     * {@inheritDoc internal.FileSystemType.glob}
+     *
+     * @category Path-makers
+     */
     glob(globs, args = {}) {
+        if (!Array.isArray(globs)) {
+            globs = [globs];
+        }
         args = mergeArgs(this.args.glob, args, false);
-        const globResult = globSync(globs, args).map((res) =>
-            typeof res === 'object' ? res.fullpath() : res,
-        );
-        return globResult.filter((path) => !path.match(/(^|\/)\._/g));
+        const globResult = globSync(globs, args)
+            .map((res) => (typeof res === 'object' ? res.fullpath() : res))
+            .filter((path) => !path.match(/(^|\/)\._/g));
+        if (args.filesOnly) {
+            return globResult.filter(this.isFile);
+        }
+        return globResult;
     }
-    /** {@inheritDoc internal.FileSystemType.minify} */
+    /**
+     * {@inheritDoc internal.FileSystemType.minify}
+     *
+     * @category Transformers
+     */
     async minify(globs, format, level, args, renamer) {
         args = mergeArgs(
             typeof this.args.minify === 'function'
@@ -192,6 +264,7 @@ export class FileSystem extends node.NodeFiles {
                 this.console.log(
                     `minimizing for ${format} is not yet implemented`,
                     level,
+                    { italic: true },
                 );
                 return [];
             case 'json':
@@ -264,15 +337,17 @@ export class FileSystem extends node.NodeFiles {
         }
         return minimized;
     }
-    /** {@inheritDoc internal.FileSystemType.prettier} */
+    /**
+     * {@inheritDoc internal.FileSystemType.prettier}
+     *
+     * @category Transformers
+     *
+     * @throws {@link FileSystem.Error} — If no parser was given or could be
+     *         automatically assigned based on the format (this is unlikely if
+     *         you respect the {@link FileSystemType.Prettier.Format} type).
+     */
     async prettier(globs, format, args) {
-        args = mergeArgs(
-            typeof this.args.prettier === 'function'
-                ? this.args.prettier(format)
-                : this.args.prettier,
-            args ?? {},
-            true,
-        );
+        args = mergeArgs(this.args.prettier[format], args ?? {}, true);
         // throws if no parser can be set
         if (!args.parser) {
             switch (format) {
@@ -328,7 +403,11 @@ export class FileSystem extends node.NodeFiles {
         }
         return prettified;
     }
-    /** {@inheritDoc internal.FileSystemType.replaceInFiles} */
+    /**
+     * {@inheritDoc internal.FileSystemType.replaceInFiles}
+     *
+     * @category Transformers
+     */
     replaceInFiles(globs, replace, level, args) {
         // returns
         if (!replace.length) {
@@ -371,7 +450,6 @@ export class FileSystem extends node.NodeFiles {
         });
         // returns
         if (!files.length) {
-            // this.console.verbose( 'FileSystem.replaceInFiles() - no files matched by globs', level );
             this.console.vi.debug(
                 { globs },
                 (this.console.params.verbose ? 1 : 0) + level,
@@ -423,7 +501,7 @@ export class FileSystem extends node.NodeFiles {
 /**
  * Used only for {@link FileSystem}.
  *
- * @category Class-Helpers
+ * @category Utilities
  *
  * @since 0.1.0-alpha.draft
  */
@@ -437,11 +515,6 @@ export class FileSystem extends node.NodeFiles {
      */
     class Error extends AbstractError {
         name = 'FileSystem Error';
-        get ARGS_DEFAULT() {
-            return {
-                ...AbstractError.prototype.ARGS_DEFAULT,
-            };
-        }
         constructor(message, method, args) {
             super(message, { class: 'FileSystem', method }, args);
         }
@@ -450,6 +523,8 @@ export class FileSystem extends node.NodeFiles {
     /**
      * Arrays of utility globs used within the library.
      *
+     * @category Utilities
+     *
      * @since 0.1.0-alpha.draft
      */
     let globs;
@@ -457,17 +532,31 @@ export class FileSystem extends node.NodeFiles {
         /**
          * Files that are copied into subdirectories (e.g., releases and
          * snapshots).
+         *
+         * @since 0.1.0-alpha.draft
+         *
+         * @source
          */
         globs.IGNORE_COPIED = (stage) => [
-            `${stage.config.paths.release.replace(/\/$/g, '')}/**`,
-            `${stage.config.paths.snapshot.replace(/\/$/g, '')}/**`,
+            stage.config.paths.release.replace(/\/$/g, '') + '/**',
+            stage.config.paths.snapshot.replace(/\/$/g, '') + '/**',
         ];
         /**
          * Compiled files to ignore.
+         *
+         * @since 0.1.0-alpha.draft
+         *
+         * @source
          */
-        globs.IGNORE_COMPILED = [`./docs/**`, `./dist/**`];
+        globs.IGNORE_COMPILED = (stage) => [
+            stage.getDistDir().replace(/\/$/g, '') + '/**',
+            stage.getDistDir('docs').replace(/\/$/g, '') + '/**',
+            stage.getDistDir('scss').replace(/\/$/g, '') + '/**',
+        ];
         /**
          * Files that we probably want to ignore within an npm project.
+         *
+         * @since 0.1.0-alpha.draft
          */
         globs.IGNORE_PROJECT = [
             '.git/**',
@@ -481,6 +570,8 @@ export class FileSystem extends node.NodeFiles {
         ];
         /**
          * System files that we *never, ever* want to include.
+         *
+         * @since 0.1.0-alpha.draft
          */
         globs.SYSTEM = [
             '._*',
@@ -492,61 +583,74 @@ export class FileSystem extends node.NodeFiles {
         ];
     })((globs = FileSystem.globs || (FileSystem.globs = {})));
     /**
-     * Utilities for the {@link FileSystem.minify} method.
+     * Utility functions and constants for the {@link FileSystem.minify} method.
+     *
+     * @category Transformers
      *
      * @since 0.1.0-alpha.draft
      */
     let minify;
     (function (minify) {
-        minify.argsDefault = {
+        /**
+         * Default args for the {@link FileSystem.minify} method
+         *
+         * @since 0.1.0-alpha.draft
+         */
+        minify.ARGS_DEFAULT = {
             css: {
-                type: 'clean-css',
-                'clean-css': {
-                    compatibility: '*',
-                },
+                // type: "clean-css",
+                // 'clean-css': {
+                //     compatibility: "*",
+                // },
             },
             html: {
-                collapseBooleanAttributes: false,
-                collapseWhitespace: true,
-                minifyCSS: true,
-                minifyJS: true,
-                removeAttributeQuotes: true,
-                removeCDATASectionsFromCDATA: true,
-                removeComments: true,
-                removeCommentsFromCDATA: true,
-                removeEmptyAttributes: false,
-                removeEmptyElements: false,
-                removeOptionalTags: false,
-                removeRedundantAttributes: false,
-                removeScriptTypeAttributes: false,
-                removeStyleLinkTypeAttributes: false,
-                useShortDoctype: true,
+                // collapseBooleanAttributes: false,
+                // collapseWhitespace: true,
+                // minifyCSS: true,
+                // minifyJS: true,
+                // removeAttributeQuotes: true,
+                // removeCDATASectionsFromCDATA: true,
+                // removeComments: true,
+                // removeCommentsFromCDATA: true,
+                // removeEmptyAttributes: false,
+                // removeEmptyElements: false,
+                // removeOptionalTags: false,
+                // removeRedundantAttributes: false,
+                // removeScriptTypeAttributes: false,
+                // removeStyleLinkTypeAttributes: false,
+                // useShortDoctype: true,
             },
             js: {
-                type: 'putout',
-                putout: {
-                    quote: "'",
-                    mangle: false,
-                    mangleClassNames: false,
-                    removeUnusedVariables: false,
-                    removeConsole: false,
-                    removeUselessSpread: false,
-                },
+                // type: 'putout',
+                // putout: {
+                //     quote: "'",
+                //     mangle: false,
+                //     mangleClassNames: false,
+                //     removeUnusedVariables: false,
+                //     removeConsole: false,
+                //     removeUselessSpread: false,
+                // },
             },
-            glob: {
-                ignore: [...FileSystem.globs.SYSTEM],
-            },
+            json: {},
+            glob: {},
         };
     })((minify = FileSystem.minify || (FileSystem.minify = {})));
     /**
      * Utility functions for the {@link FileSystem.prettier} method.
      *
+     * @category Transformers
+     *
      * @since 0.1.0-alpha.draft
      */
     let prettier;
     (function (prettier) {
-        function argsDefault(format) {
-            const universal = {
+        /**
+         * Default args for the {@link FileSystem.prettier} method
+         *
+         * @since 0.1.0-alpha.draft
+         */
+        prettier.ARGS_DEFAULT = {
+            _: {
                 bracketSameLine: false,
                 bracketSpacing: true,
                 experimentalOperatorPosition: 'start',
@@ -562,23 +666,14 @@ export class FileSystem extends node.NodeFiles {
                 trailingComma: 'all',
                 useTabs: false,
                 glob: {},
-            };
-            // returns on match
-            switch (format) {
-                case 'css':
-                    return {
-                        ...universal,
-                        singleQuote: false,
-                    };
-                case 'html':
-                    return {
-                        ...universal,
-                        printWidth: 10000,
-                    };
-            }
-            return universal;
-        }
-        prettier.argsDefault = argsDefault;
+            },
+            css: {
+                singleQuote: false,
+            },
+            html: {
+                printWidth: 10000,
+            },
+        };
     })((prettier = FileSystem.prettier || (FileSystem.prettier = {})));
 })(FileSystem || (FileSystem = {}));
 //# sourceMappingURL=FileSystem.js.map

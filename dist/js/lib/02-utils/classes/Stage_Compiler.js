@@ -3,16 +3,12 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-// import type typescript from 'typescript';
 import * as sass from 'sass';
-import { ProjectError } from '../../@internal/index.js';
+import { StageError } from '../../@internal/index.js';
 import { catchOrReturn } from '../../00-universal/index.js';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
@@ -50,50 +46,38 @@ export class Stage_Compiler {
         };
     }
     /* Args ===================================== */
-    /**
-     * Default values for the args property.
-     *
-     * @category Args
-     */
     get ARGS_DEFAULT() {
-        return {};
+        return {
+            sass: {
+                charset: true,
+                sourceMap: true,
+                sourceMapIncludeSources: true,
+                style: 'expanded',
+            },
+            ts: {},
+        };
     }
-    /**
-     * A completed args object.
-     *
-     * @category Args
-     */
     args;
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
      * @param config   Current project config.
      * @param params   Current CLI params.
-     * @param console  Instance used to send messages to the console.
+     * @param console  Instance used to log messages and debugging info.
      * @param fs       Instance used to work with paths and files.
-     * @param args     Partial overrides for the default args.
      */
-    constructor(config, params, console, fs, args = {}) {
+    constructor(config, params, console, fs) {
         this.config = config;
         this.params = params;
         this.console = console;
         this.fs = fs;
         this.args = {
             ...this.ARGS_DEFAULT,
-            ...args,
+            ...config.compiler,
         };
     }
     /* LOCAL METHODS
      * ====================================================================== */
-    /**
-     * Compiles scss using the
-     * {@link https://www.npmjs.com/package/sass | sass npm package}.
-     *
-     * @param input   Scss input path.
-     * @param output  Scss output path.
-     * @param level   Depth level for this message (above the value of
-     *                {@link CLI.Params.log-base-level}).
-     */
     async scss(input, output, level, sassOpts) {
         this.console.vi.debug(
             {
@@ -108,7 +92,7 @@ export class Stage_Compiler {
             { bold: true },
         );
         const compiled = sass.compile(input, {
-            ...this.config.compiler?.sass,
+            ...this.args,
             ...sassOpts,
         });
         this.params.debug && this.console.vi.verbose({ compiled }, level);
@@ -139,37 +123,21 @@ export class Stage_Compiler {
             );
         }
     }
-    /**
-     * Compiles typescript using the
-     * {@link https://www.npmjs.com/package/sass | sass npm package}.
-     *
-     * @throws {@link ProjectError}  If the tsconfig file doesn’t exist.
-     *
-     * @param tsConfig  Path to TS config json used to compile the project.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link (root).CLI.Params.log-base-level}).
-     */
     async typescript(tsConfig, level) {
         this.console.verbose('running tsc...', 0 + level);
         // throws
         if (!this.fs.exists(tsConfig)) {
-            throw new ProjectError(
-                'tsConfig path does not exist: ' + tsConfig,
-                {
-                    class: 'Stage_Compiler',
-                    method: 'typescript',
-                },
-            );
+            throw new StageError('tsConfig path does not exist: ' + tsConfig, {
+                class: 'Stage_Compiler',
+                method: 'typescript',
+            });
         }
         // throws
         if (!this.fs.isFile(tsConfig)) {
-            throw new ProjectError(
-                'tsConfig path was not a file: ' + tsConfig,
-                {
-                    class: 'Stage_Compiler',
-                    method: 'typescript',
-                },
-            );
+            throw new StageError('tsConfig path was not a file: ' + tsConfig, {
+                class: 'Stage_Compiler',
+                method: 'typescript',
+            });
         }
         let config_obj = JSON.parse(this.fs.readFile(tsConfig));
         if (
@@ -200,10 +168,4 @@ export class Stage_Compiler {
         ]);
     }
 }
-/**
- * Used only for {@link Stage_Compiler}.
- *
- * @category Class-Helpers
- */
-(function (Stage_Compiler) {})(Stage_Compiler || (Stage_Compiler = {}));
 //# sourceMappingURL=Stage_Compiler.js.map

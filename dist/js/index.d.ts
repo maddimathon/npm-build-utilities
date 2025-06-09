@@ -2,6 +2,7 @@
  * Exports from the root/default export path.
  *
  * @module (root)
+ * @mergeModuleWith <project>
  *
  * @since 0.1.0-alpha.draft
  *
@@ -13,20 +14,13 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- * @author Maddi Mathon (www.maddimathon.com)
- * @homepage https://maddimathon.github.io/npm-build-utilities
- *
- * @license MIT
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 export type * from './types/index.js';
 /** @hidden - documented as an entry point module */
-export * as cli from './bin/lib/index.js';
+export * as bin from './bin/lib/index.js';
 /** @hidden - documented as an entry point module */
 export * as internal from './lib/@internal.js';
 export * from './lib/index.js';

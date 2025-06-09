@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -18,12 +15,20 @@ import {
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 let _writeLog_msgMaker = new MessageMaker({ painter: null });
 /**
- * Gets a relative or absolute path to the {@link Config.Paths.scripts}
- * directories.
+ * Writes a log file to the {@link Config.Paths.scripts}.logs directory.
  *
  * @category Errors
  *
+ * @param msg       Log message to write.
+ * @param filename  File name for the log.
+ * @param t_args    Overrides for default options.
+ *
+ * @return  If false, writing the log failed. Otherwise, this is the path to the
+ *          written log file.
+ *
  * @since 0.1.0-alpha.draft
+ *
+ * @internal
  */
 export function writeLog(msg, filename, t_args) {
     const {
@@ -31,7 +36,7 @@ export function writeLog(msg, filename, t_args) {
         date = new Date(),
         subDir = [],
         fs,
-    } = mergeArgs(writeLog.ARGS_DEFAULT, t_args, false);
+    } = mergeArgs({}, t_args, false);
     const bulkMsgs = (Array.isArray(msg) ? msg : [msg]).map((_m) =>
         typeof _m === 'string' ? [_m] : _m,
     );
@@ -62,14 +67,4 @@ export function writeLog(msg, filename, t_args) {
         { force: false, rename: true },
     );
 }
-/**
- * Utilities used only for {@link writeLog} function.
- *
- * @category Function-Helpers
- *
- * @since 0.1.0-alpha.draft
- */
-(function (writeLog) {
-    writeLog.ARGS_DEFAULT = {};
-})(writeLog || (writeLog = {}));
 //# sourceMappingURL=writeLog.js.map

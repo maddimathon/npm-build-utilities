@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -24,7 +21,7 @@ export class TestStage extends AbstractStage {
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
-            ...AbstractStage.ARGS_DEFAULT,
+            utils: {},
             js: {
                 tidy: [
                     'dist/js/**/*.test.d.ts',
@@ -38,28 +35,34 @@ export class TestStage extends AbstractStage {
     }
     /* CONSTRUCTOR
      * ====================================================================== */
+    /**
+     * Whether any tests being run have passed.
+     *
+     * Reset to `false` in {@link TestStage.startEndNotice}.
+     *
+     * @category Sub-Stages
+     */
     testStatus = false;
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     *
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
-    constructor(config, params, args, _pkg, _version) {
-        super('tests', 'red', config, params, args, _pkg, _version);
+    constructor(config, params, args, pkg, version) {
+        super('tests', 'red', config, params, args, pkg, version);
     }
     /* LOCAL METHODS
      * ====================================================================== */
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     startEndNotice(which) {
-        // returns
+        // returns for end
         switch (which) {
+            case 'start':
+                this.testStatus = false;
+                break;
             case 'end':
                 this.console.startOrEnd(
                     [
@@ -80,12 +83,22 @@ export class TestStage extends AbstractStage {
     async runSubStage(subStage) {
         await this[subStage]();
     }
+    /**
+     * Not implemented.
+     *
+     * @category Sub-Stages
+     */
     async scss() {
         if (!this.args.scss) {
             return;
         }
         this.console.progress('(NOT IMPLEMENTED) running scss sub-stage...', 1);
     }
+    /**
+     * Runs jest for javascript testing.
+     *
+     * @category Sub-Stages
+     */
     async js() {
         if (!this.args.js) {
             return;
@@ -97,8 +110,9 @@ export class TestStage extends AbstractStage {
             [
                 'node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js',
             ],
-            {},
-            this.params.packaging && !this.params.dryrun,
+            {
+                exitProcess: this.params.packaging && !this.params.dryrun,
+            },
         );
         this.testStatus = result !== 'FAILED';
         if (this.params.releasing || this.params.packaging) {

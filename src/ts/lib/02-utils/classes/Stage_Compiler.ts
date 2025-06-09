@@ -3,19 +3,16 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-// import type typescript from 'typescript';
-
 import * as sass from 'sass';
 
-import type { Json } from '@maddimathon/utility-typescript/types';
+import type {
+    Json,
+} from '@maddimathon/utility-typescript/types';
 
 import type {
     CLI,
@@ -23,7 +20,7 @@ import type {
 } from '../../../types/index.js';
 
 import {
-    ProjectError,
+    StageError,
 } from '../../@internal/index.js';
 
 import {
@@ -43,11 +40,11 @@ import type { Stage_Console } from './Stage_Console.js';
  *
  * Includes a variety of utilities for compiling files (like scss and
  * typescript).
- * 
+ *
  * @category Stages
- * 
+ *
  * @since ___PKG_VERSION___
- * 
+ *
  * @internal
  */
 export class Stage_Compiler implements Stage.Compiler {
@@ -88,23 +85,23 @@ export class Stage_Compiler implements Stage.Compiler {
 
     /* Args ===================================== */
 
-    /**
-     * Default values for the args property.
-     * 
-     * @category Args
-     */
-    protected get ARGS_DEFAULT() {
+    public get ARGS_DEFAULT() {
 
         return {
-        } as const satisfies Stage_Compiler.Args;
+
+            sass: {
+                charset: true,
+                sourceMap: true,
+                sourceMapIncludeSources: true,
+                style: 'expanded',
+            },
+
+            ts: {},
+
+        } as const satisfies Stage.Compiler.Args;
     }
 
-    /**
-     * A completed args object.
-     * 
-     * @category Args
-     */
-    public readonly args: Stage_Compiler.Args;
+    public readonly args: Stage.Compiler.Args;
 
 
 
@@ -114,20 +111,18 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * @param config   Current project config.
      * @param params   Current CLI params.
-     * @param console  Instance used to send messages to the console.
+     * @param console  Instance used to log messages and debugging info.
      * @param fs       Instance used to work with paths and files.
-     * @param args     Partial overrides for the default args.
      */
     constructor (
-        public readonly config: ProjectConfig,
-        public readonly params: CLI.Params,
-        public readonly console: Stage_Console,
-        public readonly fs: FileSystem,
-        args: Partial<Stage_Compiler.Args> = {},
+        protected readonly config: ProjectConfig,
+        protected readonly params: CLI.Params,
+        protected readonly console: Stage_Console,
+        protected readonly fs: FileSystem,
     ) {
         this.args = {
             ...this.ARGS_DEFAULT,
-            ...args,
+            ...config.compiler,
         };
     }
 
@@ -136,15 +131,6 @@ export class Stage_Compiler implements Stage.Compiler {
     /* LOCAL METHODS
      * ====================================================================== */
 
-    /**
-     * Compiles scss using the 
-     * {@link https://www.npmjs.com/package/sass | sass npm package}.
-     * 
-     * @param input   Scss input path.
-     * @param output  Scss output path.
-     * @param level   Depth level for this message (above the value of 
-     *                {@link CLI.Params.log-base-level}).
-     */
     public async scss(
         input: string,
         output: string,
@@ -154,7 +140,7 @@ export class Stage_Compiler implements Stage.Compiler {
         this.console.vi.debug( { 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true } );
 
         const compiled = sass.compile( input, {
-            ...this.config.compiler?.sass,
+            ...this.args,
             ...sassOpts,
         } );
 
@@ -182,16 +168,6 @@ export class Stage_Compiler implements Stage.Compiler {
         }
     }
 
-    /**
-     * Compiles typescript using the 
-     * {@link https://www.npmjs.com/package/sass | sass npm package}.
-     * 
-     * @throws {@link ProjectError}  If the tsconfig file doesn’t exist.
-     * 
-     * @param tsConfig  Path to TS config json used to compile the project.
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link (root).CLI.Params.log-base-level}).
-     */
     public async typescript(
         tsConfig: string,
         level: number,
@@ -201,7 +177,7 @@ export class Stage_Compiler implements Stage.Compiler {
         // throws
         if ( !this.fs.exists( tsConfig ) ) {
 
-            throw new ProjectError(
+            throw new StageError(
                 'tsConfig path does not exist: ' + tsConfig,
                 {
                     class: 'Stage_Compiler',
@@ -213,7 +189,7 @@ export class Stage_Compiler implements Stage.Compiler {
         // throws
         if ( !this.fs.isFile( tsConfig ) ) {
 
-            throw new ProjectError(
+            throw new StageError(
                 'tsConfig path was not a file: ' + tsConfig,
                 {
                     class: 'Stage_Compiler',
@@ -250,19 +226,4 @@ export class Stage_Compiler implements Stage.Compiler {
             [ `tsc --project "${ this.fs.pathRelative( tsConfig ).replace( /"/g, '\\"' ) }"` ],
         );
     }
-}
-
-/**
- * Used only for {@link Stage_Compiler}.
- * 
- * @category Class-Helpers
- */
-export namespace Stage_Compiler {
-
-    /**
-     * Optional configuration for {@link Stage_Compiler}.
-     * 
-     * @since ___PKG_VERSION___
-     */
-    export interface Args { };
 }

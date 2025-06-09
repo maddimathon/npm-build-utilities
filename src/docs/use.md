@@ -1,5 +1,6 @@
 ---
 title: Using the Library
+category: Documentation
 children:
   - ./use/cli.md
   - ./use/js.md

@@ -3,6 +3,7 @@
  * so they are made available here.
  * 
  * @module internal
+ * @category Internal
  * 
  * @since ___PKG_VERSION___
  * 
@@ -15,22 +16,19 @@
  * @packageDocumentation
  * @internal
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
 export type * from '../types/FileSystemType.js';
-export type * from '../types/LocalError.js';
 export type * from '../types/Logger.js';
 
 export * from './@internal/classes/abstract/AbstractError.js';
 
 export * from './@internal/classes/UnknownCaughtError.js';
 export * from './@internal/classes/ProjectError.js';
+export * from './@internal/classes/StageError.js';
 export * from './@internal/classes/SemVer.js';
 
 export * from './@internal/errorHandler.js';

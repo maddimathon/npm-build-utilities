@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -49,6 +46,10 @@ export class Project {
     /* STATIC METHODS
      * ====================================================================== */
 
+    /**
+     * Fetches an instance of {@link internal.Stage_Console} using the given
+     * info, if any.
+     */
     public static async getConsole(
         opts: {
             name?: string,
@@ -73,7 +74,7 @@ export class Project {
      * ====================================================================== */
 
     /**
-     * The configuration for this project.
+     * The configuration object for this project.
      */
     public readonly config: ProjectConfig;
 
@@ -83,8 +84,6 @@ export class Project {
      * ====================================================================== */
 
     /**
-     * Constructs the class.
-     * 
      * @param config  Complete project config.
      * @param params  Complete CLI params.
      */
@@ -92,7 +91,6 @@ export class Project {
         config: Config.Internal | ProjectConfig,
         public readonly params: CLI.Params,
     ) {
-
         this.config = config instanceof ProjectConfig
             ? config
             : new ProjectConfig( config );
@@ -105,12 +103,14 @@ export class Project {
 
     /**
      * Displays some debugging information.
+     * 
+     * @internal
      */
     protected async debug<S extends Stage.Name>(
         console: Logger,
-        stageClass: null | Stage.ClassType.All[ S ],
+        stageClass: null | Stage.Class.All[ S ],
         stageArgs: null | Partial<Stage.Args.All[ S ]>,
-        stageInstance: null | Stage.Class.All[ S ],
+        stageInstance: null | Stage.All[ S ],
     ): Promise<void> {
         const level = this.params[ 'log-base-level' ];
 
@@ -120,7 +120,6 @@ export class Project {
         stageArgs && console.vi.progress( { stageArgs }, 1 + level );
         stageInstance && console.vi.progress( {
             stageInstance: {
-                // config: stageInstance.config,
                 params: stageInstance.params,
                 args: stageInstance.args,
             }
@@ -128,7 +127,7 @@ export class Project {
     }
 
     /**
-     * Runs the given stage with the params.
+     * Runs the given stage with the project config and current params.
      */
     public async run( stage: "debug" | Stage.Name ): Promise<void> {
 

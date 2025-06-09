@@ -1,33 +1,40 @@
 /**
  * Types for the build stage classes.
  *
- * @category Types
- *
  * @since 0.1.0-alpha.draft
  *
  * @packageDocumentation
- */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
  */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 /**
- * Type utilities for stage class argument objects.
+ * Utility types for the {@link Stage} interface.
+ *
+ * @category Types
  *
  * @since 0.1.0-alpha.draft
  */
-export var Args;
-(function (Args) {})(Args || (Args = {}));
-/**
- * Type utilities for {@link Compiler} classes.
- *
- * @see {@link Stage.ClassType}
- *
- * @since 0.1.0-alpha.draft
- */
-export var Compiler;
-(function (Compiler) {})(Compiler || (Compiler = {}));
+export var Stage;
+(function (Stage) {
+    /**
+     * Type utilities for stage class argument objects.
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    let Args;
+    (function (Args) {})((Args = Stage.Args || (Stage.Args = {})));
+    /**
+     * Type utilities for {@link Compiler} classes.
+     *
+     * @see {@link Stage.Class}
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    let Compiler;
+    (function (Compiler) {})(
+        (Compiler = Stage.Compiler || (Stage.Compiler = {})),
+    );
+})(Stage || (Stage = {}));
 //# sourceMappingURL=Stage.js.map

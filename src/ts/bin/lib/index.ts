@@ -1,21 +1,19 @@
 /**
  * Utilities used for the CLI.
  * 
- * @module cli
+ * @module bin
+ * @category Internal
  * 
  * @since ___PKG_VERSION___
  * 
  * @example
  * ```ts
- * import { cli } from '@maddimathon/build-utilities';
- * import { ... } from '@maddimathon/build-utilities/cli';
+ * import { bin } from '@maddimathon/build-utilities';
+ * import { ... } from '@maddimathon/build-utilities/bin';
  * ```
  * 
  * @packageDocumentation
  * @internal
- */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___

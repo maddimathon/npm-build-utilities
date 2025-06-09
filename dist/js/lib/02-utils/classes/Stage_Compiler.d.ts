@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -28,10 +25,10 @@ import type { Stage_Console } from './Stage_Console.js';
  * @internal
  */
 export declare class Stage_Compiler implements Stage.Compiler {
-    readonly config: ProjectConfig;
-    readonly params: CLI.Params;
-    readonly console: Stage_Console;
-    readonly fs: FileSystem;
+    protected readonly config: ProjectConfig;
+    protected readonly params: CLI.Params;
+    protected readonly console: Stage_Console;
+    protected readonly fs: FileSystem;
     get tsConfig(): {
         readonly extends: "@maddimathon/build-utilities/tsconfig";
         readonly exclude: ["**/node_modules/**/*"];
@@ -41,60 +38,24 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly baseUrl: string;
         };
     };
-    /**
-     * Default values for the args property.
-     *
-     * @category Args
-     */
-    protected get ARGS_DEFAULT(): {};
-    /**
-     * A completed args object.
-     *
-     * @category Args
-     */
-    readonly args: Stage_Compiler.Args;
+    get ARGS_DEFAULT(): {
+        readonly sass: {
+            readonly charset: true;
+            readonly sourceMap: true;
+            readonly sourceMapIncludeSources: true;
+            readonly style: "expanded";
+        };
+        readonly ts: {};
+    };
+    readonly args: Stage.Compiler.Args;
     /**
      * @param config   Current project config.
      * @param params   Current CLI params.
-     * @param console  Instance used to send messages to the console.
+     * @param console  Instance used to log messages and debugging info.
      * @param fs       Instance used to work with paths and files.
-     * @param args     Partial overrides for the default args.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, console: Stage_Console, fs: FileSystem, args?: Partial<Stage_Compiler.Args>);
-    /**
-     * Compiles scss using the
-     * {@link https://www.npmjs.com/package/sass | sass npm package}.
-     *
-     * @param input   Scss input path.
-     * @param output  Scss output path.
-     * @param level   Depth level for this message (above the value of
-     *                {@link CLI.Params.log-base-level}).
-     */
+    constructor(config: ProjectConfig, params: CLI.Params, console: Stage_Console, fs: FileSystem);
     scss(input: string, output: string, level: number, sassOpts?: sass.Options<"sync">): Promise<void>;
-    /**
-     * Compiles typescript using the
-     * {@link https://www.npmjs.com/package/sass | sass npm package}.
-     *
-     * @throws {@link ProjectError}  If the tsconfig file doesn’t exist.
-     *
-     * @param tsConfig  Path to TS config json used to compile the project.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link (root).CLI.Params.log-base-level}).
-     */
     typescript(tsConfig: string, level: number): Promise<void>;
-}
-/**
- * Used only for {@link Stage_Compiler}.
- *
- * @category Class-Helpers
- */
-export declare namespace Stage_Compiler {
-    /**
-     * Optional configuration for {@link Stage_Compiler}.
-     *
-     * @since 0.1.0-alpha.draft
-     */
-    interface Args {
-    }
 }
 //# sourceMappingURL=Stage_Compiler.d.ts.map

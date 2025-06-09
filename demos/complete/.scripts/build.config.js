@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // @ts-check
 'use strict';
-/**
+/*
  * @package @maddimathon/build-utilities
  * @author Maddi Mathon (www.maddimathon.com)
- * 
+ *
  * @license MIT
  */
 

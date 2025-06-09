@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -15,8 +12,11 @@
 // } from '../../types/index.js';
 
 import type { FileSystemType } from '../../types/FileSystemType.js';
-import type { LocalError } from '../../types/LocalError.js';
 import type { Logger } from '../../types/Logger.js';
+
+import {
+    type AbstractError,
+} from './classes/index.js';
 
 import { errorStringify } from './errorStringify.js';
 
@@ -26,22 +26,24 @@ import { errorStringify } from './errorStringify.js';
  * 
  * @category Errors
  * 
- * @param error        
- * @param level        
- * @param console      
- * @param fs           
- * @param args         Optional.
- * @param exitProcess  Optional. Whether to exit the process after handling. Default true.
+ * @see {@link errorStringify}  Used to turn the error into an output message.
+ * 
+ * @param error    Error to handle.
+ * @param level    Depth level for output to the console.
+ * @param console  Instance used to log messages and debugging info.
+ * @param fs       Instance used to work with paths and files.
+ * @param args     Overrides for default options.
+ * 
+ * @since ___PKG_VERSION___
  * 
  * @internal
  */
 export function errorHandler(
-    error: LocalError.Input,
+    error: AbstractError.Input,
     level: number,
     console: Logger,
     fs: FileSystemType,
-    args?: Partial<LocalError.Handler.Args>,
-    exitProcess: boolean = true,
+    args?: Partial<AbstractError.Handler.Args>,
 ) {
     args = {
         bold: true,
@@ -51,13 +53,15 @@ export function errorHandler(
         linesIn: 2,
         linesOut: 2,
 
+        exitProcess: true,
+
         ...args ?? {},
     };
 
-    const bulkMsgs = errorStringify( error, args, console, fs, 0 );
+    const bulkMsgs = errorStringify( error, 0, console, fs, args );
 
     // returns
-    if ( !exitProcess ) {
+    if ( !args.exitProcess ) {
         console.warn( bulkMsgs, level, args );
         return;
     }

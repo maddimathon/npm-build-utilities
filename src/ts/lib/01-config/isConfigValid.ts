@@ -3,25 +3,33 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-import type { Objects } from '@maddimathon/utility-typescript/types';
+import type {
+    Objects,
+} from '@maddimathon/utility-typescript/types';
 
-import type { Config } from '../../types/index.js';
+import type {
+    Config,
+} from '../../types/index.js';
 
 
 /**
  * Tests whether the provided object includes all properties required from a
  * valid {@link Config} object.
- * 
+ *
  * @category Config
+ *
+ * @param test  The config object to check for completeness.
+ *
+ * @return  False if any required properties are missing or the wrong type.
+ *          Otherwise, this returns a {@link Config} object for nice typing.
  * 
+ * @since ___PKG_VERSION___
+ *
  * @internal
  */
 export function isConfigValid( test: Config | Partial<Config> ): false | Config {
@@ -48,7 +56,7 @@ export function isConfigValid( test: Config | Partial<Config> ): false | Config 
         }
 
         // continues - this passes because it is defined and has no defined type
-        if ( !requiredKeys[ key ] ) {
+        if ( requiredKeys[ key ] === null ) {
             continue;
         }
 
@@ -59,6 +67,11 @@ export function isConfigValid( test: Config | Partial<Config> ): false | Config 
         // continues - this passes because it is defined and has no defined type
         if ( !allowedTypes.length ) {
             continue;
+        }
+
+        // returns - type mismatch
+        if ( !allowedTypes.includes( typeof test[ key ] as ValueType ) ) {
+            return false;
         }
     }
 

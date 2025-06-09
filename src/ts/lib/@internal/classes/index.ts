@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -17,4 +14,5 @@ export * from './DummyConsole.js';
 
 export * from './UnknownCaughtError.js';
 export * from './ProjectError.js';
+export * from './StageError.js';
 export * from './SemVer.js';

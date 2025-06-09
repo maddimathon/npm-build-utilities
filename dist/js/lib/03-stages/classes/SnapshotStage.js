@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -25,20 +22,24 @@ export class SnapshotStage extends AbstractStage {
      * ====================================================================== */
     /**
      * Output name for the snapshot zip.
+     *
+     * @category Config
      */
     filename;
     /**
      * Output directory for the snapshot.
+     *
+     * @category Config
      */
     path;
     subStages = ['snap'];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
-            ...AbstractStage.ARGS_DEFAULT,
-            ignoreGlobs: (stage) => [
-                ...FileSystem.globs.IGNORE_COPIED(stage),
-                ...FileSystem.globs.IGNORE_COMPILED,
+            utils: {},
+            ignoreGlobs: (_stage) => [
+                ...FileSystem.globs.IGNORE_COPIED(_stage),
+                ...FileSystem.globs.IGNORE_COMPILED(_stage),
                 ...FileSystem.globs.IGNORE_PROJECT,
                 ...FileSystem.globs.SYSTEM,
             ],
@@ -47,14 +48,16 @@ export class SnapshotStage extends AbstractStage {
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config    Complete project configuration.
-     * @param params    Current CLI params.
-     * @param args      Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     *
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
-    constructor(config, params, args, _pkg, _version) {
-        super('snapshot', 'pink', config, params, args, _pkg, _version);
+    constructor(config, params, args, pkg, version) {
+        super('snapshot', 'pink', config, params, args, pkg, version);
         this.filename = [
             this.pkg.name
                 .replace(/\//g, '_')
@@ -75,12 +78,6 @@ export class SnapshotStage extends AbstractStage {
     }
     /* LOCAL METHODS
      * ====================================================================== */
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     async startEndNotice(which) {
         // returns
         if (which !== 'end') {
@@ -102,6 +99,11 @@ export class SnapshotStage extends AbstractStage {
     async runSubStage(subStage) {
         await this[subStage]();
     }
+    /**
+     * Runs the whole snapshot.
+     *
+     * @category Sub-Stages
+     */
     async snap() {
         await this._tidy();
         this.console.verbose('copying files...', 1);
@@ -114,7 +116,8 @@ export class SnapshotStage extends AbstractStage {
                         ? this.args.ignoreGlobs(this)
                         : this.args.ignoreGlobs,
             },
-        ]).filter((path) => !this.fs.isSymLink(this.fs.pathResolve(path)));
+        ]).filter((_p) => !this.fs.isSymLink(_p));
+        this.fs.mkdir(this.path);
         this.try(this.fs.copy, this.params.verbose ? 2 : 1, [
             copyPaths,
             this.params.verbose ? 2 : 1,
@@ -132,6 +135,11 @@ export class SnapshotStage extends AbstractStage {
             false,
         ]);
     }
+    /**
+     * Deletes any existing snapshot folders.
+     *
+     * @category Utilities
+     */
     async _tidy() {
         this.console.verbose('removing any current folders...', 1);
         const snapDir = this.config.paths.snapshot.replace(/\/$/g, '') + '/';
@@ -149,6 +157,11 @@ export class SnapshotStage extends AbstractStage {
             false,
         ]);
     }
+    /**
+     * Zips the snapshot folder.
+     *
+     * @category Utilities
+     */
     async _zip() {
         this.console.verbose('zipping folder...', 1);
         this.try(this.console.nc.cmd, this.params.verbose ? 2 : 1, [

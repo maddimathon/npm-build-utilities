@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -16,7 +13,7 @@ import {
     escRegExpReplace,
     mergeArgs,
 } from '@maddimathon/utility-typescript/functions';
-import { ProjectError } from '../../@internal/index.js';
+import { StageError } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
@@ -27,8 +24,301 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since 0.1.0-alpha.draft
  */
 export class DocumentStage extends AbstractStage {
+    /* STATIC
+     * ====================================================================== */
+    /**
+     * Returns a default TypeDoc configuration object.  For use as
+     * {@link Stage.Args.Document.typeDoc}.
+     *
+     * @category Config
+     */
+    static typeDocConfig(stage) {
+        const homepage = stage.pkg.homepage?.replace(/\/+$/gi, '');
+        const repository = (
+            typeof stage.pkg.repository === 'string'
+                ? stage.pkg.repository
+                : stage.pkg.repository?.url
+        )?.replace(/(\/+|\.git)$/gi, '');
+        const navigationLinks = {
+            // 'About': `${ homepage }/ReadMe.html`,
+            GitHub: repository ?? '',
+            'by Maddi Mathon': 'https://www.maddimathon.com',
+        };
+        if (!repository) {
+            delete navigationLinks.GitHub;
+        }
+        return {
+            alwaysCreateEntryPointModule: true,
+            basePath: stage.fs.pathRelative(stage.getSrcDir(undefined, 'ts')),
+            blockTags: [
+                ...typeDoc.OptionDefaults.blockTags,
+                '@source',
+                '@TODO',
+                '@UPGRADE',
+            ],
+            cascadedModifierTags: [
+                ...typeDoc.OptionDefaults.cascadedModifierTags,
+                '@alpha',
+                '@beta',
+                '@experimental',
+                '@internal',
+            ],
+            categorizeByGroup: true,
+            categoryOrder: [
+                'Documentation',
+                '*',
+                'Other',
+                'Internal',
+                'Deprecated',
+            ],
+            customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com" target="_blank">Maddi Mathon</a>, ${stage.config.launchYear}.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`,
+            customFooterHtmlDisableWrapper: true,
+            disableGit: false,
+            disableSources: false,
+            excludeInternal: false,
+            excludeNotDocumented: false,
+            excludePrivate: false,
+            excludeProtected: false,
+            excludeReferences: false,
+            externalSymbolLinkMappings: {
+                '@maddimathon/utility-typescript': {
+                    mergeArgs:
+                        'https://maddimathon.github.io/utility-typescript/functions/mergeArgs.html',
+                    node: 'https://maddimathon.github.io/utility-typescript/classes/node.html',
+                    NodeConsole:
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
+                    'node.NodeConsole':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
+                    NodeFiles:
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles.html',
+                    'node.NodeFiles':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles.html',
+                    'NodeFiles.Args':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
+                    'node.NodeFiles.Args':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
+                    'NodeFiles.CopyFileArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/CopyFileArgs.html',
+                    'node.NodeFiles.CopyFileArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/CopyFileArgs.html',
+                    'NodeFiles.ReadDirArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadDirArgs.html',
+                    'node.NodeFiles.ReadDirArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadDirArgs.html',
+                    'NodeFiles.ReadFileArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadFileArgs.html',
+                    'node.NodeFiles.ReadFileArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadFileArgs.html',
+                    'NodeFiles.WriteFileArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/WriteFileArgs.html',
+                    'node.NodeFiles.WriteFileArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/WriteFileArgs.html',
+                    CustomError:
+                        'https://maddimathon.github.io/utility-typescript/classes/CustomError.html',
+                    'CustomError.Args':
+                        'https://maddimathon.github.io/utility-typescript/classes/CustomError/Args.html',
+                    'CustomError.NodeCliError':
+                        'https://maddimathon.github.io/utility-typescript/classes/CustomError/NodeCliError.html',
+                    Logger: 'https://maddimathon.github.io/utility-typescript/classes/Logger.html',
+                    'Logger.Args':
+                        'https://maddimathon.github.io/utility-typescript/classes/Logger/Args.html',
+                    MessageMaker:
+                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker.html',
+                    'MessageMaker.BulkMsgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgs.html',
+                    'MessageMaker.Colour':
+                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/Colour.html',
+                    'MessageMaker.MsgArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/MsgArgs.html',
+                    'MessageMaker.BulkMsgArgs':
+                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgArgs.html',
+                    VariableInspector:
+                        'https://maddimathon.github.io/utility-typescript/classes/VariableInspector.html',
+                    Json: 'https://maddimathon.github.io/utility-typescript/Types/Json.html',
+                    PackageJson:
+                        'https://maddimathon.github.io/utility-typescript/Types/Json/PackageJson.html',
+                    'Json.PackageJson':
+                        'https://maddimathon.github.io/utility-typescript/Types/Json/PackageJson.html',
+                    Objects:
+                        'https://maddimathon.github.io/utility-typescript/Types/Objects.html',
+                    Classify:
+                        'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
+                    'Objects.Classify':
+                        'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
+                    RecursivePartial:
+                        'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
+                    'Objects.RecursivePartial':
+                        'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
+                    RecursiveRequired:
+                        'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
+                    'Objects.RecursiveRequired':
+                        'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
+                },
+                glob: {
+                    GlobOptions:
+                        'https://github.com/search?q=repo%3Aisaacs%2Fnode-glob+path%3A%2F%5Esrc%5C%2F%2F+symbol%3AGlobOptions&type=code',
+                },
+                global: {
+                    'Error.name':
+                        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name',
+                },
+                minify: {
+                    Options:
+                        'https://github.com/search?q=repo%3ADefinitelyTyped%2FDefinitelyTyped+path%3A%2F%5Etypes%5C%2Fminify%5C%2F%2F+symbol%3AOptions&type=code',
+                },
+                prettier: {
+                    Options: 'https://prettier.io/docs/options',
+                },
+                typescript: {
+                    Error: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error',
+                    'Error.cause':
+                        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause',
+                    'Error.name':
+                        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name',
+                    Promise:
+                        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise',
+                    RegExp: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp',
+                    Awaited:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#awaitedtype',
+                    Capitalize:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
+                    ConstructorParameters:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#constructorparameterstype',
+                    Exclude:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#excludeuniontype-excludedmembers',
+                    Extract:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#extracttype-union',
+                    InstanceType:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype',
+                    Lowercase:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
+                    NoInfer:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#noinfertype',
+                    NonNullable:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#nonnullabletype',
+                    Omit: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys',
+                    OmitThisParameter:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#omitthisparametertype',
+                    Parameters:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype',
+                    Partial:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype',
+                    Pick: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys',
+                    Record: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type',
+                    Required:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype',
+                    ReturnType:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype',
+                    ThisParameterType:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#thisparametertypetype',
+                    ThisType:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#thistypetype',
+                    Uncapitalize:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
+                    Uppercase:
+                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
+                },
+            },
+            githubPages: true,
+            groupOrder: [
+                '*',
+                'Documents',
+                'Constructors',
+                'Properties',
+                'Accessors',
+                'Functions',
+                'Methods',
+                'Classes',
+                'Interfaces',
+                'Type Aliases',
+                'Namespaces',
+                'Modules',
+            ],
+            groupReferencesByType: true,
+            hideGenerator: true,
+            hostedBaseUrl: homepage,
+            jsDocCompatibility: {
+                exampleTag: false,
+            },
+            includeVersion: false,
+            kindSortOrder: [
+                'Module',
+                'Constructor',
+                'Property',
+                'Variable',
+                'Function',
+                'Accessor',
+                'Method',
+                'Enum',
+                'EnumMember',
+                'Class',
+                'Interface',
+                'TypeAlias',
+                'TypeLiteral',
+                'Namespace',
+                'Reference',
+                'Project',
+                'Parameter',
+                'TypeParameter',
+                'CallSignature',
+                'ConstructorSignature',
+                'IndexSignature',
+                'GetSignature',
+                'SetSignature',
+            ],
+            markdownLinkExternal: true,
+            name: [
+                stage.config.title,
+                stage.version.toString(stage.isDraftVersion),
+            ]
+                .filter((v) => v)
+                .join(' @ '),
+            navigationLinks,
+            notRenderedTags: [
+                ...typeDoc.OptionDefaults.notRenderedTags,
+                '@TODO',
+                '@UPGRADE',
+            ],
+            out: 'docs',
+            plugin: ['typedoc-plugin-inline-sources'],
+            projectDocuments: ['README.md'],
+            readme: 'none',
+            router: 'structure',
+            searchInComments: true,
+            searchInDocuments: true,
+            sourceLinkExternal: true,
+            sourceLinkTemplate: `${repository}/blob/main/${stage.params.packaging ? encodeURI(stage.pkg.version) + '/' : ''}{path}#L{line}`,
+            sort: [
+                'documents-first',
+                'static-first',
+                'required-first',
+                'kind',
+                'visibility',
+                'alphabetical',
+            ],
+            tsconfig: stage.fs.pathRelative(
+                stage.getSrcDir(undefined, 'ts', 'tsconfig.json'),
+            ),
+            useFirstParagraphOfCommentAsSummary: true,
+            visibilityFilters: {
+                '@alpha': !stage.params.releasing || !!stage.params.dryrun,
+                '@beta': true,
+                external: true,
+                inherited: true,
+                private: !stage.params.releasing || !!stage.params.dryrun,
+                protected: true,
+            },
+        };
+    }
     /* PROPERTIES
      * ====================================================================== */
+    /**
+     * {@inheritDoc AbstractStage.subStages}
+     *
+     * @category Running
+     *
+     * @source
+     */
     subStages = ['typeDoc', 'replace'];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
@@ -38,217 +328,26 @@ export class DocumentStage extends AbstractStage {
                 ...FileSystem.globs.IGNORE_COPIED(_stage),
                 ...FileSystem.globs.IGNORE_PROJECT,
                 ...FileSystem.globs.SYSTEM,
-                '**/.new-scripts/**',
                 '**/.vscode/**',
             ],
             package: ['docs/**'],
         });
-        const typeDocOpts = (_stage) => {
-            const _homepage = _stage.pkg.homepage?.replace(/\/+$/gi, '');
-            const _repository = (
-                typeof _stage.pkg.repository === 'string'
-                    ? _stage.pkg.repository
-                    : _stage.pkg.repository?.url
-            )?.replace(/(\/+|\.git)$/gi, '');
-            const navigationLinks = {
-                // 'About': `${ _homepage }/ReadMe.html`,
-                GitHub: _repository ?? '',
-                'by Maddi Mathon': 'https://www.maddimathon.com',
-            };
-            if (!_repository) {
-                delete navigationLinks.GitHub;
-            }
-            return {
-                alwaysCreateEntryPointModule: true,
-                basePath: _stage.fs.pathRelative(
-                    _stage.getSrcDir(undefined, 'ts'),
-                ),
-                blockTags: [
-                    ...typeDoc.OptionDefaults.blockTags,
-                    '@homepage',
-                    '@package',
-                    '@source',
-                    '@todo',
-                ],
-                categorizeByGroup: true,
-                categoryOrder: [
-                    '*',
-                    // 'Functions',
-                    // 'Classes',
-                    // 'Namespaces',
-                    // 'Modules',
-                    // 'Entry Points',
-                    'Other',
-                    'Internal',
-                    'Deprecated',
-                ],
-                customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com" target="_blank">Maddi Mathon</a>, ${_stage.config.launchYear}. <a href="${_homepage}/MIT_License.html">MIT license</a>.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`,
-                customFooterHtmlDisableWrapper: true,
-                disableGit: false,
-                disableSources: false,
-                excludeInternal: false,
-                excludeNotDocumented: false,
-                excludePrivate: false,
-                excludeProtected: false,
-                excludeReferences: false,
-                externalSymbolLinkMappings: {
-                    '@maddimathon/utility-typescript': {
-                        mergeArgs:
-                            'https://maddimathon.github.io/utility-typescript/functions/mergeArgs.html',
-                        node: 'https://maddimathon.github.io/utility-typescript/classes/node.html',
-                        NodeConsole:
-                            'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
-                        'node.NodeConsole':
-                            'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
-                        NodeFiles:
-                            'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles-1.html',
-                        'node.NodeFiles':
-                            'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles-1.html',
-                        'NodeFiles.Args':
-                            'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
-                        'node.NodeFiles.Args':
-                            'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
-                        MessageMaker:
-                            'https://maddimathon.github.io/utility-typescript/classes/MessageMaker.html',
-                        'MessageMaker.BulkMsgs':
-                            'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgs.html',
-                        'MessageMaker.Colour':
-                            'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/Colour.html',
-                        'MessageMaker.MsgArgs':
-                            'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/MsgArgs.html',
-                        'MessageMaker.BulkMsgArgs':
-                            'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgArgs.html',
-                        VariableInspector:
-                            'https://maddimathon.github.io/utility-typescript/classes/VariableInspector.html',
-                        Node: 'https://maddimathon.github.io/utility-typescript/Types/Node.html',
-                        PackageJson:
-                            'https://maddimathon.github.io/utility-typescript/Types/Node/PackageJson.html',
-                        'Node.PackageJson':
-                            'https://maddimathon.github.io/utility-typescript/Types/Node/PackageJson.html',
-                        Objects:
-                            'https://maddimathon.github.io/utility-typescript/Types/Objects.html',
-                        Classify:
-                            'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
-                        'Objects.Classify':
-                            'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
-                        'Objects.Logger':
-                            'https://maddimathon.github.io/utility-typescript/Types/Objects/Logger.html',
-                        RecursivePartial:
-                            'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
-                        'Objects.RecursivePartial':
-                            'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
-                        RecursiveRequired:
-                            'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
-                        'Objects.RecursiveRequired':
-                            'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
-                    },
-                },
-                githubPages: true,
-                groupOrder: [
-                    '*',
-                    'Documents',
-                    'Constructors',
-                    'Properties',
-                    'Accessors',
-                    'Functions',
-                    'Methods',
-                    'Classes',
-                    'Interfaces',
-                    'Type Aliases',
-                    'Namespaces',
-                    'Modules',
-                ],
-                groupReferencesByType: true,
-                hideGenerator: true,
-                hostedBaseUrl: _homepage,
-                includeVersion: false,
-                kindSortOrder: [
-                    'Module',
-                    'Constructor',
-                    'Property',
-                    'Variable',
-                    'Function',
-                    'Accessor',
-                    'Method',
-                    'Enum',
-                    'EnumMember',
-                    'Class',
-                    'Interface',
-                    'TypeAlias',
-                    'TypeLiteral',
-                    'Namespace',
-                    'Reference',
-                    'Project',
-                    'Parameter',
-                    'TypeParameter',
-                    'CallSignature',
-                    'ConstructorSignature',
-                    'IndexSignature',
-                    'GetSignature',
-                    'SetSignature',
-                ],
-                markdownLinkExternal: true,
-                name: [
-                    _stage.config.title,
-                    _stage.version.toString(_stage.isDraftVersion),
-                ]
-                    .filter((v) => v)
-                    .join(' @ '),
-                navigationLinks,
-                out: 'docs',
-                plugin: ['typedoc-plugin-inline-sources'],
-                projectDocuments: ['README.md'],
-                readme: 'none',
-                router: 'structure',
-                searchInComments: true,
-                searchInDocuments: true,
-                sourceLinkExternal: true,
-                sourceLinkTemplate: `${_repository}/blob/main/${_stage.params.packaging ? encodeURI(_stage.pkg.version) + '/' : ''}{path}#L{line}`,
-                sort: [
-                    'documents-first',
-                    'static-first',
-                    'required-first',
-                    'kind',
-                    'visibility',
-                    'alphabetical',
-                ],
-                tsconfig: _stage.fs.pathRelative(
-                    _stage.getSrcDir(undefined, 'ts', 'tsconfig.json'),
-                ),
-                useFirstParagraphOfCommentAsSummary: true,
-                visibilityFilters: {
-                    '@alpha':
-                        !_stage.params.releasing || !!_stage.params.dryrun,
-                    '@beta': true,
-                    external: true,
-                    inherited: true,
-                    private: !_stage.params.releasing || !!_stage.params.dryrun,
-                    protected: true,
-                },
-            };
-        };
         return {
-            ...AbstractStage.ARGS_DEFAULT,
             entryPoints: null,
             replace,
-            typeDoc: typeDocOpts,
+            /** This is {@link DocumentStage.typeDocConfig}. */
+            typeDoc: DocumentStage.typeDocConfig,
+            utils: {},
         };
     }
-    /** {@inheritDoc AbstractStage.buildArgs} */
+    /**
+     * {@inheritDoc AbstractStage.buildArgs}
+     *
+     * @category Config
+     */
     buildArgs(args = {}) {
         const _defaults = this.ARGS_DEFAULT;
         const merged = mergeArgs(_defaults, args, true);
-        if (
-            typeof _defaults.replace === 'function'
-            && merged.replace
-            && typeof merged.replace !== 'function'
-        ) {
-            merged.replace = mergeArgs(
-                _defaults.replace(this),
-                merged.replace,
-                false,
-            );
-        }
         if (
             typeof _defaults.typeDoc === 'function'
             && merged.typeDoc
@@ -257,7 +356,7 @@ export class DocumentStage extends AbstractStage {
             merged.typeDoc = mergeArgs(
                 _defaults.typeDoc(this),
                 merged.typeDoc,
-                false,
+                true,
             );
         }
         return merged;
@@ -265,14 +364,16 @@ export class DocumentStage extends AbstractStage {
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     *
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
-    constructor(config, params, args, _pkg, _version) {
-        super('document', 'turquoise', config, params, args, _pkg, _version);
+    constructor(config, params, args, pkg, version) {
+        super('document', 'turquoise', config, params, args, pkg, version);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -281,6 +382,11 @@ export class DocumentStage extends AbstractStage {
     async runSubStage(subStage) {
         await this[subStage]();
     }
+    /**
+     * Replaces placeholders in the built files and directories.
+     *
+     * @category Sub-Stages
+     */
     async replace() {
         if (!this.args.replace) {
             return;
@@ -292,9 +398,14 @@ export class DocumentStage extends AbstractStage {
             if (!paths[_key]) {
                 continue;
             }
-            this.replaceInFiles(paths[_key], _key, 2, paths.ignore);
+            this.replaceInFiles(paths[_key], _key, 2, paths.ignore, true);
         }
     }
+    /**
+     * Runs TypeDoc to auto-document typescript.
+     *
+     * @category Sub-Stages
+     */
     async typeDoc() {
         this.console.progress('documenting typescript...', 1);
         const entryPoints = this.args.entryPoints ?? [];
@@ -302,7 +413,7 @@ export class DocumentStage extends AbstractStage {
         if (!entryPoints?.length) {
             const _warnMsg =
                 'no entry points configured, skipping typedoc generation...';
-            const _exitError = new ProjectError(
+            const _exitError = new StageError(
                 'No entry points configured, unable to run TypeDoc',
                 { class: 'DocumentStage', method: 'typeDoc' },
             );
@@ -343,7 +454,6 @@ export class DocumentStage extends AbstractStage {
             }
             entryPoints.push(_mainExportPath);
         }
-        // this.console.vi.log( { entryPoints }, 2 );
         const config =
             typeof this.args.typeDoc === 'function'
                 ? this.args.typeDoc(this)
@@ -376,13 +486,14 @@ export class DocumentStage extends AbstractStage {
         // returns
         if (!project) {
             this.handleError(
-                new ProjectError('TypeDoc project setup failed', {
+                new StageError('TypeDoc project setup failed', {
                     class: 'DocumentStage',
                     method: 'typeDoc',
                 }),
                 this.params.verbose ? 3 : 2,
-                {},
-                this.params.packaging && !this.params.dryrun,
+                {
+                    exitProcess: this.params.packaging && !this.params.dryrun,
+                },
             );
             return;
         }
@@ -390,12 +501,9 @@ export class DocumentStage extends AbstractStage {
         try {
             await app.generateOutputs(project);
         } catch (error) {
-            this.handleError(
-                error,
-                this.params.verbose ? 3 : 2,
-                {},
-                this.params.packaging && !this.params.dryrun,
-            );
+            this.handleError(error, this.params.verbose ? 3 : 2, {
+                exitProcess: this.params.packaging && !this.params.dryrun,
+            });
             throw error;
         }
     }

@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -18,10 +15,13 @@ import { FileSystem } from './classes/index.js';
  * @category Config
  *
  * @param args  A {@link FileSystem} instance to use or arguments to use to
- * construct one.
+ *              construct one.
  *
- * @throws ProjectError  If no {@link FileSystem} instance was passed or there
- *                       was not enough information to construct one.
+ * @return  The parsed package.json file contents.
+ *
+ * @throws {@link ProjectError} — If no {@link FileSystem} instance was passed
+ *                                or there was not enough information to
+ *                                construct one.
  *
  * @since 0.1.0-alpha.draft
  *

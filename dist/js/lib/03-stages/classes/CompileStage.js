@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -26,48 +23,56 @@ import { AbstractStage } from './abstract/AbstractStage.js';
 export class CompileStage extends AbstractStage {
     /* PROPERTIES
      * ====================================================================== */
+    /**
+     * {@inheritDoc AbstractStage.subStages}
+     *
+     * @category Running
+     *
+     * @source
+     */
     subStages = ['scss', 'ts', 'files'];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
-            ...AbstractStage.ARGS_DEFAULT,
             files: false,
             scss: true,
             ts: true,
+            utils: {},
         };
     }
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     *
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
-    constructor(config, params, args, _pkg, _version) {
-        super('compile', 'green', config, params, args, _pkg, _version);
+    constructor(config, params, args, pkg, version) {
+        super('compile', 'green', config, params, args, pkg, version);
     }
     /* LOCAL METHODS
      * ====================================================================== */
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     startEndNotice(which) {
         return super.startEndNotice(which, !this.params.building);
     }
     /* RUNNING METHODS
      * ====================================================================== */
     async runSubStage(subStage) {
-        if (!this.args[subStage]) {
-            return;
-        }
         await this[subStage]();
     }
+    /**
+     * Compiles scss files to css.
+     *
+     * @category Sub-Stages
+     */
     async scss() {
+        if (!this.args.scss) {
+            return;
+        }
         this.console.progress('compiling scss files...', 1);
         const scssSrcDir = this.getSrcDir('scss');
         const globArgs = {
@@ -192,13 +197,21 @@ export class CompileStage extends AbstractStage {
         });
         this.console.vi.debug({ scssPathArgs }, this.params.verbose ? 3 : 2);
         this.console.verbose('compiling to css...', 2);
-        return Promise.all(
+        await Promise.all(
             scssPathArgs.map(({ input, output }) =>
                 this.compiler.scss(input, output, this.params.verbose ? 3 : 2),
             ),
         );
     }
+    /**
+     * Compiles typescript to javascript.
+     *
+     * @category Sub-Stages
+     */
     async ts() {
+        if (!this.args.ts) {
+            return;
+        }
         this.console.progress('compiling typescript files...', 1);
         const tsSrcDir = this.getSrcDir('ts');
         const tsPaths = tsSrcDir
@@ -302,20 +315,25 @@ export class CompileStage extends AbstractStage {
         }
         this.console.vi.debug({ tsPaths }, this.params.verbose ? 3 : 2);
         this.console.verbose('compiling to javascript...', 2);
-        return Promise.all(
+        await Promise.all(
             tsPaths.map((tsc) => {
                 this.console.verbose('compiling project: ' + tsc, 3);
                 return this.compiler.typescript(
                     tsc,
-                    this.params.verbose ? 4 : 1,
+                    this.params.verbose ? 4 : 2,
                 );
             }),
         );
     }
+    /**
+     * Copies files to the dist directory.
+     *
+     * @category Sub-Stages
+     */
     async files() {
         if (!this.args.files) {
             return;
-        } // here for typing backup
+        }
         const distDir = this.getDistDir().trim().replace(/\/$/g, '');
         this.console.progress(`copying files to ${distDir}...`, 1);
         const rootPaths = this.args.files.root;

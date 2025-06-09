@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -42,7 +39,7 @@ export declare class Project {
     /**
      * Displays some debugging information.
      */
-    protected debug<S extends Stage.Name>(console: Logger, stageClass: null | Stage.ClassType.All[S], stageArgs: null | Partial<Stage.Args.All[S]>, stageInstance: null | Stage.Class.All[S]): Promise<void>;
+    protected debug<S extends Stage.Name>(console: Logger, stageClass: null | Stage.Class.All[S], stageArgs: null | Partial<Stage.Args.All[S]>, stageInstance: null | Stage.All[S]): Promise<void>;
     /**
      * Runs the given stage with the params.
      */

@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -23,6 +20,13 @@ import { AbstractStage } from './abstract/AbstractStage.js';
 export class BuildStage extends AbstractStage {
     /* PROPERTIES
      * ====================================================================== */
+    /**
+     * {@inheritDoc AbstractStage.subStages}
+     *
+     * @category Running
+     *
+     * @source
+     */
     subStages = [
         'compile',
         'replace',
@@ -119,28 +123,30 @@ export class BuildStage extends AbstractStage {
                 yaml: [[`${_distDir._}/**/*.yaml`]],
             };
         };
-        const replace = (_stage) => ({
-            current: ['dist/**/*'],
-            ignore: [
-                ...FileSystem.globs.IGNORE_COPIED(_stage),
-                ...FileSystem.globs.IGNORE_PROJECT,
-                ...FileSystem.globs.SYSTEM,
-                '**/.new-scripts/**',
-                '**/.vscode/**',
-            ],
-            package: ['dist/**/*'],
-        });
+        const replace = (_stage) => {
+            const _distGlob =
+                _stage.getDistDir().replace(/\/$/gi, '') + '/**/*';
+            return {
+                current: [_distGlob],
+                ignore: [
+                    ...FileSystem.globs.IGNORE_COPIED(_stage),
+                    ...FileSystem.globs.IGNORE_PROJECT,
+                    ...FileSystem.globs.SYSTEM,
+                    '**/.vscode/**',
+                ],
+                package: [_distGlob],
+            };
+        };
         return {
-            ...AbstractStage.ARGS_DEFAULT,
             compile: true,
             document: false,
             minimize,
             prettify,
             replace,
             test: false,
+            utils: {},
         };
     }
-    /** {@inheritDoc AbstractStage.buildArgs} */
     buildArgs(args = {}) {
         const _defaults = this.ARGS_DEFAULT;
         const merged = mergeArgs(_defaults, args, true);
@@ -166,39 +172,24 @@ export class BuildStage extends AbstractStage {
                 false,
             );
         }
-        if (
-            typeof _defaults.replace === 'function'
-            && merged.replace
-            && typeof merged.replace !== 'function'
-        ) {
-            merged.replace = mergeArgs(
-                _defaults.replace(this),
-                merged.replace,
-                false,
-            );
-        }
         return merged;
     }
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config    Current project config.
-     * @param params    Current CLI params.
-     * @param args      Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     *
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
-    constructor(config, params, args, _pkg, _version) {
-        super('build', 'blue', config, params, args, _pkg, _version);
+    constructor(config, params, args, pkg, version) {
+        super('build', 'blue', config, params, args, pkg, version);
     }
     /* LOCAL METHODS
      * ====================================================================== */
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     startEndNotice(which) {
         return super.startEndNotice(which, !this.params.packaging);
     }
@@ -209,20 +200,29 @@ export class BuildStage extends AbstractStage {
     }
     /**
      * Runs the project's compile class.
+     *
+     * @category Sub-Stages
      */
     async compile() {
         await this.runStage('compile', 1);
     }
     /**
      * Runs the project's document class.
+     *
+     * @category Sub-Stages
      */
     async document() {
         await this.runStage('document', 1);
     }
+    /**
+     * Minimizes files.
+     *
+     * @category Sub-Stages
+     */
     async minimize() {
         if (!this.args.minimize) {
             return;
-        } // here for typing backup
+        }
         this.console.progress('minimizing built files...', 1);
         const args =
             typeof this.args.minimize === 'function'
@@ -285,10 +285,15 @@ export class BuildStage extends AbstractStage {
             );
         }
     }
+    /**
+     * Runs prettier to format files.
+     *
+     * @category Sub-Stages
+     */
     async prettify() {
         if (!this.args.prettify) {
             return;
-        } // here for typing backup
+        }
         this.console.progress('prettifying built files...', 1);
         const args =
             typeof this.args.prettify === 'function'
@@ -331,6 +336,11 @@ export class BuildStage extends AbstractStage {
             );
         }
     }
+    /**
+     * Replaces placeholders in the built files and directories.
+     *
+     * @category Sub-Stages
+     */
     async replace() {
         if (!this.args.replace) {
             return;
@@ -347,6 +357,8 @@ export class BuildStage extends AbstractStage {
     }
     /**
      * Runs the project's test class.
+     *
+     * @category Sub-Stages
      */
     async test() {
         await this.runStage('test', 1);

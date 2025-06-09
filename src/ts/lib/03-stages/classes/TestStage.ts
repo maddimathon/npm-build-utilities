@@ -3,15 +3,14 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */;
 
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type {
+    Json,
+} from '@maddimathon/utility-typescript/types';
 
 import type {
     CLI,
@@ -37,7 +36,10 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * 
  * @since ___PKG_VERSION___
  */
-export class TestStage extends AbstractStage<Stage.SubStage.Test, Stage.Args.Test> {
+export class TestStage extends AbstractStage<
+    Stage.Args.Test,
+    Stage.SubStage.Test
+> {
 
 
 
@@ -55,7 +57,7 @@ export class TestStage extends AbstractStage<Stage.SubStage.Test, Stage.Args.Tes
     public get ARGS_DEFAULT() {
 
         return {
-            ...AbstractStage.ARGS_DEFAULT,
+            utils: {},
 
             js: {
                 tidy: [
@@ -76,23 +78,32 @@ export class TestStage extends AbstractStage<Stage.SubStage.Test, Stage.Args.Tes
     /* CONSTRUCTOR
      * ====================================================================== */
 
+    /**
+     * Whether any tests being run have passed.
+     * 
+     * Reset to `false` in {@link TestStage.startEndNotice}.
+     * 
+     * @category Sub-Stages
+     */
     protected testStatus: boolean = false;
 
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     * 
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Test>,
-        _pkg?: Node.PackageJson,
-        _version?: SemVer,
+        pkg?: Json.PackageJson,
+        version?: SemVer,
     ) {
-        super( 'tests', 'red', config, params, args, _pkg, _version );
+        super( 'tests', 'red', config, params, args, pkg, version );
     }
 
 
@@ -100,16 +111,14 @@ export class TestStage extends AbstractStage<Stage.SubStage.Test, Stage.Args.Tes
     /* LOCAL METHODS
      * ====================================================================== */
 
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     public override startEndNotice( which: "start" | "end" | null ) {
 
-        // returns
+        // returns for end
         switch ( which ) {
+
+            case 'start':
+                this.testStatus = false;
+                break;
 
             case 'end':
                 this.console.startOrEnd( [
@@ -131,11 +140,21 @@ export class TestStage extends AbstractStage<Stage.SubStage.Test, Stage.Args.Tes
         await this[ subStage ]();
     }
 
+    /**
+     * Not implemented.
+     * 
+     * @category Sub-Stages
+     */
     protected async scss() {
         if ( !this.args.scss ) { return; }
         this.console.progress( '(NOT IMPLEMENTED) running scss sub-stage...', 1 );
     }
 
+    /**
+     * Runs jest for javascript testing.
+     * 
+     * @category Sub-Stages
+     */
     protected async js() {
         if ( !this.args.js ) { return; }
         this.console.progress( 'running jest...', 1 );
@@ -144,8 +163,9 @@ export class TestStage extends AbstractStage<Stage.SubStage.Test, Stage.Args.Tes
             this.console.nc.cmd,
             2,
             [ 'node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js' ],
-            {},
-            ( this.params.packaging && !this.params.dryrun ),
+            {
+                exitProcess: this.params.packaging && !this.params.dryrun,
+            },
         );
 
         this.testStatus = result !== 'FAILED';

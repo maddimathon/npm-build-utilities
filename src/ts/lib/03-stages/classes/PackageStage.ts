@@ -3,15 +3,14 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */;
 
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type {
+    Json,
+} from '@maddimathon/utility-typescript/types';
 
 import {
     arrayUnique,
@@ -29,8 +28,8 @@ import type {
 } from '../../../types/index.js';
 
 import {
-    ProjectError,
     SemVer,
+    StageError,
 } from '../../@internal/index.js';
 
 import {
@@ -53,8 +52,8 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since ___PKG_VERSION___
  */
 export class PackageStage extends AbstractStage<
-    Stage.SubStage.Package,
-    Stage.Args.Package
+    Stage.Args.Package,
+    Stage.SubStage.Package
 > {
 
 
@@ -62,6 +61,13 @@ export class PackageStage extends AbstractStage<
     /* PROPERTIES
      * ====================================================================== */
 
+    /**
+     * {@inheritDoc AbstractStage.subStages}
+     * 
+     * @category Running
+     * 
+     * @source
+     */
     public readonly subStages: Stage.SubStage.Package[] = [
         'snapshot',
         'build',
@@ -75,7 +81,7 @@ export class PackageStage extends AbstractStage<
     public get ARGS_DEFAULT() {
 
         return {
-            ...AbstractStage.ARGS_DEFAULT,
+            utils: {},
         } as const satisfies Stage.Args.Package;
     }
 
@@ -85,20 +91,22 @@ export class PackageStage extends AbstractStage<
      * ====================================================================== */
 
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     * 
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Package>,
-        _pkg?: Node.PackageJson,
-        _version?: SemVer,
+        pkg?: Json.PackageJson,
+        version?: SemVer,
     ) {
-        super( 'package', params?.releasing ? 'orange' : 'purple', config, params, args, _pkg, _version );
+        super( 'package', params.releasing ? 'orange' : 'purple', config, params, args, pkg, version );
     }
 
 
@@ -108,6 +116,8 @@ export class PackageStage extends AbstractStage<
 
     /**
      * Runs the prompters to confirm before starting the substages.
+     * 
+     * @category Running
      */
     protected async startPrompters() {
 
@@ -140,12 +150,6 @@ export class PackageStage extends AbstractStage<
         } ) ?? !!this.params.dryrun;
     }
 
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     public override async startEndNotice( which: "start" | "end" | null ) {
 
         const version = this.version.toString( this.isDraftVersion );
@@ -187,18 +191,25 @@ export class PackageStage extends AbstractStage<
 
     /**
      * Runs the project's build class.
+     * 
+     * @category Sub-Stages
      */
     protected async build() {
         await this.runStage( 'build', 1 );
     }
 
+    /**
+     * Copies all project files to the release directory.
+     * 
+     * @category Sub-Stages
+     */
     protected async copy() {
         this.console.progress( 'copying files to package directory...', 1 );
 
         // throws & returns
         if ( !this.pkg.files?.length ) {
 
-            this.handleError( new ProjectError(
+            this.handleError( new StageError(
                 'No files defined in package.json for export',
                 { class: 'PackageStage', method: 'copy' },
             ), 2 );
@@ -289,11 +300,18 @@ export class PackageStage extends AbstractStage<
 
     /**
      * Runs the project's snapshot class.
+     * 
+     * @category Sub-Stages
      */
     protected async snapshot() {
         await this.runStage( 'snapshot', 1 );
     }
 
+    /**
+     * Zips the release directory.
+     * 
+     * @category Sub-Stages
+     */
     protected async zip() {
         this.console.progress( 'zipping package...', 1 );
 

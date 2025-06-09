@@ -3,15 +3,12 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 /**
- * Types used for project configuration.
+ * Utility types for the {@link Config} interface.
  *
  * @category Types
  *
@@ -20,7 +17,18 @@
 export var Config;
 (function (Config) {
     /**
+     * Types for the {@link Config.Internal} type.
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    let Internal;
+    (function (Internal) {})(
+        (Internal = Config.Internal || (Config.Internal = {})),
+    );
+    /**
      * Types for the {@link Config.Paths} type.
+     *
+     * @since 0.1.0-alpha.draft
      */
     let Paths;
     (function (Paths) {})((Paths = Config.Paths || (Config.Paths = {})));

@@ -1,4 +1,5 @@
 import {
+    type Config,
     internal,
 
     Project,
@@ -7,9 +8,12 @@ import {
     parseParamsCLI,
 } from '@maddimathon/build-utilities';
 
-const config = new ProjectConfig( internal.internalConfig( {
+const partialConfig: Config = {
     title: 'Example Project Title',
-} ) );
+    launchYear: '2025',
+};
+
+const config = new ProjectConfig( internal.internalConfig( partialConfig ) );
 
 const project = new Project( config, parseParamsCLI( {} ) );
 

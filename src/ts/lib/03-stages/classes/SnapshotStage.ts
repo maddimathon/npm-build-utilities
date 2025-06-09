@@ -3,15 +3,14 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type {
+    Json,
+} from '@maddimathon/utility-typescript/types';
 
 import {
     slugify,
@@ -51,8 +50,8 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since ___PKG_VERSION___
  */
 export class SnapshotStage extends AbstractStage<
-    Stage.SubStage.Snapshot,
-    Stage.Args.Snapshot
+    Stage.Args.Snapshot,
+    Stage.SubStage.Snapshot
 > {
 
 
@@ -62,11 +61,15 @@ export class SnapshotStage extends AbstractStage<
 
     /**
      * Output name for the snapshot zip.
+     * 
+     * @category Config
      */
     public readonly filename: string;
 
     /**
      * Output directory for the snapshot.
+     * 
+     * @category Config
      */
     public readonly path: string;
 
@@ -80,11 +83,11 @@ export class SnapshotStage extends AbstractStage<
     public get ARGS_DEFAULT() {
 
         return {
-            ...AbstractStage.ARGS_DEFAULT,
+            utils: {},
 
-            ignoreGlobs: ( stage: Stage.Class ) => [
-                ...FileSystem.globs.IGNORE_COPIED( stage ),
-                ...FileSystem.globs.IGNORE_COMPILED,
+            ignoreGlobs: ( _stage: Stage ) => [
+                ...FileSystem.globs.IGNORE_COPIED( _stage ),
+                ...FileSystem.globs.IGNORE_COMPILED( _stage ),
                 ...FileSystem.globs.IGNORE_PROJECT,
                 ...FileSystem.globs.SYSTEM,
             ],
@@ -97,20 +100,22 @@ export class SnapshotStage extends AbstractStage<
      * ====================================================================== */
 
     /**
-     * @param config    Complete project configuration.
-     * @param params    Current CLI params.
-     * @param args      Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     * 
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Snapshot>,
-        _pkg?: Node.PackageJson,
-        _version?: SemVer,
+        pkg?: Json.PackageJson,
+        version?: SemVer,
     ) {
-        super( 'snapshot', 'pink', config, params, args, _pkg, _version );
+        super( 'snapshot', 'pink', config, params, args, pkg, version );
 
         this.filename = [
             this.pkg.name.replace( /\//g, '_' ).replace( /[^a-z0-9\-_]+/gi, '-' ).replace( /(^\-+|\-+$)/g, '' ),
@@ -128,12 +133,6 @@ export class SnapshotStage extends AbstractStage<
     /* LOCAL METHODS
      * ====================================================================== */
 
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     public override async startEndNotice( which: "start" | "end" | null ) {
 
         // returns
@@ -163,6 +162,11 @@ export class SnapshotStage extends AbstractStage<
         await this[ subStage ]();
     }
 
+    /**
+     * Runs the whole snapshot.
+     * 
+     * @category Sub-Stages
+     */
     protected async snap() {
 
         await this._tidy();
@@ -171,35 +175,50 @@ export class SnapshotStage extends AbstractStage<
         const copyPaths = this.try(
             this.fs.glob,
             2,
-            [ '**/*', {
-                follow: false,
-                ignore: typeof this.args.ignoreGlobs === 'function'
-                    ? this.args.ignoreGlobs( this )
-                    : this.args.ignoreGlobs,
-            }, ]
-        ).filter( path => !this.fs.isSymLink( this.fs.pathResolve( path ) ) );
+            [
+                '**/*',
+                {
+                    follow: false,
+                    ignore: (
+                        typeof this.args.ignoreGlobs === 'function'
+                            ? this.args.ignoreGlobs( this )
+                            : this.args.ignoreGlobs
+                    ),
+                },
+            ]
+        ).filter( _p => !this.fs.isSymLink( _p ) );
 
-        this.try( this.fs.copy, this.params.verbose ? 2 : 1, [
-            copyPaths,
-            this.params.verbose ? 2 : 1,
-            this.path,
-            null,
-            {
-                recursive: false,
-            },
-        ] );
+        this.fs.mkdir( this.path );
+
+        this.try(
+            this.fs.copy,
+            ( this.params.verbose ? 2 : 1 ),
+            [
+                copyPaths,
+                ( this.params.verbose ? 2 : 1 ),
+                this.path,
+                null,
+                {
+                    recursive: false,
+                },
+            ],
+        );
 
         await this._zip();
 
         this.console.verbose( 'removing the snapshot folder...', 1 );
         this.try(
             this.fs.delete,
-            this.params.verbose ? 2 : 1,
-            [ this.path, this.params.verbose ? 2 : 1, false ],
+            ( this.params.verbose ? 2 : 1 ),
+            [ this.path, ( this.params.verbose ? 2 : 1 ), false ],
         );
     }
 
-
+    /**
+     * Deletes any existing snapshot folders.
+     * 
+     * @category Utilities
+     */
     protected async _tidy() {
         this.console.verbose( 'removing any current folders...', 1 );
 
@@ -221,6 +240,11 @@ export class SnapshotStage extends AbstractStage<
         );
     }
 
+    /**
+     * Zips the snapshot folder.
+     * 
+     * @category Utilities
+     */
     protected async _zip() {
         this.console.verbose( 'zipping folder...', 1 );
 

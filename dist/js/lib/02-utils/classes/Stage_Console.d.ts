@@ -3,14 +3,11 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { MessageMaker, node, VariableInspector } from '@maddimathon/utility-typescript/classes';
+import { node, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
 import type { CLI } from '../../../types/index.js';
 import type { Logger } from '../../../types/Logger.js';
 import { ProjectConfig } from '../../01-config/index.js';
@@ -47,8 +44,8 @@ export declare class Stage_Console implements Logger {
      *
      * @param level     Depth level for this message (above the value of
      *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @param msgArgs   Argument overrides for the message.
+     * @param timeArgs  Argument overrides for the message's timestamp.
      *
      * @return  An object with arguments separated by message (`msg`) and time.
      */
@@ -62,24 +59,21 @@ export declare class Stage_Console implements Logger {
     error(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     /** {@inheritDoc Logger.log} */
     log(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
-    /** {@inheritDoc Logger.notice} */
-    notice(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /** {@inheritDoc Logger.progress} */
     progress(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /**
      * Prints a message to the console signalling the start or end of this build
-     * stage if {@link Stage_Console['params']['notice']} is truthy.  Uses
-     * {@link Stage_Console['notice']}.
+     * stage.  Uses {@link Stage_Consolelog}.
      *
-     * @param msg    Text to display as start/end notice.
+     * @param msg    Text to display as start/end message.
      * @param which  Whether we are starting or ending.
-     * @param args   Optional. Message argument overrides.
+     * @param args   Message argument overrides.
      */
     startOrEnd(msg: string | string[] | MessageMaker.BulkMsgs, which: "start" | "end" | null, args?: Partial<MessageMaker.BulkMsgArgs>): void;
     /**
      * {@inheritDoc Logger.debug}
      *
-     * @todo
+     * @TODO
      * **Doesn't currently actually warn.**
      */
     warn(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
@@ -114,9 +108,7 @@ export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     /** {@inheritDoc Logger.VarInspect.debug} */
     debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
     /** {@inheritDoc Logger.VarInspect.log} */
-    log(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<Stage_Console['notice']>[1], msgArgs?: Parameters<Stage_Console['notice']>[2], timeArgs?: Parameters<Stage_Console['notice']>[3]): void;
-    /** {@inheritDoc Logger.VarInspect.notice} */
-    notice(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
+    log(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /** {@inheritDoc Logger.VarInspect.progress} */
     progress(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
     /** {@inheritDoc Logger.VarInspect.stringify} */

@@ -3,17 +3,14 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
+import type { Objects } from '@maddimathon/utility-typescript/types';
 import { node } from '@maddimathon/utility-typescript/classes';
 import type { Stage } from '../../../types/index.js';
 import type { FileSystemType } from '../../../types/FileSystemType.js';
-import type { LocalError } from '../../../types/LocalError.js';
 import type { Logger } from '../../../types/Logger.js';
 import { AbstractError } from '../../@internal/index.js';
 /**
@@ -24,19 +21,15 @@ import { AbstractError } from '../../@internal/index.js';
  * @since 0.1.0-alpha.draft
  */
 export declare class FileSystem extends node.NodeFiles {
+    /**
+     * Instance used to log messages within the class.
+     *
+     * @category Classes
+     */
     readonly console: Logger;
-    /**
-     * A completed args object.
-     *
-     * @category Args
-     */
-    readonly args: FileSystemType.Args;
-    /**
-     * Default args for this class.
-     *
-     * @category Args
-     */
+    readonly args: FileSystem.Args;
     get ARGS_DEFAULT(): {
+        readonly argsRecursive: true;
         readonly copy: {
             readonly force: true;
             readonly recursive: true;
@@ -44,102 +37,148 @@ export declare class FileSystem extends node.NodeFiles {
             readonly glob: {
                 readonly absolute: false;
                 readonly dot: true;
+                readonly filesOnly: false;
             };
         };
         readonly glob: {
             readonly absolute: true;
             readonly dot: true;
-            readonly ignore: string[];
+            readonly ignore: ["._*", "._*/**", "**/._*", "**/._*/**", "**/.DS_Store", "**/.smbdelete**"];
         };
         readonly minify: {
+            readonly css: {};
+            readonly html: {};
+            readonly js: {};
+            readonly json: {};
+            readonly glob: {};
+        };
+        readonly prettier: {
+            readonly _: {
+                readonly bracketSameLine: false;
+                readonly bracketSpacing: true;
+                readonly experimentalOperatorPosition: "start";
+                readonly experimentalTernaries: false;
+                readonly htmlWhitespaceSensitivity: "strict";
+                readonly jsxSingleQuote: false;
+                readonly printWidth: 80;
+                readonly proseWrap: "preserve";
+                readonly semi: true;
+                readonly singleAttributePerLine: true;
+                readonly singleQuote: true;
+                readonly tabWidth: 4;
+                readonly trailingComma: "all";
+                readonly useTabs: false;
+                readonly glob: {};
+            };
             readonly css: {
-                readonly type: "clean-css";
-                readonly 'clean-css': {
-                    readonly compatibility: "*";
-                };
+                readonly singleQuote: false;
             };
             readonly html: {
-                readonly collapseBooleanAttributes: false;
-                readonly collapseWhitespace: true;
-                readonly minifyCSS: true;
-                readonly minifyJS: true;
-                readonly removeAttributeQuotes: true;
-                readonly removeCDATASectionsFromCDATA: true;
-                readonly removeComments: true;
-                readonly removeCommentsFromCDATA: true;
-                readonly removeEmptyAttributes: false;
-                readonly removeEmptyElements: false;
-                readonly removeOptionalTags: false;
-                readonly removeRedundantAttributes: false;
-                readonly removeScriptTypeAttributes: false;
-                readonly removeStyleLinkTypeAttributes: false;
-                readonly useShortDoctype: true;
-            };
-            readonly js: {
-                readonly type: "putout";
-                readonly putout: {
-                    readonly quote: "'";
-                    readonly mangle: false;
-                    readonly mangleClassNames: false;
-                    readonly removeUnusedVariables: false;
-                    readonly removeConsole: false;
-                    readonly removeUselessSpread: false;
-                };
-            };
-            readonly glob: {
-                readonly ignore: string[];
+                readonly printWidth: 10000;
             };
         };
-        readonly prettier: typeof FileSystem.prettier.argsDefault;
-        readonly argsRecursive: true;
-        readonly copyFileArgs: {
+        readonly copyFile: {
             readonly force: true;
             readonly rename: true;
             readonly recursive: false;
         };
         readonly root: "./";
-        readonly readDirArgs: {
+        readonly readDir: {
             readonly recursive: false;
         };
-        readonly readFileArgs: {};
-        readonly writeArgs: {
+        readonly readFile: {};
+        readonly write: {
             force: boolean;
             rename: boolean;
         };
     };
+    buildArgs(args?: Partial<FileSystemType.Args> | Objects.RecursivePartial<FileSystemType.Args>): FileSystem.Args;
     /**
-     * @param console   Used to output messages within the class.
-     * @param args
+     * @category Constructor
+     *
+     * @param console  Instance used to log messages and debugging info.
+     * @param args     Override arguments.
      */
     constructor(console: Logger, args?: Partial<FileSystemType.Args>);
     /**
      * {@inheritDoc internal.FileSystemType.copy}
      *
-     * @throws {@link FileSystem.Error}
+     * @category Filers
+     *
+     * @throws {@link FileSystem.Error} — If copying a file fails.
      */
-    copy(globs: string | string[], level: number, outputDir: string, sourceDir?: string | null, args?: Partial<FileSystemType.Copy.Args>): false | string[];
-    /** {@inheritDoc internal.FileSystemType.delete} */
-    delete(globs: string | string[], level: number, dryRun?: boolean, args?: FileSystemType.Glob.Args): void;
-    /** {@inheritDoc internal.FileSystemType.glob} */
-    glob(globs: string | string[], args?: FileSystemType.Glob.Args): string[];
-    /** {@inheritDoc internal.FileSystemType.minify} */
+    copy(globs: string | string[], level: number, outputDir: string, sourceDir?: string | null, args?: Partial<FileSystemType.Copy.Args>): string[];
+    /**
+     * Deletes given globs (via {@link node.NodeFiles}.delete).
+     *
+     * This catches any errors from {@link node.NodeFiles}.delete, ignores
+     * ENOTEMPTY errors, and re-throws the rest.
+     *
+     * @category Filers
+     *
+     * @param globs   Glob patterns for paths to delete.
+     * @param level   Depth level for output to the console.
+     * @param dryRun  If true, files that would be deleted are printed to the
+     *                console and not deleted.
+     * @param args    Optional glob configuration.
+     */
+    delete(globs: string | string[], level: number, dryRun?: boolean, args?: Partial<FileSystemType.Glob.Args>): void;
+    /**
+     * {@inheritDoc internal.FileSystemType.glob}
+     *
+     * @category Path-makers
+     */
+    glob(globs: string | string[], args?: Partial<FileSystemType.Glob.Args>): string[];
+    /**
+     * {@inheritDoc internal.FileSystemType.minify}
+     *
+     * @category Transformers
+     */
     minify(globs: string | string[], format: FileSystemType.Minify.Format, level: number, args?: Partial<FileSystemType.Minify.Args>, renamer?: (path: string) => string): Promise<{
         source: string;
         output: string;
     }[]>;
-    /** {@inheritDoc internal.FileSystemType.prettier} */
+    /**
+     * {@inheritDoc internal.FileSystemType.prettier}
+     *
+     * @category Transformers
+     *
+     * @throws {@link FileSystem.Error} — If no parser was given or could be
+     *         automatically assigned based on the format (this is unlikely if
+     *         you respect the {@link FileSystemType.Prettier.Format} type).
+     */
     prettier(globs: string | string[], format: FileSystemType.Prettier.Format, args?: Partial<FileSystemType.Prettier.Args>): Promise<string[]>;
-    /** {@inheritDoc internal.FileSystemType.replaceInFiles} */
-    replaceInFiles(globs: string | string[], replace: [string | RegExp, string] | [string | RegExp, string][], level: number, args?: FileSystemType.Glob.Args): string[];
+    /**
+     * {@inheritDoc internal.FileSystemType.replaceInFiles}
+     *
+     * @category Transformers
+     */
+    replaceInFiles(globs: string | string[], replace: [string | RegExp, string] | [string | RegExp, string][], level: number, args?: Partial<FileSystemType.Glob.Args>): string[];
 }
 /**
  * Used only for {@link FileSystem}.
  *
- * @category Class-Helpers
+ * @category Utilities
  *
  * @since 0.1.0-alpha.draft
  */
 export declare namespace FileSystem {
+    /**
+     * Rather than the input arguments (i.e., {@link FileSystemType.Args}), this
+     * is the shape of the object built by {@link FileSystem.buildArgs}.
+     *
+     * @since 0.1.0-alpha.draft
+     *
+     * @internal
+     */
+    interface Args extends Omit<FileSystemType.Args, "prettier"> {
+        /**
+         * Defaults for the {@link FileSystemType.prettier} method.
+         */
+        prettier: {
+            [F in FileSystemType.Prettier.Format]: Partial<FileSystemType.Prettier.Args>;
+        };
+    }
     /**
      * An extension of the utilities error used by the {@link FileSystem} class.
      *
@@ -147,15 +186,16 @@ export declare namespace FileSystem {
      *
      * @since 0.1.0-alpha.draft
      */
-    class Error extends AbstractError<LocalError.Args> {
+    class Error extends AbstractError {
         readonly name: string;
-        get ARGS_DEFAULT(): any;
-        constructor(message: string, method: string, args?: Partial<LocalError.Args> & {
-            cause?: LocalError.Input;
+        constructor(message: string, method: string, args?: {
+            cause?: AbstractError.Input;
         });
     }
     /**
      * Arrays of utility globs used within the library.
+     *
+     * @category Utilities
      *
      * @since 0.1.0-alpha.draft
      */
@@ -163,121 +203,91 @@ export declare namespace FileSystem {
         /**
          * Files that are copied into subdirectories (e.g., releases and
          * snapshots).
+         *
+         * @since 0.1.0-alpha.draft
+         *
+         * @source
          */
-        const IGNORE_COPIED: (stage: Stage.Class) => string[];
+        const IGNORE_COPIED: (stage: Stage) => string[];
         /**
          * Compiled files to ignore.
+         *
+         * @since 0.1.0-alpha.draft
+         *
+         * @source
          */
-        const IGNORE_COMPILED: string[];
+        const IGNORE_COMPILED: (stage: Stage) => string[];
         /**
          * Files that we probably want to ignore within an npm project.
+         *
+         * @since 0.1.0-alpha.draft
          */
-        const IGNORE_PROJECT: string[];
+        const IGNORE_PROJECT: readonly [".git/**", "**/.git/**", ".scripts/**", "**/.scripts/**", ".vscode/**/*.code-snippets", ".vscode/**/settings.json", "node_modules/**", "**/node_modules/**"];
         /**
          * System files that we *never, ever* want to include.
+         *
+         * @since 0.1.0-alpha.draft
          */
-        const SYSTEM: string[];
+        const SYSTEM: readonly ["._*", "._*/**", "**/._*", "**/._*/**", "**/.DS_Store", "**/.smbdelete**"];
     }
     /**
-     * Utilities for the {@link FileSystem.minify} method.
+     * Utility functions and constants for the {@link FileSystem.minify} method.
+     *
+     * @category Transformers
      *
      * @since 0.1.0-alpha.draft
      */
     namespace minify {
-        const argsDefault: {
-            readonly css: {
-                readonly type: "clean-css";
-                readonly 'clean-css': {
-                    readonly compatibility: "*";
-                };
-            };
-            readonly html: {
-                readonly collapseBooleanAttributes: false;
-                readonly collapseWhitespace: true;
-                readonly minifyCSS: true;
-                readonly minifyJS: true;
-                readonly removeAttributeQuotes: true;
-                readonly removeCDATASectionsFromCDATA: true;
-                readonly removeComments: true;
-                readonly removeCommentsFromCDATA: true;
-                readonly removeEmptyAttributes: false;
-                readonly removeEmptyElements: false;
-                readonly removeOptionalTags: false;
-                readonly removeRedundantAttributes: false;
-                readonly removeScriptTypeAttributes: false;
-                readonly removeStyleLinkTypeAttributes: false;
-                readonly useShortDoctype: true;
-            };
-            readonly js: {
-                readonly type: "putout";
-                readonly putout: {
-                    readonly quote: "'";
-                    readonly mangle: false;
-                    readonly mangleClassNames: false;
-                    readonly removeUnusedVariables: false;
-                    readonly removeConsole: false;
-                    readonly removeUselessSpread: false;
-                };
-            };
-            readonly glob: {
-                readonly ignore: string[];
-            };
+        /**
+         * Default args for the {@link FileSystem.minify} method
+         *
+         * @since 0.1.0-alpha.draft
+         */
+        const ARGS_DEFAULT: {
+            readonly css: {};
+            readonly html: {};
+            readonly js: {};
+            readonly json: {};
+            readonly glob: {};
         };
     }
     /**
      * Utility functions for the {@link FileSystem.prettier} method.
      *
+     * @category Transformers
+     *
      * @since 0.1.0-alpha.draft
      */
     namespace prettier {
-        function argsDefault(format: FileSystemType.Prettier.Format): {
-            readonly bracketSameLine: false;
-            readonly bracketSpacing: true;
-            readonly experimentalOperatorPosition: "start";
-            readonly experimentalTernaries: false;
-            readonly htmlWhitespaceSensitivity: "strict";
-            readonly jsxSingleQuote: false;
-            readonly printWidth: 80;
-            readonly proseWrap: "preserve";
-            readonly semi: true;
-            readonly singleAttributePerLine: true;
-            readonly singleQuote: true;
-            readonly tabWidth: 4;
-            readonly trailingComma: "all";
-            readonly useTabs: false;
-            readonly glob: {};
-        } | {
-            readonly singleQuote: false;
-            readonly bracketSameLine: false;
-            readonly bracketSpacing: true;
-            readonly experimentalOperatorPosition: "start";
-            readonly experimentalTernaries: false;
-            readonly htmlWhitespaceSensitivity: "strict";
-            readonly jsxSingleQuote: false;
-            readonly printWidth: 80;
-            readonly proseWrap: "preserve";
-            readonly semi: true;
-            readonly singleAttributePerLine: true;
-            readonly tabWidth: 4;
-            readonly trailingComma: "all";
-            readonly useTabs: false;
-            readonly glob: {};
-        } | {
-            readonly printWidth: 10000;
-            readonly bracketSameLine: false;
-            readonly bracketSpacing: true;
-            readonly experimentalOperatorPosition: "start";
-            readonly experimentalTernaries: false;
-            readonly htmlWhitespaceSensitivity: "strict";
-            readonly jsxSingleQuote: false;
-            readonly proseWrap: "preserve";
-            readonly semi: true;
-            readonly singleAttributePerLine: true;
-            readonly singleQuote: true;
-            readonly tabWidth: 4;
-            readonly trailingComma: "all";
-            readonly useTabs: false;
-            readonly glob: {};
+        /**
+         * Default args for the {@link FileSystem.prettier} method
+         *
+         * @since 0.1.0-alpha.draft
+         */
+        const ARGS_DEFAULT: {
+            readonly _: {
+                readonly bracketSameLine: false;
+                readonly bracketSpacing: true;
+                readonly experimentalOperatorPosition: "start";
+                readonly experimentalTernaries: false;
+                readonly htmlWhitespaceSensitivity: "strict";
+                readonly jsxSingleQuote: false;
+                readonly printWidth: 80;
+                readonly proseWrap: "preserve";
+                readonly semi: true;
+                readonly singleAttributePerLine: true;
+                readonly singleQuote: true;
+                readonly tabWidth: 4;
+                readonly trailingComma: "all";
+                readonly useTabs: false;
+                readonly glob: {};
+            };
+            readonly css: {
+                readonly singleQuote: false;
+            };
+            readonly html: {
+                readonly printWidth: 10000;
+            };
         };
     }
 }

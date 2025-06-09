@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -34,12 +31,7 @@ import type { Config } from './Config.js';
  *
  * @since ___PKG_VERSION___
  */
-export interface Logger extends Objects.Logger<
-    Logger.MethodParams,
-    Logger.ErrorParams,
-    Logger.MessageInput,
-    Logger.ErrorInput
-> {
+export interface Logger {
 
     /**
      * Current project config.
@@ -66,10 +58,9 @@ export interface Logger extends Objects.Logger<
      * {@link CLI.Params.debug} is truthy.
      * 
      * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @param level     Depth level for output to the console.
+     * @param msgArgs   Argument overrides for the message.
+     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     debug(
         msg: Parameters<Logger[ 'log' ]>[ 0 ],
@@ -82,10 +73,9 @@ export interface Logger extends Objects.Logger<
      * Outputs the given error message to the console.
      * 
      * @param msg       Error message(s).
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @param level     Depth level for output to the console.
+     * @param msgArgs   Argument overrides for the message.
+     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     error(
         msg: string | string[] | MessageMaker.BulkMsgs,
@@ -98,10 +88,9 @@ export interface Logger extends Objects.Logger<
      * Prints a timestamped log message to the console.
      * 
      * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @param level     Depth level for output to the console.
+     * @param msgArgs   Argument overrides for the message.
+     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     log(
         msg: string | string[] | MessageMaker.BulkMsgs,
@@ -112,30 +101,12 @@ export interface Logger extends Objects.Logger<
 
     /**
      * Prints a timestamped log message to the console. Only if 
-     * {@link CLI.Params.notice} is truthy.
-     * 
-     * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-     */
-    notice(
-        msg: Parameters<Logger[ 'log' ]>[ 0 ],
-        level: Parameters<Logger[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Logger[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Logger[ 'log' ]>[ 3 ],
-    ): void;
-
-    /**
-     * Prints a timestamped log message to the console. Only if 
      * {@link CLI.Params.progress} is truthy.
      * 
      * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @param level     Depth level for this message.
+     * @param msgArgs   Argument overrides for the message.
+     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     progress(
         msg: Parameters<Logger[ 'log' ]>[ 0 ],
@@ -148,10 +119,9 @@ export interface Logger extends Objects.Logger<
      * Outputs the given warning message to the console.
      * 
      * @param msg       Warning message(s).
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @param level     Depth level for this message.
+     * @param msgArgs   Argument overrides for the message.
+     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     warn(
         msg: string | string[] | MessageMaker.BulkMsgs,
@@ -165,10 +135,9 @@ export interface Logger extends Objects.Logger<
      * {@link CLI.Params.verbose} is truthy.
      * 
      * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of 
-     *                  {@link CLI.Params.log-base-level}).
-     * @param msgArgs   Optional. Argument overrides for the message.
-     * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+     * @param level     Depth level for this message.
+     * @param msgArgs   Argument overrides for the message.
+     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     verbose(
         msg: Parameters<Logger[ 'log' ]>[ 0 ],
@@ -207,38 +176,12 @@ export namespace Logger {
     };
 
     /**
-     * Used for extending {@link Objects.Logger}.
-     */
-    export type ErrorInput = string | string[] | MessageMaker.BulkMsgs;
-
-    /**
-     * Used for extending {@link Objects.Logger}.
-     */
-    export type ErrorParams = [
-        number,
-        Partial<MessageMaker.BulkMsgArgs>,
-        Partial<MessageMaker.BulkMsgArgs>,
-    ];
-
-    /**
-     * Used for extending {@link Objects.Logger}.
-     */
-    export type MessageInput = string | string[] | MessageMaker.BulkMsgs;
-
-    /**
-     * Used for extending {@link Objects.Logger}.
-     */
-    export type MethodParams = [
-        number,
-        Partial<MessageMaker.BulkMsgArgs>,
-        Partial<MessageMaker.BulkMsgArgs>,
-    ];
-
-    /**
      * Shape of the variable inspection utility class to be available in each
      * {@link Logger}.
      * 
      * @see {@link VariableInspector}  Used to inspect variables.
+     * 
+     * @since ___PKG_VERSION___
      */
     export interface VarInspect {
 
@@ -247,10 +190,9 @@ export namespace Logger {
          * {@link CLI.Params.debug} is truthy.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of 
-         *                  {@link CLI.Params.log-base-level}).
-         * @param msgArgs   Optional. Argument overrides for the message.
-         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+         * @param level     Depth level for this message.
+         * @param msgArgs   Argument overrides for the message.
+         * @param timeArgs  Argument overrides for the message's timestamp.
          */
         debug(
             variable: Parameters<VarInspect[ 'log' ]>[ 0 ],
@@ -263,10 +205,9 @@ export namespace Logger {
          * Prints a timestamped log message to the console.
          * 
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of 
-         *                  {@link CLI.Params.log-base-level}).
-         * @param msgArgs   Optional. Argument overrides for the message.
-         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+         * @param level     Depth level for this message.
+         * @param msgArgs   Argument overrides for the message.
+         * @param timeArgs  Argument overrides for the message's timestamp.
          */
         log(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
@@ -277,30 +218,12 @@ export namespace Logger {
 
         /**
          * Prints a timestamped log message to the console. Only if 
-         * {@link CLI.Params.notice} is truthy.
+         * {@link CLI.Params.progress} is truthy.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of 
-         *                  {@link CLI.Params.log-base-level}).
-         * @param msgArgs   Optional. Argument overrides for the message.
-         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
-         */
-        notice(
-            variable: Parameters<VarInspect[ 'log' ]>[ 0 ],
-            level: Parameters<VarInspect[ 'log' ]>[ 1 ],
-            msgArgs?: Parameters<VarInspect[ 'log' ]>[ 2 ],
-            timeArgs?: Parameters<VarInspect[ 'log' ]>[ 3 ],
-        ): void;
-
-        /**
-         * Prints a timestamped log message to the console. Only if 
-         * {@link CLI.Params.notice} is truthy.
-         *
-         * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of 
-         *                  {@link CLI.Params.log-base-level}).
-         * @param msgArgs   Optional. Argument overrides for the message.
-         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+         * @param level     Depth level for this message.
+         * @param msgArgs   Argument overrides for the message.
+         * @param timeArgs  Argument overrides for the message's timestamp.
          */
         progress(
             variable: Parameters<VarInspect[ 'log' ]>[ 0 ],
@@ -313,7 +236,7 @@ export namespace Logger {
          * Outputs a default-level message of the variable.
          * 
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param args      Optional. Override arguments for converting the variable.
+         * @param args      Override arguments for converting the variable.
          */
         stringify(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
@@ -325,10 +248,9 @@ export namespace Logger {
          * {@link CLI.Params.verbose} is truthy.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of 
-         *                  {@link CLI.Params.log-base-level}).
-         * @param msgArgs   Optional. Argument overrides for the message.
-         * @param timeArgs  Optional. Argument overrides for the message's timestamp.
+         * @param level     Depth level for this message.
+         * @param msgArgs   Argument overrides for the message.
+         * @param timeArgs  Argument overrides for the message's timestamp.
          */
         verbose(
             variable: Parameters<VarInspect[ 'log' ]>[ 0 ],

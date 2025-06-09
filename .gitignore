@@ -6,7 +6,6 @@
 # SCRIPTS
 # ======= #
 .scripts/.logs
-.new-scripts/.logs
 
 
 # RELEASES
@@ -39,8 +38,7 @@ demos/*/package-lock.json
 
 # SRC
 # === #
-src/docs/content/js
-src/docs/content/scss
+src/ts/lib/@internal/githubSearchLink.ts
 
 
 # ROOT

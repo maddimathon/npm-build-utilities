@@ -3,40 +3,19 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import type { LocalError } from '../../../types/LocalError.js';
 import { AbstractError } from './abstract/AbstractError.js';
 /**
- * An extension of the utilities error for while running a {@link Project}.
+ * An extension of the utilities error for use while running a {@link Project}.
  *
  * @category Errors
  *
  * @since 0.1.0-alpha.draft
  */
-export declare class ProjectError extends AbstractError<ProjectError.Args> {
+export declare class ProjectError extends AbstractError {
     readonly name: string;
-    get ARGS_DEFAULT(): any;
-}
-/**
- * Used only for {@link ProjectError}.
- *
- * @category Class-Helpers
- *
- * @since 0.1.0-alpha.draft
- */
-export declare namespace ProjectError {
-    /**
-     * Optional configuration for {@link ProjectError} class.
-     *
-     * @since 0.1.0-alpha.draft
-     */
-    interface Args extends LocalError.Args {
-    }
 }
 //# sourceMappingURL=ProjectError.d.ts.map

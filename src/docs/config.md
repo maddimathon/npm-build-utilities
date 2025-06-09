@@ -1,11 +1,12 @@
 ---
 title: Configuration
+category: Documentation
 ---
 
 # Configuring the Library
 
-If no [config](./use/cli.md#options) argument is passed, the library looks
-for a configuration file at the following locations, in order:
+If no config [CLI option](./use/cli.md#options) is passed, the library looks for
+a configuration file at the following locations, in order:
 1. `.scripts/build.config.js`
 1. `build-utils.config.js`
 
@@ -29,17 +30,6 @@ build-utils --config path/to/build.config.js
 
 ### Javascript
 
-[example](./config.example-1.ts)
+{@includeCode ./config.example-1.ts}
 
-```ts
-import {
-    cli,
-
-    Project,
-    parseParamsCLI,
-} from '@maddimathon/build-utilities';
-
-const params = parseParamsCLI( { config: 'path/to/build.config.js' } );
-
-const project = new Project( await cli.getConfig( params ), params );
-```
+See also [Using the Library](./use.md) > [Javascript](./use/js.md#with-config-file).

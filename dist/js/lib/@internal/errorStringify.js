@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -23,9 +20,9 @@ const _msgMaker = new MessageMaker();
  * error.
  *
  * @internal
- * @private
+ * @hidden
  */
-function _errorStringifyInternal(error, args, console, fs, level) {
+function _errorStringifyInternal(error, level, console, fs, args) {
     args = {
         ...args,
         bold: false,
@@ -39,10 +36,10 @@ function _errorStringifyInternal(error, args, console, fs, level) {
     let i = 0;
     for (const [_msg, _args] of errorStringify(
         error,
-        args,
+        1 + level,
         console,
         fs,
-        1 + level,
+        args,
     )) {
         bulkMsgs.push([
             _msg,
@@ -56,13 +53,21 @@ function _errorStringifyInternal(error, args, console, fs, level) {
     return bulkMsgs;
 }
 /**
- * Returns a string(s) representation of the error for logging.
+ * Returns a string(s) representation of an error for logging.
  *
  * @category Errors
  *
+ * @param error    Error to convery.
+ * @param level    Depth level for output to the console.
+ * @param console  Instance used to log messages and debugging info.
+ * @param fs       Instance used to work with paths and files.
+ * @param args     Overrides for default options.
+ *
+ * @since 0.1.0-alpha.draft
+ *
  * @internal
  */
-export function errorStringify(error, args, console, fs, level) {
+export function errorStringify(error, level, console, fs, args) {
     /**
      * Sectioned information for the error message.
      */
@@ -85,10 +90,10 @@ export function errorStringify(error, args, console, fs, level) {
                 ? _msgMaker.msgs(
                       _errorStringifyInternal(
                           err.cause,
-                          args,
+                          1 + level,
                           console,
                           fs,
-                          1 + level,
+                          args,
                       ),
                   )
                 : '';
@@ -145,7 +150,7 @@ export function errorStringify(error, args, console, fs, level) {
             if (error === null || Array.isArray(error)) {
                 error = new UnknownCaughtError(
                     `<${errorType}> \n${String(error)}`,
-                    { cause: error },
+                    error,
                 );
                 t_errorInfo = _defaultErrorInfo(error);
                 break;
@@ -238,10 +243,10 @@ export function errorStringify(error, args, console, fs, level) {
         }
         for (const arr of _errorStringifyInternal(
             errorInfo.cause,
-            args,
+            1 + level,
             console,
             fs,
-            1 + level,
+            args,
         )) {
             bulkMsgs.push(arr);
         }

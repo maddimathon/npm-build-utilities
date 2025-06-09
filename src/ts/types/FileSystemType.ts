@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -19,6 +16,8 @@ import type {
     node,
 } from '@maddimathon/utility-typescript/classes';
 
+import type { Logger } from './Logger.js';
+
 /**
  * Shape of the file/path utility class.
  *
@@ -26,14 +25,39 @@ import type {
  * {@link FileSystem} class is defined.
  *
  * @category Types
+ * 
+ * @since ___PKG_VERSION___
  *
  * @internal
  */
 export interface FileSystemType extends node.NodeFiles {
 
+
+    /**
+     * Used to output messages within the class.
+     * 
+     * @category Classes
+     */
+    readonly console: Logger;
+
     /**
      * Copies files from one directory to another, maintaing their relative
      * directory structure.
+     *
+     * @category Filers
+     * 
+     * @see {@link node.NodeFiles.copyFile}  Used to copy the matched paths.
+     *
+     * @param globs      Glob patterns for paths to copy.
+     * @param level      Depth level for output to the console.
+     * @param outputDir  Path to directory where matched files will be copied.
+     * @param sourceDir  Relative source directory. If any, the globs are 
+     *                   resolved as relative to that directory and the path/dir 
+     *                   structure copied to the outputDir is relative to this
+     *                   sourceDir.
+     * @param args       Overrides for default options.
+     *
+     * @return  Array of paths to the newly-copied files/etc.
      */
     copy(
         globs: string | string[],
@@ -41,14 +65,15 @@ export interface FileSystemType extends node.NodeFiles {
         outputDir: string,
         sourceDir?: string | null,
         args?: Partial<FileSystemType.Copy.Args>,
-    ): false | string[];
+    ): string[];
 
     /**
-     * Deletes given globs.
+     * Deletes given globs (via {@link node.NodeFiles}.delete).
      * 
-     * @param globs   Paths to delete.
-     * @param level   Depth level for this message (above the value of 
-     *                {@link CLI.Params.log-base-level}).
+     * @category Filers
+     * 
+     * @param globs   Glob patterns for paths to delete.
+     * @param level   Depth level for output to the console.
      * @param dryRun  If true, files that would be deleted are printed to the 
      *                console and not deleted.
      * @param args    Optional glob configuration.
@@ -57,19 +82,37 @@ export interface FileSystemType extends node.NodeFiles {
         globs: string | string[],
         level: number,
         dryRun?: boolean,
-        args?: FileSystemType.Glob.Args,
+        args?: Partial<FileSystemType.Glob.Args>,
     ): ReturnType<node.NodeFiles[ 'delete' ]>;
 
     /**
      * Gets the valid paths matched against the input globs.
+     * 
+     * @category Path-makers
+     * 
+     * @param globs  Glob patterns to match.
+     * @param args   Optional glob configuration.
+     * 
+     * @return  Matched paths.
      */
     glob(
-        input: string | string[],
-        args?: FileSystemType.Glob.Args,
+        globs: string | string[],
+        args?: Partial<FileSystemType.Glob.Args>,
     ): string[];
 
     /**
      * Runs minify on the given file globs.
+     * 
+     * @category Transformers
+     * 
+     * @param globs    Glob patterns for paths to minify.
+     * @param format   File format for the input globs.
+     * @param level    Depth level for output to the console.
+     * @param args     Overrides for default options.
+     * @param renamer  Function used to define the new basename for the minified 
+     *                 files, if any.
+     * 
+     * @return  Paths to the minified files (both source and output).
      */
     minify(
         globs: string | string[],
@@ -84,21 +127,40 @@ export interface FileSystemType extends node.NodeFiles {
 
     /**
      * Runs prettier on the given file globs.
+     * 
+     * @category Transformers
+     * 
+     * @param globs   Glob patterns for paths to run through prettier.
+     * @param format  File format for the input globs.
+     * @param args    Overrides for default options.
+     * 
+     * @return  Paths to the formatted files.
      */
     prettier(
         globs: string | string[],
         format: FileSystemType.Prettier.Format,
-        args?: FileSystemType.Prettier.Args,
+        args?: Partial<FileSystemType.Prettier.Args>,
     ): Promise<string[]>;
 
     /**
      * Replaces the given text or regex in the given file globs.
+     * 
+     * @category Transformers
+     * 
+     * @param globs    Glob patterns for paths to replace in.
+     * @param replace  Replacements to make. The first tuple item is a string 
+     *                 or RegExp to find and the second item is a string to 
+     *                 replace.
+     * @param level    Depth level for output to the console.
+     * @param args     Optional glob configuration.
+     * 
+     * @return  Paths to the replaced files.
      */
     replaceInFiles(
         globs: string | string[],
         replace: [ string | RegExp, string ] | [ string | RegExp, string ][],
         level: number,
-        args?: FileSystemType.Glob.Args,
+        args?: Partial<FileSystemType.Glob.Args>,
     ): string[];
 }
 
@@ -106,6 +168,8 @@ export interface FileSystemType extends node.NodeFiles {
  * Types for the {@link FileSystemType} interface.
  * 
  * @category Types
+ * 
+ * @since ___PKG_VERSION___
  * 
  * @internal
  */
@@ -126,25 +190,27 @@ export namespace FileSystemType {
         /**
          * Defaults for the {@link FileSystemType.glob} method.
          */
-        glob: Glob.Args;
+        glob: Partial<Glob.Args>;
 
         /**
          * Defaults for the {@link FileSystemType.minify} method.
          */
         minify:
         | Partial<Minify.Args>
-        | ( ( format: Minify.Format ) => Partial<Minify.Args> );
+        | ( <F extends Minify.Format>( format: F ) => Partial<Minify.Args[ F ] & Minify.Args[ 'glob' ]> );
 
         /**
          * Defaults for the {@link FileSystemType.prettier} method.
          */
         prettier:
         | Partial<Prettier.Args>
-        | ( ( format: Prettier.Format ) => Partial<Prettier.Args> );
+        | ( ( format: Prettier.Format ) => Partial<Prettier.Args> )
+        /** Test comment */
+        | Prettier.Args.MultiFormat;
     };
 
     /**
-     * Types for {@link FileSystem.copy} method.
+     * Types for {@link FileSystemType.copy} method.
      * 
      * @since ___PKG_VERSION___
      */
@@ -156,52 +222,67 @@ export namespace FileSystemType {
          * @since ___PKG_VERSION___
          */
         export interface Args extends node.NodeFiles.CopyFileArgs {
-            glob: Glob.Args;
+
+            /**
+             * Optional argument overrides passed to {@link FileSystemType.glob}
+             * while matching paths to copy.
+             */
+            glob: Partial<Glob.Args>;
         };
     };
 
     /**
-     * Types for {@link FileSystem.glob} method.
+     * Types for {@link FileSystemType.glob} method.
      * 
      * @since ___PKG_VERSION___
      */
     export namespace Glob {
 
         /**
-         * Optional configuration for {@link FileSystem.glob} method.
+         * Optional configuration for {@link FileSystemType.glob} method.
          * 
          * @since ___PKG_VERSION___
-         * 
-         * @interface
          */
-        export type Args = GlobOptions & Partial<{
+        export interface Args extends Required<GlobOptions> {
+
+            /**
+             * Whether to only return files (i.e., do not include directory
+             * paths).
+             */
             filesOnly: boolean;
-        }>;
+        };
     };
 
     /**
-     * Types for {@link FileSystem.minify} method.
+     * Types for {@link FileSystemType.minify} method.
      * 
      * @since ___PKG_VERSION___
      */
     export namespace Minify {
 
         /**
-         * Optional configuration for {@link FileSystem.minify} method.
+         * Optional configuration for {@link FileSystemType.minify} method.
          * 
          * @since ___PKG_VERSION___
-         * 
-         * @interface
          */
         export interface Args {
 
+            /**
+             * {@include ./FileSystemType.docs.md#MinifyArgsProp}
+             */
             css: {
                 type?: string;
                 'clean-css'?: { [ key: string ]: boolean | string | null | undefined; };
             };
 
+            /**
+             * {@include ./FileSystemType.docs.md#MinifyArgsProp}
+             */
             html: { [ key: string ]: boolean | string | null | undefined; };
 
+            /**
+             * {@include ./FileSystemType.docs.md#MinifyArgsProp}
+             */
             js: {
                 type?: string;
                 putout?: { [ key: string ]: boolean | string | null | undefined; };
@@ -209,11 +290,22 @@ export namespace FileSystemType {
                 esbuild?: { [ key: string ]: boolean | string | null | undefined; };
             };
 
-            glob: Glob.Args;
+            /**
+             * {@include ./FileSystemType.docs.md#MinifyArgsProp}
+             */
+            json: {},
+
+            /**
+             * Optional argument overrides passed to {@link FileSystemType.glob}
+             * while matching paths to minify.
+             */
+            glob: Partial<Glob.Args>;
         };
 
         /**
          * File type options for minify.
+         * 
+         * @since ___PKG_VERSION___
          */
         export type Format =
             | "css"
@@ -223,25 +315,46 @@ export namespace FileSystemType {
     };
 
     /**
-     * Types for {@link FileSystem.prettier} method.
+     * Types for {@link FileSystemType.prettier} method.
      * 
      * @since ___PKG_VERSION___
      */
     export namespace Prettier {
 
         /**
-         * Optional configuration for {@link FileSystem.prettier} method.
+         * Optional configuration for {@link FileSystemType.prettier} method.
          * 
          * @since ___PKG_VERSION___
-         * 
-         * @interface
          */
-        export interface Args extends prettier.Options {
-            glob: Glob.Args;
+        export interface Args extends Required<prettier.Options> {
+            glob: Partial<Glob.Args>;
         };
 
         /**
+         * Utility types for the {@link Prettier.Args} interface.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        export namespace Args {
+
+            /**
+             * {@include ./FileSystemType.docs.md#MultiFormatArgs}
+             * 
+             * @since ___PKG_VERSION___
+             * 
+             * @interface
+             */
+            export type MultiFormat = {
+                _: Partial<Args>;
+            } & {
+                [ F in Format ]?: Partial<Args>;
+            };
+        }
+
+        /**
          * File type options for prettier.
+         * 
+         * @since ___PKG_VERSION___
          */
         export type Format =
             | "css"

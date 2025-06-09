@@ -3,73 +3,41 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import { timestamp, typeOf } from '@maddimathon/utility-typescript/functions';
+import { typeOf } from '@maddimathon/utility-typescript/functions';
 /**
- * A super-simple class just for the configuration of the entire project.
- *
- * Includes some utility methods and coverts a {@link Config} object into a
- * complete {@link Config.Internal} object.
+ * A super-simple class just for the configuration of the project.
  *
  * @category Config
  *
  * @since 0.1.0-alpha.draft
  */
 export class ProjectConfig {
-    static replace(stage) {
-        const _currentDate = timestamp(null, {
-            time: false,
-            date: true,
-        });
-        const _currentYear = timestamp(null, {
-            time: false,
-            date: true,
-            format: {
-                date: {
-                    year: 'numeric',
-                },
-            },
-        });
-        const rpl = {
-            current: [
-                [/___(CURRENT)_DATE___/g, _currentDate],
-                [
-                    /___(CURRENT)_DESC(RIPTION)?___/g,
-                    stage.pkg.description ?? '',
-                ],
-                [/___(CURRENT)_(HOMEPAGE|URL)___/g, stage.pkg.homepage ?? ''],
-                [
-                    /___(CURRENT)_VERSION___/g,
-                    stage.version.toString(stage.isDraftVersion),
-                ],
-                [/___(CURRENT)_YEAR___/g, _currentYear],
-            ],
-            package: [
-                [/___(PKG)_DATE___/g, _currentDate],
-                [
-                    /___(PKG)_VERSION___/g,
-                    stage.version.toString(stage.isDraftVersion),
-                ],
-                [/___(PKG)_YEAR___/g, _currentYear],
-            ],
-        };
-        return rpl;
-    }
+    /** {@inheritDoc Config.clr} */
     clr;
+    /** {@inheritDoc Config.compiler} */
     compiler;
+    /** {@inheritDoc Config.console} */
     console;
+    /** {@inheritDoc Config.fs} */
     fs;
+    /** {@inheritDoc Config.launchYear} */
     launchYear;
+    /** {@inheritDoc Config.paths} */
     paths;
+    /** {@inheritDoc Config.replace} */
     replace;
+    /** {@inheritDoc Config.stages} */
     stages;
+    /** {@inheritDoc Config.title} */
     title;
+    /**
+     * To convert a {@link Config} type to a {@link Config.Internal} type, use
+     * the {@link internal.internalConfig} function.
+     */
     constructor(config) {
         this.clr = config.clr;
         this.compiler = config.compiler;
@@ -81,7 +49,6 @@ export class ProjectConfig {
         this.stages = config.stages;
         this.title = config.title;
         if (this.stages.compile && Array.isArray(this.stages.compile)) {
-            // const _compileArgs = this.stages.compile[ 1 ] ?? {};
             if (!this.stages.compile[1]) {
                 this.stages.compile[1] = {};
             }
@@ -106,46 +73,55 @@ export class ProjectConfig {
     /* LOCAL METHODS
      * ====================================================================== */
     /**
-     * Gets the paths from the config for the given dist sub directory.
+     * Gets a path to the {@link Config.Paths.dist} directories.
      *
-     * @param fs        Instance used to resolve path.
+     * @param fs        Instance used to work with paths and files.
      * @param subDir    Sub-path to get.
      * @param subpaths  Optional additional subpaths.
+     *
+     * @return  Relative path.
      */
     getDistDir(fs, subDir, ...subpaths) {
-        return fs.pathResolve(this.paths.dist[subDir ?? '_'], ...subpaths);
+        return fs.pathRelative(
+            fs.pathResolve(this.paths.dist[subDir ?? '_'] ?? './', ...subpaths),
+        );
     }
     /**
-     * Gets an absolute path to the {@link Config.Paths['scripts']} directories.
+     * Gets a path to the {@link Config.Paths.scripts} directories.
      *
-     * @param fs        Instance used to resolve path.
+     * @param fs        Instance used to work with paths and files.
      * @param subDir    Sub-path to get.
      * @param subpaths  Optional additional subpaths.
+     *
+     * @return  Relative path.
      */
     getScriptsPath(fs, subDir, ...subpaths) {
-        return fs.pathResolve(this.paths.scripts[subDir ?? '_'], ...subpaths);
+        return fs.pathRelative(
+            fs.pathResolve(
+                this.paths.scripts[subDir ?? '_'] ?? './',
+                ...subpaths,
+            ),
+        );
     }
-    /**
-     * Gets the paths from the config for the given src sub directory.
-     */
     getSrcDir(fs, subDir, ...subpaths) {
         if (!subDir) {
-            return fs.pathResolve(this.paths.src._, ...subpaths);
+            return fs.pathRelative(
+                fs.pathResolve(this.paths.src._ ?? './', ...subpaths),
+            );
         }
         const result = this.paths.src[subDir ?? '_'] ?? [];
         return (Array.isArray(result) ? result : [result]).map((_path) =>
-            fs.pathResolve(_path, ...subpaths),
+            fs.pathRelative(fs.pathResolve(_path, ...subpaths)),
         );
     }
     /**
      * Gets the instance for the given stage.
      *
-     * @category Fetchers
-     *
      * @param stage  Stage to get.
      *
      * @return  An array with first the stage’s class and then the configured
-     *          arguments for that class, if any.
+     *          arguments for that class, or undefined if that class is disabled
+     *          by the config.
      */
     async getStage(stage, console) {
         const stageConfig = this.stages[stage];
@@ -196,35 +172,29 @@ export class ProjectConfig {
     /**
      * The object shape used when converting to JSON.
      *
-     * @category Exporters
-     *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
      */
     toJSON() {
-        return this;
+        return {
+            clr: this.clr,
+            compiler: this.compiler,
+            console: this.console,
+            fs: this.fs,
+            launchYear: this.launchYear,
+            paths: this.paths,
+            replace: this.replace,
+            stages: this.stages,
+            title: this.title,
+        };
     }
     /**
      * Overrides the default function to return a string representation of this
      * object.
      *
-     * @category Exporters
-     *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString | Object.prototype.toString()}
      */
     toString() {
         return JSON.stringify(this, null, 4);
-    }
-    /**
-     * Overrides the default function to return an object representation of this
-     * object.
-     *
-     * @category Exporters
-     *
-     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
-     * @see {@link ProjectConfig.toJSON | ProjectConfig.toJSON()}
-     */
-    valueOf() {
-        return this.toJSON();
     }
 }
 //# sourceMappingURL=ProjectConfig.js.map

@@ -3,23 +3,17 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
 import { Stage } from '../../types/index.js';
-import { BuildStage, CompileStage, DocumentStage, PackageStage, ReleaseStage, SnapshotStage, TestStage } from './classes/index.js';
-/**
- * Gets the default class for the given stage.
- *
- * @category Stages
- *
- * @since 0.1.0-alpha.draft
- *
- * @internal
- */
-export declare function getDefaultStageClass(stage: Stage.WithDefaultClass): typeof BuildStage | typeof CompileStage | typeof DocumentStage | typeof PackageStage | typeof ReleaseStage | typeof SnapshotStage | typeof TestStage;
+export declare function getDefaultStageClass(stage: "compile"): Stage.Class.Compile;
+export declare function getDefaultStageClass(stage: "build"): Stage.Class.Build;
+export declare function getDefaultStageClass(stage: "document"): Stage.Class.Document;
+export declare function getDefaultStageClass(stage: "package"): Stage.Class.Package;
+export declare function getDefaultStageClass(stage: "release"): Stage.Class.Release;
+export declare function getDefaultStageClass(stage: "snapshot"): Stage.Class.Snapshot;
+export declare function getDefaultStageClass(stage: "test"): Stage.Class.Test;
+export declare function getDefaultStageClass(stage: Stage.Name): Stage.Class;
 //# sourceMappingURL=getDefaultStageClass.d.ts.map

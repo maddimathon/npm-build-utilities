@@ -3,15 +3,14 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type {
+    Json,
+} from '@maddimathon/utility-typescript/types';
 
 import { escRegExp, escRegExpReplace } from '@maddimathon/utility-typescript/functions';
 
@@ -42,8 +41,8 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since ___PKG_VERSION___
  */
 export class CompileStage extends AbstractStage<
-    Stage.SubStage.Compile,
-    Stage.Args.Compile
+    Stage.Args.Compile,
+    Stage.SubStage.Compile
 > {
 
 
@@ -51,6 +50,13 @@ export class CompileStage extends AbstractStage<
     /* PROPERTIES
      * ====================================================================== */
 
+    /**
+     * {@inheritDoc AbstractStage.subStages}
+     * 
+     * @category Running
+     * 
+     * @source
+     */
     public readonly subStages: Stage.SubStage.Compile[] = [
         'scss',
         'ts',
@@ -63,11 +69,10 @@ export class CompileStage extends AbstractStage<
     public get ARGS_DEFAULT() {
 
         return {
-            ...AbstractStage.ARGS_DEFAULT,
-
             files: false,
             scss: true,
             ts: true,
+            utils: {},
         } as const satisfies Stage.Args.Compile;
     }
 
@@ -77,20 +82,22 @@ export class CompileStage extends AbstractStage<
      * ====================================================================== */
 
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     * 
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
     constructor (
         config: ProjectConfig,
         params: CLI.Params,
         args: Partial<Stage.Args.Compile>,
-        _pkg?: Node.PackageJson,
-        _version?: SemVer,
+        pkg?: Json.PackageJson,
+        version?: SemVer,
     ) {
-        super( 'compile', 'green', config, params, args, _pkg, _version );
+        super( 'compile', 'green', config, params, args, pkg, version );
     }
 
 
@@ -98,12 +105,6 @@ export class CompileStage extends AbstractStage<
     /* LOCAL METHODS
      * ====================================================================== */
 
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     public override startEndNotice( which: "start" | "end" | null ) {
         return super.startEndNotice( which, !this.params.building );
     }
@@ -114,11 +115,16 @@ export class CompileStage extends AbstractStage<
      * ====================================================================== */
 
     protected async runSubStage( subStage: Stage.SubStage.Compile ) {
-        if ( !this.args[ subStage ] ) { return; }
         await this[ subStage ]();
     }
 
+    /**
+     * Compiles scss files to css.
+     * 
+     * @category Sub-Stages
+     */
     protected async scss() {
+        if ( !this.args.scss ) { return; }
         this.console.progress( 'compiling scss files...', 1 );
 
         const scssSrcDir = this.getSrcDir( 'scss' );
@@ -243,13 +249,18 @@ export class CompileStage extends AbstractStage<
         this.console.vi.debug( { scssPathArgs }, ( this.params.verbose ? 3 : 2 ) );
 
         this.console.verbose( 'compiling to css...', 2 );
-
-        return Promise.all( scssPathArgs.map(
+        await Promise.all( scssPathArgs.map(
             ( { input, output } ) => this.compiler.scss( input, output, ( this.params.verbose ? 3 : 2 ) )
         ) );
     }
 
+    /**
+     * Compiles typescript to javascript.
+     * 
+     * @category Sub-Stages
+     */
     protected async ts() {
+        if ( !this.args.ts ) { return; }
         this.console.progress( 'compiling typescript files...', 1 );
 
         const tsSrcDir = this.getSrcDir( 'ts' );
@@ -361,16 +372,21 @@ export class CompileStage extends AbstractStage<
         this.console.vi.debug( { tsPaths }, ( this.params.verbose ? 3 : 2 ) );
 
         this.console.verbose( 'compiling to javascript...', 2 );
-        return Promise.all( tsPaths.map(
+        await Promise.all( tsPaths.map(
             tsc => {
                 this.console.verbose( 'compiling project: ' + tsc, 3 );
-                return this.compiler.typescript( tsc, ( this.params.verbose ? 4 : 1 ) );
+                return this.compiler.typescript( tsc, ( this.params.verbose ? 4 : 2 ) );
             }
         ) );
     }
 
+    /**
+     * Copies files to the dist directory.
+     * 
+     * @category Sub-Stages
+     */
     protected async files() {
-        if ( !this.args.files ) { return; } // here for typing backup
+        if ( !this.args.files ) { return; }
 
         const distDir = this.getDistDir().trim().replace( /\/$/g, '' );
         this.console.progress( `copying files to ${ distDir }...`, 1 );

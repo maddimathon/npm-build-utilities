@@ -3,43 +3,46 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type { Json } from '@maddimathon/utility-typescript/types';
+import type { Stage } from '../../types/index.js';
 import type { Logger } from '../../types/Logger.js';
-import { ProjectConfig } from '../01-config/index.js';
 /**
  * Complete, default configuration for the library.
  *
  * @category Config
+ *
+ * @param args  Either the package.json value or a Logger instance to use in
+ *              {@link internal.getPackageJson}.
+ *
+ * @return  Default configuration values.  Satisfies {@link Config.Internal}.
+ *
+ * @since 0.1.0-alpha.draft
  */
 export declare function defaultConfig(args?: {
-    pkg: Node.PackageJson;
+    pkg: Json.PackageJson;
 } | Logger): {
-    readonly title: any;
+    readonly title: string;
     readonly clr: "black";
-    readonly compiler: {
-        readonly sass: {
-            readonly charset: true;
-            readonly sourceMap: true;
-            readonly sourceMapIncludeSources: true;
-            readonly style: "expanded";
-        };
-    };
+    readonly compiler: {};
+    readonly console: {};
     readonly fs: {};
     readonly launchYear: string;
     readonly paths: {
+        readonly changelog: "CHANGELOG.md";
+        readonly readme: "README.md";
         readonly release: "@releases";
         readonly snapshot: ".snapshots";
         readonly dist: {
             readonly _: "dist";
             readonly docs: "docs";
             readonly scss: "dist/css";
+        };
+        readonly notes: {
+            readonly release: ".releasenotes.md";
         };
         readonly scripts: {
             readonly _: ".scripts";
@@ -52,14 +55,17 @@ export declare function defaultConfig(args?: {
             readonly ts: "src/ts";
         };
     };
-    readonly replace: typeof ProjectConfig.replace;
+    readonly replace: (_stage: Stage) => {
+        current: [RegExp, string][];
+        package: [RegExp, string][];
+    };
     readonly stages: {
-        readonly compile: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
-        readonly build: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
+        readonly compile: [Stage.Class.Compile];
+        readonly build: [Stage.Class.Build];
         readonly document: false;
-        readonly package: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
-        readonly release: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
-        readonly snapshot: typeof import("./index.js").BuildStage | typeof import("./index.js").CompileStage | typeof import("./index.js").DocumentStage | typeof import("./index.js").PackageStage | typeof import("./index.js").ReleaseStage | typeof import("./index.js").SnapshotStage | typeof import("./index.js").TestStage;
+        readonly package: [Stage.Class.Package];
+        readonly release: [Stage.Class.Release];
+        readonly snapshot: [Stage.Class.Snapshot];
         readonly test: false;
     };
 };

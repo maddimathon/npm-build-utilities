@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -18,7 +15,14 @@ import type { Logger } from '../../types/Logger.js';
  *
  * @category Config
  *
+ * @param inputConfig  Partial config to complete.
+ * @param console      Instance used to log messages and debugging info.
+ *
+ * @return  Complete object ready for {@link ProjectConfig}.
+ *
+ * @since 0.1.0-alpha.draft
+ *
  * @internal
  */
-export declare function internalConfig(inputConfig: Config | Config.Internal | Partial<Config.Internal> | Config & Partial<Config.Internal>, console?: Logger): Config.Internal;
+export declare function internalConfig(inputConfig: Config | Config.Internal | Config & Partial<Config.Internal>, console?: Logger): Config.Internal;
 //# sourceMappingURL=internalConfig.d.ts.map

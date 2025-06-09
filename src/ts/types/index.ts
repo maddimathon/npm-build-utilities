@@ -3,19 +3,13 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-/** @module CLI */
 export type * as CLI from './CLI.js';
 
-/** @module Config */
 export type * from './Config.js';
 
-/** @module Stage */
-export type * as Stage from './Stage.js';
+export type { Stage } from './Stage.js';

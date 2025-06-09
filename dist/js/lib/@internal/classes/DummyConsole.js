@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -56,12 +53,6 @@ export class DummyConsole {
             timeArgs,
         );
     }
-    notice(msg, level, msgArgs, timeArgs) {
-        if (!this.params.notice && typeof this.params.notice !== 'undefined') {
-            return;
-        }
-        this.log(msg, level, msgArgs, timeArgs);
-    }
     progress(msg, level, msgArgs, timeArgs) {
         if (
             !this.params.progress
@@ -74,7 +65,7 @@ export class DummyConsole {
     /**
      * Doesn't currently actually warn.
      *
-     * @todo
+     * @TODO - make it warn
      */
     warn(msg, level, msgArgs, timeArgs) {
         this.log(msg, level, msgArgs, timeArgs);
@@ -92,7 +83,6 @@ export class DummyConsole {
 class _DummyConsole_VarDump {
     nc;
     params;
-    // public readonly nc: node.NodeConsole;
     constructor(nc = new node.NodeConsole(), params = {}) {
         this.nc = nc;
         this.params = params;
@@ -109,9 +99,6 @@ class _DummyConsole_VarDump {
             },
             timeArgs,
         );
-    }
-    notice(variable, level, msgArgs, timeArgs) {
-        this.log(variable, level, msgArgs, timeArgs);
     }
     progress(variable, level, msgArgs, timeArgs) {
         this.log(variable, level, msgArgs, timeArgs);

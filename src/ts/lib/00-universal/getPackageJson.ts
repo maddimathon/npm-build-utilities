@@ -3,15 +3,14 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
  */
 
-import type { Node } from '@maddimathon/utility-typescript/types';
+import type {
+    Json,
+} from '@maddimathon/utility-typescript/types';
 
 // import type {
 // } from '../../types/index.js';
@@ -34,10 +33,13 @@ import {
  * @category Config
  *
  * @param args  A {@link FileSystem} instance to use or arguments to use to
- * construct one.
+ *              construct one.
+ * 
+ * @return  The parsed package.json file contents.
  *
- * @throws ProjectError  If no {@link FileSystem} instance was passed or there
- *                       was not enough information to construct one.
+ * @throws {@link ProjectError} — If no {@link FileSystem} instance was passed 
+ *                                or there was not enough information to 
+ *                                construct one.
  * 
  * @since ___PKG_VERSION___
  * 
@@ -45,13 +47,13 @@ import {
  */
 export function getPackageJson(
     args: FileSystem | {
-        console?: Logger,
+        console?: undefined | Logger,
         fs: FileSystem,
     } | {
         console: Logger,
         fs?: undefined | FileSystemType.Args,
     },
-): Partial<Node.PackageJson> {
+): Partial<Json.PackageJson> {
 
     let fs: FileSystem | undefined;
 
@@ -78,5 +80,5 @@ export function getPackageJson(
         );
     }
 
-    return JSON.parse( fs.readFile( 'package.json' ) ) as Node.PackageJson;
+    return JSON.parse( fs.readFile( 'package.json' ) ) as Json.PackageJson;
 }

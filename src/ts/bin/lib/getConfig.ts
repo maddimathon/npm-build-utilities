@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -45,13 +42,15 @@ import {
  *
  * Prompts the user in the terminal as needed to complete the configuration.
  *
- * @category Config
- *
- * @since 0.1.0-draft
- *
  * @param params   Input CLI params to convert.
- * @param console  Optional. And instance of the console class to use for outputting messages.
- * @param level    Optional. Depth level for this message (above the value of {@link CLI.Params.log-base-level}).
+ * @param console  Instance used to log messages and debugging info.
+ * @param level    Depth level for this message.
+ * 
+ * @returns  Complete config instance.
+ *
+ * @since ___PKG_VERSION___
+ * 
+ * @internal
  */
 export async function getConfig(
     params: CLI.Params,

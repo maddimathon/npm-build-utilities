@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -28,12 +25,11 @@ export declare class DummyConsole implements Logger {
     debug(msg: Parameters<DummyConsole['log']>[0], level: Parameters<DummyConsole['log']>[1], msgArgs?: Parameters<DummyConsole['log']>[2], timeArgs?: Parameters<DummyConsole['log']>[3]): void;
     error(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     log(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
-    notice(msg: Parameters<DummyConsole['log']>[0], level: Parameters<DummyConsole['log']>[1], msgArgs?: Parameters<DummyConsole['log']>[2], timeArgs?: Parameters<DummyConsole['log']>[3]): void;
     progress(msg: Parameters<DummyConsole['log']>[0], level: Parameters<DummyConsole['log']>[1], msgArgs?: Parameters<DummyConsole['log']>[2], timeArgs?: Parameters<DummyConsole['log']>[3]): void;
     /**
      * Doesn't currently actually warn.
      *
-     * @todo
+     * @TODO - make it warn
      */
     warn(msg: Parameters<DummyConsole['log']>[0], level: Parameters<DummyConsole['log']>[1], msgArgs?: Parameters<DummyConsole['log']>[2], timeArgs?: Parameters<DummyConsole['log']>[3]): void;
     verbose(msg: Parameters<DummyConsole['log']>[0], level: Parameters<DummyConsole['log']>[1], msgArgs?: Parameters<DummyConsole['log']>[2], timeArgs?: Parameters<DummyConsole['log']>[3]): void;

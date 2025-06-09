@@ -3,6 +3,7 @@
  * so they are made available here.
  *
  * @module internal
+ * @category Internal
  *
  * @since 0.1.0-alpha.draft
  *
@@ -15,9 +16,6 @@
  * @packageDocumentation
  * @internal
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -25,6 +23,7 @@
 export * from './@internal/classes/abstract/AbstractError.js';
 export * from './@internal/classes/UnknownCaughtError.js';
 export * from './@internal/classes/ProjectError.js';
+export * from './@internal/classes/StageError.js';
 export * from './@internal/classes/SemVer.js';
 export * from './@internal/errorHandler.js';
 export * from './@internal/errorStringify.js';

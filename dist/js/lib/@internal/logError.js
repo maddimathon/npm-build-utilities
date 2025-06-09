@@ -3,19 +3,16 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
+import { slugify } from '@maddimathon/utility-typescript/functions';
 import { errorStringify } from './errorStringify.js';
 import { writeLog } from './writeLog.js';
-import { slugify } from '@maddimathon/utility-typescript/functions/index';
 /**
- * Writes the content of an error to a msgs file and outputs (to the console) a
- * confirmation message with the path to the msgs file.
+ * Writes the content of an error to a log file and outputs (to the console) a
+ * confirmation message with the path to the log file.
  *
  * @category Errors
  *
@@ -30,6 +27,8 @@ import { slugify } from '@maddimathon/utility-typescript/functions/index';
  *          if written successfully.
  *
  * @since 0.1.0-alpha.draft
+ *
+ * @internal
  */
 export function logError(logMsg, error, level, args) {
     const {
@@ -41,7 +40,7 @@ export function logError(logMsg, error, level, args) {
     } = args;
     let msgs = [
         [(errMsg ?? logMsg) + '\n'],
-        ...errorStringify(error, {}, console, fs, level),
+        ...errorStringify(error, level, console, fs, {}),
     ];
     const filename = (typeof error === 'object' && error?.name) || 'error';
     const result = writeLog(msgs, slugify(filename), {
@@ -77,9 +76,11 @@ export function logError(logMsg, error, level, args) {
 /**
  * Utilities used only for {@link logError} function.
  *
- * @category Function-Helpers
+ * @category Errors
  *
  * @since 0.1.0-alpha.draft
+ *
+ * @internal
  */
 (function (logError) {})(logError || (logError = {}));
 //# sourceMappingURL=logError.js.map

@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -13,18 +10,20 @@
 
 import type { Test } from '@maddimathon/utility-typescript/types';
 
-import type { Stage } from '../../../types/index.js';
+import type {
+    Stage,
+} from '../../../types/index.js';
 
 import { TestStage } from './TestStage.js';
 
 
 // checks if the actual class can be assigned to its class type
-const testStage: Stage.ClassType.Test = TestStage;
+const testStage: Stage.Class.Test = TestStage;
 
 // double-checks that the types match
 type TypeTest = [
-    Test.Expect<Test.Satisfies<typeof TestStage, Stage.ClassType.Test>>,
-    Test.ExpectNot<Test.Exactly<typeof TestStage, Stage.ClassType.Test>>,
+    Test.Expect<Test.Satisfies<typeof TestStage, Stage.Class.Test>>,
+    Test.ExpectNot<Test.Exactly<typeof TestStage, Stage.Class.Test>>,
 ];
 
 // only here so that these are used and don’t throw errors

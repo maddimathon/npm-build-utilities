@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -15,17 +12,19 @@ import type { CLI } from '../../types/index.js';
 
 
 /**
- * Constructs a complete CLI params object based on the partial input.
+ * Constructs a complete CLI params object based on partial input.
  * 
  * @category Config
  * 
  * @param input  Input CLI params to convert.
  * 
  * @return  A completed version of the params object.
+ * 
+ * @since ___PKG_VERSION___
  */
 export function parseParamsCLI( input: Partial<CLI.Params> ): CLI.Params {
 
-    const defaultParams: CLI.Params = parseParamsCLI.ARGS_DEFAULT( input );
+    const defaultParams: CLI.Params = parseParamsCLI.DEFAULT( input );
 
     const parsed: CLI.Params = {
         ...defaultParams,
@@ -41,6 +40,7 @@ export function parseParamsCLI( input: Partial<CLI.Params> ): CLI.Params {
 
         if ( typeof input[ _key ] === 'undefined' ) {
             // @ts-expect-error - I honestly have no idea what's going wrong here
+            // UPGRADE - figure this out
             parsed[ _key ] = defaultParams[ _key ];
         }
     }
@@ -51,13 +51,18 @@ export function parseParamsCLI( input: Partial<CLI.Params> ): CLI.Params {
 /**
  * Utilities for {@link parseParamsCLI} function.
  * 
- * @category Function-Helpers
+ * @category Config
  * 
  * @since ___PKG_VERSION___
  */
 export namespace parseParamsCLI {
 
-    export const ARGS_DEFAULT = ( input: Partial<CLI.Params> ) => {
+    /**
+     * Default arguments for {@link parseParamsCLI} function.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export function DEFAULT( input: Partial<CLI.Params> ) {
 
         const stage = input._?.[ 0 ];
 
@@ -94,7 +99,6 @@ export namespace parseParamsCLI {
 
             debug: input._?.[ 0 ] === 'debug',
             'log-base-level': 0,
-            notice: true,
             progress: true,
             verbose: false,
 

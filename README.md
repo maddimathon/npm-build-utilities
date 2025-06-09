@@ -1,5 +1,6 @@
 ---
 title: About
+category: Documentation
 children: 
   - ./CHANGELOG.md
   - ./LICENSE.md
@@ -20,7 +21,9 @@ Not meant for use in production/client-side, only during development/build.
 **Unit testing is not yet properly implemented.**
 
 This library is fairly opinionated and targeted entirely towards my personal
-needs/preferences rather than to (web) developers in general.
+needs/preferences rather than to (web) developers in general.  If you want to
+use it, it probably makes sense to make a wrapper package with your own
+preferred configuration and utilities.
 
 
 ## Changelog
@@ -28,7 +31,7 @@ needs/preferences rather than to (web) developers in general.
 <!--README_DOCS_CHANGELOG-->
 Read it from [the source](https://github.com/maddimathon/npm-build-utilities/blob/main/CHANGELOG.md) 
 or 
-[the docs site](https://maddimathon.github.io/npm-build-utilities/Changelog.html).
+[the docs site](https://maddimathon.github.io/npm-build-utilities/About/Changelog.html).
 <!--/README_DOCS_CHANGELOG-->
 
 
@@ -55,7 +58,7 @@ below.
 ### Exports & Entry Points
 
 There is one main entry point (the root), plus one for types only and one for
-the {@link cli} and {@link internal} modules.  It should, however, be possible
+the {@link bin} and {@link internal} modules.  It should, however, be possible
 to target individual files (carefully and at your own risk, paths may change
 without being considered a breaking change).
 
@@ -63,9 +66,9 @@ without being considered a breaking change).
 import type { ... } from '@maddimathon/build-utilities';
 import type { ... } from '@maddimathon/build-utilities/types';
 
-import { cli, internal, ... } from '@maddimathon/build-utilities';
+import { bin, internal, ... } from '@maddimathon/build-utilities';
 
-import { ... } from '@maddimathon/build-utilities/cli';
+import { ... } from '@maddimathon/build-utilities/bin';
 import { ... } from '@maddimathon/build-utilities/internal';
 ```
 
@@ -75,7 +78,7 @@ A basic tsconfig to extend for npm scripts is available at
 
 ### Command Line
 
-See <a href="https://maddimathon.github.io/npm-build-utilities/cli.html">documentation</a> for details.
+See <a href="https://maddimathon.github.io/npm-build-utilities/Using_the_Library/CLI.html">documentation</a> for details.
 
 
 ## Development & Coding Practices
@@ -148,5 +151,5 @@ of its files.  **Types should also be tested** using the utility types in
 
 ## License
 
-This mini-library uses the [MIT license](LICENSE.md).  Please read and understand
-the license — I promise it’s short!
+This mini-library uses the [MIT license](LICENSE.md).  Please read and
+understand the license — I promise it’s short!

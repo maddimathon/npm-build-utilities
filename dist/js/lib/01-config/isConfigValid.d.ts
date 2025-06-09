@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -16,6 +13,13 @@ import type { Config } from '../../types/index.js';
  * valid {@link Config} object.
  *
  * @category Config
+ *
+ * @param test  The config object to check for completeness.
+ *
+ * @return  False if any required properties are missing or the wrong type.
+ *          Otherwise, this returns a {@link Config} object for nice typing.
+ *
+ * @since 0.1.0-alpha.draft
  *
  * @internal
  */

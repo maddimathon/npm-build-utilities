@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -85,16 +82,6 @@ export class DummyConsole implements Logger {
         );
     }
 
-    public notice(
-        msg: Parameters<DummyConsole[ 'log' ]>[ 0 ],
-        level: Parameters<DummyConsole[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<DummyConsole[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<DummyConsole[ 'log' ]>[ 3 ],
-    ) {
-        if ( !this.params.notice && typeof this.params.notice !== 'undefined' ) { return; }
-        this.log( msg, level, msgArgs, timeArgs );
-    }
-
     public progress(
         msg: Parameters<DummyConsole[ 'log' ]>[ 0 ],
         level: Parameters<DummyConsole[ 'log' ]>[ 1 ],
@@ -108,7 +95,7 @@ export class DummyConsole implements Logger {
     /** 
      * Doesn't currently actually warn.
      * 
-     * @todo
+     * @TODO - make it warn
      */
     public warn(
         msg: Parameters<DummyConsole[ 'log' ]>[ 0 ],
@@ -131,8 +118,6 @@ export class DummyConsole implements Logger {
 }
 
 class _DummyConsole_VarDump implements Logger.VarInspect {
-
-    // public readonly nc: node.NodeConsole;
 
     public constructor (
         public readonly nc: node.NodeConsole = new node.NodeConsole(),
@@ -163,15 +148,6 @@ class _DummyConsole_VarDump implements Logger.VarInspect {
             },
             timeArgs
         );
-    }
-
-    public notice(
-        variable: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 0 ],
-        level: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 3 ],
-    ) {
-        this.log( variable, level, msgArgs, timeArgs );
     }
 
     public progress(

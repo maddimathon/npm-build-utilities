@@ -5,9 +5,24 @@
         "body": "@since ___PKG_VERSION___"
     },
 
+    "Insert @param args": {
+        "prefix": "@param args",
+        "body": "@param args  Overrides for default options."
+    },
+
     "Insert @param config": {
         "prefix": "@param config",
         "body": "@param config  Current project config."
+    },
+
+    "Insert @param console": {
+        "prefix": "@param console",
+        "body": "@param console  Instance used to log messages and debugging info."
+    },
+
+    "Insert @param fs": {
+        "prefix": "@param fs",
+        "body": "@param fs  Instance used to work with paths and files."
     },
 
     "Insert @param level": {

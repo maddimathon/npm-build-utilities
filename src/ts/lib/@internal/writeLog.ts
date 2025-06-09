@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -27,15 +24,24 @@ import type {
 
 import type { FileSystemType } from '../../types/FileSystemType.js';
 
+
 let _writeLog_msgMaker = new MessageMaker( { painter: null } );
 
 /**
- * Gets a relative or absolute path to the {@link Config.Paths.scripts}
- * directories.
- * 
+ * Writes a log file to the {@link Config.Paths.scripts}.logs directory.
+ *
  * @category Errors
  * 
+ * @param msg       Log message to write.
+ * @param filename  File name for the log.
+ * @param t_args    Overrides for default options.
+ * 
+ * @return  If false, writing the log failed. Otherwise, this is the path to the 
+ *          written log file.
+ *
  * @since ___PKG_VERSION___
+ * 
+ * @internal
  */
 export function writeLog(
     msg: string | string[] | MessageMaker.BulkMsgs,
@@ -48,7 +54,7 @@ export function writeLog(
         date = new Date(),
         subDir = [],
         fs,
-    } = mergeArgs( writeLog.ARGS_DEFAULT, t_args, false );
+    } = mergeArgs( {}, t_args, false );
 
     const bulkMsgs: MessageMaker.BulkMsgs = (
         Array.isArray( msg ) ? msg : [ msg ]
@@ -94,19 +100,39 @@ export function writeLog(
 /**
  * Utilities used only for {@link writeLog} function.
  * 
- * @category Function-Helpers
+ * @category Errors
  * 
  * @since ___PKG_VERSION___
+ * 
+ * @internal
  */
 export namespace writeLog {
 
-    export const ARGS_DEFAULT = {
-    } as const satisfies Partial<Args>;
-
+    /**
+     * Optional overrides for default options.
+     * 
+     * @since ___PKG_VERSION___
+     */
     export interface Args {
-        config: Partial<Config> | Config.Internal;
+
+        /**
+         * Current project config.
+         */
+        config: Partial<Config | Config.Internal> | Config.Internal;
+
+        /**
+         * Used for the timestamp.
+         */
         date?: Date;
+
+        /**
+         * Instance used to work with paths and files.
+         */
         fs: FileSystemType;
+
+        /**
+         * Subdirectories used for the path to write the log file.
+         */
         subDir?: string[];
     }
 }

@@ -1,5 +1,4 @@
 /**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
  * @since ___PKG_VERSION___
  * 
  * @packageDocumentation

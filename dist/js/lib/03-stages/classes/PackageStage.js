@@ -3,13 +3,15 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
- */ import { arrayUnique } from '@maddimathon/utility-typescript/functions';
+ */ import {
+    arrayUnique,
+    escRegExp,
+    timestamp,
+} from '@maddimathon/utility-typescript/functions';
+import { StageError } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
@@ -22,37 +24,48 @@ import { AbstractStage } from './abstract/AbstractStage.js';
 export class PackageStage extends AbstractStage {
     /* PROPERTIES
      * ====================================================================== */
+    /**
+     * {@inheritDoc AbstractStage.subStages}
+     *
+     * @category Running
+     *
+     * @source
+     */
     subStages = ['snapshot', 'build', 'copy', 'zip'];
     /* Args ===================================== */
     get ARGS_DEFAULT() {
         return {
-            ...AbstractStage.ARGS_DEFAULT,
+            utils: {},
         };
     }
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config  Complete project configuration.
-     * @param params  Current CLI params.
-     * @param args    Optional. Partial overrides for the default args.
-     * @param _pkg      Optional. The current package.json value, if any.
-     * @param _version  Optional. Current version object, if any.
+     * @category Constructor
+     *
+     * @param config   Current project config.
+     * @param params   Current CLI params.
+     * @param args     Partial overrides for the default args.
+     * @param pkg      Parsed contents of the project’s package.json file.
+     * @param version  Version object for the project’s version.
      */
-    constructor(config, params, args, _pkg, _version) {
+    constructor(config, params, args, pkg, version) {
         super(
             'package',
-            params?.releasing ? 'orange' : 'purple',
+            params.releasing ? 'orange' : 'purple',
             config,
             params,
             args,
-            _pkg,
-            _version,
+            pkg,
+            version,
         );
     }
     /* LOCAL METHODS
      * ====================================================================== */
     /**
      * Runs the prompters to confirm before starting the substages.
+     *
+     * @category Running
      */
     async startPrompters() {
         const promptArgs = {
@@ -77,12 +90,6 @@ export class PackageStage extends AbstractStage {
                 },
             })) ?? !!this.params.dryrun;
     }
-    /**
-     * Prints a message to the console signalling the start or end of this
-     * build stage.
-     *
-     * @param which  Whether we are starting or ending.
-     */
     async startEndNotice(which) {
         const version = this.version.toString(this.isDraftVersion);
         // returns
@@ -119,27 +126,31 @@ export class PackageStage extends AbstractStage {
     }
     /**
      * Runs the project's build class.
+     *
+     * @category Sub-Stages
      */
     async build() {
         await this.runStage('build', 1);
     }
+    /**
+     * Copies all project files to the release directory.
+     *
+     * @category Sub-Stages
+     */
     async copy() {
         this.console.progress('copying files to package directory...', 1);
-        const sourceGlobs = [
-            ...(this.pkg.files ?? []),
-            // '.npmrc',
-            // '.nvmrc',
-            // 'package.json',
-            // 'package-lock.json',
-            // 'LICENSE.md',
-            // 'README.md',
-            // 'tsconfig.base.json',
-        ];
-        // this.console.vi.log( { sourceGlobs }, 2 );
-        const outDir = this.releasePath;
-        // this.console.vi.log( { outDir }, 2 );
-        const sourceDir = './';
-        // this.console.vi.log( { sourceDir }, 2 );
+        // throws & returns
+        if (!this.pkg.files?.length) {
+            this.handleError(
+                new StageError('No files defined in package.json for export', {
+                    class: 'PackageStage',
+                    method: 'copy',
+                }),
+                2,
+            );
+            return;
+        }
+        const releaseDir = this.releaseDir;
         let t_ignore = [
             ...FileSystem.globs.SYSTEM,
             '**/.archive/**',
@@ -169,25 +180,28 @@ export class PackageStage extends AbstractStage {
             }
         }
         const ignore = arrayUnique(t_ignore);
-        // this.console.vi.log( { ignore }, 2 );
-        // this.console.vi.log( { filesToCopy: this.fs.glob( sourceGlobs, { ignore } ).map( this.fs.pathRelative ) }, 2 );
-        if (this.fs.exists(outDir)) {
+        if (this.fs.exists(releaseDir)) {
             this.console.verbose('deleting current package folder...', 2);
             this.try(this.fs.delete, this.params.verbose ? 4 : 3, [
-                [outDir],
+                [releaseDir],
                 this.params.verbose ? 3 : 2,
             ]);
         }
         this.console.verbose('copying files to package...', 2);
         this.fs.copy(
-            sourceGlobs,
+            this.pkg.files,
             this.params.verbose ? 3 : 2,
-            outDir,
-            sourceDir,
-            { glob: { ignore } },
+            releaseDir,
+            './',
+            {
+                glob: {
+                    filesOnly: true,
+                    ignore,
+                },
+            },
         );
         this.console.verbose('replacing placeholders in package...', 2);
-        const replaceGlobs = [outDir.replace(/\/$/gi, '') + '/**/*'];
+        const replaceGlobs = [releaseDir.replace(/\/$/gi, '') + '/**/*'];
         for (const _key of ['current', 'package']) {
             this.replaceInFiles(
                 replaceGlobs,
@@ -198,12 +212,59 @@ export class PackageStage extends AbstractStage {
     }
     /**
      * Runs the project's snapshot class.
+     *
+     * @category Sub-Stages
      */
     async snapshot() {
         await this.runStage('snapshot', 1);
     }
+    /**
+     * Zips the release directory.
+     *
+     * @category Sub-Stages
+     */
     async zip() {
-        this.console.progress('(NOT IMPLEMENTED) running zip sub-stage...', 1);
+        this.console.progress('zipping package...', 1);
+        let zipPath = this.releaseDir.replace(/\/*$/g, '') + '.zip';
+        /**
+         * Directory to use as working dir when zipping the project.
+         * With a trailing slash.
+         */
+        const zippingPWD =
+            this.fs.pathResolve(this.releaseDir, '..').replace(/\/*$/g, '')
+            + '/';
+        /**
+         * Regex that matches the path to the working directory to zip from.
+         */
+        const zippingPWD_regex = new RegExp('^' + escRegExp(zippingPWD), 'g');
+        /*
+         * Correcting and formatting the output zip path.
+         */
+        zipPath =
+            this.fs.pathResolve(zipPath).replace(/(\/*|\.zip)?$/g, '') + '.zip';
+        if (this.fs.exists(zipPath)) {
+            const _timeStr = timestamp(null, {
+                date: true,
+                separator: '@',
+                time: true,
+            })
+                .replace(/[^a-z|0-9|\@]+/gi, '')
+                .replace(/@/g, '-');
+            zipPath = this.fs.uniquePath(
+                zipPath.replace(/(\/*|\.zip)?$/g, '') + `-${_timeStr}.zip`,
+            );
+        }
+        /**
+         * All files to include in the zip file.
+         */
+        const files = this.fs
+            .glob(this.releaseDir.replace(/\/*$/g, '/**'), { filesOnly: true })
+            .map((p) => p.replace(zippingPWD_regex, ''));
+        /*
+         * Running the command.
+         */
+        const zipCMD = `cd "${this.fs.pathRelative(zippingPWD)}" && zip "${zipPath.replace(zippingPWD_regex, '')}" '${files.join("' '")}'`;
+        this.try(this.console.nc.cmd, this.params.verbose ? 3 : 2, [zipCMD]);
     }
 }
 //# sourceMappingURL=PackageStage.js.map

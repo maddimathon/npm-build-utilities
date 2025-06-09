@@ -1,13 +1,5 @@
 #!/usr/bin/env node
 /**
- * NPM Build Utilities (CLI)
- * 
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- * @author Maddi Mathon (www.maddimathon.com)
- * @homepage ___CURRENT_URL___
- * 
- * @license MIT
- * 
  * @since ___PKG_VERSION___
  * 
  * @packageDocumentation

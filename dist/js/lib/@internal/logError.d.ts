@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -14,8 +11,8 @@ import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { FileSystemType } from '../../types/FileSystemType.js';
 import type { Logger } from '../../types/Logger.js';
 /**
- * Writes the content of an error to a msgs file and outputs (to the console) a
- * confirmation message with the path to the msgs file.
+ * Writes the content of an error to a log file and outputs (to the console) a
+ * confirmation message with the path to the log file.
  *
  * @category Errors
  *
@@ -30,18 +27,24 @@ import type { Logger } from '../../types/Logger.js';
  *          if written successfully.
  *
  * @since 0.1.0-alpha.draft
+ *
+ * @internal
  */
 export declare function logError(logMsg: string, error: unknown, level: number, args: logError.Args): MessageMaker.BulkMsgs;
 /**
  * Utilities used only for {@link logError} function.
  *
- * @category Function-Helpers
+ * @category Errors
  *
  * @since 0.1.0-alpha.draft
+ *
+ * @internal
  */
 export declare namespace logError {
     /**
      * Input configuration for {@link logError} function.
+     *
+     * @since 0.1.0-alpha.draft
      */
     interface Args {
         /**
@@ -56,12 +59,8 @@ export declare namespace logError {
          */
         fs: FileSystemType;
         /**
-         * Optional. The date object to use for the error log.
-         *
-         * @default
-         * ```ts
-         * new Date()
-         * ```
+         * The date object to use for the error log. Otherwise constructs a new
+         * date object.
          */
         date?: Date;
         /**

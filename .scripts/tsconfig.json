@@ -1,17 +1,12 @@
 {
     "extends": "../tsconfig.base.json",
     "include": [
-        "./**/*",
-        ".scripts/**/*",
+        "../.scripts/**/*",
+        ".scripts/**/*"
     ],
     "compilerOptions": {
         "baseUrl": "../",
-
-        "declaration": false,
-        "declarationMap": false,
         "exactOptionalPropertyTypes": false,
-        "noEmit": true,
-        "sourceMap": false,
-        "target": "ESNext"
+        "noEmit": true
     }
 }

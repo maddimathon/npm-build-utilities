@@ -3,9 +3,6 @@
  * 
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@___CURRENT_VERSION___
- */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
  * @license MIT
@@ -15,86 +12,98 @@
 // } from '../../types/index.js';
 ;
 import type { FileSystemType } from '../../types/FileSystemType.js';
-import type { LocalError } from '../../types/LocalError.js';
 import type { Logger } from '../../types/Logger.js';
 
 import {
+    type AbstractError,
+
     errorHandler,
 } from '../@internal/index.js';
 
+
 /**
+ * If the `tryer` function has no params, then they are optional.
+ * 
+ * @typeParam T_Params  Parameter type for the `tryer` function.
+ * @typeParam T_Return  Return type for the `tryer` function.
+ * 
  * @param tryer     Function to run inside the try {}.
- * @param level     
- * @param console   Instance used to log debugging information.
- * @param fs        
+ * @param level     Depth level for output to the console.
+ * @param console   Instance used to log messages and debugging info.
+ * @param fs        Instance used to work with paths and files.
  * @param params    Parameters passed to the tryer function, if any.
- * @param callback  Used to handle the error.  Note: if the callback does not throw or exit, the caught error is re-thrown.
+ * @param callback  Used to handle the error. Note: if the callback does not 
+ *                  throw or exit, the caught error is re-thrown.
+ * 
+ * @return  The `tryer` function’s return.
  */
 export function catchOrReturn<
-    Params extends never[],
-    Return extends unknown,
+    T_Params extends never[],
+    T_Return extends unknown,
 >(
-    tryer: ( ...params: Params ) => Return,
+    tryer: () => T_Return,
     level: number,
     console: Logger,
     fs: FileSystemType,
-    params?: Params,
+    params?: NoInfer<T_Params>,
     callback?: (
-        | null
-        | LocalError.Handler
-        | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
+        | AbstractError.Handler
+        | [ AbstractError.Handler, Partial<AbstractError.Handler.Args> ]
     ),
-): Return;
+): T_Return;
 
+/**
+ * If the `tryer` function *has* params, then they are required.
+ */
 export function catchOrReturn<
-    Params extends unknown[],
-    Return extends unknown,
+    T_Params extends unknown[],
+    T_Return extends unknown,
 >(
-    tryer: ( ...params: Params ) => Return,
+    tryer: ( ...params: T_Params ) => T_Return,
     level: number,
     console: Logger,
     fs: FileSystemType,
-    params: Params,
+    params: NoInfer<T_Params>,
     callback?: (
-        | null
-        | LocalError.Handler
-        | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
+        | AbstractError.Handler
+        | [ AbstractError.Handler, Partial<AbstractError.Handler.Args> ]
     ),
-): Return;
+): T_Return;
 
 /**
  * Runs a function, with parameters as applicable, and catches (& handles)
  * anything thrown.
  * 
- * Overloaded for better function param typing.
+ * Overloaded for better param typing.
  * 
  * @category Errors
  * 
- * @experimental
+ * @throws  Any errors thrown in the `tryer` function.
+ * 
+ * @since ___PKG_VERSION___
  */
 export function catchOrReturn<
-    Params extends unknown[] | never[],
-    Return extends unknown,
+    T_Params extends unknown[] | never[],
+    T_Return extends unknown,
 >(
-    tryer: ( ...params: Params ) => Return,
+    tryer: ( ...params: T_Params ) => T_Return,
     level: number,
     console: Logger,
     fs: FileSystemType,
-    params: Params,
-    callback: (
-        | null
-        | LocalError.Handler
-        | [ LocalError.Handler, Partial<LocalError.Handler.Args> ]
-    ) = null,
-): Return {
+    params?: NoInfer<T_Params>,
+    callback?: (
+        | AbstractError.Handler
+        | [ AbstractError.Handler, Partial<AbstractError.Handler.Args> ]
+    ),
+): T_Return {
 
     try {
 
-        return tryer( ...( params ?? [] as Params ) );
+        return tryer( ...( params ?? [] as T_Params ) );
 
     } catch ( error ) {
 
-        let callbackArgs: Partial<LocalError.Handler.Args> = {};
+        let callbackArgs: Partial<AbstractError.Handler.Args> = {};
 
         if ( !callback ) {
             callback = errorHandler;
@@ -104,7 +113,7 @@ export function catchOrReturn<
         }
 
         callback(
-            error as LocalError.Input,
+            error as AbstractError.Input,
             level,
             console,
             fs,

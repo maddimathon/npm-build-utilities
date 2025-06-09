@@ -3,9 +3,6 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
@@ -15,12 +12,14 @@
  *
  * @category Types
  *
+ * @since 0.1.0-alpha.draft
+ *
  * @internal
  */
 export var FileSystemType;
 (function (FileSystemType) {
     /**
-     * Types for {@link FileSystem.copy} method.
+     * Types for {@link FileSystemType.copy} method.
      *
      * @since 0.1.0-alpha.draft
      */
@@ -29,7 +28,16 @@ export var FileSystemType;
         (Copy = FileSystemType.Copy || (FileSystemType.Copy = {})),
     );
     /**
-     * Types for {@link FileSystem.minify} method.
+     * Types for {@link FileSystemType.glob} method.
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    let Glob;
+    (function (Glob) {})(
+        (Glob = FileSystemType.Glob || (FileSystemType.Glob = {})),
+    );
+    /**
+     * Types for {@link FileSystemType.minify} method.
      *
      * @since 0.1.0-alpha.draft
      */
@@ -38,7 +46,7 @@ export var FileSystemType;
         (Minify = FileSystemType.Minify || (FileSystemType.Minify = {})),
     );
     /**
-     * Types for {@link FileSystem.prettier} method.
+     * Types for {@link FileSystemType.prettier} method.
      *
      * @since 0.1.0-alpha.draft
      */

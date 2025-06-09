@@ -3,44 +3,52 @@
  *
  * @packageDocumentation
  */
-/**
- * @package @maddimathon/build-utilities@0.1.0-alpha.draft
- */
 /*!
  * @maddimathon/build-utilities@0.1.0-alpha.draft
  * @license MIT
  */
-import {
-    CustomError,
-    VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+import { VariableInspector } from '@maddimathon/utility-typescript/classes';
+import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 /**
  * An extension of the utilities error for use within the library.
  *
  * @category Errors
  *
+ * @typeParam T_Args  Complete {@link AbstractError.args} object for this instance.
+ *
  * @since 0.1.0-alpha.draft
  */
-export class AbstractError extends CustomError {
-    /* STATIC
-     * ====================================================================== */
-    /**
-     * Adds this error information to a log file according to the project
-     * configuration.
-     *
-     * @return  If false, writing a log file failed. Else, this is the path to
-     *          the log file.
-     */
-    static log(error, fs, args) {
-        return String(error);
-    }
+export class AbstractError extends Error {
     /* LOCAL PROPERTIES
      * ====================================================================== */
+    /** {@inheritDoc internal.AbstractError.Context} */
     context;
+    /* Args ===================================== */
+    /**
+     * Represents the cause of the error (e.g., a different exception that was
+     * caught).
+     *
+     * @see {@link Error.cause}
+     */
+    cause;
+    /**
+     * Additional arguments for this instance, if any.
+     */
+    args;
+    /**
+     * Default args object, if applicable.
+     */
+    ARGS_DEFAULT;
+    /** @hidden */
+    buildArgs(args) {
+        return mergeArgs(this.ARGS_DEFAULT ?? {}, args ?? {}, true);
+    }
     /* CONSTRUCTOR
      * ====================================================================== */
-    constructor(message, context, args) {
-        super(message, args?.cause, args);
+    constructor(message, context, cause, args) {
+        super(message);
+        this.args = this.buildArgs(args);
+        this.cause = cause;
         this.context = context;
     }
     /* LOCAL METHODS
@@ -60,8 +68,6 @@ export class AbstractError extends CustomError {
     /**
      * The object shape used when converting to JSON.
      *
-     * @category Exporters
-     *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
      */
     toJSON() {
@@ -77,8 +83,6 @@ export class AbstractError extends CustomError {
     /**
      * Overrides the default function to return a string representation of this
      * object.
-     *
-     * @category Exporters
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString | Object.prototype.toString()}
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/toString | Error.prototype.toString()}
@@ -102,21 +106,39 @@ export class AbstractError extends CustomError {
      * Overrides the default function to return an object representation of this
      * object.
      *
-     * @category Exporters
-     *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
-     * @see {@link NodeConsole_Error.toJSON | NodeConsole_Error.toJSON()}
      */
     valueOf() {
         return this.toJSON();
     }
 }
 /**
- * Used only for {@link AbstractError}.
+ * Types used for {@link AbstractError} classes.
  *
- * @category Class-Helpers
+ * @category Types
  *
  * @since 0.1.0-alpha.draft
+ *
+ * @internal
  */
-(function (AbstractError) {})(AbstractError || (AbstractError = {}));
+(function (AbstractError) {
+    /**
+     * Types for {@link Context} interface.
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    let Context;
+    (function (Context) {})(
+        (Context = AbstractError.Context || (AbstractError.Context = {})),
+    );
+    /**
+     * Types for handling errors in a variety of contexts.
+     *
+     * @since 0.1.0-alpha.draft
+     */
+    let Handler;
+    (function (Handler) {})(
+        (Handler = AbstractError.Handler || (AbstractError.Handler = {})),
+    );
+})(AbstractError || (AbstractError = {}));
 //# sourceMappingURL=AbstractError.js.map
