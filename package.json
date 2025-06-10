@@ -35,6 +35,7 @@
     "files": [
         "./dist/**/*",
         "./LICENSE.md",
+        "./package-lock.json",
         "./package.json",
         "./README.md",
         "./tsconfig.base.json"
@@ -108,7 +109,7 @@
         "release": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts release --config .scripts/build.config.ts"
     },
     "dependencies": {
-        "@maddimathon/utility-typescript": "2.0.0-alpha",
+        "@maddimathon/utility-typescript": "file:../utility-typescript",
         "@tsconfig/node20": "20.1.5",
         "glob": "11.0.2",
         "minimist": "1.2.8",

@@ -24,6 +24,10 @@ export class Project {
     params;
     /* STATIC METHODS
      * ====================================================================== */
+    /**
+     * Fetches an instance of {@link internal.Stage_Console} using the given
+     * info, if any.
+     */
     static async getConsole(opts = {}) {
         const params = opts.params ?? parseParamsCLI({});
         const config =
@@ -33,14 +37,12 @@ export class Project {
     /* LOCAL PROPERTIES
      * ====================================================================== */
     /**
-     * The configuration for this project.
+     * The configuration object for this project.
      */
     config;
     /* CONSTRUCUTOR
      * ====================================================================== */
     /**
-     * Constructs the class.
-     *
      * @param config  Complete project config.
      * @param params  Complete CLI params.
      */
@@ -55,6 +57,8 @@ export class Project {
      * ====================================================================== */
     /**
      * Displays some debugging information.
+     *
+     * @internal
      */
     async debug(console, stageClass, stageArgs, stageInstance) {
         const level = this.params['log-base-level'];
@@ -65,7 +69,6 @@ export class Project {
             && console.vi.progress(
                 {
                     stageInstance: {
-                        // config: stageInstance.config,
                         params: stageInstance.params,
                         args: stageInstance.args,
                     },
@@ -74,7 +77,7 @@ export class Project {
             );
     }
     /**
-     * Runs the given stage with the params.
+     * Runs the given stage with the project config and current params.
      */
     async run(stage) {
         const console = await Project.getConsole({

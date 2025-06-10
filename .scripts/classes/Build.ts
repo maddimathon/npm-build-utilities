@@ -45,17 +45,86 @@ export class Build extends BuildStage implements AbstractStage<
         'minimize',
         'test',
         'document',
+        'demos',
     ] as Stage.SubStage.Build[];
 
 
+    protected async demos() {
+        this.console.progress( 'updating demo files...', 1 );
 
-    public override get ARGS_DEFAULT() {
+        this.console.verbose( 'deleting compiled files...', 2 );
+        this.fs.delete( [
 
-        return {
-            ...super.ARGS_DEFAULT,
-        } as const satisfies Build.Args;
+            'demos/complete/.snapshots',
+            'demos/complete/@releases',
+            'demos/complete/dist',
+
+            'demos/no-config/.scripts',
+            'demos/no-config/.snapshots',
+            'demos/no-config/@releases',
+            'demos/no-config/dist',
+            'demos/no-config/src',
+            'demos/no-config/.releasenotes.md',
+            'demos/no-config/build-utils.config.js',
+            'demos/no-config/CHANGELOG.md',
+            'demos/no-config/tsconfig.json',
+
+        ], this.params.verbose ? 3 : 2 );
+
+        this.console.verbose( 'copying files to demos/complete...', 2 );
+        this.fs.copy(
+            [
+                'src/**/.*',
+                'src/**/*',
+            ],
+            this.params.verbose ? 3 : 2,
+            'demos/complete',
+            'src/demos',
+        );
+        this.fs.write(
+            'demos/complete/src/ts/tsconfig.json',
+            JSON.stringify( {
+                extends: '@maddimathon/build-utilities/tsconfig',
+                include: [
+                    '../../src/ts/**/*',
+                    './src/ts/**/*',
+                ],
+                compilerOptions: {
+                    baseUrl: '../../',
+                    noEmit: false,
+                    outDir: '../../dist/js',
+                }
+            }, null, 4 ),
+        );
+
+        this.console.verbose( 'copying files to demos/no-config...', 2 );
+        this.fs.copy(
+            [
+                'src/**/.*',
+                'src/**/*',
+            ],
+            this.params.verbose ? 3 : 2,
+            'demos/no-config',
+            'src/demos',
+        );
+
+        this.console.verbose( 'updating version numbers...', 2 );
+        for ( const _path of [
+            'demos/complete/package.json',
+            'demos/no-config/package.json',
+        ] ) {
+            const _currentPkgJson = this.fs.readFile( _path );
+
+            this.fs.write(
+                _path,
+                _currentPkgJson.replace(
+                    /"version":\s*"[^"]*"/gi,
+                    escRegExpReplace( `"version": "${ this.version.toString( false ) }"` )
+                ),
+                { force: true },
+            );
+        }
     }
-
 
     protected async tscheck() {
         this.console.progress( 'checking non-emitted typescript...', 1 );

@@ -6,6 +6,9 @@
  * @mergeModuleWith <project>
  * 
  * @since ___PKG_VERSION___
+ * 
+ * @remarks
+ * Example file for demos in @maddimathon/build-utilities@___CURRENT_VERSION___
  */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___

@@ -42,8 +42,7 @@ export declare class Stage_Console implements Logger {
      *
      * @see {@link Stage_Console.clr}  Default colour for the message.
      *
-     * @param level     Depth level for this message (above the value of
-     *                  {@link CLI.Params.log-base-level}).
+     * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
      * @param timeArgs  Argument overrides for the message's timestamp.
      *

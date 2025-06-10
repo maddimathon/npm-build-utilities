@@ -1,9 +1,9 @@
 name: Publish Package to GitHub & NPM
 
 on:
+  workflow_dispatch: # allows running from the Actions tab
   release:
     types: [published]
-  workflow_dispatch: # allows running from the Actions tab
 
 jobs:
   publish-github:

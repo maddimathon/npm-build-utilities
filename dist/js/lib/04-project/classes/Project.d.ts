@@ -20,28 +20,32 @@ import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
  */
 export declare class Project {
     readonly params: CLI.Params;
+    /**
+     * Fetches an instance of {@link internal.Stage_Console} using the given
+     * info, if any.
+     */
     static getConsole(opts?: {
         name?: string;
         params?: CLI.Params;
         config?: ProjectConfig;
     }): Promise<Stage_Console>;
     /**
-     * The configuration for this project.
+     * The configuration object for this project.
      */
     readonly config: ProjectConfig;
     /**
-     * Constructs the class.
-     *
      * @param config  Complete project config.
      * @param params  Complete CLI params.
      */
     constructor(config: Config.Internal | ProjectConfig, params: CLI.Params);
     /**
      * Displays some debugging information.
+     *
+     * @internal
      */
     protected debug<S extends Stage.Name>(console: Logger, stageClass: null | Stage.Class.All[S], stageArgs: null | Partial<Stage.Args.All[S]>, stageInstance: null | Stage.All[S]): Promise<void>;
     /**
-     * Runs the given stage with the params.
+     * Runs the given stage with the project config and current params.
      */
     run(stage: "debug" | Stage.Name): Promise<void>;
 }

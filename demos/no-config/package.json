@@ -1,15 +1,23 @@
 {
     "name": "@maddimathon/build-utilities--demos--no-config",
-    "version": "0.1.0",
+    "version": "0.1.0-alpha",
 
     "config": {
         "title": "NPM Build Utilities No-config Demo"
     },
 
+    "files": [
+        "./dist/**/*",
+        "./LICENSE.md",
+        "./package-lock.json",
+        "./package.json",
+        "./README.md"
+    ],
+
     "type": "module",
 
     "scripts": {
-        "_": "build-utils",
+        
         "help": "build-utils help",
         "debug": "build-utils debug",
 
@@ -27,7 +35,7 @@
 
         "dryrun": "build-utils release --dryrun",
 
-        "reset": "rm -f .scripts/build.config.js .scripts/tsconfig.json build-utils.config.js tsconfig.json src/tsconfig.json src/ts/tsconfig.json"
+        "reset": "rm -rf .scripts @releases .snapshots dist .releasenotes.md CHANGELOG.md build-utils.config.js tsconfig.json src/tsconfig.json src/ts/tsconfig.json"
     },
 
     "dependencies": {

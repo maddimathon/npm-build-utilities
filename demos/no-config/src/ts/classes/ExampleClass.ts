@@ -10,6 +10,8 @@
 
 /**
  * An example class that does almost nothing.
+ * 
+ * @since ___PKG_VERSION___
  */
 export class ExampleClass {
 

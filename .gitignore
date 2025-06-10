@@ -29,7 +29,9 @@ dist/docs/javascript.TypeDoc.json
 demos/*/@releases
 demos/*/.snapshots
 demos/*/dist
+demos/*/CHANGELOG.md
 demos/*/package-lock.json
+demos/*/README.md
 
 
 # DOCS

@@ -253,7 +253,7 @@ export class ReleaseStage extends AbstractStage<
 
         if ( inputVersion !== this.pkg.version ) {
 
-            const currentPkgJson: string = this.fs.readFile( 'package.json' );
+            const currentPkgJson = this.fs.readFile( 'package.json' );
 
             this.version = inputVersion;
 

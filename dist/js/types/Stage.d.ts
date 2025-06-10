@@ -172,8 +172,7 @@ export interface Stage<T_Args extends Stage.Args = Stage.Args, T_SubStage extend
      * @category Running
      *
      * @param subStage  Substage to check.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link CLI.Params.log-base-level}).
+     * @param level     Depth level for this message.
      *
      * @return  Whether to run this sub-stage.
      */

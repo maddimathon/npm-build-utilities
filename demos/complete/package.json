@@ -2,14 +2,18 @@
     "name": "@maddimathon/build-utilities--demos--complete",
     "version": "0.1.0-alpha",
 
-    "config": {
-        "title": "NPM Build Utilities Complete Demo"
-    },
+    "files": [
+        "./dist/**/*",
+        "./LICENSE.md",
+        "./package-lock.json",
+        "./package.json",
+        "./README.md"
+    ],
     
     "type": "module",
 
     "scripts": {
-        "_": "build-utils",
+        
         "help": "build-utils help",
         "debug": "build-utils debug",
 
@@ -25,7 +29,9 @@
         "package": "build-utils package",
         "release": "build-utils release",
 
-        "dryrun": "build-utils release --dryrun"
+        "dryrun": "build-utils release --dryrun",
+
+        "reset": "rm -f @releases/* .snapshots/* dist/*"
     },
 
     "dependencies": {

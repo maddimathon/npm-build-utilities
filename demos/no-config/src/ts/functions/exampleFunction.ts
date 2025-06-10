@@ -14,6 +14,8 @@
  * @category Category A
  * 
  * @return  Always says "hello".
+ * 
+ * @since ___PKG_VERSION___
  */
 export function exampleFunction(): "hello" {
     return 'hello';

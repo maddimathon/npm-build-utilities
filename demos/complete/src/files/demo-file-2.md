@@ -1,1 +1,1 @@
-This is an example file for testing.
+This is an example file for demo.

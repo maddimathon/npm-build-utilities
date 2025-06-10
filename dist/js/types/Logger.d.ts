@@ -71,8 +71,7 @@ export interface Logger {
      * {@link CLI.Params.progress} is truthy.
      *
      * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link CLI.Params.log-base-level}).
+     * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
      * @param timeArgs  Argument overrides for the message's timestamp.
      */
@@ -81,8 +80,7 @@ export interface Logger {
      * Outputs the given warning message to the console.
      *
      * @param msg       Warning message(s).
-     * @param level     Depth level for this message (above the value of
-     *                  {@link CLI.Params.log-base-level}).
+     * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
      * @param timeArgs  Argument overrides for the message's timestamp.
      */
@@ -92,8 +90,7 @@ export interface Logger {
      * {@link CLI.Params.verbose} is truthy.
      *
      * @param msg       The message(s) to print to the console.
-     * @param level     Depth level for this message (above the value of
-     *                  {@link CLI.Params.log-base-level}).
+     * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
      * @param timeArgs  Argument overrides for the message's timestamp.
      */
@@ -136,8 +133,7 @@ export declare namespace Logger {
          * {@link CLI.Params.debug} is truthy.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of
-         *                  {@link CLI.Params.log-base-level}).
+         * @param level     Depth level for this message.
          * @param msgArgs   Argument overrides for the message.
          * @param timeArgs  Argument overrides for the message's timestamp.
          */
@@ -146,8 +142,7 @@ export declare namespace Logger {
          * Prints a timestamped log message to the console.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of
-         *                  {@link CLI.Params.log-base-level}).
+         * @param level     Depth level for this message.
          * @param msgArgs   Argument overrides for the message.
          * @param timeArgs  Argument overrides for the message's timestamp.
          */
@@ -157,8 +152,7 @@ export declare namespace Logger {
          * {@link CLI.Params.progress} is truthy.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of
-         *                  {@link CLI.Params.log-base-level}).
+         * @param level     Depth level for this message.
          * @param msgArgs   Argument overrides for the message.
          * @param timeArgs  Argument overrides for the message's timestamp.
          */
@@ -175,8 +169,7 @@ export declare namespace Logger {
          * {@link CLI.Params.verbose} is truthy.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
-         * @param level     Depth level for this message (above the value of
-         *                  {@link CLI.Params.log-base-level}).
+         * @param level     Depth level for this message.
          * @param msgArgs   Argument overrides for the message.
          * @param timeArgs  Argument overrides for the message's timestamp.
          */

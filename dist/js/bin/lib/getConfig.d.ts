@@ -15,11 +15,15 @@ import { ProjectConfig } from '../../lib/index.js';
  *
  * Prompts the user in the terminal as needed to complete the configuration.
  *
- * @since 0.1.0-alpha.draft
- *
  * @param params   Input CLI params to convert.
  * @param console  Instance used to log messages and debugging info.
- * @param level    Depth level for this message (above the value of {@link CLI.Params.log-base-level}).
+ * @param level    Depth level for this message.
+ *
+ * @returns  Complete config instance.
+ *
+ * @since 0.1.0-alpha.draft
+ *
+ * @internal
  */
 export declare function getConfig(params: CLI.Params, console?: Logger | null, level?: number): Promise<ProjectConfig>;
 //# sourceMappingURL=getConfig.d.ts.map

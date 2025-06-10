@@ -331,7 +331,7 @@ export class FileSystem extends node.NodeFiles {
 
         const globResult = globSync( globs, args )
             .map( res => typeof res === 'object' ? res.fullpath() : res )
-            .filter( path => !path.match( /(^|\/)\._/g ) );
+            .filter( _path => _path.match( /(^|\/)\._/g ) === null );
 
         if ( args.filesOnly ) {
             return globResult.filter( this.isFile );
