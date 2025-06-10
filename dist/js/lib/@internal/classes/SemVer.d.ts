@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { Logger } from '../../../types/Logger.js';
@@ -22,7 +22,7 @@ import { AbstractError } from './abstract/index.js';
  * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json | Node’s package.json documentation}
  * @see {@link https://www.npmjs.com/package/semver | Node’s semver package}
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @experimental
  * @internal
@@ -97,7 +97,7 @@ export declare class SemVer {
  *
  * @category Config
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare namespace SemVer {
     /**
@@ -105,7 +105,7 @@ export declare namespace SemVer {
      *
      * @category Errors
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     class Error extends AbstractError {
         readonly code: Error.Code;
@@ -117,39 +117,39 @@ export declare namespace SemVer {
      *
      * @category Errors
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Error {
         /**
          * All allowed error code strings.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Code = typeof INVALID_INPUT | typeof INVALID_META | typeof INVALID_PRERELEASE | typeof INVALID_VERSION;
         /**
          * Error code for input version strings that cannot be coerced into a
          * valid version.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         const INVALID_INPUT = "4";
         /**
          * Error code for invalid build meta strings.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         const INVALID_META = "3";
         /**
          * Error code for invalid prerelease strings.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         const INVALID_PRERELEASE = "2";
         /**
          * Error code for invalid, missing, or non-matching major, minor, or
          * patch versions.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         const INVALID_VERSION = "1";
     }

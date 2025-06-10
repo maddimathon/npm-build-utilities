@@ -1,7 +1,7 @@
 /**
  * Types for the build stage classes.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -54,7 +54,7 @@ import type { Logger } from './Logger.js';
  * @typeParam T_Args      Complete {@link Stage.args} object for this stage.
  * @typeParam T_SubStage  String literal of all {@link Stage.subStages} options.
  *
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export interface Stage<
     T_Args extends Stage.Args = Stage.Args,
@@ -274,7 +274,7 @@ export interface Stage<
  * 
  * @category Types
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export namespace Stage {
 
@@ -284,7 +284,7 @@ export namespace Stage {
      * Those that are optional only have abstract classes included in this
      * package (test, document).
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      * 
      * @interface
      */
@@ -295,56 +295,56 @@ export namespace Stage {
     /** 
      * Shape of the default {@link BuildStage} class.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Build = Stage<Args.Build, SubStage.Build>;
 
     /** 
      * Shape of the default {@link CompileStage} class.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Compile = Stage<Args.Compile, SubStage.Compile>;
 
     /** 
      * Shape of the default {@link DocumentStage} class.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Document = Stage<Args.Document, SubStage.Document>;
 
     /** 
      * Shape of the default {@link PackageStage} class.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Package = Stage<Args.Package, SubStage.Package>;
 
     /** 
      * Shape of the default {@link ReleaseStage} class.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Release = Stage<Args.Release, SubStage.Release>;
 
     /** 
      * Shape of the default {@link SnapshotStage} class.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Snapshot = Stage<Args.Snapshot, SubStage.Snapshot>;
 
     /** 
      * Shape of the default {@link TestStage} class.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Test = Stage<Args.Test, SubStage.Test>;
 
     /**
      * The required shape for every stage's arguments.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Args {
 
@@ -360,7 +360,7 @@ export namespace Stage {
     /**
      * Type utilities for stage class argument objects.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Args {
 
@@ -370,7 +370,7 @@ export namespace Stage {
          * Those that are optional only have abstract classes included in this
          * package (test, document).
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type All = {
             build: Args.Build,
@@ -387,7 +387,7 @@ export namespace Stage {
          * 
          * @see {@link BuildStage.ARGS_DEFAULT}  For defaults.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Build extends Args {
 
@@ -453,7 +453,7 @@ export namespace Stage {
         /**
          * Types for the {@link Args.Build} interface.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export namespace Build {
 
@@ -462,7 +462,7 @@ export namespace Stage {
              * 
              * String array should be globs to minimize.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.1.0-alpha
              * 
              * @interface
              */
@@ -486,7 +486,7 @@ export namespace Stage {
             /**
              * Arguments for the {@link BuildStage.prettify} substage.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.1.0-alpha
              * 
              * @interface
              */
@@ -506,7 +506,7 @@ export namespace Stage {
          * 
          * @see {@link CompileStage.ARGS_DEFAULT}  For defaults.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Compile extends Args {
 
@@ -547,7 +547,7 @@ export namespace Stage {
          * 
          * @see {@link DocumentStage.ARGS_DEFAULT}  For defaults.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Document extends Args {
 
@@ -596,7 +596,7 @@ export namespace Stage {
          * 
          * @see {@link PackageStage.ARGS_DEFAULT}  For defaults.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Package extends Args { };
 
@@ -605,7 +605,7 @@ export namespace Stage {
          * 
          * @see {@link ReleaseStage.ARGS_DEFAULT}  For defaults.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Release extends Args {
 
@@ -634,7 +634,7 @@ export namespace Stage {
          * 
          * @see {@link SnapshotStage.ARGS_DEFAULT}  For defaults.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Snapshot extends Args {
 
@@ -649,7 +649,7 @@ export namespace Stage {
          * 
          * @see {@link TestStage.ARGS_DEFAULT}  For defaults.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Test extends Args {
 
@@ -668,7 +668,7 @@ export namespace Stage {
     /**
      * Any stage class compatible with this package.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Class {
         new(
@@ -683,7 +683,7 @@ export namespace Stage {
     /**
      * Any stage class compatible with this package.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface ClassTypeGeneric<
         T_Instance extends Stage<T_Args, T_SubStage>,
@@ -704,14 +704,14 @@ export namespace Stage {
      * 
      * @see {@link Class}
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Class {
 
         /**
          * An object with an instance of each stage's class.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          * 
          * @interface
          */
@@ -723,49 +723,49 @@ export namespace Stage {
         /**
          * Shape of the default {@link BuildStage} {@link Stage.Args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Build = ClassTypeGeneric<Stage.Build, Args.Build>;
 
         /**
          * Shape of the default {@link CompileStage} {@link Stage.Args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Compile = ClassTypeGeneric<Stage.Compile, Args.Compile>;
 
         /**
          * Shape of the default {@link DocumentStage} {@link Stage.Args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Document = ClassTypeGeneric<Stage.Document, Args.Document>;
 
         /**
          * Shape of the default {@link PackageStage} {@link Stage.Args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Package = ClassTypeGeneric<Stage.Package, Args.Package>;
 
         /**
          * Shape of the default {@link ReleaseStage} {@link Stage.Args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Release = ClassTypeGeneric<Stage.Release, Args.Release>;
 
         /**
          * Shape of the default {@link SnapshotStage} {@link Stage.Args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Snapshot = ClassTypeGeneric<Stage.Snapshot, Args.Snapshot>;
 
         /**
          * Shape of the default {@link TestStage} {@link Stage.Args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Test = ClassTypeGeneric<Stage.Test, Args.Test>;
     }
@@ -773,7 +773,7 @@ export namespace Stage {
     /**
      * Shape of the utility class for compiling file types.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Compiler {
 
@@ -827,14 +827,14 @@ export namespace Stage {
      * 
      * @see {@link Stage.Class}
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Compiler {
 
         /**
          * Optional configuration for {@link Compiler} classes.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Args {
 
@@ -855,7 +855,7 @@ export namespace Stage {
      * 
      * These are all lowercase on purpose.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      * 
      * @expand
      */
@@ -873,7 +873,7 @@ export namespace Stage {
      * 
      * @see {@link SubStage} 
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace SubStage {
 
@@ -883,7 +883,7 @@ export namespace Stage {
          * Those that are optional only have abstract classes included in this
          * package (test, document).
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          *
          * @interface
          */
@@ -900,7 +900,7 @@ export namespace Stage {
         /**
          * Default substage names for a build stage.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Build =
             | "compile"
@@ -913,21 +913,21 @@ export namespace Stage {
         /**
          * Default substage names for a compile stage.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Compile = "files" | "scss" | "ts";
 
         /**
          * Default substage names for a document stage.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Document = "replace" | "typeDoc";
 
         /**
          * Default substage names for a package stage.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Package =
             | "build"
@@ -938,7 +938,7 @@ export namespace Stage {
         /**
          * Default substage names for a release stage.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Release =
             | "changelog"
@@ -951,14 +951,14 @@ export namespace Stage {
         /**
          * Default substage names for a snapshot stage.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Snapshot = "snap";
 
         /**
          * Default substage names for a test stage.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Test = "scss" | "js";
     };

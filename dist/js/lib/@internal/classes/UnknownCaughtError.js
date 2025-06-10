@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import { AbstractError } from './abstract/AbstractError.js';
@@ -14,7 +14,7 @@ import { AbstractError } from './abstract/AbstractError.js';
  *
  * @category Errors
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export class UnknownCaughtError extends AbstractError {
     name = 'Unknown Caught Error';

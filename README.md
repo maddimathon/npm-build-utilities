@@ -7,11 +7,8 @@ children:
 ---
 
 <!--README_HEADER-->
-# NPM Build Utilities @ 0.1.0-alpha.draft
+# NPM Build Utilities @ 0.1.0-alpha
 <!--/README_HEADER-->
-
-**Not yet finished and still weird.**  This site is only public because I don't
-want to pay even more for GitHub.
 
 <!--README_DESC-->
 Opinionated utilities for easy build systems in npm projects.

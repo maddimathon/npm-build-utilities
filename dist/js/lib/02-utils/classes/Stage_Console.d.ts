@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import { node, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
@@ -18,7 +18,7 @@ import { ProjectConfig } from '../../01-config/index.js';
  *
  * @category Stages
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -86,7 +86,7 @@ export declare class Stage_Console implements Logger {
  *
  * @category Stages
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  * @private

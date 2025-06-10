@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -18,7 +18,7 @@ import { Logger } from '../../../../types/Logger.js';
  *
  * @typeParam T_Args  Complete {@link AbstractError.args} object for this instance.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare abstract class AbstractError<T_Args extends object | never = never> extends Error {
     /** {@inheritDoc internal.AbstractError.Context} */
@@ -78,7 +78,7 @@ export declare abstract class AbstractError<T_Args extends object | never = neve
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -86,19 +86,19 @@ export declare namespace AbstractError {
     /**
      * Context information for an error.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Context = Context.Basic | Context.Class | Context.Function;
     /**
      * Types for {@link Context} interface.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Context {
         /**
          * Basic context information for a thrown error.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Basic {
             file: string;
@@ -108,7 +108,7 @@ export declare namespace AbstractError {
         /**
          * Context information for an error thrown in a class.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Class extends Partial<Basic> {
             class: string;
@@ -117,7 +117,7 @@ export declare namespace AbstractError {
         /**
          * Context information for an error thrown in a function.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Function extends Partial<Basic> {
             function: string;
@@ -134,19 +134,19 @@ export declare namespace AbstractError {
      * @param fs       Instance used to work with paths and files.
      * @param args     Overrides for default options.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Handler = (error: Input, level: number, console: Logger, fs: FileSystemType, args?: Partial<Handler.Args>) => void;
     /**
      * Types for handling errors in a variety of contexts.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Handler {
         /**
          * Optional configuration for {@link Handler} function types.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Args extends MessageMaker.BulkMsgArgs {
             /**
@@ -160,7 +160,7 @@ export declare namespace AbstractError {
     /**
      * Expected error input types for Handler funtions.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Input = null | boolean | number | string | string[] | {
         [key: string]: any;
@@ -170,7 +170,7 @@ export declare namespace AbstractError {
     /**
      * Export shape for a plain {@link AbstractError} object.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface JSON extends Objects.Classify<Omit<AbstractError, "args" | "getOutput" | "toJSON" | "toString" | "valueOf">> {
         /**
@@ -182,7 +182,7 @@ export declare namespace AbstractError {
      * An approximation of the error thrown by node run via npm, which I can't
      * find the proper type for despite a ton of search keywords.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface NodeCliError extends Partial<Error> {
         name?: string;

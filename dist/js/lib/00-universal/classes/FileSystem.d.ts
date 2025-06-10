@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -18,7 +18,7 @@ import { AbstractError } from '../../@internal/index.js';
  *
  * @category Utilities
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare class FileSystem extends node.NodeFiles {
     /**
@@ -160,14 +160,14 @@ export declare class FileSystem extends node.NodeFiles {
  *
  * @category Utilities
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare namespace FileSystem {
     /**
      * Rather than the input arguments (i.e., {@link FileSystemType.Args}), this
      * is the shape of the object built by {@link FileSystem.buildArgs}.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      *
      * @internal
      */
@@ -184,7 +184,7 @@ export declare namespace FileSystem {
      *
      * @category Errors
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     class Error extends AbstractError {
         readonly name: string;
@@ -197,14 +197,14 @@ export declare namespace FileSystem {
      *
      * @category Utilities
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace globs {
         /**
          * Files that are copied into subdirectories (e.g., releases and
          * snapshots).
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          *
          * @source
          */
@@ -212,7 +212,7 @@ export declare namespace FileSystem {
         /**
          * Compiled files to ignore.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          *
          * @source
          */
@@ -220,13 +220,13 @@ export declare namespace FileSystem {
         /**
          * Files that we probably want to ignore within an npm project.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         const IGNORE_PROJECT: readonly [".git/**", "**/.git/**", ".scripts/**", "**/.scripts/**", ".vscode/**/*.code-snippets", ".vscode/**/settings.json", "node_modules/**", "**/node_modules/**"];
         /**
          * System files that we *never, ever* want to include.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         const SYSTEM: readonly ["._*", "._*/**", "**/._*", "**/._*/**", "**/.DS_Store", "**/.smbdelete**"];
     }
@@ -235,13 +235,13 @@ export declare namespace FileSystem {
      *
      * @category Transformers
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace minify {
         /**
          * Default args for the {@link FileSystem.minify} method
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         const ARGS_DEFAULT: {
             readonly css: {};
@@ -256,13 +256,13 @@ export declare namespace FileSystem {
      *
      * @category Transformers
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace prettier {
         /**
          * Default args for the {@link FileSystem.prettier} method
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         const ARGS_DEFAULT: {
             readonly _: {

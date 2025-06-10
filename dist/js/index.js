@@ -4,7 +4,7 @@
  * @module (root)
  * @mergeModuleWith <project>
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @example
  * ```ts
@@ -15,7 +15,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 /** @hidden - documented as an entry point module */

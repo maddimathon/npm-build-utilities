@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -39,7 +39,7 @@ let _writeLog_msgMaker = new MessageMaker( { painter: null } );
  * @return  If false, writing the log failed. Otherwise, this is the path to the 
  *          written log file.
  *
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */
@@ -102,7 +102,7 @@ export function writeLog(
  * 
  * @category Errors
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */
@@ -111,7 +111,7 @@ export namespace writeLog {
     /**
      * Optional overrides for default options.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Args {
 

@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -116,7 +116,7 @@ function _internalConfig_stage<_StageName extends Stage.Name>(
  * 
  * @return  Complete object ready for {@link ProjectConfig}.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */

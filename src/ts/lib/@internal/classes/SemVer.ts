@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -33,7 +33,7 @@ import {
  * @see {@link https://docs.npmjs.com/cli/v11/configuring-npm/package-json | Node’s package.json documentation}
  * @see {@link https://www.npmjs.com/package/semver | Node’s semver package}
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @experimental
  * @internal
@@ -250,7 +250,7 @@ export class SemVer {
  * 
  * @category Config
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export namespace SemVer {
 
@@ -259,7 +259,7 @@ export namespace SemVer {
      * 
      * @category Errors
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export class Error extends AbstractError {
 
@@ -283,14 +283,14 @@ export namespace SemVer {
      * 
      * @category Errors
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Error {
 
         /**
          * All allowed error code strings.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Code =
             | typeof INVALID_INPUT
@@ -302,21 +302,21 @@ export namespace SemVer {
          * Error code for input version strings that cannot be coerced into a
          * valid version.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export const INVALID_INPUT = '4';
 
         /**
          * Error code for invalid build meta strings.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export const INVALID_META = '3';
 
         /**
          * Error code for invalid prerelease strings.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export const INVALID_PRERELEASE = '2';
 
@@ -324,7 +324,7 @@ export namespace SemVer {
          * Error code for invalid, missing, or non-matching major, minor, or
          * patch versions.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export const INVALID_VERSION = '1';
     }

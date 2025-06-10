@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -43,7 +43,7 @@ export function getDefaultStageClass( stage: Stage.Name ): Stage.Class;
  * 
  * @return  The default stage class.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */

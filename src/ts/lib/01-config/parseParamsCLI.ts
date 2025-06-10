@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -20,7 +20,7 @@ import type { CLI } from '../../types/index.js';
  * 
  * @return  A completed version of the params object.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export function parseParamsCLI( input: Partial<CLI.Params> ): CLI.Params {
 
@@ -53,14 +53,14 @@ export function parseParamsCLI( input: Partial<CLI.Params> ): CLI.Params {
  * 
  * @category Config
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export namespace parseParamsCLI {
 
     /**
      * Default arguments for {@link parseParamsCLI} function.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export function DEFAULT( input: Partial<CLI.Params> ) {
 

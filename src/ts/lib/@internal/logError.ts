@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -42,7 +42,7 @@ import { writeLog } from './writeLog.js';
  * @return  Message that was output to the console, with a link to the log file
  *          if written successfully.
  *
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */
@@ -117,7 +117,7 @@ export function logError(
  * 
  * @category Errors
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */
@@ -126,7 +126,7 @@ export namespace logError {
     /**
      * Input configuration for {@link logError} function.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Args {
 

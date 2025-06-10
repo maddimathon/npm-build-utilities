@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -98,7 +98,7 @@ function _errorStringifyInternal(
  * @param fs       Instance used to work with paths and files.
  * @param args     Overrides for default options.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */

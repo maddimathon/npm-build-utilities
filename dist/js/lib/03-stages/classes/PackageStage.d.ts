@@ -8,7 +8,7 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  *
  * @category Stages
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare class PackageStage extends AbstractStage<Stage.Args.Package, Stage.SubStage.Package> {
     /**

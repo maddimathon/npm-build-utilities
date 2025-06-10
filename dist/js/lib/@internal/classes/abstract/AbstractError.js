@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import { VariableInspector } from '@maddimathon/utility-typescript/classes';
@@ -16,7 +16,7 @@ import { mergeArgs } from '@maddimathon/utility-typescript/functions';
  *
  * @typeParam T_Args  Complete {@link AbstractError.args} object for this instance.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export class AbstractError extends Error {
     /* LOCAL PROPERTIES
@@ -117,7 +117,7 @@ export class AbstractError extends Error {
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -125,7 +125,7 @@ export class AbstractError extends Error {
     /**
      * Types for {@link Context} interface.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let Context;
     (function (Context) {})(
@@ -134,7 +134,7 @@ export class AbstractError extends Error {
     /**
      * Types for handling errors in a variety of contexts.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let Handler;
     (function (Handler) {})(

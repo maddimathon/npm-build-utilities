@@ -41,7 +41,7 @@
     "dependencies": {
     },
     "devDependencies": {
-        "@maddimathon/build-utilities": "file:../.."
+        "@maddimathon/build-utilities": "0.1.0-alpha"
     },
 
     "browserslist": [

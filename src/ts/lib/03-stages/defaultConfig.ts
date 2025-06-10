@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -50,7 +50,7 @@ const _dummyConsole = new DummyConsole();
  * 
  * @return  Default configuration values.  Satisfies {@link Config.Internal}.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export function defaultConfig(
     args?: { pkg: Json.PackageJson; } | Logger,

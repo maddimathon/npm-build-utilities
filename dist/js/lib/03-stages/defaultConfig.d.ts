@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -20,7 +20,7 @@ import type { Logger } from '../../types/Logger.js';
  *
  * @return  Default configuration values.  Satisfies {@link Config.Internal}.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare function defaultConfig(args?: {
     pkg: Json.PackageJson;

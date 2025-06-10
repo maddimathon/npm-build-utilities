@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { Config, Stage } from '../../../types/index.js';
@@ -15,7 +15,7 @@ import { FileSystem } from '../../00-universal/index.js';
  *
  * @category Config
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare class ProjectConfig implements Config.Internal {
     /** {@inheritDoc Config.clr} */

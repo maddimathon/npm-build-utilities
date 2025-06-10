@@ -3,7 +3,7 @@
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @example
  * ```ts
@@ -13,14 +13,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { Stage } from './Stage.js';
 /**
  * Possible command options for the CLI.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export type Command = "debug" | "help" | Stage.Name;
 /**
@@ -31,7 +31,7 @@ export type Command = "debug" | "help" | Stage.Name;
  *
  * For default values, see {@link parseParamsCLI.DEFAULT}.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export interface Params {
     /**

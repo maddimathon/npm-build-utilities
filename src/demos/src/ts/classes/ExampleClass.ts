@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -11,7 +11,7 @@
 /**
  * An example class that does almost nothing.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export class ExampleClass {
 

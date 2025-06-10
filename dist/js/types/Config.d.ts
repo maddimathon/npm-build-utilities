@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -21,7 +21,7 @@ import type { Stage } from './Stage.js';
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export interface Config {
     /**
@@ -60,7 +60,7 @@ export interface Config {
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare namespace Config {
     /**
@@ -69,7 +69,7 @@ export declare namespace Config {
      *
      * **These properties are properly defined in {@link Config}.**
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      *
      * @interface
      * @internal
@@ -91,14 +91,14 @@ export declare namespace Config {
     /**
      * Types for the {@link Config.Internal} type.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Internal {
         /**
          * A version of {@link Config.Paths} with more limited, predictable
          * options.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          *
          * @interface
          */
@@ -124,7 +124,7 @@ export declare namespace Config {
          * A version of {@link Config.Stages} with more limited, predictable
          * options.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Stages = {
             [S in Stage.Name]: false | [Stage.Class] | [Stage.Class, undefined | Partial<Stage.Args.All[S]>];
@@ -135,7 +135,7 @@ export declare namespace Config {
      *
      * Absolute *or* relative to node’s cwd.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface Paths {
         /**
@@ -195,25 +195,25 @@ export declare namespace Config {
     /**
      * Types for the {@link Config.Paths} type.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Paths {
         /**
          * Keys for paths in the dist directory.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type DistDirectory = Exclude<SourceDirectory, "ts">;
         /**
          * Keys for paths in the source directory.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type SourceDirectory = "docs" | "scss" | "ts";
         /**
          * Function overloads for configuring the source path via function.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          *
          * @function
          */
@@ -226,7 +226,7 @@ export declare namespace Config {
     /**
      * Placeholders to be replaced during the build processes.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface Replace {
         /**
@@ -252,7 +252,7 @@ export declare namespace Config {
      *
      * If true, the default class is run.  If false, it is not run at all.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      *
      * @interface
      */

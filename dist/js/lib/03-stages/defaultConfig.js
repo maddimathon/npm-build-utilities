@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import { timestamp } from '@maddimathon/utility-typescript/functions';
@@ -23,7 +23,7 @@ const _dummyConsole = new DummyConsole();
  *
  * @return  Default configuration values.  Satisfies {@link Config.Internal}.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export function defaultConfig(args) {
     const fs = new FileSystem(args && !('pkg' in args) ? args : _dummyConsole);

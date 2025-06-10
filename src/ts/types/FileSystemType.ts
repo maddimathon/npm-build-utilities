@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -26,7 +26,7 @@ import type { Logger } from './Logger.js';
  *
  * @category Types
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -169,7 +169,7 @@ export interface FileSystemType extends node.NodeFiles {
  * 
  * @category Types
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */
@@ -178,7 +178,7 @@ export namespace FileSystemType {
     /**
      * Optional configuration for {@link FileSystemType} classes.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Args extends node.NodeFiles.Args {
 
@@ -212,14 +212,14 @@ export namespace FileSystemType {
     /**
      * Types for {@link FileSystemType.copy} method.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Copy {
 
         /**
          * Optional configuration for {@link FileSystemType.copy} method.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Args extends node.NodeFiles.CopyFileArgs {
 
@@ -234,14 +234,14 @@ export namespace FileSystemType {
     /**
      * Types for {@link FileSystemType.glob} method.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Glob {
 
         /**
          * Optional configuration for {@link FileSystemType.glob} method.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Args extends Required<GlobOptions> {
 
@@ -256,14 +256,14 @@ export namespace FileSystemType {
     /**
      * Types for {@link FileSystemType.minify} method.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Minify {
 
         /**
          * Optional configuration for {@link FileSystemType.minify} method.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Args {
 
@@ -305,7 +305,7 @@ export namespace FileSystemType {
         /**
          * File type options for minify.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Format =
             | "css"
@@ -317,14 +317,14 @@ export namespace FileSystemType {
     /**
      * Types for {@link FileSystemType.prettier} method.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Prettier {
 
         /**
          * Optional configuration for {@link FileSystemType.prettier} method.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Args extends Required<prettier.Options> {
             glob: Partial<Glob.Args>;
@@ -333,14 +333,14 @@ export namespace FileSystemType {
         /**
          * Utility types for the {@link Prettier.Args} interface.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export namespace Args {
 
             /**
              * {@include ./FileSystemType.docs.md#MultiFormatArgs}
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.1.0-alpha
              * 
              * @interface
              */
@@ -354,7 +354,7 @@ export namespace FileSystemType {
         /**
          * File type options for prettier.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Format =
             | "css"

@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -29,7 +29,7 @@ import {
  *
  * @category Config
  *
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export class ProjectConfig implements Config.Internal {
 

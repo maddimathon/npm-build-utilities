@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import {
@@ -26,7 +26,7 @@ let _writeLog_msgMaker = new MessageMaker({ painter: null });
  * @return  If false, writing the log failed. Otherwise, this is the path to the
  *          written log file.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */

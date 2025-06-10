@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -61,7 +61,7 @@ import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
  * @typeParam T_Args      Argument object for this stage.
  * @typeParam T_SubStage  String literal of substages to run within this stage.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export abstract class AbstractStage<
     T_Args extends Stage.Args,

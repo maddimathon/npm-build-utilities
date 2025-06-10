@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -28,7 +28,7 @@ import type {
  * @return  False if any required properties are missing or the wrong type.
  *          Otherwise, this returns a {@link Config} object for nice typing.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  *
  * @internal
  */

@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import { globSync } from 'glob';
@@ -22,7 +22,7 @@ import { AbstractError, logError } from '../../@internal/index.js';
  *
  * @category Utilities
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export class FileSystem extends node.NodeFiles {
     /* LOCAL PROPERTIES
@@ -503,7 +503,7 @@ export class FileSystem extends node.NodeFiles {
  *
  * @category Utilities
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 (function (FileSystem) {
     /**
@@ -511,7 +511,7 @@ export class FileSystem extends node.NodeFiles {
      *
      * @category Errors
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     class Error extends AbstractError {
         name = 'FileSystem Error';
@@ -525,7 +525,7 @@ export class FileSystem extends node.NodeFiles {
      *
      * @category Utilities
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let globs;
     (function (globs) {
@@ -533,7 +533,7 @@ export class FileSystem extends node.NodeFiles {
          * Files that are copied into subdirectories (e.g., releases and
          * snapshots).
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          *
          * @source
          */
@@ -544,7 +544,7 @@ export class FileSystem extends node.NodeFiles {
         /**
          * Compiled files to ignore.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          *
          * @source
          */
@@ -556,7 +556,7 @@ export class FileSystem extends node.NodeFiles {
         /**
          * Files that we probably want to ignore within an npm project.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         globs.IGNORE_PROJECT = [
             '.git/**',
@@ -571,7 +571,7 @@ export class FileSystem extends node.NodeFiles {
         /**
          * System files that we *never, ever* want to include.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         globs.SYSTEM = [
             '._*',
@@ -587,14 +587,14 @@ export class FileSystem extends node.NodeFiles {
      *
      * @category Transformers
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let minify;
     (function (minify) {
         /**
          * Default args for the {@link FileSystem.minify} method
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         minify.ARGS_DEFAULT = {
             css: {
@@ -640,14 +640,14 @@ export class FileSystem extends node.NodeFiles {
      *
      * @category Transformers
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let prettier;
     (function (prettier) {
         /**
          * Default args for the {@link FileSystem.prettier} method
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         prettier.ARGS_DEFAULT = {
             _: {

@@ -3,7 +3,7 @@
  * 
  * @category Types
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @example
  * ```ts
@@ -23,7 +23,7 @@ import type { Stage } from './Stage.js';
 /**
  * Possible command options for the CLI.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export type Command =
     | "debug"
@@ -39,7 +39,7 @@ export type Command =
  * 
  * For default values, see {@link parseParamsCLI.DEFAULT}.
  *
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export interface Params {
 

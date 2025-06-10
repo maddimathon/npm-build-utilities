@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -24,7 +24,7 @@ import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
  * @typeParam T_Args      Argument object for this stage.
  * @typeParam T_SubStage  String literal of substages to run within this stage.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStage extends string> implements Stage<T_Args, T_SubStage> {
     #private;

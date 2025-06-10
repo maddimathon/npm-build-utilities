@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -26,7 +26,7 @@ import type { Stage } from './Stage.js';
  * 
  * @category Types
  *
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export interface Config {
 
@@ -75,7 +75,7 @@ export interface Config {
  * 
  * @category Types
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export namespace Config {
 
@@ -85,7 +85,7 @@ export namespace Config {
      * 
      * **These properties are properly defined in {@link Config}.**
      *
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      * 
      * @interface
      * @internal
@@ -116,7 +116,7 @@ export namespace Config {
     /**
      * Types for the {@link Config.Internal} type.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Internal {
 
@@ -124,7 +124,7 @@ export namespace Config {
          * A version of {@link Config.Paths} with more limited, predictable
          * options.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          * 
          * @interface
          */
@@ -162,7 +162,7 @@ export namespace Config {
          * A version of {@link Config.Stages} with more limited, predictable
          * options.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type Stages = {
 
@@ -178,7 +178,7 @@ export namespace Config {
      * 
      * Absolute *or* relative to node’s cwd.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Paths {
 
@@ -248,28 +248,28 @@ export namespace Config {
     /**
      * Types for the {@link Config.Paths} type.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Paths {
 
         /**
          * Keys for paths in the dist directory.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type DistDirectory = Exclude<SourceDirectory, "ts">;
 
         /**
          * Keys for paths in the source directory.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export type SourceDirectory = "docs" | "scss" | "ts";
 
         /**
          * Function overloads for configuring the source path via function.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          * 
          * @function
          */
@@ -285,7 +285,7 @@ export namespace Config {
     /**
      * Placeholders to be replaced during the build processes.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Replace {
 
@@ -314,7 +314,7 @@ export namespace Config {
      * 
      * If true, the default class is run.  If false, it is not run at all.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      * 
      * @interface
      */

@@ -17,3 +17,55 @@ and this project adheres to
 
 
 <!--CHANGELOG_NEW-->
+
+
+## **0.1.0-alpha** -- 2025-06-09
+
+First release, everything is new!
+
+### Classes
+- AbstractStage
+- BuildStage
+- CompileStage
+- DocumentStage
+- PackageStage
+- ReleaseStage
+- SnapshotStage
+- TestStage
+- FileSystem (and namespace)
+- Project
+- ProjectConfig
+
+#### Internal
+- AbstractError (and namespace)
+- ProjectError
+- SemVer (and namespace)
+- Stage_Compiler
+- Stage_Console
+- StageError
+- UnknownCaughtError
+
+### Functions
+- catchOrReturn
+- defaultConfig
+- parseParamsCLI (and namespace)
+
+#### Internal
+- errorHandler
+- errorStringify
+- getConfig
+- getDefaultStageClass
+- getPackageJson
+- internalConfig
+- isConfigValid
+- logError (and namespace)
+- writeLog (and namespace)
+
+### Types
+- Config (and namespace)
+- Stage (and namespace)
+- CLI namespace
+
+#### Internal
+- FileSystemType (and namespace)
+- Logger (and namespace)

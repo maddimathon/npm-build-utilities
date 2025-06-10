@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 /**
@@ -16,7 +16,7 @@
  *
  * @return  A completed version of the params object.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export function parseParamsCLI(input) {
     const defaultParams = parseParamsCLI.DEFAULT(input);
@@ -42,13 +42,13 @@ export function parseParamsCLI(input) {
  *
  * @category Config
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 (function (parseParamsCLI) {
     /**
      * Default arguments for {@link parseParamsCLI} function.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     function DEFAULT(input) {
         const stage = input._?.[0];

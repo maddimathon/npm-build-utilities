@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */ import {
     arrayUnique,
@@ -19,7 +19,7 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  *
  * @category Stages
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export class PackageStage extends AbstractStage {
     /* PROPERTIES

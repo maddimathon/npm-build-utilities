@@ -1,7 +1,7 @@
 /**
  * Exports only the included classes.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @remarks
  * Example file for demos in @maddimathon/build-utilities@___CURRENT_VERSION___

@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -17,7 +17,7 @@ import { AbstractError } from './abstract/AbstractError.js';
  * 
  * @category Errors
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export class UnknownCaughtError extends AbstractError {
 

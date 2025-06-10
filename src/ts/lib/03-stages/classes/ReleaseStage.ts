@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -13,6 +13,7 @@ import type {
 } from '@maddimathon/utility-typescript/types';
 
 import {
+    arrayUnique,
     escRegExpReplace,
     softWrapText,
     timestamp,
@@ -43,7 +44,7 @@ import { FileSystem } from '../../00-universal/index.js';
  * 
  * @category Stages
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export class ReleaseStage extends AbstractStage<
     Stage.Args.Release,
@@ -288,11 +289,15 @@ export class ReleaseStage extends AbstractStage<
                     [ `${ this.pkg.name }@${ version }`, { flag: 'reverse' } ],
                     [ '  🎉 🎉 🎉', { flag: false } ],
                     [ '\n\n', { flag: false } ],
-                    [
-                        'eventually I will put a link to the github release draft here: ' + 'https://github.com/maddimathon/npm-build-utilities/releases',
-                        { bold: false, flag: false, indent: '  ', italic: true, maxWidth }
-                    ],
                 ];
+
+                if ( this.pkg.repository ) {
+
+                    _endMsg.push( [
+                        'eventually I will put a link to the github release draft here: ' + this.pkg.repository.replace( /\/+$/g, '' ) + '/releases',
+                        { bold: false, flag: false, indent: '  ', italic: true, maxWidth }
+                    ] );
+                }
 
                 this.console.startOrEnd( _endMsg, which, { maxWidth: null } );
                 return;
@@ -494,7 +499,9 @@ export class ReleaseStage extends AbstractStage<
             updatedPaths = updatedPaths.concat( this.args.replace( this ).package );
         }
 
-        updatedPaths = updatedPaths.map( this.fs.pathRelative );
+        updatedPaths = arrayUnique( updatedPaths )
+            .filter( this.fs.exists )
+            .map( this.fs.pathRelative );
 
         const gitCmd = `git add "${ updatedPaths.join( '" "' ) }"`
             + ' && '

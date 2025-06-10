@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -49,7 +49,7 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * 
  * @category Stages
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export class PackageStage extends AbstractStage<
     Stage.Args.Package,

@@ -1,12 +1,12 @@
 /**
  * Types for the build stage classes.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import * as sass from 'sass';
@@ -33,7 +33,7 @@ import type { Logger } from './Logger.js';
  * @typeParam T_Args      Complete {@link Stage.args} object for this stage.
  * @typeParam T_SubStage  String literal of all {@link Stage.subStages} options.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export interface Stage<T_Args extends Stage.Args = Stage.Args, T_SubStage extends string = string> {
     /**
@@ -203,7 +203,7 @@ export interface Stage<T_Args extends Stage.Args = Stage.Args, T_SubStage extend
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export declare namespace Stage {
     /**
@@ -212,7 +212,7 @@ export declare namespace Stage {
      * Those that are optional only have abstract classes included in this
      * package (test, document).
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      *
      * @interface
      */
@@ -222,49 +222,49 @@ export declare namespace Stage {
     /**
      * Shape of the default {@link BuildStage} class.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Build = Stage<Args.Build, SubStage.Build>;
     /**
      * Shape of the default {@link CompileStage} class.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Compile = Stage<Args.Compile, SubStage.Compile>;
     /**
      * Shape of the default {@link DocumentStage} class.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Document = Stage<Args.Document, SubStage.Document>;
     /**
      * Shape of the default {@link PackageStage} class.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Package = Stage<Args.Package, SubStage.Package>;
     /**
      * Shape of the default {@link ReleaseStage} class.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Release = Stage<Args.Release, SubStage.Release>;
     /**
      * Shape of the default {@link SnapshotStage} class.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Snapshot = Stage<Args.Snapshot, SubStage.Snapshot>;
     /**
      * Shape of the default {@link TestStage} class.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     type Test = Stage<Args.Test, SubStage.Test>;
     /**
      * The required shape for every stage's arguments.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface Args {
         /**
@@ -278,7 +278,7 @@ export declare namespace Stage {
     /**
      * Type utilities for stage class argument objects.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Args {
         /**
@@ -287,7 +287,7 @@ export declare namespace Stage {
          * Those that are optional only have abstract classes included in this
          * package (test, document).
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type All = {
             build: Args.Build;
@@ -303,7 +303,7 @@ export declare namespace Stage {
          *
          * @see {@link BuildStage.ARGS_DEFAULT}  For defaults.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Build extends Args {
             /**
@@ -353,7 +353,7 @@ export declare namespace Stage {
         /**
          * Types for the {@link Args.Build} interface.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         namespace Build {
             /**
@@ -361,7 +361,7 @@ export declare namespace Stage {
              *
              * String array should be globs to minimize.
              *
-             * @since 0.1.0-alpha.draft
+             * @since 0.1.0-alpha
              *
              * @interface
              */
@@ -379,7 +379,7 @@ export declare namespace Stage {
             /**
              * Arguments for the {@link BuildStage.prettify} substage.
              *
-             * @since 0.1.0-alpha.draft
+             * @since 0.1.0-alpha
              *
              * @interface
              */
@@ -392,7 +392,7 @@ export declare namespace Stage {
          *
          * @see {@link CompileStage.ARGS_DEFAULT}  For defaults.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Compile extends Args {
             /**
@@ -427,7 +427,7 @@ export declare namespace Stage {
          *
          * @see {@link DocumentStage.ARGS_DEFAULT}  For defaults.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Document extends Args {
             /**
@@ -467,7 +467,7 @@ export declare namespace Stage {
          *
          * @see {@link PackageStage.ARGS_DEFAULT}  For defaults.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Package extends Args {
         }
@@ -476,7 +476,7 @@ export declare namespace Stage {
          *
          * @see {@link ReleaseStage.ARGS_DEFAULT}  For defaults.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Release extends Args {
             /**
@@ -500,7 +500,7 @@ export declare namespace Stage {
          *
          * @see {@link SnapshotStage.ARGS_DEFAULT}  For defaults.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Snapshot extends Args {
             /**
@@ -513,7 +513,7 @@ export declare namespace Stage {
          *
          * @see {@link TestStage.ARGS_DEFAULT}  For defaults.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Test extends Args {
             js: false | {
@@ -528,7 +528,7 @@ export declare namespace Stage {
     /**
      * Any stage class compatible with this package.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface Class {
         new (config: ProjectConfig, params: CLI.Params, args: Partial<Args>, pkg?: Json.PackageJson, version?: SemVer): Stage;
@@ -536,7 +536,7 @@ export declare namespace Stage {
     /**
      * Any stage class compatible with this package.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface ClassTypeGeneric<T_Instance extends Stage<T_Args, T_SubStage>, T_Args extends Args = Args, T_SubStage extends string = string> {
         new (config: ProjectConfig, params: CLI.Params, args: Partial<T_Args>, pkg?: Json.PackageJson, version?: SemVer): T_Instance;
@@ -546,13 +546,13 @@ export declare namespace Stage {
      *
      * @see {@link Class}
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Class {
         /**
          * An object with an instance of each stage's class.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          *
          * @interface
          */
@@ -562,50 +562,50 @@ export declare namespace Stage {
         /**
          * Shape of the default {@link BuildStage} {@link Stage.Args}.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Build = ClassTypeGeneric<Stage.Build, Args.Build>;
         /**
          * Shape of the default {@link CompileStage} {@link Stage.Args}.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Compile = ClassTypeGeneric<Stage.Compile, Args.Compile>;
         /**
          * Shape of the default {@link DocumentStage} {@link Stage.Args}.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Document = ClassTypeGeneric<Stage.Document, Args.Document>;
         /**
          * Shape of the default {@link PackageStage} {@link Stage.Args}.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Package = ClassTypeGeneric<Stage.Package, Args.Package>;
         /**
          * Shape of the default {@link ReleaseStage} {@link Stage.Args}.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Release = ClassTypeGeneric<Stage.Release, Args.Release>;
         /**
          * Shape of the default {@link SnapshotStage} {@link Stage.Args}.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Snapshot = ClassTypeGeneric<Stage.Snapshot, Args.Snapshot>;
         /**
          * Shape of the default {@link TestStage} {@link Stage.Args}.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Test = ClassTypeGeneric<Stage.Test, Args.Test>;
     }
     /**
      * Shape of the utility class for compiling file types.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface Compiler {
         /**
@@ -645,13 +645,13 @@ export declare namespace Stage {
      *
      * @see {@link Stage.Class}
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Compiler {
         /**
          * Optional configuration for {@link Compiler} classes.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Args {
             /**
@@ -669,7 +669,7 @@ export declare namespace Stage {
      *
      * These are all lowercase on purpose.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      *
      * @expand
      */
@@ -679,7 +679,7 @@ export declare namespace Stage {
      *
      * @see {@link SubStage}
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace SubStage {
         /**
@@ -688,7 +688,7 @@ export declare namespace Stage {
          * Those that are optional only have abstract classes included in this
          * package (test, document).
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          *
          * @interface
          */
@@ -704,43 +704,43 @@ export declare namespace Stage {
         /**
          * Default substage names for a build stage.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Build = "compile" | "document" | "minimize" | "prettify" | "replace" | "test";
         /**
          * Default substage names for a compile stage.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Compile = "files" | "scss" | "ts";
         /**
          * Default substage names for a document stage.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Document = "replace" | "typeDoc";
         /**
          * Default substage names for a package stage.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Package = "build" | "copy" | "snapshot" | "zip";
         /**
          * Default substage names for a release stage.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Release = "changelog" | "commit" | "github" | "package" | "replace" | "tidy";
         /**
          * Default substage names for a snapshot stage.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Snapshot = "snap";
         /**
          * Default substage names for a test stage.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Test = "scss" | "js";
     }

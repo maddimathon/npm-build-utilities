@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -80,7 +80,7 @@ export function catchOrReturn<
  * 
  * @throws  Any errors thrown in the `tryer` function.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export function catchOrReturn<
     T_Params extends unknown[] | never[],

@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -15,7 +15,7 @@
  * 
  * @return  Always says "hello".
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export function exampleFunction(): "hello" {
     return 'hello';

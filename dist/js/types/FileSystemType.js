@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 /**
@@ -12,7 +12,7 @@
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -21,7 +21,7 @@ export var FileSystemType;
     /**
      * Types for {@link FileSystemType.copy} method.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let Copy;
     (function (Copy) {})(
@@ -30,7 +30,7 @@ export var FileSystemType;
     /**
      * Types for {@link FileSystemType.glob} method.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let Glob;
     (function (Glob) {})(
@@ -39,7 +39,7 @@ export var FileSystemType;
     /**
      * Types for {@link FileSystemType.minify} method.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let Minify;
     (function (Minify) {})(
@@ -48,7 +48,7 @@ export var FileSystemType;
     /**
      * Types for {@link FileSystemType.prettier} method.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     let Prettier;
     (function (Prettier) {})(

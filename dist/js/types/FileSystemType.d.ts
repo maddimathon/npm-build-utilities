@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import type { GlobOptions } from 'glob';
@@ -19,7 +19,7 @@ import type { Logger } from './Logger.js';
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -124,7 +124,7 @@ export interface FileSystemType extends node.NodeFiles {
  *
  * @category Types
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -132,7 +132,7 @@ export declare namespace FileSystemType {
     /**
      * Optional configuration for {@link FileSystemType} classes.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface Args extends node.NodeFiles.Args {
         /**
@@ -157,13 +157,13 @@ export declare namespace FileSystemType {
     /**
      * Types for {@link FileSystemType.copy} method.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Copy {
         /**
          * Optional configuration for {@link FileSystemType.copy} method.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Args extends node.NodeFiles.CopyFileArgs {
             /**
@@ -176,13 +176,13 @@ export declare namespace FileSystemType {
     /**
      * Types for {@link FileSystemType.glob} method.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Glob {
         /**
          * Optional configuration for {@link FileSystemType.glob} method.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Args extends Required<GlobOptions> {
             /**
@@ -195,13 +195,13 @@ export declare namespace FileSystemType {
     /**
      * Types for {@link FileSystemType.minify} method.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Minify {
         /**
          * Optional configuration for {@link FileSystemType.minify} method.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Args {
             /**
@@ -247,20 +247,20 @@ export declare namespace FileSystemType {
         /**
          * File type options for minify.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Format = "css" | "html" | "js" | "json";
     }
     /**
      * Types for {@link FileSystemType.prettier} method.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     namespace Prettier {
         /**
          * Optional configuration for {@link FileSystemType.prettier} method.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         interface Args extends Required<prettier.Options> {
             glob: Partial<Glob.Args>;
@@ -268,13 +268,13 @@ export declare namespace FileSystemType {
         /**
          * Utility types for the {@link Prettier.Args} interface.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         namespace Args {
             /**
              * {@include ./FileSystemType.docs.md#MultiFormatArgs}
              *
-             * @since 0.1.0-alpha.draft
+             * @since 0.1.0-alpha
              *
              * @interface
              */
@@ -287,7 +287,7 @@ export declare namespace FileSystemType {
         /**
          * File type options for prettier.
          *
-         * @since 0.1.0-alpha.draft
+         * @since 0.1.0-alpha
          */
         type Format = "css" | "html" | "js" | "json" | "md" | "mdx" | "scss" | "ts" | "yaml";
     }

@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -43,7 +43,7 @@ import type { Stage_Console } from './Stage_Console.js';
  *
  * @category Stages
  *
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  *
  * @internal
  */

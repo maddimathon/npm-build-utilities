@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -35,7 +35,7 @@ import { Logger } from '../../../../types/Logger.js';
  * 
  * @typeParam T_Args  Complete {@link AbstractError.args} object for this instance.
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export abstract class AbstractError<
     T_Args extends object | never = never,
@@ -179,7 +179,7 @@ export abstract class AbstractError<
  * 
  * @category Types
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @internal
  */
@@ -188,7 +188,7 @@ export namespace AbstractError {
     /**
      * Context information for an error.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Context =
         | Context.Basic
@@ -198,14 +198,14 @@ export namespace AbstractError {
     /**
      * Types for {@link Context} interface.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Context {
 
         /**
          * Basic context information for a thrown error.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Basic {
             file: string;
@@ -216,7 +216,7 @@ export namespace AbstractError {
         /**
          * Context information for an error thrown in a class.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Class extends Partial<Basic> {
             class: string;
@@ -226,7 +226,7 @@ export namespace AbstractError {
         /**
          * Context information for an error thrown in a function.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Function extends Partial<Basic> {
             function: string;
@@ -244,7 +244,7 @@ export namespace AbstractError {
      * @param fs       Instance used to work with paths and files.
      * @param args     Overrides for default options.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Handler = (
         error: Input,
@@ -257,14 +257,14 @@ export namespace AbstractError {
     /** 
      * Types for handling errors in a variety of contexts.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace Handler {
 
         /**
          * Optional configuration for {@link Handler} function types.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export interface Args extends MessageMaker.BulkMsgArgs {
 
@@ -280,7 +280,7 @@ export namespace AbstractError {
     /**
      * Expected error input types for Handler funtions.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export type Input =
         // | {}
@@ -296,7 +296,7 @@ export namespace AbstractError {
     /**
      * Export shape for a plain {@link AbstractError} object.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface JSON extends Objects.Classify<Omit<
         AbstractError,
@@ -313,7 +313,7 @@ export namespace AbstractError {
      * An approximation of the error thrown by node run via npm, which I can't
      * find the proper type for despite a ton of search keywords.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface NodeCliError extends Partial<Error> {
 

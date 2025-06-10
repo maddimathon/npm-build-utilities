@@ -1,13 +1,14 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import {
+    arrayUnique,
     escRegExpReplace,
     softWrapText,
     timestamp,
@@ -19,7 +20,7 @@ import { FileSystem } from '../../00-universal/index.js';
  *
  * @category Stages
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  */
 export class ReleaseStage extends AbstractStage {
     /* PROPERTIES
@@ -208,9 +209,12 @@ export class ReleaseStage extends AbstractStage {
                     [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
                     ['  🎉 🎉 🎉', { flag: false }],
                     ['\n\n', { flag: false }],
-                    [
+                ];
+                if (this.pkg.repository) {
+                    _endMsg.push([
                         'eventually I will put a link to the github release draft here: '
-                            + 'https://github.com/maddimathon/npm-build-utilities/releases',
+                            + this.pkg.repository.replace(/\/+$/g, '')
+                            + '/releases',
                         {
                             bold: false,
                             flag: false,
@@ -218,8 +222,8 @@ export class ReleaseStage extends AbstractStage {
                             italic: true,
                             maxWidth,
                         },
-                    ],
-                ];
+                    ]);
+                }
                 this.console.startOrEnd(_endMsg, which, { maxWidth: null });
                 return;
         }
@@ -421,7 +425,9 @@ export class ReleaseStage extends AbstractStage {
         if (this.args.replace) {
             updatedPaths = updatedPaths.concat(this.args.replace(this).package);
         }
-        updatedPaths = updatedPaths.map(this.fs.pathRelative);
+        updatedPaths = arrayUnique(updatedPaths)
+            .filter(this.fs.exists)
+            .map(this.fs.pathRelative);
         const gitCmd =
             `git add "${updatedPaths.join('" "')}"`
             + ' && '

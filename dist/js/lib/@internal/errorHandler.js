@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import { errorStringify } from './errorStringify.js';
@@ -21,7 +21,7 @@ import { errorStringify } from './errorStringify.js';
  * @param fs       Instance used to work with paths and files.
  * @param args     Overrides for default options.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */

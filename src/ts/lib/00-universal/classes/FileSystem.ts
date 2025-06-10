@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -44,7 +44,7 @@ import {
  * 
  * @category Utilities
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export class FileSystem extends node.NodeFiles {
 
@@ -652,7 +652,7 @@ export class FileSystem extends node.NodeFiles {
  * 
  * @category Utilities
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export namespace FileSystem {
 
@@ -660,7 +660,7 @@ export namespace FileSystem {
      * Rather than the input arguments (i.e., {@link FileSystemType.Args}), this
      * is the shape of the object built by {@link FileSystem.buildArgs}.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      * 
      * @internal
      */
@@ -679,7 +679,7 @@ export namespace FileSystem {
      * 
      * @category Errors
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export class Error extends AbstractError {
 
@@ -699,7 +699,7 @@ export namespace FileSystem {
      * 
      * @category Utilities
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace globs {
 
@@ -707,7 +707,7 @@ export namespace FileSystem {
          * Files that are copied into subdirectories (e.g., releases and
          * snapshots).
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          * 
          * @source
          */
@@ -719,7 +719,7 @@ export namespace FileSystem {
         /** 
          * Compiled files to ignore.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          * 
          * @source
          */
@@ -732,7 +732,7 @@ export namespace FileSystem {
         /** 
          * Files that we probably want to ignore within an npm project.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export const IGNORE_PROJECT = [
 
@@ -752,7 +752,7 @@ export namespace FileSystem {
         /** 
          * System files that we *never, ever* want to include.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export const SYSTEM = [
             '._*',
@@ -769,14 +769,14 @@ export namespace FileSystem {
      * 
      * @category Transformers
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace minify {
 
         /**
          * Default args for the {@link FileSystem.minify} method
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export const ARGS_DEFAULT = {
 
@@ -829,14 +829,14 @@ export namespace FileSystem {
      * 
      * @category Transformers
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export namespace prettier {
 
         /**
          * Default args for the {@link FileSystem.prettier} method
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.1.0-alpha
          */
         export const ARGS_DEFAULT = {
 

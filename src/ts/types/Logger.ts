@@ -1,5 +1,5 @@
 /**
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  * 
  * @packageDocumentation
  */
@@ -29,7 +29,7 @@ import type { Config } from './Config.js';
  * 
  * @category Types
  *
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export interface Logger {
 
@@ -153,14 +153,14 @@ export interface Logger {
  * 
  * @category Types
  * 
- * @since ___PKG_VERSION___
+ * @since 0.1.0-alpha
  */
 export namespace Logger {
 
     /**
      * Optional configuration for {@link Logger} classes.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface Args {
 
@@ -181,7 +181,7 @@ export namespace Logger {
      * 
      * @see {@link VariableInspector}  Used to inspect variables.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.1.0-alpha
      */
     export interface VarInspect {
 

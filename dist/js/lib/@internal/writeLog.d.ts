@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -22,7 +22,7 @@ import type { FileSystemType } from '../../types/FileSystemType.js';
  * @return  If false, writing the log failed. Otherwise, this is the path to the
  *          written log file.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -32,7 +32,7 @@ export declare function writeLog(msg: string | string[] | MessageMaker.BulkMsgs,
  *
  * @category Errors
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -40,7 +40,7 @@ export declare namespace writeLog {
     /**
      * Optional overrides for default options.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface Args {
         /**

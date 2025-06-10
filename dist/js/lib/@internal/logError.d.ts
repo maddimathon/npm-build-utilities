@@ -1,10 +1,10 @@
 /**
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.draft
+ * @maddimathon/build-utilities@0.1.0-alpha
  * @license MIT
  */
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -26,7 +26,7 @@ import type { Logger } from '../../types/Logger.js';
  * @return  Message that was output to the console, with a link to the log file
  *          if written successfully.
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -36,7 +36,7 @@ export declare function logError(logMsg: string, error: unknown, level: number, 
  *
  * @category Errors
  *
- * @since 0.1.0-alpha.draft
+ * @since 0.1.0-alpha
  *
  * @internal
  */
@@ -44,7 +44,7 @@ export declare namespace logError {
     /**
      * Input configuration for {@link logError} function.
      *
-     * @since 0.1.0-alpha.draft
+     * @since 0.1.0-alpha
      */
     interface Args {
         /**
