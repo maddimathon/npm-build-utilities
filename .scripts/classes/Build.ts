@@ -137,10 +137,21 @@ export class Build extends BuildStage implements AbstractStage<
 
             if ( this.params.releasing ) {
 
-                _replaced = _currentPkgJson.replace(
-                    /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
-                    escRegExpReplace( `"@maddimathon/build-utilities": "${ this.version.toString( false ) }"` )
-                );
+                if ( this.version.prerelease ) {
+
+                    // update to the version being release for testing
+                    _replaced = _currentPkgJson.replace(
+                        /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
+                        escRegExpReplace( `"@maddimathon/build-utilities": "${ this.version.toString( false ) }"` )
+                    );
+                } else {
+
+                    // update to be a file path for development
+                    _replaced = _currentPkgJson.replace(
+                        /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
+                        escRegExpReplace( `"@maddimathon/build-utilities": "file:../.."` )
+                    );
+                }
             }
 
             this.fs.write(

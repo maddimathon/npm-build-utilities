@@ -16,7 +16,7 @@
  * @internal
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.1
+ * @maddimathon/build-utilities@0.1.0
  * @license MIT
  */
 export * from './getConfig.js';

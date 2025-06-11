@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha.1
+ * @maddimathon/build-utilities@0.1.0
  * @license MIT
  */
 import {
@@ -60,7 +60,13 @@ export class ReleaseStage extends AbstractStage {
     get DEFAULT_RELEASE_NOTES() {
         return [
             '',
-            '### Breaking',
+            '### Removed',
+            '- ',
+            '',
+            '### Moved & Renamed',
+            '- ',
+            '',
+            '### Misc. Breaking',
             '- ',
             '',
             '### Added',
@@ -70,9 +76,6 @@ export class ReleaseStage extends AbstractStage {
             '- ',
             '',
             '### Fixed',
-            '- ',
-            '',
-            '### Removed',
             '- ',
             '',
             '',
@@ -373,7 +376,7 @@ export class ReleaseStage extends AbstractStage {
         const releaseNotes = this.fs.readFile(releaseNotesPath);
         const newChangeLogEntry =
             '<!--CHANGELOG_NEW-->\n\n\n'
-            + `## **${this.version.toString(false)}** -- ${timestamp(null, { date: true, time: false })}`
+            + `## **${this.version.toString(false)}** — ${timestamp(null, { date: true, time: false })}`
             + '\n\n'
             + releaseNotes.trim()
             + '\n\n\n';
