@@ -16,6 +16,7 @@ import type {
 
 import type {
     CLI,
+    Config,
     Stage,
 } from '../../../types/index.js';
 
@@ -28,9 +29,8 @@ import {
     FileSystem,
 } from '../../00-universal/index.js';
 
-import {
-    ProjectConfig,
-} from '../../01-config/index.js';
+// import {
+// } from '../../01-config/index.js';
 
 import type { Stage_Console } from './Stage_Console.js';
 
@@ -115,7 +115,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * @param fs       Instance used to work with paths and files.
      */
     constructor (
-        protected readonly config: ProjectConfig,
+        protected readonly config: Config.Class,
         protected readonly params: CLI.Params,
         protected readonly console: Stage_Console,
         protected readonly fs: FileSystem,

@@ -14,6 +14,7 @@ import type {
 
 import type {
     CLI,
+    Config,
     Stage,
 } from '../../../types/index.js';
 
@@ -21,9 +22,8 @@ import {
     SemVer,
 } from '../../@internal/index.js';
 
-import {
-    ProjectConfig,
-} from '../../01-config/index.js';
+// import {
+// } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
 
@@ -97,7 +97,7 @@ export class TestStage extends AbstractStage<
      * @param version  Version object for the project’s version.
      */
     constructor (
-        config: ProjectConfig,
+        config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Test>,
         pkg?: Json.PackageJson,

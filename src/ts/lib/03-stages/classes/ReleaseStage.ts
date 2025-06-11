@@ -27,12 +27,16 @@ import type {
 
 import type {
     CLI,
+    Config,
     Stage,
 } from '../../../types/index.js';
 
-import { SemVer } from '../../@internal/index.js';
+import {
+    SemVer,
+} from '../../@internal/index.js';
 
-import { ProjectConfig } from '../../01-config/index.js';
+// import {
+// } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
 import { FileSystem } from '../../00-universal/index.js';
@@ -178,7 +182,7 @@ export class ReleaseStage extends AbstractStage<
      * @param version  Version object for the project’s version.
      */
     constructor (
-        config: ProjectConfig,
+        config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Release>,
         pkg?: Json.PackageJson,
@@ -294,7 +298,7 @@ export class ReleaseStage extends AbstractStage<
                 if ( this.pkg.repository ) {
 
                     _endMsg.push( [
-                        'eventually I will put a link to the github release draft here: ' + this.pkg.repository.replace( /\/+$/g, '' ) + '/releases',
+                        'eventually I will put a link to the github release draft here: ' + this.pkg.repository.replace( /(\/+|\.git)$/g, '' ) + '/releases',
                         { bold: false, flag: false, indent: '  ', italic: true, maxWidth }
                     ] );
                 }

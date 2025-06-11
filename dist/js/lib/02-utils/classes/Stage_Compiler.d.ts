@@ -4,13 +4,12 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import * as sass from 'sass';
-import type { CLI, Stage } from '../../../types/index.js';
+import type { CLI, Config, Stage } from '../../../types/index.js';
 import { FileSystem } from '../../00-universal/index.js';
-import { ProjectConfig } from '../../01-config/index.js';
 import type { Stage_Console } from './Stage_Console.js';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
@@ -25,7 +24,7 @@ import type { Stage_Console } from './Stage_Console.js';
  * @internal
  */
 export declare class Stage_Compiler implements Stage.Compiler {
-    protected readonly config: ProjectConfig;
+    protected readonly config: Config.Class;
     protected readonly params: CLI.Params;
     protected readonly console: Stage_Console;
     protected readonly fs: FileSystem;
@@ -54,7 +53,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @param console  Instance used to log messages and debugging info.
      * @param fs       Instance used to work with paths and files.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, console: Stage_Console, fs: FileSystem);
+    constructor(config: Config.Class, params: CLI.Params, console: Stage_Console, fs: FileSystem);
     scss(input: string, output: string, level: number, sassOpts?: sass.Options<"sync">): Promise<void>;
     typescript(tsConfig: string, level: number): Promise<void>;
 }

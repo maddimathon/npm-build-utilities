@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import * as sass from 'sass';
@@ -18,7 +18,6 @@ import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
 import type { SemVer } from '../lib/@internal/classes/index.js';
 import type { FileSystem } from '../lib/00-universal/classes/index.js';
-import type { ProjectConfig } from '../lib/01-config/classes/index.js';
 import type { Stage_Compiler } from '../lib/02-utils/classes/Stage_Compiler.js';
 import type { FileSystemType } from './FileSystemType.js';
 import type { Logger } from './Logger.js';
@@ -531,7 +530,7 @@ export declare namespace Stage {
      * @since 0.1.0-alpha
      */
     interface Class {
-        new (config: ProjectConfig, params: CLI.Params, args: Partial<Args>, pkg?: Json.PackageJson, version?: SemVer): Stage;
+        new (config: Config.Class, params: CLI.Params, args: Partial<Args>, pkg?: Json.PackageJson, version?: SemVer): Stage;
     }
     /**
      * Any stage class compatible with this package.
@@ -539,7 +538,7 @@ export declare namespace Stage {
      * @since 0.1.0-alpha
      */
     interface ClassTypeGeneric<T_Instance extends Stage<T_Args, T_SubStage>, T_Args extends Args = Args, T_SubStage extends string = string> {
-        new (config: ProjectConfig, params: CLI.Params, args: Partial<T_Args>, pkg?: Json.PackageJson, version?: SemVer): T_Instance;
+        new (config: Config.Class, params: CLI.Params, args: Partial<T_Args>, pkg?: Json.PackageJson, version?: SemVer): T_Instance;
     }
     /**
      * Type utilities for stage class types.

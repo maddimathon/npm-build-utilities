@@ -80,6 +80,173 @@ export interface Config {
 export namespace Config {
 
     /**
+     * Shape for the project config class (i.e., {@link Config.Class}).
+     * 
+     * Properties are properly defined in {@link Config}.
+     * 
+     * @since 0.1.0-alpha.1
+     * 
+     * @internal
+     */
+    export interface Class extends Internal {
+
+        /**
+         * Used to export the default config to write a config file when one did
+         * not exist.
+         * 
+         * @since 0.1.0-alpha.1
+         */
+        export(): Config.Default;
+
+        /**
+         * Gets a path to the {@link Config.Paths.dist} directories.
+         * 
+         * @param fs        Instance used to work with paths and files.
+         * @param subDir    Sub-path to get.
+         * @param subpaths  Optional additional subpaths.
+         * 
+         * @return  Relative path.
+         * 
+         * @since 0.1.0-alpha — Previously defined in {@link ProjectConfig} class.
+         */
+        getDistDir(
+            fs: FileSystemType,
+            subDir?: Config.Paths.DistDirectory,
+            ...subpaths: string[]
+        ): string;
+
+        /**
+         * Gets a path to the {@link Config.Paths.scripts} directories.
+         * 
+         * @param fs        Instance used to work with paths and files.
+         * @param subDir    Sub-path to get.
+         * @param subpaths  Optional additional subpaths.
+         * 
+         * @return  Relative path.
+         * 
+         * @since 0.1.0-alpha — Previously defined in {@link ProjectConfig} class.
+         */
+        getScriptsPath(
+            fs: FileSystemType,
+            subDir?: "logs",
+            ...subpaths: string[]
+        ): string;
+
+        /**
+         * Gets a path to the {@link Config.Paths.src} directories.
+         *
+         * Overloaded for more accurate typing:
+         * - If a subdirectory is defined, the results will be an array.
+         * - If no subdirectory is defined, then the return will always be a
+         *   string.
+         *
+         * @param fs        Instance used to work with paths and files.
+         * @param subDir    Sub-path to get.
+         * @param subpaths  Optional additional subpaths.
+         *
+         * @return  Relative path.
+         *
+         * @since 0.1.0-alpha — Previously defined in {@link ProjectConfig}
+         * class.
+         */
+        getSrcDir(
+            fs: FileSystemType,
+            subDir: Config.Paths.SourceDirectory,
+            ...subpaths: string[]
+        ): string[];
+
+        getSrcDir(
+            fs: FileSystemType,
+            subDir?: undefined,
+            ...subpaths: string[]
+        ): string;
+
+        getSrcDir(
+            fs: FileSystemType,
+            subDir?: Config.Paths.SourceDirectory,
+            ...subpaths: string[]
+        ): string | string[];
+
+        /**
+         * Gets the instance for the given stage.
+         *
+         * @param stage  Stage to get.
+         *
+         * @return  An array with first the stage’s class and then the configured
+         *          arguments for that class, or undefined if that class is disabled
+         *          by the config.
+         * 
+         * @since 0.1.0-alpha — Previously defined in {@link ProjectConfig} class.
+         */
+        getStage(
+            stage: Stage.Name,
+            console: Logger,
+        ): Promise<undefined | [ Stage.Class, Partial<Stage.Args> ]>;
+
+        /**
+         * Returns the minimum required properties of this config.
+         * 
+         * Useful for creating stripped-down or default configuration objects.
+         * 
+         * @return  The minimum required properties for this config.
+         * 
+         * @since 0.1.0-alpha — Previously defined in {@link ProjectConfig} class.
+         */
+        minimum(): Config;
+
+        /**
+         * The object shape used when converting to JSON.
+         *
+         * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
+         * 
+         * @since 0.1.0-alpha — Previously defined in {@link ProjectConfig} class.
+         */
+        toJSON(): Config.Internal;
+
+        /**
+         * Overrides the default function to return a string representation of this
+         * object.
+         *
+         * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString | Object.prototype.toString()}
+         * 
+         * @since 0.1.0-alpha — Previously defined in {@link ProjectConfig} class.
+         */
+        toString(): string;
+    }
+
+    /**
+     * This is the shape of the internal config when it's exported to
+     * create a default config file.
+     * 
+     * Used by {@link Config.Class.export}
+     *
+     * @since 0.1.0-alpha.1
+     *
+     * @interface
+     * @internal
+     */
+    export type Default = {
+        [ _Key in Exclude<
+            keyof Config,
+            "launchYear" | "paths" | "replace" | "stages" | "title"
+        > ]?: Required<Config>[ _Key ];
+    } & {
+        [ _Key in Extract<
+            keyof Config,
+            "launchYear" | "title"
+        > ]-?: Required<Config>[ _Key ];
+    } & {
+
+        paths?: {
+            [ _Key in keyof Config.Internal.Paths ]?: Config.Internal.Paths[ _Key ];
+        };
+
+        stages?: {
+            [ _Key in Stage.Name ]?: boolean | Partial<Stage.Args.All[ _Key ]>;
+        };
+    };
+
+    /**
      * Complete configuration shape. Requires more properties than
      * {@link Config}.
      * 
@@ -95,21 +262,11 @@ export namespace Config {
             keyof Config,
             "clr" | "fs" | "paths" | "replace" | "stages"
         > ]: Config[ _Key ];
-    } & {
-
-        /** {@inheritDoc Config.clr} */
-        clr: Required<Config>[ 'clr' ],
-
-        /** {@inheritDoc Config.fs} */
-        fs: Required<Config>[ 'fs' ],
-
-        /** {@inheritDoc Config.Internal.Paths} */
+    } & Pick<
+        Required<Config>,
+        "clr" | "fs" | "replace"
+    > & {
         paths: Internal.Paths;
-
-        /** {@inheritDoc Config.Replace} */
-        replace: Required<Config>[ 'replace' ];
-
-        /** {@inheritDoc Config.Internal.Stages} */
         stages: Internal.Stages;
     };
 
@@ -218,11 +375,11 @@ export namespace Config {
          * - `scss` expects a directory, file path, or globs (or array of such)
          * - `ts` expects a directory or file path (or array of such)
          */
-        src: Paths.SourceFunction | ( {
-            _?: string;
-        } & {
+        src:
+        | Paths.SourceFunction
+        | { _?: string; } & {
             [ D in Paths.SourceDirectory ]?: string | string[];
-        } );
+        };
 
         /**
          * Relative path to changelog file.

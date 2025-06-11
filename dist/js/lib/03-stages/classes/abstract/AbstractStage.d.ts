@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -12,7 +12,6 @@ import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { CLI, Config, Stage } from '../../../../types/index.js';
 import { type AbstractError, SemVer } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
-import { ProjectConfig } from '../../../01-config/index.js';
 import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
 import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
 /**
@@ -39,7 +38,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @category Config
      */
-    readonly config: ProjectConfig;
+    readonly config: Config.Class;
     /**
      * {@inheritDoc Stage.console}
      *
@@ -160,7 +159,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @param pkg      Parsed contents of the project’s package.json file.
      * @param version  Version object for the project’s version.
      */
-    constructor(name: string, clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params, args: Partial<T_Args>, pkg: Json.PackageJson | undefined, version: SemVer | undefined);
+    constructor(name: string, clr: MessageMaker.Colour, config: Config.Class, params: CLI.Params, args: Partial<T_Args>, pkg: Json.PackageJson | undefined, version: SemVer | undefined);
     /** {@inheritDoc Stage.isDraftVersion} */
     get isDraftVersion(): boolean;
     /**

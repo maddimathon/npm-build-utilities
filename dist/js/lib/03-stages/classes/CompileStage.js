@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import {
@@ -12,6 +12,8 @@ import {
     escRegExpReplace,
 } from '@maddimathon/utility-typescript/functions';
 import { FileSystem } from '../../00-universal/index.js';
+// import {
+// } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
  * Default compile stage.
@@ -303,7 +305,7 @@ export class CompileStage extends AbstractStage {
             const baseUrl = tsSrcDir.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
             this.console.vi.debug({ baseUrl }, 2);
             const outDir = this.fs.pathRelative(
-                this.fs.pathResolve(baseUrl, this.getDistDir(), 'ts'),
+                this.fs.pathResolve(baseUrl, this.getDistDir(), 'js'),
             );
             this.console.vi.debug({ outDir }, 2);
             this.fs.write(

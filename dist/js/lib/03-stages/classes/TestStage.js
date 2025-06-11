@@ -4,9 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
- */ import { AbstractStage } from './abstract/AbstractStage.js';
+ */ // import {
+// } from '../../01-config/index.js';
+import { AbstractStage } from './abstract/AbstractStage.js';
 /**
  * Default package stage.
  *

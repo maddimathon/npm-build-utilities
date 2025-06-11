@@ -52,8 +52,10 @@ export class Build extends BuildStage implements AbstractStage<
     protected async demos() {
         this.console.progress( 'updating demo files...', 1 );
 
+
         this.console.verbose( 'deleting compiled files...', 2 );
-        this.fs.delete( [
+
+        const deleteGlobs = [
 
             'demos/complete/.snapshots',
             'demos/complete/@releases',
@@ -68,8 +70,17 @@ export class Build extends BuildStage implements AbstractStage<
             'demos/no-config/build-utils.config.js',
             'demos/no-config/CHANGELOG.md',
             'demos/no-config/tsconfig.json',
+        ];
 
-        ], this.params.verbose ? 3 : 2 );
+        if ( this.params.releasing ) {
+            deleteGlobs.push( 'demos/complete/node_modules' );
+            deleteGlobs.push( 'demos/no-config/node_modules' );
+            deleteGlobs.push( 'demos/complete/package-lock.json' );
+            deleteGlobs.push( 'demos/no-config/package-lock.json' );
+        }
+
+        this.fs.delete( deleteGlobs, this.params.verbose ? 3 : 2 );
+
 
         this.console.verbose( 'copying files to demos/complete...', 2 );
         this.fs.copy(
@@ -80,6 +91,7 @@ export class Build extends BuildStage implements AbstractStage<
             this.params.verbose ? 3 : 2,
             'demos/complete',
             'src/demos',
+            { force: true }
         );
         this.fs.write(
             'demos/complete/src/ts/tsconfig.json',
@@ -95,7 +107,9 @@ export class Build extends BuildStage implements AbstractStage<
                     outDir: '../../dist/js',
                 }
             }, null, 4 ),
+            { force: true }
         );
+
 
         this.console.verbose( 'copying files to demos/no-config...', 2 );
         this.fs.copy(
@@ -108,6 +122,7 @@ export class Build extends BuildStage implements AbstractStage<
             'src/demos',
         );
 
+
         this.console.verbose( 'updating version numbers...', 2 );
         for ( const _path of [
             'demos/complete/package.json',
@@ -115,12 +130,22 @@ export class Build extends BuildStage implements AbstractStage<
         ] ) {
             const _currentPkgJson = this.fs.readFile( _path );
 
+            let _replaced = _currentPkgJson.replace(
+                /"version":\s*"[^"]*"/gi,
+                escRegExpReplace( `"version": "${ this.version.toString( false ) }"` )
+            );
+
+            if ( this.params.releasing ) {
+
+                _replaced = _currentPkgJson.replace(
+                    /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
+                    escRegExpReplace( `"@maddimathon/build-utilities": "${ this.version.toString( false ) }"` )
+                );
+            }
+
             this.fs.write(
                 _path,
-                _currentPkgJson.replace(
-                    /"version":\s*"[^"]*"/gi,
-                    escRegExpReplace( `"version": "${ this.version.toString( false ) }"` )
-                ),
+                _replaced,
                 { force: true },
             );
         }

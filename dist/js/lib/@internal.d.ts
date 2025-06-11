@@ -17,7 +17,7 @@
  * @internal
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 export type * from '../types/FileSystemType.js';
@@ -29,6 +29,7 @@ export * from './@internal/classes/StageError.js';
 export * from './@internal/classes/SemVer.js';
 export * from './@internal/errorHandler.js';
 export * from './@internal/errorStringify.js';
+export * from './@internal/isObjectEmpty.js';
 export * from './@internal/logError.js';
 export * from './@internal/writeLog.js';
 export * from './00-universal/getPackageJson.js';

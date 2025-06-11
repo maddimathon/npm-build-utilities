@@ -16,6 +16,7 @@ import { escRegExp, escRegExpReplace } from '@maddimathon/utility-typescript/fun
 
 import type {
     CLI,
+    Config,
     Stage,
 } from '../../../types/index.js';
 
@@ -25,9 +26,8 @@ import {
     FileSystem,
 } from '../../00-universal/index.js';
 
-import {
-    ProjectConfig,
-} from '../../01-config/index.js';
+// import {
+// } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
 
@@ -91,7 +91,7 @@ export class CompileStage extends AbstractStage<
      * @param version  Version object for the project’s version.
      */
     constructor (
-        config: ProjectConfig,
+        config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Compile>,
         pkg?: Json.PackageJson,
@@ -355,7 +355,7 @@ export class CompileStage extends AbstractStage<
             const outDir = this.fs.pathRelative( this.fs.pathResolve(
                 baseUrl,
                 this.getDistDir(),
-                'ts',
+                'js',
             ) );
 
             this.console.vi.debug( { outDir }, 2 );

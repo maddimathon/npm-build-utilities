@@ -4,14 +4,18 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import { timestamp } from '@maddimathon/utility-typescript/functions';
 import { VariableInspector } from '@maddimathon/utility-typescript/classes';
 import { getPackageJson } from '../../lib/00-universal/getPackageJson.js';
 import { FileSystem, Project, ProjectConfig } from '../../lib/index.js';
-import { isConfigValid, internalConfig } from '../../lib/@internal.js';
+import {
+    isConfigValid,
+    internalConfig,
+    getDefaultStageClass,
+} from '../../lib/@internal.js';
 /**
  * Gets the configuration object for the current node package.
  *
@@ -169,34 +173,41 @@ export async function getConfig(params, console = null, level = 0) {
             paths: {
                 ...defaultConfig.paths,
                 release:
-                    newConfig.paths?.release
-                    ?? (await console.nc.prompt.input({
+                    (await console.nc.prompt.input({
                         message: 'What is the path for the release directory?',
                         default: defaultConfig.paths.release,
                         msgArgs,
-                    }))
-                    ?? defaultConfig.paths.release,
+                    })) ?? defaultConfig.paths.release,
                 snapshot:
-                    newConfig.paths?.snapshot
-                    ?? (await console.nc.prompt.input({
+                    (await console.nc.prompt.input({
                         message: 'What is the path for the snapshot directory?',
                         default: defaultConfig.paths.snapshot,
                         msgArgs,
-                    }))
-                    ?? defaultConfig.paths.snapshot,
+                    })) ?? defaultConfig.paths.snapshot,
             },
             stages: {
                 ...defaultConfig.stages,
-                snapshot:
-                    (newConfig.paths?.snapshot
-                    ?? (defaultConfig.stages.snapshot
-                        && (await console.nc.prompt.bool({
-                            message: 'Include snapshot stage?',
-                            default: !!defaultConfig.stages.snapshot,
-                            msgArgs,
-                        }))))
-                        ? defaultConfig.stages.snapshot
-                        : false,
+                document: (await console.nc.prompt.bool({
+                    message: 'Include document stage?',
+                    default: !!defaultConfig.stages.document,
+                    msgArgs,
+                }))
+                    ? [getDefaultStageClass('document')]
+                    : false,
+                snapshot: (await console.nc.prompt.bool({
+                    message: 'Include snapshot stage?',
+                    default: !!defaultConfig.stages.snapshot,
+                    msgArgs,
+                }))
+                    ? [getDefaultStageClass('snapshot')]
+                    : false,
+                test: (await console.nc.prompt.bool({
+                    message: 'Include test stage?',
+                    default: !!defaultConfig.stages.test,
+                    msgArgs,
+                }))
+                    ? [getDefaultStageClass('test')]
+                    : false,
             },
         };
     }
@@ -236,12 +247,15 @@ export async function getConfig(params, console = null, level = 0) {
         `/**`,
         ` * @type {Config}`,
         ` */`,
-        'const config = ' + builtConfig.toString() + ';',
+        'const config = '
+            + JSON.stringify(configInstance.export(), null, 4)
+            + ';',
         ``,
         `export default config;`,
     ].join('\n');
     console.vi.debug({ configFileContent }, level);
     fs.write(configPath, configFileContent, { force });
+    await fs.prettier(configPath, 'js');
     return configInstance;
 }
 //# sourceMappingURL=getConfig.js.map

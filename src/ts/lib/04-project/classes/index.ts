@@ -9,3 +9,4 @@
  */
 
 export * from './Project.js';
+export * from './ProjectConfig.js';

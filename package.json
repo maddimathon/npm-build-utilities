@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.1.0-alpha",
+    "version": "0.1.0-alpha.1",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
     "description": "Opinionated utilities for easy build systems in npm projects.",
@@ -13,6 +13,7 @@
 
     "homepage": "https://maddimathon.github.io/npm-build-utilities",
     "license": "MIT",
+    
     "repository": {
         "type": "git",
         "url": "https://github.com/maddimathon/npm-build-utilities.git"
@@ -109,7 +110,7 @@
         "release": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts release --config .scripts/build.config.ts"
     },
     "dependencies": {
-        "@maddimathon/utility-typescript": "2.0.0-alpha.1",
+        "@maddimathon/utility-typescript": "2.0.0-beta",
         "@tsconfig/node20": "20.1.5",
         "glob": "11.0.2",
         "minimist": "1.2.8",

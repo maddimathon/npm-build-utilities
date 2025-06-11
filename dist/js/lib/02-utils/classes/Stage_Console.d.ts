@@ -4,13 +4,12 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import { node, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
-import type { CLI } from '../../../types/index.js';
+import type { CLI, Config } from '../../../types/index.js';
 import type { Logger } from '../../../types/Logger.js';
-import { ProjectConfig } from '../../01-config/index.js';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
  *
@@ -24,7 +23,7 @@ import { ProjectConfig } from '../../01-config/index.js';
  */
 export declare class Stage_Console implements Logger {
     readonly clr: MessageMaker.Colour;
-    readonly config: ProjectConfig;
+    readonly config: Config.Class;
     readonly params: CLI.Params;
     /** {@inheritDoc Logger.nc} */
     readonly nc: node.NodeConsole;
@@ -35,7 +34,7 @@ export declare class Stage_Console implements Logger {
      * @param config  Current project config.
      * @param params  Current CLI params.
      */
-    constructor(clr: MessageMaker.Colour, config: ProjectConfig, params: CLI.Params);
+    constructor(clr: MessageMaker.Colour, config: Config.Class, params: CLI.Params);
     /**
      * Creates an argument object used to print messages to the terminal, adding
      * styling defaults by depth level.
@@ -92,7 +91,7 @@ export declare class Stage_Console implements Logger {
  * @private
  */
 export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
-    readonly config: ProjectConfig;
+    readonly config: Config.Class;
     readonly params: CLI.Params;
     readonly _msgArgs: Stage_Console['msgArgs'];
     protected readonly nc: node.NodeConsole;
@@ -102,7 +101,7 @@ export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
      * @param _msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
      * @param nc        Instance to use within the class.
      */
-    constructor(config: ProjectConfig, params: CLI.Params, _msgArgs: Stage_Console['msgArgs'], nc: node.NodeConsole);
+    constructor(config: Config.Class, params: CLI.Params, _msgArgs: Stage_Console['msgArgs'], nc: node.NodeConsole);
     private msgArgs;
     /** {@inheritDoc Logger.VarInspect.debug} */
     debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;

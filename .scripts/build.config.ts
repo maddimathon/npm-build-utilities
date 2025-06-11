@@ -51,10 +51,7 @@ const config: Config = {
                 return {
                     ..._defaults.build.prettify( _stage ),
 
-                    css: undefined,
                     html: undefined,
-                    json: undefined,
-                    scss: undefined,
                     ts: undefined,
                     yaml: undefined,
                 };
@@ -87,10 +84,6 @@ const config: Config = {
             typeDoc: {
 
                 categorizeByGroup: false,
-
-                // jsDocCompatibility: {
-                //     exampleTag: true,
-                // },
 
                 navigation: {
                     // includeCategories: true,

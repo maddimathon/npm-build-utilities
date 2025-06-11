@@ -21,6 +21,7 @@ import {
 
 import type {
     CLI,
+    Config,
 } from '../../../types/index.js';
 
 import type { Logger } from '../../../types/Logger.js';
@@ -31,9 +32,8 @@ import type { Logger } from '../../../types/Logger.js';
 // import {
 // } from '../../00-universal/index.js';
 
-import {
-    ProjectConfig,
-} from '../../01-config/index.js';
+// import {
+// } from '../../01-config/index.js';
 
 
 /**
@@ -72,7 +72,7 @@ export class Stage_Console implements Logger {
      */
     constructor (
         public readonly clr: MessageMaker.Colour,
-        public readonly config: ProjectConfig,
+        public readonly config: Config.Class,
         public readonly params: CLI.Params,
     ) {
         this.nc = new node.NodeConsole( mergeArgs(
@@ -343,7 +343,7 @@ export class _Stage_Console_VarInspect implements Logger.VarInspect {
      * @param nc        Instance to use within the class.
      */
     constructor (
-        public readonly config: ProjectConfig,
+        public readonly config: Config.Class,
         public readonly params: CLI.Params,
         public readonly _msgArgs: Stage_Console[ 'msgArgs' ],
         protected readonly nc: node.NodeConsole,

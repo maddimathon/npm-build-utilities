@@ -213,7 +213,9 @@ export class SemVer {
             this.patch.toFixed( 0 ),
         ].join( '.' );
 
-        let prerelease = this.prerelease;
+        let prerelease = Array.isArray( this.prerelease )
+            ? [ ...this.prerelease ]
+            : this.prerelease;
 
         let meta = this.meta;
 
@@ -223,7 +225,7 @@ export class SemVer {
                 prerelease = 'draft';
             } else if ( !Array.isArray( prerelease ) ) {
                 prerelease = [ prerelease, 'draft' ];
-            } else {
+            } else if ( !prerelease.includes( 'draft' ) ) {
                 prerelease.push( 'draft' );
             }
         }

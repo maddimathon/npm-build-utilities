@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import node_SemVer from 'semver';
@@ -189,14 +189,16 @@ export class SemVer {
             this.minor.toFixed(0),
             this.patch.toFixed(0),
         ].join('.');
-        let prerelease = this.prerelease;
+        let prerelease = Array.isArray(this.prerelease)
+            ? [...this.prerelease]
+            : this.prerelease;
         let meta = this.meta;
         if (draft) {
             if (!prerelease) {
                 prerelease = 'draft';
             } else if (!Array.isArray(prerelease)) {
                 prerelease = [prerelease, 'draft'];
-            } else {
+            } else if (!prerelease.includes('draft')) {
                 prerelease.push('draft');
             }
         }

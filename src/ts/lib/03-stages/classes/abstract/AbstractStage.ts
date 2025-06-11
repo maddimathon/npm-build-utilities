@@ -44,9 +44,8 @@ import {
 
 import { getPackageJson } from '../../../00-universal/getPackageJson.js';
 
-import {
-    ProjectConfig,
-} from '../../../01-config/index.js';
+// import {
+// } from '../../../01-config/index.js';
 
 import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
 import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
@@ -85,7 +84,7 @@ export abstract class AbstractStage<
      * 
      * @category Config
      */
-    public readonly config: ProjectConfig;
+    public readonly config: Config.Class;
 
     /** 
      * {@inheritDoc Stage.console}
@@ -303,7 +302,7 @@ export abstract class AbstractStage<
     public constructor (
         name: string,
         clr: MessageMaker.Colour,
-        config: ProjectConfig,
+        config: Config.Class,
         params: CLI.Params,
         args: Partial<T_Args>,
         pkg: Json.PackageJson | undefined,
@@ -611,7 +610,7 @@ export abstract class AbstractStage<
      * @category Config
      */
     public getSrcDir(
-        subDir?: Config.Paths.SourceDirectory,
+        subDir?: undefined | Config.Paths.SourceDirectory,
         ...subpaths: string[]
     ): string | string[] {
         return this.config.getSrcDir( this.fs, subDir, ...( subpaths ?? [] ) );

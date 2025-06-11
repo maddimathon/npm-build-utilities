@@ -12,5 +12,6 @@ export * from './classes/index.js';
 
 export * from './errorHandler.js';
 export * from './errorStringify.js';
+export * from './isObjectEmpty.js';
 export * from './logError.js';
 export * from './writeLog.js';

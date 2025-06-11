@@ -34,6 +34,7 @@ import {
 import {
     isConfigValid,
     internalConfig,
+    getDefaultStageClass,
 } from '../../lib/@internal.js';
 
 
@@ -224,13 +225,13 @@ export async function getConfig(
             paths: {
                 ...defaultConfig.paths,
 
-                release: newConfig.paths?.release ?? await console.nc.prompt.input( {
+                release: await console.nc.prompt.input( {
                     message: 'What is the path for the release directory?',
                     default: defaultConfig.paths.release,
                     msgArgs,
                 } ) ?? defaultConfig.paths.release,
 
-                snapshot: newConfig.paths?.snapshot ?? await console.nc.prompt.input( {
+                snapshot: await console.nc.prompt.input( {
                     message: 'What is the path for the snapshot directory?',
                     default: defaultConfig.paths.snapshot,
                     msgArgs,
@@ -240,14 +241,23 @@ export async function getConfig(
             stages: {
                 ...defaultConfig.stages,
 
-                snapshot: newConfig.paths?.snapshot ?? (
-                    defaultConfig.stages.snapshot
-                    && await console.nc.prompt.bool( {
-                        message: 'Include snapshot stage?',
-                        default: !!defaultConfig.stages.snapshot,
-                        msgArgs,
-                    } )
-                ) ? defaultConfig.stages.snapshot : false,
+                document: await console.nc.prompt.bool( {
+                    message: 'Include document stage?',
+                    default: !!defaultConfig.stages.document,
+                    msgArgs,
+                } ) ? [ getDefaultStageClass( 'document' ) ] : false,
+
+                snapshot: await console.nc.prompt.bool( {
+                    message: 'Include snapshot stage?',
+                    default: !!defaultConfig.stages.snapshot,
+                    msgArgs,
+                } ) ? [ getDefaultStageClass( 'snapshot' ) ] : false,
+
+                test: await console.nc.prompt.bool( {
+                    message: 'Include test stage?',
+                    default: !!defaultConfig.stages.test,
+                    msgArgs,
+                } ) ? [ getDefaultStageClass( 'test' ) ] : false,
             },
         };
     }
@@ -290,7 +300,7 @@ export async function getConfig(
         `/**`,
         ` * @type {Config}`,
         ` */`,
-        'const config = ' + builtConfig.toString() + ';',
+        'const config = ' + JSON.stringify( configInstance.export(), null, 4 ) + ';',
         ``,
         `export default config;`,
     ].join( '\n' );
@@ -298,6 +308,7 @@ export async function getConfig(
     console.vi.debug( { configFileContent }, level );
 
     fs.write( configPath, configFileContent, { force } );
+    await fs.prettier( configPath, 'js' );
 
     return configInstance;
 }

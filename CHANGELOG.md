@@ -19,6 +19,24 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.1.0-alpha.1** -- 2025-06-11
+
+### Moved & Renamed
+- Moved ProjectConfig class to 04-project folder; earlier references now use new
+  Config.Class interface
+
+### Added
+- Class interface to Config namespace -- this types the class methods
+- Default interface to Config namespace -- export shape used when writing new
+  config files
+- isObjectEmpty() internal function
+
+### Fixed
+- Fixed default config file output (wrong var, so config did not convert to json)
+- Now updating dependency versions in demos on releasing build
+- Improved additional new-config questions in CLI
+
+
 ## **0.1.0-alpha** -- 2025-06-09
 
 First release, everything is new!

@@ -205,12 +205,12 @@ export function internalConfig(
                     switch ( typeof inputConfig.paths[ _path ] ) {
 
                         case 'string':
-                            const _distDirString = inputConfig.paths[ _path ]
+                            const _scriptsDirString = inputConfig.paths[ _path ]
                                 .replace( /\/$/gi, '' );
 
                             paths[ _path ] = {
-                                _: _distDirString,
-                                logs: _distDirString + '/logs',
+                                _: _scriptsDirString,
+                                logs: _scriptsDirString + '/logs',
                             };
                             break;
 

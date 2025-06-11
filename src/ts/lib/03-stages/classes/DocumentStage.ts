@@ -22,6 +22,7 @@ import {
 
 import type {
     CLI,
+    Config,
     Stage,
 } from '../../../types/index.js';
 
@@ -36,9 +37,8 @@ import {
     FileSystem,
 } from '../../00-universal/index.js';
 
-import {
-    ProjectConfig,
-} from '../../01-config/index.js';
+// import {
+// } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
 
@@ -438,7 +438,7 @@ export class DocumentStage extends AbstractStage<
      * @param version  Version object for the project’s version.
      */
     constructor (
-        config: ProjectConfig,
+        config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Document>,
         pkg?: Json.PackageJson,

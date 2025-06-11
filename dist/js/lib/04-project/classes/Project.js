@@ -4,15 +4,16 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import { DummyConsole } from '../../@internal/index.js';
-import { parseParamsCLI, ProjectConfig } from '../../01-config/index.js';
+import { parseParamsCLI } from '../../01-config/index.js';
 // import {
 // } from '../../02-utils/index.js';
 import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
 import { defaultConfig } from '../../03-stages/defaultConfig.js';
+import { ProjectConfig } from './ProjectConfig.js';
 /**
  * Manages and runs a single project (typically used by the cli).
  *

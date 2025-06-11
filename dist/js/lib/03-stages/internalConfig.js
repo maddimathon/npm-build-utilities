@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0-alpha
+ * @maddimathon/build-utilities@0.1.0-alpha.1
  * @license MIT
  */
 import { defaultConfig } from './defaultConfig.js';
@@ -134,12 +134,12 @@ export function internalConfig(inputConfig, console) {
                 case 'scripts':
                     switch (typeof inputConfig.paths[_path]) {
                         case 'string':
-                            const _distDirString = inputConfig.paths[
+                            const _scriptsDirString = inputConfig.paths[
                                 _path
                             ].replace(/\/$/gi, '');
                             paths[_path] = {
-                                _: _distDirString,
-                                logs: _distDirString + '/logs',
+                                _: _scriptsDirString,
+                                logs: _scriptsDirString + '/logs',
                             };
                             break;
                         case 'object':

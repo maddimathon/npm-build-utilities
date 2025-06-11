@@ -33,9 +33,8 @@ import type {
     FileSystem,
 } from '../lib/00-universal/classes/index.js';
 
-import type {
-    ProjectConfig,
-} from '../lib/01-config/classes/index.js';
+// import type {
+// } from '../lib/01-config/classes/index.js';
 
 import type { Stage_Compiler } from '../lib/02-utils/classes/Stage_Compiler.js';
 
@@ -672,7 +671,7 @@ export namespace Stage {
      */
     export interface Class {
         new(
-            config: ProjectConfig,
+            config: Config.Class,
             params: CLI.Params,
             args: Partial<Args>,
             pkg?: Json.PackageJson,
@@ -691,7 +690,7 @@ export namespace Stage {
         T_SubStage extends string = string,
     > {
         new(
-            config: ProjectConfig,
+            config: Config.Class,
             params: CLI.Params,
             args: Partial<T_Args>,
             pkg?: Json.PackageJson,
