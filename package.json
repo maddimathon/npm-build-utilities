@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.1.1",
+    "version": "0.1.2",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
     "description": "Opinionated utilities for easy build systems in npm projects.",
@@ -134,7 +134,7 @@
         "watch-cli": "0.2.3"
     },
     "peerDependencies": {
-        "jest": "^30.0.0"
+        "jest": "^29.7.0"
     },
     "browserslist": [
         "last 3 major versions",

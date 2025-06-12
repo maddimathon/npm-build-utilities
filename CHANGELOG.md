@@ -19,6 +19,12 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.1.2** — 2025-06-11
+
+### Fixed
+- Reverted jest peerDependencies version to match dependency
+
+
 ## **0.1.1** — 2025-06-11
 
 ### Added
