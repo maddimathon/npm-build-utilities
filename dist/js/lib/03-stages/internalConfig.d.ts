@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0
+ * @maddimathon/build-utilities@0.1.1
  * @license MIT
  */
 import { Config } from '../../types/index.js';

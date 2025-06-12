@@ -6,12 +6,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0
+ * @maddimathon/build-utilities@0.1.1
  * @license MIT
  */
 import * as sass from 'sass';
 import * as typeDoc from "typedoc";
-import typescript from 'typescript';
 import type { Json } from '@maddimathon/utility-typescript/types';
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type * as CLI from './CLI.js';
@@ -479,6 +478,18 @@ export declare namespace Stage {
          */
         interface Release extends Args {
             /**
+             * Files to add to commit after packaging but before release.
+             */
+            commit: null | (
+            /**
+             * @param stage         Instance of the current stage (probably
+             *                      {@link ReleaseStage}).
+             * @param defaultPaths  The default paths to add to the commit.
+             *
+             * @return  All relative or absolute paths to add to the commit.
+             */
+            (stage: Stage, defaultPaths?: string[]) => string[]);
+            /**
              * Whether to include this sub-stage, or the configuration if so.
              */
             replace: false | ((stage: Stage) => {
@@ -651,16 +662,13 @@ export declare namespace Stage {
          * Optional configuration for {@link Compiler} classes.
          *
          * @since 0.1.0-alpha
+         * @since 0.1.1 — Removed unused ts prop.
          */
         interface Args {
             /**
              * Optional default configuration to use when compiling sass.
              */
             sass: sass.Options<"sync">;
-            /**
-             * Optional default configuration to use when compiling typescript.
-             */
-            ts: typescript.CompilerOptions;
         }
     }
     /**

@@ -130,7 +130,9 @@ export class Build extends BuildStage implements AbstractStage<
         ] ) {
             const _currentPkgJson = this.fs.readFile( _path );
 
-            let _replaced = _currentPkgJson.replace(
+            let _replaced = _currentPkgJson;
+
+            _replaced = _replaced.replace(
                 /"version":\s*"[^"]*"/gi,
                 escRegExpReplace( `"version": "${ this.version.toString( false ) }"` )
             );
@@ -140,14 +142,14 @@ export class Build extends BuildStage implements AbstractStage<
                 if ( this.version.prerelease ) {
 
                     // update to the version being release for testing
-                    _replaced = _currentPkgJson.replace(
+                    _replaced = _replaced.replace(
                         /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
                         escRegExpReplace( `"@maddimathon/build-utilities": "${ this.version.toString( false ) }"` )
                     );
                 } else {
 
                     // update to be a file path for development
-                    _replaced = _currentPkgJson.replace(
+                    _replaced = _replaced.replace(
                         /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
                         escRegExpReplace( `"@maddimathon/build-utilities": "file:../.."` )
                     );
@@ -257,5 +259,5 @@ export namespace Build {
     export interface Args extends Stage.Args.Build {
     }
 
-    export type SubStage = Stage.SubStage.Build | "readme" | "tscheck";
+    export type SubStage = Stage.SubStage.Build | "demos" | "readme" | "tscheck";
 }

@@ -14,6 +14,7 @@ import type {
 
 import {
     arrayUnique,
+    escRegExp,
     escRegExpReplace,
     softWrapText,
     timestamp,
@@ -163,10 +164,9 @@ export class ReleaseStage extends AbstractStage<
         } ) satisfies Exclude<Stage.Args.Release[ 'replace' ], boolean>;
 
         return {
-            utils: {},
-
+            commit: null,
             replace,
-
+            utils: {},
         } as const satisfies Stage.Args.Release;
     }
 
@@ -491,24 +491,41 @@ export class ReleaseStage extends AbstractStage<
 
         const version = this.version.toString();
 
+        const relPath = this.config.paths.release.replace( /\/+$/g, '' );
+
         /** To add to commit. */
         let updatedPaths = [
             this.getDistDir(),
             this.getDistDir( 'docs' ),
             this.getDistDir( 'scss' ),
-            this.config.paths.release.replace( /\/+$/g, '' ) + '/*.zip',
+            relPath + '/*.zip',
             this.config.paths.changelog,
             this.config.paths.readme,
         ];
 
         // adds replaced files to the commit too
         if ( this.args.replace ) {
-            updatedPaths = updatedPaths.concat( this.args.replace( this ).package );
+
+            const _relPathRegex = new RegExp( '^' + escRegExp( relPath ), 'gi' );
+
+            updatedPaths = updatedPaths.concat(
+
+                this.args.replace( this ).package
+                    .filter(
+                        _path => _path.match( _relPathRegex ) === null
+                    )
+                    .map(
+                        _path => _path.replace( /(\/\*{1,2}){1,2}$/gi, '' )
+                    )
+            );
         }
 
         updatedPaths = arrayUnique( updatedPaths )
-            .filter( this.fs.exists )
-            .map( this.fs.pathRelative );
+            .filter( _path => this.fs.exists( _path ) || _path.includes( '*' ) );
+
+        if ( this.args.commit ) {
+            updatedPaths = this.args.commit( this, updatedPaths );
+        }
 
         const gitCmd = `git add "${ updatedPaths.join( '" "' ) }"`
             + ' && '

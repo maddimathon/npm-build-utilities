@@ -19,6 +19,20 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.1.1** — 2025-06-11
+
+### Added
+- Release stage args now have a commit prop for filtering commit paths
+
+### Changed
+- Stage_Compiler.scss() now forces an instance of `NodePackageImporter` into the
+  config
+
+### Fixed
+- Bug in git commit in release stage if dist is in gitignore
+- Compiler methods are now bound to this in the constructor
+
+
 ## **0.1.0** — 2025-06-11
 
 External testing complete, upgrading to release.

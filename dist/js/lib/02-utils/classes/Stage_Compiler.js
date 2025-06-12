@@ -4,10 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0
+ * @maddimathon/build-utilities@0.1.1
  * @license MIT
  */
 import * as sass from 'sass';
+import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import { StageError } from '../../@internal/index.js';
 import { catchOrReturn } from '../../00-universal/index.js';
 /**
@@ -54,7 +55,6 @@ export class Stage_Compiler {
                 sourceMapIncludeSources: true,
                 style: 'expanded',
             },
-            ts: {},
         };
     }
     args;
@@ -75,6 +75,8 @@ export class Stage_Compiler {
             ...this.ARGS_DEFAULT,
             ...config.compiler,
         };
+        this.scss = this.scss.bind(this);
+        this.typescript = this.typescript.bind(this);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -91,8 +93,15 @@ export class Stage_Compiler {
             level,
             { bold: true },
         );
+        sassOpts = mergeArgs(this.args.sass, sassOpts, true);
+        sassOpts = {
+            ...sassOpts,
+            importers: [
+                ...(sassOpts.importers ?? []),
+                new sass.NodePackageImporter(),
+            ],
+        };
         const compiled = sass.compile(input, {
-            ...this.args,
             ...sassOpts,
         });
         this.params.debug && this.console.vi.verbose({ compiled }, level);

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.0
+ * @maddimathon/build-utilities@0.1.1
  * @license MIT
  */
 import {
@@ -168,7 +168,7 @@ export class CompileStage extends AbstractStage {
             return;
         }
         const scssDistDir = this.fs.pathRelative(this.getDistDir('scss'));
-        // this.console.vi.verbose( { scssDistDir }, ( this.params.verbose ? 3 : 2 ) );
+        // this.console.vi.verbose( { scssDistDir }, this.params.verbose ? 3 : 2 );
         this.console.verbose('deleting existing files...', 2);
         this.fs.delete([scssDistDir], 3);
         this.console.verbose('building path arguments...', 2);
@@ -201,7 +201,11 @@ export class CompileStage extends AbstractStage {
         this.console.verbose('compiling to css...', 2);
         await Promise.all(
             scssPathArgs.map(({ input, output }) =>
-                this.compiler.scss(input, output, this.params.verbose ? 3 : 2),
+                this.atry(this.compiler.scss, this.params.verbose ? 3 : 2, [
+                    input,
+                    output,
+                    this.params.verbose ? 3 : 2,
+                ]),
             ),
         );
     }

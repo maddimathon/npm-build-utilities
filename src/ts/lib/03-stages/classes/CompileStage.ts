@@ -215,7 +215,7 @@ export class CompileStage extends AbstractStage<
         }
 
         const scssDistDir = this.fs.pathRelative( this.getDistDir( 'scss' ) );
-        // this.console.vi.verbose( { scssDistDir }, ( this.params.verbose ? 3 : 2 ) );
+        // this.console.vi.verbose( { scssDistDir }, this.params.verbose ? 3 : 2 );
 
         this.console.verbose( 'deleting existing files...', 2 );
         this.fs.delete( [ scssDistDir ], 3 );
@@ -246,11 +246,15 @@ export class CompileStage extends AbstractStage<
             };
         } );
 
-        this.console.vi.debug( { scssPathArgs }, ( this.params.verbose ? 3 : 2 ) );
+        this.console.vi.debug( { scssPathArgs }, this.params.verbose ? 3 : 2 );
 
         this.console.verbose( 'compiling to css...', 2 );
         await Promise.all( scssPathArgs.map(
-            ( { input, output } ) => this.compiler.scss( input, output, ( this.params.verbose ? 3 : 2 ) )
+            ( { input, output } ) => this.atry(
+                this.compiler.scss,
+                this.params.verbose ? 3 : 2,
+                [ input, output, this.params.verbose ? 3 : 2 ],
+            )
         ) );
     }
 

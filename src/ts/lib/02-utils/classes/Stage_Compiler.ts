@@ -14,6 +14,10 @@ import type {
     Json,
 } from '@maddimathon/utility-typescript/types';
 
+import {
+    mergeArgs,
+} from '@maddimathon/utility-typescript/functions';
+
 import type {
     CLI,
     Config,
@@ -96,8 +100,6 @@ export class Stage_Compiler implements Stage.Compiler {
                 style: 'expanded',
             },
 
-            ts: {},
-
         } as const satisfies Stage.Compiler.Args;
     }
 
@@ -124,6 +126,9 @@ export class Stage_Compiler implements Stage.Compiler {
             ...this.ARGS_DEFAULT,
             ...config.compiler,
         };
+
+        this.scss = this.scss.bind( this );
+        this.typescript = this.typescript.bind( this );
     }
 
 
@@ -139,8 +144,17 @@ export class Stage_Compiler implements Stage.Compiler {
     ): Promise<void> {
         this.console.vi.debug( { 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true } );
 
+        sassOpts = mergeArgs( this.args.sass, sassOpts, true );
+        sassOpts = {
+            ...sassOpts,
+
+            importers: [
+                ...sassOpts.importers ?? [],
+                new sass.NodePackageImporter(),
+            ],
+        };
+
         const compiled = sass.compile( input, {
-            ...this.args,
             ...sassOpts,
         } );
 
