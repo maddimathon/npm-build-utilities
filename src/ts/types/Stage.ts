@@ -10,14 +10,14 @@
  * @license MIT
  */
 
-import * as sass from 'sass';
-import * as typeDoc from "typedoc";
+import type * as sass from 'sass';
+import type * as typeDoc from "typedoc";
 
 import type {
     Json,
 } from '@maddimathon/utility-typescript/types';
 
-import {
+import type {
     MessageMaker,
 } from '@maddimathon/utility-typescript/classes';
 
@@ -855,10 +855,21 @@ export namespace Stage {
              */
             sass: sass.Options<"sync">;
 
-            // /**
-            //  * Optional default configuration to use when compiling typescript.
-            //  */
-            // ts: typescript.CompilerOptions,
+            /**
+             * Optional default configuration to use when compiling typescript.
+             * 
+             * @since 0.1.3
+             */
+            ts: {
+
+                /**
+                 * This is an array of globs, resolved relative to the tsconfig
+                 * outDir, to be removed after compilation.
+                 *
+                 * Used, for example, to delete type-only javascript files.
+                 */
+                tidyGlobs?: string | string[];
+            },
         };
     };
 

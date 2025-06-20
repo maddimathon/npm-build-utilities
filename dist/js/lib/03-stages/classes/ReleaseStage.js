@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.2
+ * @maddimathon/build-utilities@0.1.3
  * @license MIT
  */
 import {
@@ -74,6 +74,9 @@ export class ReleaseStage extends AbstractStage {
             '- ',
             '',
             '### Changed',
+            '- ',
+            '',
+            '### Deprecated',
             '- ',
             '',
             '### Fixed',
@@ -504,7 +507,7 @@ export class ReleaseStage extends AbstractStage {
         const releaseCmd = `gh release create ${version} ${releaseAttachment} ${this.console.nc.cmdArgs(
             {
                 draft: true,
-                'notes-file': '.releasenotes.md',
+                'notes-file': this.config.paths.notes.release,
                 title: `${version} — ${timestamp(null, { date: true, time: false })}`,
             },
             false,

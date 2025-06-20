@@ -250,6 +250,36 @@ export class DocumentStage extends AbstractStage<
             groupReferencesByType: true,
 
             hideGenerator: true,
+
+            highlightLanguages: [
+                ...typeDoc.OptionDefaults.highlightLanguages,
+
+                'astro',
+                'csv',
+                'handlebars',
+                'jsx',
+                'latex',
+                'markdown',
+                'md',
+                'php',
+                'regex',
+                'regexp',
+                'sass',
+                'scss',
+                'sh',
+                'shell',
+                'shellscript',
+                'sql',
+                'swift',
+                'tsv',
+                'vue-html',
+                'vue',
+                'xml',
+                'yaml',
+                'yml',
+                'zsh',
+            ],
+
             hostedBaseUrl: homepage,
 
             jsDocCompatibility: {

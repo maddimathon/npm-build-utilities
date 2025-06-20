@@ -100,6 +100,8 @@ export class Stage_Compiler implements Stage.Compiler {
                 style: 'expanded',
             },
 
+            ts: {},
+
         } as const satisfies Stage.Compiler.Args;
     }
 
@@ -214,22 +216,26 @@ export class Stage_Compiler implements Stage.Compiler {
 
         let config_obj = JSON.parse( this.fs.readFile( tsConfig ) ) as Partial<Json.TsConfig> | string;
 
-        if (
+        const outDir = (
             typeof config_obj === 'object'
-            && config_obj?.compilerOptions?.noEmit !== true
-            && config_obj?.compilerOptions?.outDir
-        ) {
-            const _output = this.fs.pathResolve(
+            && config_obj.compilerOptions?.noEmit !== true
+            && config_obj.compilerOptions?.outDir
+        )
+            && this.fs.pathResolve(
                 this.fs.dirname( tsConfig ),
                 config_obj.compilerOptions.outDir,
-                '*',
-            );
+            ).replace( /\/+$/gi, '' )
+            || false;
 
+        if ( outDir ) {
             this.console.debug(
-                'deleting existing files from ' + this.fs.pathRelative( _output ).replace( ' ', '%20' ) + ' ...',
+                'deleting existing files from ' + this.fs.pathRelative( outDir ).replace( ' ', '%20' ) + ' ...',
                 ( this.params.verbose ? 1 : 0 ) + level
             );
-            this.fs.delete( [ _output ], ( this.params.verbose ? 2 : 0 ) + level + this.console.params[ 'log-base-level' ] );
+            this.fs.delete(
+                outDir + '/*',
+                ( this.params.debug ? 1 : 0 ) + ( this.params.verbose ? 1 : 0 ) + level,
+            );
         }
 
         catchOrReturn(
@@ -239,5 +245,27 @@ export class Stage_Compiler implements Stage.Compiler {
             this.fs,
             [ `tsc --project "${ this.fs.pathRelative( tsConfig ).replace( /"/g, '\\"' ) }"` ],
         );
+
+        if ( outDir && this.args.ts.tidyGlobs?.length ) {
+            this.console.verbose( 'tidying compiled files...', 0 + level );
+
+            const _globs = (
+                Array.isArray( this.args.ts.tidyGlobs )
+                    ? this.args.ts.tidyGlobs
+                    : [ this.args.ts.tidyGlobs ]
+            ).map(
+                _glob => this.fs.pathResolve( outDir, _glob )
+            );
+
+            this.console.vi.debug(
+                { tidyGlobs: _globs },
+                ( this.params.verbose ? 1 : 0 ) + level
+            );
+
+            this.fs.delete(
+                _globs,
+                ( this.params.debug ? 1 : 0 ) + ( this.params.verbose ? 1 : 0 ) + level,
+            );
+        }
     }
 }

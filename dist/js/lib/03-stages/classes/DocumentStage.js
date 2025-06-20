@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.2
+ * @maddimathon/build-utilities@0.1.3
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -238,6 +238,33 @@ export class DocumentStage extends AbstractStage {
             ],
             groupReferencesByType: true,
             hideGenerator: true,
+            highlightLanguages: [
+                ...typeDoc.OptionDefaults.highlightLanguages,
+                'astro',
+                'csv',
+                'handlebars',
+                'jsx',
+                'latex',
+                'markdown',
+                'md',
+                'php',
+                'regex',
+                'regexp',
+                'sass',
+                'scss',
+                'sh',
+                'shell',
+                'shellscript',
+                'sql',
+                'swift',
+                'tsv',
+                'vue-html',
+                'vue',
+                'xml',
+                'yaml',
+                'yml',
+                'zsh',
+            ],
             hostedBaseUrl: homepage,
             jsDocCompatibility: {
                 exampleTag: false,

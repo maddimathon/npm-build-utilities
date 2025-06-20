@@ -19,6 +19,18 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.1.3** — 2025-06-19
+
+Quick fix for better ts compiling.
+
+### Added
+- Option to Stage.Compiler args (ts.tidyGlobs) to delete unneeded ts files after
+  compile (e.g., type-only files)
+
+### Fixed
+- Added deprecated heading to template release notes file
+
+
 ## **0.1.2** — 2025-06-11
 
 ### Fixed

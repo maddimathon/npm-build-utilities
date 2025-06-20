@@ -12,7 +12,7 @@ optionally create the missing files).
 
 ## Syntax
 
-```sh
+```bash
 build-utils [command] [...options]
 ```
 
@@ -55,7 +55,7 @@ These options are defined and documented by {@link CLI.Params}.
 
 ## Examples
 
-```sh
+```bash
 build-utils compile --no-verbose --config .config/build-utils.config.js --starting
 build-utils package --verbose --debug --dryrun
 ```

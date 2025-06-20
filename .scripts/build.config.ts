@@ -23,8 +23,13 @@ const _defaults = {
 const config: Config = {
 
     title: 'NPM Build Utilities',
-
     launchYear: '2025',
+
+    compiler: {
+        ts: {
+            tidyGlobs: 'types/**/*.js',
+        },
+    },
 
     paths: {
         release: '@releases',

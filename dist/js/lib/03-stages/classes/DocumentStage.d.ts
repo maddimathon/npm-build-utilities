@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.2
+ * @maddimathon/build-utilities@0.1.3
  * @license MIT
  */
 import * as typeDoc from "typedoc";
@@ -127,6 +127,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
         readonly groupOrder: ["*", "Documents", "Constructors", "Properties", "Accessors", "Functions", "Methods", "Classes", "Interfaces", "Type Aliases", "Namespaces", "Modules"];
         readonly groupReferencesByType: true;
         readonly hideGenerator: true;
+        readonly highlightLanguages: [...import("@gerrit0/mini-shiki").BundledLanguage[], "astro", "csv", "handlebars", "jsx", "latex", "markdown", "md", "php", "regex", "regexp", "sass", "scss", "sh", "shell", "shellscript", "sql", "swift", "tsv", "vue-html", "vue", "xml", "yaml", "yml", "zsh"];
         readonly hostedBaseUrl: string | undefined;
         readonly jsDocCompatibility: {
             readonly exampleTag: false;

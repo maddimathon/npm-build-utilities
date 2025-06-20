@@ -241,7 +241,7 @@ export class Build extends BuildStage implements AbstractStage<
             readmeContent = readmeContent.replace(
                 /(<!--README_INSTALL-->).*?(<!--\/README_INSTALL-->)/gs,
                 '$1\n' + escRegExpReplace( [
-                    '```sh',
+                    '```bash',
                     'npm i -D @maddimathon/build-utilities@' + this.pkg.version,
                     'npm i -D github:maddimathon/build-utilities#' + this.pkg.version,
                     '```',

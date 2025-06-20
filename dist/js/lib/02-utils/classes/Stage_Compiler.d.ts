@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.2
+ * @maddimathon/build-utilities@0.1.3
  * @license MIT
  */
 import * as sass from 'sass';
@@ -44,6 +44,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly sourceMapIncludeSources: true;
             readonly style: "expanded";
         };
+        readonly ts: {};
     };
     readonly args: Stage.Compiler.Args;
     /**
