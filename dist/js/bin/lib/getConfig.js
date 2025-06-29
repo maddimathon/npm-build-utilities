@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.3
+ * @maddimathon/build-utilities@0.1.4-alpha
  * @license MIT
  */
 import { timestamp } from '@maddimathon/utility-typescript/functions';
@@ -28,6 +28,7 @@ import {
  * @returns  Complete config instance.
  *
  * @since 0.1.0-alpha
+ * @since 0.1.4-alpha — Experimental support for typescript config files.
  *
  * @internal
  */
@@ -51,6 +52,7 @@ export async function getConfig(params, console = null, level = 0) {
     let config;
     /** Index of the path currently behind checked. */
     let i = 0;
+    /** Maximum number of times to loop while checking for a config file. */
     const maxInterations = pathsToCheck.length;
     const fs = new FileSystem(console);
     console.debug('Checking config paths...', level);
@@ -70,7 +72,7 @@ export async function getConfig(params, console = null, level = 0) {
         if (!fs.exists(path)) {
             continue;
         }
-        const content = (await import(path)).default;
+        const content = (await import(path + '?t=' + Date.now())).default;
         console.vi.debug({ content }, 2 + level);
         if (content && typeof content === 'object') {
             config = content;

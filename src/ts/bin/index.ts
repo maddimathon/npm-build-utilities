@@ -11,18 +11,13 @@
 
 import minimist from 'minimist';
 
-import type {
-    CLI,
-} from '../types/index.js';
+import type * as CLI from '../types/CLI.js';
 
-import help from './help.js';
+import { parseParamsCLI } from '../lib/01-config/parseParamsCLI.js';
 
-import {
-    parseParamsCLI,
-    Project,
-} from '../lib/index.js';
+import { Project } from '../lib/04-project/classes/Project.js';
 
-import { getConfig } from './lib/index.js';
+import { getConfig } from './lib/getConfig.js';
 
 
 const params = parseParamsCLI(
@@ -47,6 +42,7 @@ switch ( scriptName ) {
 
     case 'help':
     default:
+        const help = ( await import( './help.js' ) ).default;
         await help( params );
         break;
 }

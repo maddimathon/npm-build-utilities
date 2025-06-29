@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.3
+ * @maddimathon/build-utilities@0.1.4-alpha
  * @license MIT
  */
 import type { CLI } from '../../types/index.js';
@@ -22,6 +22,7 @@ import { ProjectConfig } from '../../lib/index.js';
  * @returns  Complete config instance.
  *
  * @since 0.1.0-alpha
+ * @since 0.1.4-alpha — Experimental support for typescript config files.
  *
  * @internal
  */

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.3
+ * @maddimathon/build-utilities@0.1.4-alpha
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -343,5 +343,34 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @category Running
      */
     protected abstract runSubStage(subStage: T_SubStage): Promise<void>;
+    /**
+     * This runs a custom sub-stage that only copies a whole folder at the given
+     * subpath from the source to the dist directories.
+     *
+     * Deletes any existing, logs update messages, etc.
+     *
+     * @param subpath  The subdriectory, relative to src path.
+     * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     *
+     * @since 0.1.4-alpha
+     *
+     * @experimental
+     */
+    protected runCustomDirCopySubStage(subpath: string, _distDir?: string): Promise<void>;
+    /**
+     * This runs a custom sub-stage that uses globs to find non-partial
+     * scss/sass files and compile them at the given subpath from the source to
+     * the dist directories.
+     *
+     * Deletes any existing, logs update messages, etc.
+     *
+     * @param subpath   The subdriectory, relative to src path.
+     * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     *
+     * @since 0.1.4-alpha
+     *
+     * @experimental
+     */
+    protected runCustomScssDirSubStage(subpath: string, _distDir?: string): Promise<void>;
 }
 //# sourceMappingURL=AbstractStage.d.ts.map

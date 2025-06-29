@@ -5,13 +5,13 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.3
+ * @maddimathon/build-utilities@0.1.4-alpha
  * @license MIT
  */
 import minimist from 'minimist';
-import help from './help.js';
-import { parseParamsCLI, Project } from '../lib/index.js';
-import { getConfig } from './lib/index.js';
+import { parseParamsCLI } from '../lib/01-config/parseParamsCLI.js';
+import { Project } from '../lib/04-project/classes/Project.js';
+import { getConfig } from './lib/getConfig.js';
 const params = parseParamsCLI(minimist(process.argv.slice(2)));
 const scriptName = params._?.[0];
 switch (scriptName) {
@@ -28,6 +28,7 @@ switch (scriptName) {
         break;
     case 'help':
     default:
+        const help = (await import('./help.js')).default;
         await help(params);
         break;
 }

@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.1.3",
+    "version": "0.1.4-alpha",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
     "description": "Opinionated utilities for easy build systems in npm projects.",
@@ -51,9 +51,20 @@
 
     "exports": {
 
-        ".": "./dist/js/index.js",
-        "./bin": "./dist/js/bin/lib/index.js",
-        "./internal": "./dist/js/lib/@internal.js",
+        ".": {
+            "types": "./dist/js/index.d.ts",
+            "default": "./dist/js/index.js"
+        },
+
+        "./bin": {
+            "types": "./dist/js/bin/index.d.ts",
+            "default": "./dist/js/bin/index.js"
+        },
+
+        "./internal": {
+            "types": "./dist/js/lib/@internal.d.ts",
+            "default": "./dist/js/lib/@internal.js"
+        },
 
         "./tsconfig": "./tsconfig.base.json",
 
@@ -64,15 +75,19 @@
             "./dist/js/types/*"
         ],
 
-        "./*": [
-            "./dist/js/*.js",
-            "./dist/js/*/index.js",
-            "./dist/js/*"
-        ],
-        "./*.js": [
-            "./dist/js/*.js",
-            "./dist/js/*/index.js"
-        ]
+        "./*": {
+
+            "types": [
+                "./dist/js/*.d.ts",
+                "./dist/js/*/index.d.ts"
+            ],
+
+            "default": [
+                "./dist/js/*.js",
+                "./dist/js/*/index.js",
+                "./dist/js/*"
+            ]
+        }
     },
 
     "bugs": {
@@ -90,7 +105,7 @@
         "compile": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts compile --config .scripts/build.config.ts",
         
         "build":       "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts build --config .scripts/build.config.ts",
-        "quick-build": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts build --config .scripts/build.config.ts --without minimize,prettify,readme",
+        "quick-build": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts build --config .scripts/build.config.ts --without minimize,prettify,readme,demo",
         
         "doc": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts document --config .scripts/build.config.ts",
 

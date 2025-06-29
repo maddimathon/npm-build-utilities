@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.3
+ * @maddimathon/build-utilities@0.1.4-alpha
  * @license MIT
  */
 import { parseParamsCLI, Project } from '../lib/index.js';

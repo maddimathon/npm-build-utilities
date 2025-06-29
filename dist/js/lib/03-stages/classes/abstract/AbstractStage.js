@@ -4,11 +4,12 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.3
+ * @maddimathon/build-utilities@0.1.4-alpha
  * @license MIT
  */
 import {
     escRegExp,
+    escRegExpReplace,
     mergeArgs,
     toTitleCase,
 } from '@maddimathon/utility-typescript/functions';
@@ -668,6 +669,150 @@ export class AbstractStage {
             this.#pkg,
             this.#version,
         ).run();
+    }
+    /**
+     * This runs a custom sub-stage that only copies a whole folder at the given
+     * subpath from the source to the dist directories.
+     *
+     * Deletes any existing, logs update messages, etc.
+     *
+     * @param subpath  The subdriectory, relative to src path.
+     * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     *
+     * @since 0.1.4-alpha
+     *
+     * @experimental
+     */
+    async runCustomDirCopySubStage(subpath, _distDir) {
+        this.console.progress('copying ' + subpath + ' to dist...', 1);
+        const distDir =
+            _distDir ?? this.getDistDir(undefined).replace(/\/$/g, '');
+        if (this.fs.exists(distDir)) {
+            this.console.verbose('deleting any existing files...', 2);
+            this.fs.delete([distDir + '/' + subpath], 3, true);
+        }
+        const srcDir = this.getSrcDir(undefined).replace(/\/+$/gi, '');
+        // returns
+        if (!this.fs.exists(srcDir + '/' + subpath)) {
+            this.console.verbose(
+                'ⅹ source dir '
+                    + this.fs.pathRelative(srcDir)
+                    + ' does not exist, exiting...',
+                2,
+            );
+            return;
+        }
+        // returns
+        if (!this.fs.isDirectory(srcDir + '/' + subpath)) {
+            this.console.verbose(
+                'ⅹ source dir '
+                    + this.fs.pathRelative(srcDir)
+                    + ' is not a directory, exiting...',
+                2,
+            );
+            return;
+        }
+        this.fs.copy(subpath, 2, distDir, srcDir, {
+            force: true,
+            rename: true,
+            recursive: true,
+        });
+    }
+    /**
+     * This runs a custom sub-stage that uses globs to find non-partial
+     * scss/sass files and compile them at the given subpath from the source to
+     * the dist directories.
+     *
+     * Deletes any existing, logs update messages, etc.
+     *
+     * @param subpath   The subdriectory, relative to src path.
+     * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     *
+     * @since 0.1.4-alpha
+     *
+     * @experimental
+     */
+    async runCustomScssDirSubStage(subpath, _distDir) {
+        this.console.progress('compiling ' + subpath + ' to css...', 1);
+        const distDir =
+            _distDir ?? this.getDistDir(undefined, subpath).replace(/\/$/g, '');
+        if (this.fs.exists(distDir)) {
+            this.console.verbose('deleting any existing files...', 2);
+            this.fs.delete([distDir], 3, true);
+        }
+        const srcDir = this.getSrcDir(undefined, subpath).replace(/\/+$/gi, '');
+        // returns
+        if (!this.fs.exists(srcDir)) {
+            this.console.verbose(
+                'ⅹ source dir '
+                    + this.fs.pathRelative(srcDir)
+                    + ' does not exist, exiting...',
+                2,
+            );
+            return;
+        }
+        // returns
+        if (!this.fs.isDirectory(srcDir)) {
+            this.console.verbose(
+                'ⅹ source dir '
+                    + this.fs.pathRelative(srcDir)
+                    + ' is not a directory, exiting...',
+                2,
+            );
+            return;
+        }
+        const scssPaths = this.fs
+            .glob(
+                [
+                    srcDir + '/**/*.css',
+                    srcDir + '/**/*.sass',
+                    srcDir + '/**/*.scss',
+                ],
+                {
+                    ignore: [...FileSystem.globs.SYSTEM, '**/_*'],
+                },
+            )
+            .filter(this.fs.isFile)
+            .map(this.fs.pathRelative);
+        // returns
+        if (!scssPaths.length) {
+            this.console.verbose('ⅹ no css files found', 2);
+            return;
+        }
+        this.console.verbose('building path arguments...', 2);
+        const scssPathArgs = scssPaths.map((_path) => {
+            const _srcDirRegex = new RegExp(
+                escRegExp(
+                    this.fs
+                        .pathRelative(
+                            this.fs.isFile(_path)
+                                ? this.fs.dirname(_path)
+                                : _path,
+                        )
+                        .replace(/\/$/g, '') + '/',
+                ),
+                'g',
+            );
+            const _output = this.fs
+                .pathRelative(_path)
+                .replace(_srcDirRegex, escRegExpReplace(distDir + '/'))
+                .replace(/\.scss$/gi, '.css');
+            return {
+                input: _path,
+                output: _output,
+            };
+        });
+        this.console.vi.debug({ scssPathArgs }, this.params.verbose ? 3 : 2);
+        this.console.verbose('compiling to css at ' + distDir + '...', 2);
+        await Promise.all(
+            scssPathArgs.map(({ input, output }) =>
+                this.atry(this.compiler.scss, this.params.verbose ? 3 : 2, [
+                    input,
+                    output,
+                    this.params.verbose ? 3 : 2,
+                ]),
+            ),
+        );
     }
 }
 //# sourceMappingURL=AbstractStage.js.map

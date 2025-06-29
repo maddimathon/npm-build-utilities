@@ -19,6 +19,19 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.1.4-alpha** — 2025-06-29
+
+Quick update to facilitate common custom sub-stage types and test typescript
+config file compatibility.
+
+### Added
+- AbstractStage.runCustomDirCopySubStage() - experimental
+- AbstractStage.runCustomScssDirSubStage() - experimental
+
+### Fixed
+- Improved exports schema in package.json for explicit types paths
+
+
 ## **0.1.3** — 2025-06-19
 
 Quick fix for better ts compiling.
