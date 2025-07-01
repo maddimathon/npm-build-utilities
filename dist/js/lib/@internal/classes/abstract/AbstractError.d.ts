@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -160,13 +160,15 @@ export declare namespace AbstractError {
     /**
      * Expected error input types for Handler funtions.
      *
+     * This is mostly fake - in reality, 'errors' can be anything.
+     *
      * @since 0.1.0-alpha
      */
     type Input = null | boolean | number | string | string[] | {
         [key: string]: any;
-    } | (Error & {
+    } | (Partial<Error> & {
         [key: string]: any;
-    }) | NodeCliError;
+    }) | Partial<NodeCliError>;
     /**
      * Export shape for a plain {@link AbstractError} object.
      *
@@ -184,8 +186,7 @@ export declare namespace AbstractError {
      *
      * @since 0.1.0-alpha
      */
-    interface NodeCliError extends Partial<Error> {
-        name?: string;
+    interface NodeCliError extends Error {
         code?: string;
         output?: (null | string)[];
         path?: string;
@@ -194,6 +195,7 @@ export declare namespace AbstractError {
         status?: number;
         stderr?: string;
         stdout?: string;
+        [key: string]: any;
     }
 }
 //# sourceMappingURL=AbstractError.d.ts.map

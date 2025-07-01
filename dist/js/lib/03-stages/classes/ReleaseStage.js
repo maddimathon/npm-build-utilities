@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import {
@@ -14,6 +14,7 @@ import {
     softWrapText,
     timestamp,
 } from '@maddimathon/utility-typescript/functions';
+import { SemVer } from '../../@internal/index.js';
 // import {
 // } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
@@ -173,14 +174,10 @@ export class ReleaseStage extends AbstractStage {
                 message: inputVersionMessage,
                 default: this.pkg.version,
                 validate: (value) =>
-                    value
-                        .trim()
-                        .match(
-                            /^\d+\.\d+\.\d+(\-((alpha|beta)(\.\d+)?|\d+\.\d+\.\d+))?(\+[^\s]+)?$/gi,
-                        )
+                    value.trim().match(SemVer.regex)
                         ? true
                         : softWrapText(
-                              'The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, another valid version code, or metadata prefixed with `+`.',
+                              'The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, `-rc[.#]`, another valid version code, or metadata prefixed with `+`.',
                               Math.max(
                                   20,
                                   (this.console.nc.msg.args.msg.maxWidth ?? 80)

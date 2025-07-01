@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import { slugify, typeOf } from '@maddimathon/utility-typescript/functions';
@@ -122,26 +122,30 @@ export function errorStringify(error, level, console, fs, args) {
             }
             // breaks
             if (error instanceof Error) {
+                const _typedError = error;
                 const output = [
-                    error.output || error.stderr || error.stdout || [],
+                    _typedError.output
+                        || _typedError.stderr
+                        || _typedError.stdout
+                        || [],
                 ]
                     .flat()
                     .filter((v) => v !== null)
                     .join('\n\n');
-                t_errorInfo = _defaultErrorInfo(error, {
-                    message: error.message,
+                t_errorInfo = _defaultErrorInfo(_typedError, {
+                    message: _typedError.message,
                     output: output,
                     details: {
-                        code: error.code,
-                        signal: error.signal,
-                        status: error.status,
+                        code: _typedError.code,
+                        signal: _typedError.signal,
+                        status: _typedError.status,
                         path:
-                            typeof error.path === 'string'
+                            typeof _typedError.path === 'string'
                                 ? fs
-                                      .pathRelative(error.path)
+                                      .pathRelative(_typedError.path)
                                       .replace(' ', '%20')
-                                : error.path,
-                        pid: error.pid,
+                                : _typedError.path,
+                        pid: _typedError.pid,
                     },
                 });
                 break;
@@ -176,8 +180,6 @@ export function errorStringify(error, level, console, fs, args) {
                 - new UnknownCaughtError('').name.length
                 - errorType.length
                 - 6;
-            // console.vi.log( { 'UnknownCaughtError.prototype.name.length': ( new UnknownCaughtError( '' ) ).name.length }, level );
-            // console.vi.log( { _errorStringLength }, level );
             let _errorString = String(error);
             if (_errorString.length > _errorStringLength) {
                 _errorString =

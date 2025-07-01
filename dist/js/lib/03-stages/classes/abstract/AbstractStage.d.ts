@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -234,6 +234,14 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      */
     logError(logMsg: string, error: unknown, level: number, errMsg?: string, date?: Date): MessageMaker.BulkMsgs;
     /**
+     * Handles uncaught errors in node.
+     *
+     * @param error  To handle.
+     *
+     * @since 0.1.4-alpha.1.draft
+     */
+    uncaughtErrorListener(error: unknown): void;
+    /**
      * If the `tryer` function has no params, then they are optional.
      *
      * If the handler must exit, then 'FAILED' is not possible.
@@ -349,6 +357,8 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * Deletes any existing, logs update messages, etc.
      *
+     * @category Running
+     *
      * @param subpath  The subdriectory, relative to src path.
      * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
      *
@@ -363,6 +373,8 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * the dist directories.
      *
      * Deletes any existing, logs update messages, etc.
+     *
+     * @category Running
      *
      * @param subpath   The subdriectory, relative to src path.
      * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.

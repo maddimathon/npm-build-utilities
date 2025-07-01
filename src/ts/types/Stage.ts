@@ -265,6 +265,12 @@ export interface Stage<
         watcherVersion?: boolean,
         args?: Partial<MessageMaker.BulkMsgArgs>,
     ): void | Promise<void>;
+
+    /**
+     * Handles uncaught errors after this stage is completely constructed (set
+     * in the {@link Project.run} method).
+     */
+    uncaughtErrorListener: ( error: unknown ) => void;
 };
 
 /**

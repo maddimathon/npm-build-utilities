@@ -16,7 +16,16 @@ import type {
 
 import type { Logger } from '../../../types/Logger.js';
 
-import { DummyConsole } from '../../@internal/index.js';
+import {
+    type AbstractError,
+    DummyConsole,
+
+    errorHandler,
+} from '../../@internal/index.js';
+
+import {
+    FileSystem,
+} from '../../00-universal/index.js';
 
 import {
     parseParamsCLI,
@@ -66,6 +75,26 @@ export class Project {
             config.clr,
             config,
             params,
+        );
+    }
+
+    /**
+     * Handles uncaught errors in node.
+     * 
+     * @param error  To handle.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    public static uncaughtErrorListener( error: unknown ) {
+
+        const console = new DummyConsole();
+        const fs = new FileSystem( console );
+
+        errorHandler(
+            error as AbstractError.Input,
+            0,
+            console,
+            fs,
         );
     }
 
@@ -159,10 +188,16 @@ export class Project {
 
         const inst = new stageClass( this.config, this.params, stageArgs );
 
+        process.removeListener( 'uncaughtException', Project.uncaughtErrorListener );
+        process.on( 'uncaughtException', inst.uncaughtErrorListener );
+
         if ( this.params.debug ) {
             await this.debug( console, stageClass, stageArgs ?? null, inst );
         }
 
-        return inst.run();
+        await inst.run();
+
+        process.on( 'uncaughtException', Project.uncaughtErrorListener );
+        process.removeListener( 'uncaughtException', inst.uncaughtErrorListener );
     }
 }

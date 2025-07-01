@@ -253,10 +253,10 @@ export class ReleaseStage extends AbstractStage<
 
             default: this.pkg.version,
             validate: ( value ) => (
-                value.trim().match( /^\d+\.\d+\.\d+(\-((alpha|beta)(\.\d+)?|\d+\.\d+\.\d+))?(\+[^\s]+)?$/gi )
+                value.trim().match( SemVer.regex )
                     ? true
                     : softWrapText(
-                        'The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, another valid version code, or metadata prefixed with `+`.',
+                        'The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, `-rc[.#]`, another valid version code, or metadata prefixed with `+`.',
                         Math.max( 20, ( this.console.nc.msg.args.msg.maxWidth ?? 80 ) - inputVersionIndent.length )
                     ).split( /\n/g ).join( '\n' + inputVersionIndent )
             ),

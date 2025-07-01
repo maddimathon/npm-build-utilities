@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import type { CLI, Config, Stage } from '../../../types/index.js';
@@ -29,6 +29,14 @@ export declare class Project {
         params?: CLI.Params;
         config?: ProjectConfig;
     }): Promise<Stage_Console>;
+    /**
+     * Handles uncaught errors in node.
+     *
+     * @param error  To handle.
+     *
+     * @since 0.1.4-alpha.1.draft
+     */
+    static uncaughtErrorListener(error: unknown): void;
     /**
      * The configuration object for this project.
      */

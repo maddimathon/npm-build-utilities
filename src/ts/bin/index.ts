@@ -19,6 +19,7 @@ import { Project } from '../lib/04-project/classes/Project.js';
 
 import { getConfig } from './lib/getConfig.js';
 
+process.on( 'uncaughtException', Project.uncaughtErrorListener );
 
 const params = parseParamsCLI(
     minimist( process.argv.slice( 2 ) ) as Partial<CLI.Params>,

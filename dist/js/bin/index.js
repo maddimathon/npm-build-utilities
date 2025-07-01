@@ -5,13 +5,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import minimist from 'minimist';
 import { parseParamsCLI } from '../lib/01-config/parseParamsCLI.js';
 import { Project } from '../lib/04-project/classes/Project.js';
 import { getConfig } from './lib/getConfig.js';
+process.on('uncaughtException', Project.uncaughtErrorListener);
 const params = parseParamsCLI(minimist(process.argv.slice(2)));
 const scriptName = params._?.[0];
 switch (scriptName) {

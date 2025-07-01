@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import {
@@ -18,6 +18,7 @@ import {
     writeLog,
     SemVer,
     logError,
+    StageError,
 } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
 import { getPackageJson } from '../../../00-universal/getPackageJson.js';
@@ -158,10 +159,28 @@ export class AbstractStage {
      */
     get version() {
         if (typeof this.#version === 'undefined') {
-            this.#version = new SemVer(
-                this.pkg.version ?? '0.0.0',
-                this.console,
-            );
+            try {
+                this.console.vi.debug(
+                    { 'SemVer input': this.pkg.version ?? '0.0.0' },
+                    1,
+                );
+                this.#version = new SemVer(
+                    this.pkg.version ?? '0.0.0',
+                    this.console,
+                );
+            } catch (error) {
+                error = new StageError(
+                    'Error while constructing SemVer',
+                    {
+                        class: 'AbstractStage',
+                        method: 'get version',
+                        file: __filename,
+                    },
+                    { cause: error },
+                );
+                this.handleError(error, 1);
+                throw error;
+            }
         }
         return this.#version;
     }
@@ -178,7 +197,25 @@ export class AbstractStage {
             this.#version = input;
             return;
         }
-        this.#version = new SemVer(input, this.console);
+        try {
+            this.console.vi.debug(
+                { 'SemVer input': this.pkg.version ?? '0.0.0' },
+                1,
+            );
+            this.#version = new SemVer(input, this.console);
+        } catch (error) {
+            error = new StageError(
+                'Error while constructing SemVer',
+                {
+                    class: 'AbstractStage',
+                    method: 'set version',
+                    file: __filename,
+                },
+                { cause: error },
+            );
+            this.handleError(error, 1);
+            throw error;
+        }
         if (this.#pkg) {
             this.#pkg.version = this.#version.toString();
         }
@@ -232,6 +269,7 @@ export class AbstractStage {
                 this.console,
                 this.fs,
             );
+        this.uncaughtErrorListener = this.uncaughtErrorListener.bind(this);
     }
     /* METHODS
      * ====================================================================== */
@@ -507,6 +545,16 @@ export class AbstractStage {
         });
     }
     /**
+     * Handles uncaught errors in node.
+     *
+     * @param error  To handle.
+     *
+     * @since 0.1.4-alpha.1.draft
+     */
+    uncaughtErrorListener(error) {
+        this.handleError(error, 1);
+    }
+    /**
      * Runs a function, with parameters as applicable, and catches (& handles)
      * anything thrown.
      *
@@ -661,6 +709,12 @@ export class AbstractStage {
         if (!stageClass) {
             return;
         }
+        if (stageArgs.utils?.compiler) {
+            stageArgs.utils.compiler = undefined;
+        }
+        if (stageArgs.utils?.fs) {
+            stageArgs.utils.fs = undefined;
+        }
         this.params.debug && this.console.vi.verbose({ _subParams }, level);
         return new stageClass(
             this.config,
@@ -676,6 +730,8 @@ export class AbstractStage {
      *
      * Deletes any existing, logs update messages, etc.
      *
+     * @category Running
+     *
      * @param subpath  The subdriectory, relative to src path.
      * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
      *
@@ -689,7 +745,10 @@ export class AbstractStage {
             _distDir ?? this.getDistDir(undefined).replace(/\/$/g, '');
         if (this.fs.exists(distDir)) {
             this.console.verbose('deleting any existing files...', 2);
-            this.fs.delete([distDir + '/' + subpath], 3, true);
+            this.fs.delete(
+                [distDir + '/' + subpath],
+                this.params.verbose ? 3 : 2,
+            );
         }
         const srcDir = this.getSrcDir(undefined).replace(/\/+$/gi, '');
         // returns
@@ -712,6 +771,7 @@ export class AbstractStage {
             );
             return;
         }
+        this.console.verbose('copying files...', 2);
         this.fs.copy(subpath, 2, distDir, srcDir, {
             force: true,
             rename: true,
@@ -724,6 +784,8 @@ export class AbstractStage {
      * the dist directories.
      *
      * Deletes any existing, logs update messages, etc.
+     *
+     * @category Running
      *
      * @param subpath   The subdriectory, relative to src path.
      * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
@@ -738,7 +800,7 @@ export class AbstractStage {
             _distDir ?? this.getDistDir(undefined, subpath).replace(/\/$/g, '');
         if (this.fs.exists(distDir)) {
             this.console.verbose('deleting any existing files...', 2);
-            this.fs.delete([distDir], 3, true);
+            this.fs.delete([distDir], this.params.verbose ? 3 : 2);
         }
         const srcDir = this.getSrcDir(undefined, subpath).replace(/\/+$/gi, '');
         // returns

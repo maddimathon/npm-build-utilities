@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import node_SemVer from 'semver';
@@ -71,11 +71,13 @@ export class SemVer {
      */
     meta;
     /** @hidden */
-    #regex;
+    static #regex;
     /**
      * The regular expression used to match a valid semantic version.
+     *
+     * @since 0.1.4-alpha.1.draft — Now static, not local.
      */
-    get regex() {
+    static get regex() {
         if (typeof this.#regex === 'undefined') {
             this.#regex = new RegExp(
                 [
@@ -100,10 +102,12 @@ export class SemVer {
     constructor(input, console) {
         this.input = input;
         this.console = console;
+        console.vi.debug({ 'new SemVer() input': input }, 1);
         const matches =
-            input.match(this.regex)
-            ?? node_SemVer.clean(input)?.match(this.regex)
-            ?? node_SemVer.valid(node_SemVer.coerce(input))?.match(this.regex); // we're confident in this tuple because of the regex match
+            input?.match(SemVer.regex)
+            ?? node_SemVer.clean(input)?.match(SemVer.regex)
+            ?? node_SemVer.valid(node_SemVer.coerce(input))?.match(SemVer.regex)
+            ?? null; // we're confident in this tuple because of the regex match
         // throws
         if (matches === null) {
             throw new SemVer.Error(
@@ -147,6 +151,7 @@ export class SemVer {
         this.console.debug(
             [
                 ['new SemVer()', { bold: true }],
+                [this.console.vi.stringify({ input })],
                 [this.console.vi.stringify({ matches })],
                 [
                     this.console.vi.stringify({

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import type { Logger } from '../../../types/Logger.js';
@@ -72,8 +72,10 @@ export declare class SemVer {
     readonly meta?: string;
     /**
      * The regular expression used to match a valid semantic version.
+     *
+     * @since 0.1.4-alpha.1.draft — Now static, not local.
      */
-    protected get regex(): RegExp;
+    static get regex(): RegExp;
     /**
      * @throws {@link SemVer.Error} — If input string is not valid and cannot be
      *                                corrected.

@@ -5,7 +5,9 @@
  * https://jestjs.io/docs/configuration
  */
 
-import jest from 'jest';
+/**
+ * @import * as jest from 'jest';
+ */
 
 /**
  * @type {jest.Config}

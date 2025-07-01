@@ -4,10 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
-import { DummyConsole } from '../../@internal/index.js';
+import { DummyConsole, errorHandler } from '../../@internal/index.js';
+import { FileSystem } from '../../00-universal/index.js';
 import { parseParamsCLI } from '../../01-config/index.js';
 // import {
 // } from '../../02-utils/index.js';
@@ -34,6 +35,18 @@ export class Project {
         const config =
             opts.config ?? new ProjectConfig(defaultConfig(new DummyConsole()));
         return new Stage_Console(config.clr, config, params);
+    }
+    /**
+     * Handles uncaught errors in node.
+     *
+     * @param error  To handle.
+     *
+     * @since 0.1.4-alpha.1.draft
+     */
+    static uncaughtErrorListener(error) {
+        const console = new DummyConsole();
+        const fs = new FileSystem(console);
+        errorHandler(error, 0, console, fs);
     }
     /* LOCAL PROPERTIES
      * ====================================================================== */
@@ -105,10 +118,17 @@ export class Project {
             return;
         }
         const inst = new stageClass(this.config, this.params, stageArgs);
+        process.removeListener(
+            'uncaughtException',
+            Project.uncaughtErrorListener,
+        );
+        process.on('uncaughtException', inst.uncaughtErrorListener);
         if (this.params.debug) {
             await this.debug(console, stageClass, stageArgs ?? null, inst);
         }
-        return inst.run();
+        await inst.run();
+        process.on('uncaughtException', Project.uncaughtErrorListener);
+        process.removeListener('uncaughtException', inst.uncaughtErrorListener);
     }
 }
 //# sourceMappingURL=Project.js.map

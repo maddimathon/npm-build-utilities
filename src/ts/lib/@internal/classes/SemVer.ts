@@ -85,12 +85,14 @@ export class SemVer {
     public readonly meta?: string;
 
     /** @hidden */
-    #regex: RegExp | undefined;
+    static #regex: RegExp | undefined;
 
     /**
      * The regular expression used to match a valid semantic version.
+     * 
+     * @since ___PKG_VERSION___ — Now static, not local.
      */
-    protected get regex(): RegExp {
+    public static get regex(): RegExp {
 
         if ( typeof this.#regex === 'undefined' ) {
 
@@ -117,11 +119,13 @@ export class SemVer {
         protected readonly input: string,
         protected readonly console: Logger,
     ) {
+        console.vi.debug( { 'new SemVer() input': input }, 1 );
 
         const matches = (
-            input.match( this.regex )
-            ?? node_SemVer.clean( input )?.match( this.regex )
-            ?? node_SemVer.valid( node_SemVer.coerce( input ) )?.match( this.regex )
+            input?.match( SemVer.regex )
+            ?? node_SemVer.clean( input )?.match( SemVer.regex )
+            ?? node_SemVer.valid( node_SemVer.coerce( input ) )?.match( SemVer.regex )
+            ?? null
         ) as null | [
             string,
             string,
@@ -182,6 +186,7 @@ export class SemVer {
 
         this.console.debug( [
             [ 'new SemVer()', { bold: true } ],
+            [ this.console.vi.stringify( { input } ) ],
             [ this.console.vi.stringify( { matches } ) ],
             [ this.console.vi.stringify( {
                 'this': {

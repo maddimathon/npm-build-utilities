@@ -280,18 +280,19 @@ export namespace AbstractError {
     /**
      * Expected error input types for Handler funtions.
      * 
+     * This is mostly fake - in reality, 'errors' can be anything.
+     * 
      * @since 0.1.0-alpha
      */
     export type Input =
-        // | {}
         | null
         | boolean
         | number
         | string
         | string[]
         | { [ key: string ]: any; }
-        | Error & { [ key: string ]: any; }
-        | NodeCliError;
+        | Partial<Error> & { [ key: string ]: any; }
+        | Partial<NodeCliError>;
 
     /**
      * Export shape for a plain {@link AbstractError} object.
@@ -315,10 +316,7 @@ export namespace AbstractError {
      * 
      * @since 0.1.0-alpha
      */
-    export interface NodeCliError extends Partial<Error> {
-
-        name?: string;
-
+    export interface NodeCliError extends Error {
         code?: string;
         output?: ( null | string )[];
         path?: string;
@@ -327,5 +325,7 @@ export namespace AbstractError {
         status?: number;
         stderr?: string;
         stdout?: string;
+
+        [ key: string ]: any;
     };
 }

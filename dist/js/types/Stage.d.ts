@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha
+ * @maddimathon/build-utilities@0.1.4-alpha.1.draft
  * @license MIT
  */
 import type * as sass from 'sass';
@@ -195,6 +195,11 @@ export interface Stage<T_Args extends Stage.Args = Stage.Args, T_SubStage extend
      * @param args            Message argument overrides.
      */
     startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean, args?: Partial<MessageMaker.BulkMsgArgs>): void | Promise<void>;
+    /**
+     * Handles uncaught errors after this stage is completely constructed (set
+     * in the {@link Project.run} method).
+     */
+    uncaughtErrorListener: (error: unknown) => void;
 }
 /**
  * Utility types for the {@link Stage} interface.
