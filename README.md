@@ -7,7 +7,7 @@ children:
 ---
 
 <!--README_HEADER-->
-# NPM Build Utilities @ 0.2.0-alpha.draft
+# NPM Build Utilities @ 0.2.0-alpha
 <!--/README_HEADER-->
 
 <!--README_DESC-->
@@ -35,6 +35,10 @@ or
 ## Install
 
 <!--README_INSTALL-->
+```bash
+npm i -D @maddimathon/build-utilities@0.2.0-alpha
+npm i -D github:maddimathon/build-utilities#0.2.0-alpha
+```
 <!--/README_INSTALL-->
 
 
@@ -57,7 +61,6 @@ without being considered a breaking change).
 
 ```ts
 import type { ... } from '@maddimathon/build-utilities';
-import type { ... } from '@maddimathon/build-utilities/types';
 
 import { bin, internal, ... } from '@maddimathon/build-utilities';
 

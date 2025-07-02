@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -52,7 +52,7 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
      *
      * @category Sub-Stages
      *
-     * @since 0.2.0-alpha.draft — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
+     * @since 0.2.0-alpha — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
      */
     protected scss(): Promise<void>;
     /**

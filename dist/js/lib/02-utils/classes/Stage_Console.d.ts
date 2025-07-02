@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import { node, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
@@ -71,7 +71,7 @@ export declare class Stage_Console implements Logger {
     /**
      * {@inheritDoc Logger.debug}
      *
-     * @TODO
+     * @UPGRADE
      * **Doesn't currently actually warn.**
      */
     warn(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;

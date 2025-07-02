@@ -37,5 +37,5 @@ type TypeTest = [
 true as TypeTest[ 0 ];
 testClass;
 
-// TODO tests
+// UPGRADE tests
 test.todo( 'FileSystem JS tests' );

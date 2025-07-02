@@ -724,7 +724,7 @@ export abstract class AbstractStage<
      * 
      * @param error  To handle.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha
      */
     public uncaughtErrorListener( error: unknown ) {
         this.handleError( error as AbstractError.Input, 1 );
@@ -1157,7 +1157,7 @@ export abstract class AbstractStage<
      * @param postCSS   Whether to run PostCSS on the output css. Default true.
      *
      * @since 0.1.4-alpha
-     * @since ___PKG_VERSION___ — Added postCSS param and PostCSS compatibility.
+     * @since 0.2.0-alpha — Added postCSS param and PostCSS compatibility.
      *
      * @experimental
      */
@@ -1255,7 +1255,7 @@ export abstract class AbstractStage<
 
         if ( postCSS ) {
 
-            this.console.verbose( 'processing with PostCSS...', 2 );
+            this.console.verbose( 'processing with postcss...', 2 );
             await this.atry(
                 this.compiler.postCSS,
                 this.params.verbose ? 3 : 2,

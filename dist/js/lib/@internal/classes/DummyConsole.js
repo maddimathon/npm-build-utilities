@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import {
@@ -66,7 +66,7 @@ export class DummyConsole {
     /**
      * Doesn't currently actually warn.
      *
-     * @TODO - make it warn
+     * @UPGRADE - make it warn
      */
     warn(msg, level, msgArgs, timeArgs) {
         this.log(msg, level, msgArgs, timeArgs);

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
@@ -197,7 +197,7 @@ export class Stage_Console {
     /**
      * {@inheritDoc Logger.debug}
      *
-     * @TODO
+     * @UPGRADE
      * **Doesn't currently actually warn.**
      */
     warn(msg, level, msgArgs, timeArgs) {

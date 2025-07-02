@@ -90,7 +90,7 @@ export class SemVer {
     /**
      * The regular expression used to match a valid semantic version.
      * 
-     * @since ___PKG_VERSION___ — Now static, not local.
+     * @since 0.2.0-alpha — Now static, not local.
      */
     public static get regex(): RegExp {
 

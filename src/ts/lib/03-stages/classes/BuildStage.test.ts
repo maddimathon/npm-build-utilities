@@ -30,5 +30,5 @@ type TypeTest = [
 true as TypeTest[ 0 ];
 testStage;
 
-// TODO tests
+// UPGRADE tests
 test.todo( 'BuildStage JS tests' );

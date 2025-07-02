@@ -83,7 +83,7 @@ export class Project {
      * 
      * @param error  To handle.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha
      */
     public static uncaughtErrorListener( error: unknown ) {
 

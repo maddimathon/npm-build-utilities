@@ -64,14 +64,14 @@ export class TestStage extends AbstractStage<
      * These default values are made using
      * {@link Stage_Compiler.getTsConfigPaths} and
      * {@link Stage_Compiler.getTsConfigOutDir}.  Assumes that tests match the
-     * globs `**\/*.test.js` and should be deleted with any maps and type
+     * glob `**\/*.test.js` and should be deleted with any maps and type
      * definitions.
      * 
      * @category Config
      * 
      * @param level  Depth level for output to the console.
      *
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha
      */
     protected async tsConfigTidyPaths( level: number ): Promise<string[]> {
 
@@ -116,7 +116,7 @@ export class TestStage extends AbstractStage<
      * 
      * @category Sub-Stages
      * 
-     * @since ___PKG_VERSION___ — Converted from boolean to boolean[].
+     * @since 0.2.0-alpha — Converted from boolean to boolean[].
      */
     protected testResults: boolean[] = [];
 

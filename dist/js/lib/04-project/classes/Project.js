@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import { DummyConsole, errorHandler } from '../../@internal/index.js';
@@ -41,7 +41,7 @@ export class Project {
      *
      * @param error  To handle.
      *
-     * @since 0.2.0-alpha.draft
+     * @since 0.2.0-alpha
      */
     static uncaughtErrorListener(error) {
         const console = new DummyConsole();

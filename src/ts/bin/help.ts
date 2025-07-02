@@ -33,7 +33,7 @@ export default async function (
         console = await Project.getConsole( { params } );
     }
 
-    // TODO finish me
+    // UPGRADE finish me
     console.log( 'Hello!  I am the help function.  I am not yet useful, sorry.', level, { linesOut: 2 } );
     console.vi.debug( { params }, level, { bold: false, linesOut: 2 } );
 };

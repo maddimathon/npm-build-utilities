@@ -70,7 +70,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * @param level            Depth level for output to the console.
      * @param writeIfNotFound  Whether to prompt (via console) to write a new tsconfig file if none are found.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha
      */
     public static async getTsConfigPaths(
         stage: Stage,
@@ -196,7 +196,7 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * Default configuration for working with PostCSS.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha
      */
     public static get postCssConfig() {
 
@@ -387,7 +387,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * @param level            Depth level for this message.
      * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha
      */
     public getTsConfig(
         tsconfig: string,
@@ -443,11 +443,11 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
      * 
-     * @param tsConfig         Path to TS config json used to compile the project.
+     * @param tsconfig         Path to TS config json.
      * @param level            Depth level for this message.
      * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha
      */
     public getTsConfigOutDir(
         tsconfig: string | Partial<Json.TsConfig> & { path: string; },
@@ -600,7 +600,7 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * {@inheritDoc Stage.Compiler.typescript}
      * 
-     * @since ___PKG_VERSION___ — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
+     * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
      */
     public async typescript(
         tsconfig: string,

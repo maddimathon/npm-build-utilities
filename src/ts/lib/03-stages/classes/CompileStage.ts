@@ -137,7 +137,7 @@ export class CompileStage extends AbstractStage<
      * 
      * @category Sub-Stages
      * 
-     * @since ___PKG_VERSION___ — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
+     * @since 0.2.0-alpha — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
      */
     protected async scss() {
         if ( !this.args.scss ) { return; }

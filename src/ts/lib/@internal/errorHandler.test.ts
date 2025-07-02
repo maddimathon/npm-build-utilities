@@ -32,5 +32,5 @@ type TypeTest = [
 true as TypeTest[ 0 ];
 testFunction;
 
-// TODO tests
+// UPGRADE tests
 test.todo( 'errorHandler JS tests' );

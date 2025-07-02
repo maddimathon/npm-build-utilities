@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -238,7 +238,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @param error  To handle.
      *
-     * @since 0.2.0-alpha.draft
+     * @since 0.2.0-alpha
      */
     uncaughtErrorListener(error: unknown): void;
     /**
@@ -381,7 +381,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @param postCSS   Whether to run PostCSS on the output css. Default true.
      *
      * @since 0.1.4-alpha
-     * @since 0.2.0-alpha.draft — Added postCSS param and PostCSS compatibility.
+     * @since 0.2.0-alpha — Added postCSS param and PostCSS compatibility.
      *
      * @experimental
      */

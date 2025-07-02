@@ -19,6 +19,42 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.2.0-alpha** — 2025-07-01
+
+Added PostCSS support (enabled by default) and better uncaught error handling.
+
+### Moved & Renamed
+- SemVer.regex converted to static and public
+
+### Misc. Breaking
+- PostCSS processing enabled by default in Stage_Compiler.scss,
+  Stage.Args.Compile, and AbstractStage.runCustomScssDirSubStage() 
+- Added `verbatimModuleSyntax: true` to base tsconfig
+
+### Added
+- Uncaught error handling - with uncaughtErrorListener() methods in Project
+  (static) and Stage (local) classes
+- PostCSS support in Stage.Compiler, AbstractStage, and CompileStage
+  (enabled by default)
+- `verbatimModuleSyntax: true` to base tsconfig
+- Stage_Compiler.getTsConfig() method
+- Stage_Compiler.getTsConfigOutDir() method
+- Stage_Compiler.typescript() optional param: errorIfNotFound
+- Stage_Compiler.getTsConfigPaths() static method (this logic was previously in
+  CompileStage.typescript())
+- Stage_Compiler.postCssConfig() static method
+- TestStage.tsConfigTidyPaths() method for default Stage.Args.Test.js.tidy
+
+### Fixed
+- Bugs in AbstractStage.runCustomDirCopySubStage() and
+  AbstractStage.runCustomScssDirSubStage():
+    - Deletion was left in dry-run mode
+    - Notice output level for fs.delete calls
+- Rare bug resulting in uncaught error while constructing a SemVer while
+  running build as a sub-stage
+- Updated dependency versions
+
+
 ## **0.1.4-alpha** — 2025-06-29
 
 Quick update to facilitate common custom sub-stage types and test typescript

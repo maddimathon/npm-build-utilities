@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import postcss from 'postcss';
@@ -41,7 +41,7 @@ export class Stage_Compiler {
      * @param level            Depth level for output to the console.
      * @param writeIfNotFound  Whether to prompt (via console) to write a new tsconfig file if none are found.
      *
-     * @since 0.2.0-alpha.draft
+     * @since 0.2.0-alpha
      */
     static async getTsConfigPaths(stage, level, writeIfNotFound = true) {
         const tsSrcDirs = stage.getSrcDir('ts');
@@ -161,7 +161,7 @@ export class Stage_Compiler {
     /**
      * Default configuration for working with PostCSS.
      *
-     * @since 0.2.0-alpha.draft
+     * @since 0.2.0-alpha
      */
     static get postCssConfig() {
         const features = {
@@ -307,7 +307,7 @@ export class Stage_Compiler {
      * @param level            Depth level for this message.
      * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
      *
-     * @since 0.2.0-alpha.draft
+     * @since 0.2.0-alpha
      */
     getTsConfig(tsconfig, level, errorIfNotFound = true) {
         this.console.verbose('getting tsconfig value...', level);
@@ -349,11 +349,11 @@ export class Stage_Compiler {
      *
      * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
      *
-     * @param tsConfig         Path to TS config json used to compile the project.
+     * @param tsconfig         Path to TS config json.
      * @param level            Depth level for this message.
      * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
      *
-     * @since 0.2.0-alpha.draft
+     * @since 0.2.0-alpha
      */
     getTsConfigOutDir(tsconfig, level, errorIfNotFound = true) {
         const config_obj =
@@ -495,7 +495,7 @@ export class Stage_Compiler {
     /**
      * {@inheritDoc Stage.Compiler.typescript}
      *
-     * @since 0.2.0-alpha.draft — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
+     * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
      */
     async typescript(tsconfig, level, errorIfNotFound) {
         this.console.verbose('running tsc...', level);

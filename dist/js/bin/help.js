@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import { parseParamsCLI, Project } from '../lib/index.js';
@@ -15,7 +15,7 @@ export default async function (_params, level = 0, console) {
     if (!console) {
         console = await Project.getConsole({ params });
     }
-    // TODO finish me
+    // UPGRADE finish me
     console.log(
         'Hello!  I am the help function.  I am not yet useful, sorry.',
         level,

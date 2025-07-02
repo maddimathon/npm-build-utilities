@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import {
@@ -79,7 +79,7 @@ export class CompileStage extends AbstractStage {
      *
      * @category Sub-Stages
      *
-     * @since 0.2.0-alpha.draft — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
+     * @since 0.2.0-alpha — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
      */
     async scss() {
         if (!this.args.scss) {

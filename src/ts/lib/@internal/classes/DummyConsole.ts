@@ -95,7 +95,7 @@ export class DummyConsole implements Logger {
     /** 
      * Doesn't currently actually warn.
      * 
-     * @TODO - make it warn
+     * @UPGRADE - make it warn
      */
     public warn(
         msg: Parameters<DummyConsole[ 'log' ]>[ 0 ],

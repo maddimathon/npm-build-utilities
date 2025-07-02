@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -205,7 +205,7 @@ export interface Stage<T_Args extends Stage.Args = Stage.Args, T_SubStage extend
      *
      * @param error  Uncaught exception to handle.
      *
-     * @since 0.2.0-alpha.draft
+     * @since 0.2.0-alpha
      */
     uncaughtErrorListener: (error: unknown) => void;
 }
@@ -429,7 +429,7 @@ export declare namespace Stage {
              *
              * If an object, settings for steps within the sub-stage.
              *
-             * @since 0.2.0-alpha.draft — Now can be an object to pass params.
+             * @since 0.2.0-alpha — Now can be an object to pass params.
              */
             scss: boolean | {
                 /**
@@ -552,7 +552,7 @@ export declare namespace Stage {
                 /**
                  * File globs to be removed after tests are complete.
                  *
-                 * @since 0.2.0-alpha.draft — If undefined, these paths are set by {@link TestStage.tsConfigTidyPaths}.
+                 * @since 0.2.0-alpha — If undefined, these paths are set by {@link TestStage.tsConfigTidyPaths}.
                  */
                 tidy?: string[];
             };
@@ -662,7 +662,7 @@ export declare namespace Stage {
          * @param level        Depth level for this message.
          * @param postCssOpts  Overrides for the configured PostCSS options in {@link Stage.Compiler.args}.
          *
-         * @since 0.2.0-alpha.draft
+         * @since 0.2.0-alpha
          */
         postCSS(paths: {
             from: string;
@@ -684,10 +684,11 @@ export declare namespace Stage {
          *
          * @throws {@link StageError}  If the tsconfig file doesn’t exist.
          *
-         * @param tsconfig  Path to TS config json used to compile the project.
-         * @param level     Depth level for this message.
+         * @param tsconfig         Path to TS config json used to compile the project.
+         * @param level            Depth level for this message.
+         * @param errorIfNotFound  Whether to throw error if the tsconfig file is not found.
          */
-        typescript(tsconfig: string, level: number): Promise<void>;
+        typescript(tsconfig: string, level: number, errorIfNotFound?: boolean): Promise<void>;
     }
     /**
      * Type utilities for {@link Compiler} classes.
@@ -706,7 +707,7 @@ export declare namespace Stage {
             /**
              * {@inheritDoc Compiler.Args.PostCSS}
              *
-             * @since 0.2.0-alpha.draft
+             * @since 0.2.0-alpha
              */
             postCSS: Args.PostCSS;
             /** {@inheritDoc Compiler.Args.Sass} */
@@ -730,14 +731,14 @@ export declare namespace Stage {
         /**
          * Types for the {@link Compiler.Args} interface.
          *
-         * @since 0.2.0-alpha.draft
+         * @since 0.2.0-alpha
          */
         namespace Args {
             /**
              * Optional default configuration to use when processing css with
              * postCSS.
              *
-             * @since 0.2.0-alpha.draft
+             * @since 0.2.0-alpha
              */
             interface PostCSS {
                 /**
@@ -780,7 +781,7 @@ export declare namespace Stage {
              * documentation.
              *
              * @since 0.1.0-alpha
-             * @since 0.2.0-alpha.draft — Moved to {@link Stage.Compiler.Args} namespace.
+             * @since 0.2.0-alpha — Moved to {@link Stage.Compiler.Args} namespace.
              *
              * @interface
              */

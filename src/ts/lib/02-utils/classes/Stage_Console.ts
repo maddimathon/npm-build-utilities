@@ -289,7 +289,7 @@ export class Stage_Console implements Logger {
     /** 
      * {@inheritDoc Logger.debug}
      * 
-     * @TODO
+     * @UPGRADE
      * **Doesn't currently actually warn.**
      */
     public warn(

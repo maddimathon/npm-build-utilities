@@ -277,7 +277,7 @@ export interface Stage<
      * 
      * @param error  Uncaught exception to handle.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha
      */
     uncaughtErrorListener: ( error: unknown ) => void;
 };
@@ -549,7 +549,7 @@ export namespace Stage {
              *
              * If an object, settings for steps within the sub-stage.
              * 
-             * @since ___PKG_VERSION___ — Now can be an object to pass params.
+             * @since 0.2.0-alpha — Now can be an object to pass params.
              */
             scss: boolean | {
 
@@ -694,7 +694,7 @@ export namespace Stage {
                 /**
                  * File globs to be removed after tests are complete.
                  *
-                 * @since ___PKG_VERSION___ — If undefined, these paths are set by {@link TestStage.tsConfigTidyPaths}.
+                 * @since 0.2.0-alpha — If undefined, these paths are set by {@link TestStage.tsConfigTidyPaths}.
                  */
                 tidy?: string[];
             },
@@ -838,7 +838,7 @@ export namespace Stage {
          * @param level        Depth level for this message.
          * @param postCssOpts  Overrides for the configured PostCSS options in {@link Stage.Compiler.args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.2.0-alpha
          */
         postCSS(
             paths: {
@@ -871,12 +871,14 @@ export namespace Stage {
          * 
          * @throws {@link StageError}  If the tsconfig file doesn’t exist.
          * 
-         * @param tsconfig  Path to TS config json used to compile the project.
-         * @param level     Depth level for this message.
+         * @param tsconfig         Path to TS config json used to compile the project.
+         * @param level            Depth level for this message.
+         * @param errorIfNotFound  Whether to throw error if the tsconfig file is not found.
          */
         typescript(
             tsconfig: string,
             level: number,
+            errorIfNotFound?: boolean,
         ): Promise<void>;
     };
 
@@ -899,7 +901,7 @@ export namespace Stage {
             /**
              * {@inheritDoc Compiler.Args.PostCSS}
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.2.0-alpha
              */
             postCSS: Args.PostCSS;
 
@@ -927,7 +929,7 @@ export namespace Stage {
         /**
          * Types for the {@link Compiler.Args} interface.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.2.0-alpha
          */
         export namespace Args {
 
@@ -935,7 +937,7 @@ export namespace Stage {
              * Optional default configuration to use when processing css with
              * postCSS.
              *
-             * @since ___PKG_VERSION___
+             * @since 0.2.0-alpha
              */
             export interface PostCSS {
 
@@ -984,7 +986,7 @@ export namespace Stage {
              * documentation.
              *
              * @since 0.1.0-alpha
-             * @since ___PKG_VERSION___ — Moved to {@link Stage.Compiler.Args} namespace.
+             * @since 0.2.0-alpha — Moved to {@link Stage.Compiler.Args} namespace.
              *
              * @interface
              */

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.draft
+ * @maddimathon/build-utilities@0.2.0-alpha
  * @license MIT
  */
 import {
@@ -550,7 +550,7 @@ export class AbstractStage {
      *
      * @param error  To handle.
      *
-     * @since 0.2.0-alpha.draft
+     * @since 0.2.0-alpha
      */
     uncaughtErrorListener(error) {
         this.handleError(error, 1);
@@ -793,7 +793,7 @@ export class AbstractStage {
      * @param postCSS   Whether to run PostCSS on the output css. Default true.
      *
      * @since 0.1.4-alpha
-     * @since 0.2.0-alpha.draft — Added postCSS param and PostCSS compatibility.
+     * @since 0.2.0-alpha — Added postCSS param and PostCSS compatibility.
      *
      * @experimental
      */
@@ -879,7 +879,7 @@ export class AbstractStage {
             ),
         );
         if (postCSS) {
-            this.console.verbose('processing with PostCSS...', 2);
+            this.console.verbose('processing with postcss...', 2);
             await this.atry(
                 this.compiler.postCSS,
                 this.params.verbose ? 3 : 2,
