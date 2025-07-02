@@ -8,7 +8,7 @@
  * @license MIT
  */
 
-import {
+import type {
     Config,
     Stage,
 } from '../../types/index.js';

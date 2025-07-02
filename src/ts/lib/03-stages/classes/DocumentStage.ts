@@ -194,8 +194,20 @@ export class DocumentStage extends AbstractStage<
                     Options: 'https://github.com/search?q=repo%3ADefinitelyTyped%2FDefinitelyTyped+path%3A%2F%5Etypes%5C%2Fminify%5C%2F%2F+symbol%3AOptions&type=code',
                 },
 
+                postcss: {
+                    'postcss.process': 'https://postcss.org/api/#processor-process',
+
+                    'postcss.Parser': 'https://postcss.org/api/#postcss-parser',
+                    'postcss.SourceMapOptions': 'https://postcss.org/api/#sourcemapoptions',
+                    'postcss.Syntax': 'https://postcss.org/api/#syntax',
+                },
+
                 prettier: {
                     Options: 'https://prettier.io/docs/options',
+                },
+
+                sass: {
+                    Options: 'https://sass-lang.com/documentation/js-api/interfaces/options/',
                 },
 
                 typescript: {

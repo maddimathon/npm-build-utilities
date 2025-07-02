@@ -4,12 +4,13 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 var _a;
 import { typeOf } from '@maddimathon/utility-typescript/functions';
 import { DummyConsole, isObjectEmpty } from '../../@internal/index.js';
+import { FileSystem } from '../../00-universal/index.js';
 // import {
 // } from '../../01-config/index.js';
 // import {

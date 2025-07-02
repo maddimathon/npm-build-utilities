@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -29,7 +29,9 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
     readonly subStages: Stage.SubStage.Compile[];
     get ARGS_DEFAULT(): {
         readonly files: false;
-        readonly scss: true;
+        readonly scss: {
+            postCSS: true;
+        };
         readonly ts: true;
         readonly utils: {};
     };
@@ -49,6 +51,8 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
      * Compiles scss files to css.
      *
      * @category Sub-Stages
+     *
+     * @since 0.2.0-alpha.draft — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
      */
     protected scss(): Promise<void>;
     /**

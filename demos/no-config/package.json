@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities--demos--no-config",
-    "version": "0.1.4-alpha.1",
+    "version": "0.2.0-alpha",
 
     "config": {
         "title": "NPM Build Utilities No-config Demo"
@@ -44,7 +44,7 @@
     "dependencies": {
     },
     "devDependencies": {
-        "@maddimathon/build-utilities": "0.1.4-alpha.1"
+        "@maddimathon/build-utilities": "0.2.0-alpha"
     },
 
     "browserslist": [

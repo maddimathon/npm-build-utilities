@@ -4,10 +4,12 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 import { slugify } from '@maddimathon/utility-typescript/functions';
+import { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import {} from './classes/index.js';
 import { errorStringify } from './errorStringify.js';
 import { writeLog } from './writeLog.js';
 /**

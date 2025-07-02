@@ -4,13 +4,13 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
-import { FileSystemType } from '../../../../types/FileSystemType.js';
-import { Logger } from '../../../../types/Logger.js';
+import type { FileSystemType } from '../../../../types/FileSystemType.js';
+import type { Logger } from '../../../../types/Logger.js';
 /**
  * An extension of the utilities error for use within the library.
  *

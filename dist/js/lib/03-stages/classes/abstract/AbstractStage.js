@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 import {
@@ -13,6 +13,7 @@ import {
     mergeArgs,
     toTitleCase,
 } from '@maddimathon/utility-typescript/functions';
+import { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import {
     errorHandler,
     writeLog,
@@ -549,7 +550,7 @@ export class AbstractStage {
      *
      * @param error  To handle.
      *
-     * @since 0.1.4-alpha.1.draft
+     * @since 0.2.0-alpha.draft
      */
     uncaughtErrorListener(error) {
         this.handleError(error, 1);
@@ -789,12 +790,14 @@ export class AbstractStage {
      *
      * @param subpath   The subdriectory, relative to src path.
      * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     * @param postCSS   Whether to run PostCSS on the output css. Default true.
      *
      * @since 0.1.4-alpha
+     * @since 0.2.0-alpha.draft — Added postCSS param and PostCSS compatibility.
      *
      * @experimental
      */
-    async runCustomScssDirSubStage(subpath, _distDir) {
+    async runCustomScssDirSubStage(subpath, _distDir, postCSS = true) {
         this.console.progress('compiling ' + subpath + ' to css...', 1);
         const distDir =
             _distDir ?? this.getDistDir(undefined, subpath).replace(/\/$/g, '');
@@ -826,9 +829,9 @@ export class AbstractStage {
         const scssPaths = this.fs
             .glob(
                 [
-                    srcDir + '/**/*.css',
-                    srcDir + '/**/*.sass',
                     srcDir + '/**/*.scss',
+                    srcDir + '/**/*.sass',
+                    srcDir + '/**/*.css',
                 ],
                 {
                     ignore: [...FileSystem.globs.SYSTEM, '**/_*'],
@@ -838,7 +841,7 @@ export class AbstractStage {
             .map(this.fs.pathRelative);
         // returns
         if (!scssPaths.length) {
-            this.console.verbose('ⅹ no css files found', 2);
+            this.console.verbose('ⅹ no css, sass, or scss files found', 2);
             return;
         }
         this.console.verbose('building path arguments...', 2);
@@ -875,6 +878,17 @@ export class AbstractStage {
                 ]),
             ),
         );
+        if (postCSS) {
+            this.console.verbose('processing with PostCSS...', 2);
+            await this.atry(
+                this.compiler.postCSS,
+                this.params.verbose ? 3 : 2,
+                [
+                    scssPathArgs.map((_o) => ({ from: _o.output })),
+                    this.params.verbose ? 3 : 2,
+                ],
+            );
+        }
     }
 }
 //# sourceMappingURL=AbstractStage.js.map

@@ -8,7 +8,7 @@
  * @license MIT
  */
 
-import {
+import type {
     Objects,
 } from '@maddimathon/utility-typescript/types';
 

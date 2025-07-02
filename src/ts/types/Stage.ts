@@ -10,6 +10,9 @@
  * @license MIT
  */
 
+import type postcss from 'postcss';
+import type * as postcss_PresetEnv from 'postcss-preset-env';
+
 import type * as sass from 'sass';
 import type * as typeDoc from "typedoc";
 
@@ -269,6 +272,12 @@ export interface Stage<
     /**
      * Handles uncaught errors after this stage is completely constructed (set
      * in the {@link Project.run} method).
+     *
+     * @category Errors
+     * 
+     * @param error  Uncaught exception to handle.
+     * 
+     * @since ___PKG_VERSION___
      */
     uncaughtErrorListener: ( error: unknown ) => void;
 };
@@ -537,8 +546,18 @@ export namespace Stage {
 
             /**
              * Whether to include this sub-stage.
+             *
+             * If an object, settings for steps within the sub-stage.
+             * 
+             * @since ___PKG_VERSION___ — Now can be an object to pass params.
              */
-            scss: boolean;
+            scss: boolean | {
+
+                /**
+                 * Whether to run PostCSS on the compiled css.
+                 */
+                postCSS: boolean;
+            };
 
             /**
              * Whether to include this sub-stage.
@@ -674,8 +693,10 @@ export namespace Stage {
 
                 /**
                  * File globs to be removed after tests are complete.
+                 *
+                 * @since ___PKG_VERSION___ — If undefined, these paths are set by {@link TestStage.tsConfigTidyPaths}.
                  */
-                tidy: string[];
+                tidy?: string[];
             },
 
             scss: boolean;
@@ -810,31 +831,51 @@ export namespace Stage {
         readonly tsConfig: Json.TsConfig;
 
         /**
+         * Process css with the 
+         * {@link https://www.npmjs.com/package/postCSS | PostCSS npm package}.
+         * 
+         * @param paths        Css paths to process (from), and optionally where to output them (to).
+         * @param level        Depth level for this message.
+         * @param postCssOpts  Overrides for the configured PostCSS options in {@link Stage.Compiler.args}.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        postCSS(
+            paths: {
+                from: string,
+                to?: string,
+            }[],
+            level: number,
+            postCssOpts?: Compiler.Args.PostCSS,
+        ): Promise<void>;
+
+        /**
          * Compile scss using the 
          * {@link https://www.npmjs.com/package/sass | sass npm package}.
          * 
-         * @param input   Scss input path.
-         * @param output  Scss output path.
-         * @param level   Depth level for this message.
+         * @param input     Scss input path.
+         * @param output    Scss output path.
+         * @param level     Depth level for this message.
+         * @param sassOpts  Overrides for the configured sass options in {@link Stage.Compiler.args}.
          */
         scss(
             input: string,
             output: string,
             level: number,
-            sassOpts?: sass.Options<"sync">,
+            sassOpts?: Compiler.Args.Sass,
         ): Promise<void>;
 
         /**
          * Compile typescript using the 
-         * {@link https://www.npmjs.com/package/sass | sass npm package}.
+         * {@link https://www.npmjs.com/package/typescript | typescript npm package}.
          * 
          * @throws {@link StageError}  If the tsconfig file doesn’t exist.
          * 
-         * @param tsConfig  Path to TS config json used to compile the project.
+         * @param tsconfig  Path to TS config json used to compile the project.
          * @param level     Depth level for this message.
          */
         typescript(
-            tsConfig: string,
+            tsconfig: string,
             level: number,
         ): Promise<void>;
     };
@@ -842,7 +883,7 @@ export namespace Stage {
     /**
      * Type utilities for {@link Compiler} classes.
      * 
-     * @see {@link Stage.Class}
+     * @see {@link Stage.compiler}
      * 
      * @since 0.1.0-alpha
      */
@@ -852,19 +893,24 @@ export namespace Stage {
          * Optional configuration for {@link Compiler} classes.
          * 
          * @since 0.1.0-alpha
-         * @since 0.1.1 — Removed unused ts prop.
          */
         export interface Args {
 
             /**
-             * Optional default configuration to use when compiling sass.
+             * {@inheritDoc Compiler.Args.PostCSS}
+             * 
+             * @since ___PKG_VERSION___
              */
-            sass: sass.Options<"sync">;
+            postCSS: Args.PostCSS;
+
+            /** {@inheritDoc Compiler.Args.Sass} */
+            sass: Args.Sass;
 
             /**
              * Optional default configuration to use when compiling typescript.
              * 
-             * @since 0.1.3
+             * @since 0.1.1 — Removed unused ts prop.
+             * @since 0.1.3 — Added it back.
              */
             ts: {
 
@@ -877,6 +923,75 @@ export namespace Stage {
                 tidyGlobs?: string | string[];
             },
         };
+
+        /**
+         * Types for the {@link Compiler.Args} interface.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        export namespace Args {
+
+            /**
+             * Optional default configuration to use when processing css with
+             * postCSS.
+             *
+             * @since ___PKG_VERSION___
+             */
+            export interface PostCSS {
+
+                /**
+                 * Instantiated plugins to include.
+                 *
+                 * Note that postcss-preset-env is included according to
+                 * {@link Args.presetEnv}.
+                 */
+                plugins?: postcss.AcceptedPlugin[];
+
+                /**
+                 * Configuration passed to the
+                 * {@link https://www.npmjs.com/package/postcss-preset-env | postcss-preset-env plugin}.
+                 *
+                 * Gets merged with the defaults in
+                 * {@link Stage.Compiler.ARGS_DEFAULT}. If false, this plugin is
+                 * not used.
+                 */
+                presetEnv?: false | {
+                    [ K in keyof postcss_PresetEnv.pluginOptions ]: postcss_PresetEnv.pluginOptions[ K ];
+                };
+
+                /**
+                 * Options used with {@link postcss.process}.
+                 */
+                processor?: {
+
+                    /**
+                     * Remapping of {@link postcss.SourceMapOptions} for better
+                     * typing and documentation.
+                     */
+                    map?: boolean | {
+                        [ K in keyof postcss.SourceMapOptions ]: postcss.SourceMapOptions[ K ];
+                    };
+
+                    parser?: postcss.Parser | postcss.Syntax;
+                };
+            };
+
+            /**
+             * Optional default configuration to use when compiling sass.
+             *
+             * This is a simple re-mapping of
+             * {@link sass.Options | sass.Options<"sync">} for better typing and
+             * documentation.
+             *
+             * @since 0.1.0-alpha
+             * @since ___PKG_VERSION___ — Moved to {@link Stage.Compiler.Args} namespace.
+             *
+             * @interface
+             */
+            export type Sass = {
+                [ K in keyof sass.Options<"sync"> ]: sass.Options<"sync">[ K ];
+            };
+        }
     };
 
     /**

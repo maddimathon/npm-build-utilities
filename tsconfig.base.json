@@ -31,7 +31,8 @@
         "sourceMap": true,
         "strict": true,
         "strictBindCallApply": true,
-        "target": "es2022"
+        "target": "es2022",
+        "verbatimModuleSyntax": true
     },
     "$schema": "https://json.schemastore.org/tsconfig"
 }

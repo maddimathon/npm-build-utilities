@@ -1154,14 +1154,17 @@ export abstract class AbstractStage<
      *
      * @param subpath   The subdriectory, relative to src path.
      * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     * @param postCSS   Whether to run PostCSS on the output css. Default true.
      *
      * @since 0.1.4-alpha
+     * @since ___PKG_VERSION___ — Added postCSS param and PostCSS compatibility.
      *
      * @experimental
      */
     protected async runCustomScssDirSubStage(
         subpath: string,
         _distDir?: string,
+        postCSS: boolean = true,
     ) {
         this.console.progress( 'compiling ' + subpath + ' to css...', 1 );
 
@@ -1188,9 +1191,9 @@ export abstract class AbstractStage<
 
         const scssPaths = this.fs.glob(
             [
-                srcDir + '/**/*.css',
-                srcDir + '/**/*.sass',
                 srcDir + '/**/*.scss',
+                srcDir + '/**/*.sass',
+                srcDir + '/**/*.css',
             ],
             {
                 ignore: [
@@ -1202,7 +1205,7 @@ export abstract class AbstractStage<
 
         // returns
         if ( !scssPaths.length ) {
-            this.console.verbose( 'ⅹ no css files found', 2 );
+            this.console.verbose( 'ⅹ no css, sass, or scss files found', 2 );
             return;
         }
 
@@ -1249,5 +1252,19 @@ export abstract class AbstractStage<
                 [ input, output, this.params.verbose ? 3 : 2 ],
             )
         ) );
+
+        if ( postCSS ) {
+
+            this.console.verbose( 'processing with PostCSS...', 2 );
+            await this.atry(
+                this.compiler.postCSS,
+                this.params.verbose ? 3 : 2,
+                [
+                    scssPathArgs.map( _o => ( { from: _o.output } ) ),
+                    this.params.verbose ? 3 : 2,
+
+                ],
+            );
+        }
     }
 }

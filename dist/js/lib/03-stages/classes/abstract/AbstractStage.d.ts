@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -238,7 +238,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @param error  To handle.
      *
-     * @since 0.1.4-alpha.1.draft
+     * @since 0.2.0-alpha.draft
      */
     uncaughtErrorListener(error: unknown): void;
     /**
@@ -378,11 +378,13 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @param subpath   The subdriectory, relative to src path.
      * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     * @param postCSS   Whether to run PostCSS on the output css. Default true.
      *
      * @since 0.1.4-alpha
+     * @since 0.2.0-alpha.draft — Added postCSS param and PostCSS compatibility.
      *
      * @experimental
      */
-    protected runCustomScssDirSubStage(subpath: string, _distDir?: string): Promise<void>;
+    protected runCustomScssDirSubStage(subpath: string, _distDir?: string, postCSS?: boolean): Promise<void>;
 }
 //# sourceMappingURL=AbstractStage.d.ts.map

@@ -24,8 +24,8 @@ import {
 // import type {
 // } from '../../../../types/index.js';
 
-import { FileSystemType } from '../../../../types/FileSystemType.js';
-import { Logger } from '../../../../types/Logger.js';
+import type { FileSystemType } from '../../../../types/FileSystemType.js';
+import type { Logger } from '../../../../types/Logger.js';
 
 
 /**

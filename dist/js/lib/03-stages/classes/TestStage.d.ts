@@ -11,21 +11,37 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  */
 export declare class TestStage extends AbstractStage<Stage.Args.Test, Stage.SubStage.Test> {
     readonly subStages: Stage.SubStage.Test[];
+    /**
+     * Default values for {@link Stage.Args.Test | Stage.Args.Test.js.tidy}.
+     *
+     * These default values are made using
+     * {@link Stage_Compiler.getTsConfigPaths} and
+     * {@link Stage_Compiler.getTsConfigOutDir}.  Assumes that tests match the
+     * globs `**\/*.test.js` and should be deleted with any maps and type
+     * definitions.
+     *
+     * @category Config
+     *
+     * @param level  Depth level for output to the console.
+     *
+     * @since 0.2.0-alpha.draft
+     */
+    protected tsConfigTidyPaths(level: number): Promise<string[]>;
     get ARGS_DEFAULT(): {
-        readonly utils: {};
-        readonly js: {
-            readonly tidy: ["dist/js/**/*.test.d.ts", "dist/js/**/*.test.d.ts.map", "dist/js/**/*.test.js", "dist/js/**/*.test.js.map"];
-        };
+        readonly js: {};
         readonly scss: false;
+        readonly utils: {};
     };
     /**
      * Whether any tests being run have passed.
      *
-     * Reset to `false` in {@link TestStage.startEndNotice}.
+     * Reset to empty array in {@link TestStage.startEndNotice}.
      *
      * @category Sub-Stages
+     *
+     * @since 0.2.0-alpha.draft — Converted from boolean to boolean[].
      */
-    protected testStatus: boolean;
+    protected testResults: boolean[];
     /**
      * @category Constructor
      *

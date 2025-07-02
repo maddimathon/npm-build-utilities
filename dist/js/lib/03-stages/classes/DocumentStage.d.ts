@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 import * as typeDoc from "typedoc";
@@ -91,8 +91,17 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
             readonly minify: {
                 readonly Options: "https://github.com/search?q=repo%3ADefinitelyTyped%2FDefinitelyTyped+path%3A%2F%5Etypes%5C%2Fminify%5C%2F%2F+symbol%3AOptions&type=code";
             };
+            readonly postcss: {
+                readonly 'postcss.process': "https://postcss.org/api/#processor-process";
+                readonly 'postcss.Parser': "https://postcss.org/api/#postcss-parser";
+                readonly 'postcss.SourceMapOptions': "https://postcss.org/api/#sourcemapoptions";
+                readonly 'postcss.Syntax': "https://postcss.org/api/#syntax";
+            };
             readonly prettier: {
                 readonly Options: "https://prettier.io/docs/options";
+            };
+            readonly sass: {
+                readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";
             };
             readonly typescript: {
                 readonly Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error";

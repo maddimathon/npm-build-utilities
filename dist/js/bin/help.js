@@ -5,10 +5,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 import { parseParamsCLI, Project } from '../lib/index.js';
+import { Stage_Console } from '../lib/@internal.js';
 export default async function (_params, level = 0, console) {
     const params = parseParamsCLI(_params ?? {});
     if (!console) {

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.1.4-alpha.1.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.draft
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -13,7 +13,7 @@ import {
     escRegExpReplace,
     mergeArgs,
 } from '@maddimathon/utility-typescript/functions';
-import { StageError } from '../../@internal/index.js';
+import { SemVer, StageError } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 // import {
 // } from '../../01-config/index.js';
@@ -168,8 +168,20 @@ export class DocumentStage extends AbstractStage {
                     Options:
                         'https://github.com/search?q=repo%3ADefinitelyTyped%2FDefinitelyTyped+path%3A%2F%5Etypes%5C%2Fminify%5C%2F%2F+symbol%3AOptions&type=code',
                 },
+                postcss: {
+                    'postcss.process':
+                        'https://postcss.org/api/#processor-process',
+                    'postcss.Parser': 'https://postcss.org/api/#postcss-parser',
+                    'postcss.SourceMapOptions':
+                        'https://postcss.org/api/#sourcemapoptions',
+                    'postcss.Syntax': 'https://postcss.org/api/#syntax',
+                },
                 prettier: {
                     Options: 'https://prettier.io/docs/options',
+                },
+                sass: {
+                    Options:
+                        'https://sass-lang.com/documentation/js-api/interfaces/options/',
                 },
                 typescript: {
                     Error: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error',
