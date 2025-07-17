@@ -14,6 +14,7 @@ import * as prettier from "prettier";
 
 import type {
     Objects,
+    Test,
 } from '@maddimathon/utility-typescript/types';
 
 import {
@@ -36,6 +37,8 @@ import type { Logger } from '../../../types/Logger.js';
 import {
     AbstractError,
 
+    isObjectEmpty,
+
     logError,
 } from '../../@internal/index.js';
 
@@ -47,6 +50,163 @@ import {
  * @since 0.1.0-alpha
  */
 export class FileSystem extends node.NodeFiles {
+
+
+
+    /* STATIC
+     * ====================================================================== */
+
+    /**
+     * Default {@link prettier} configuration file.
+     * 
+     * @satisfies {prettier.Options}
+     * 
+     * @since ___PKG_VERSION___
+     */
+    public static get prettierConfig() {
+
+        /**
+         * @param format  If defined, the override for the given format is
+         *                merged into the object. If undefined, all
+         *                overrides are formatted for a JSON config file.
+         */
+        function toJSON(
+            this: prettier.Options & { overrides: { [ Key in FileSystemType.Prettier.Format ]?: prettier.Options; }; },
+            format?: FileSystemType.Prettier.Format,
+        ) {
+
+            const overrides = this.overrides;
+
+            const json: Omit<prettier.Options, "overrides"> & {
+                toJSON?: typeof config.toJSON;
+                overrides: {
+                    files: string | string[];
+                    options: prettier.Options;
+                }[];
+            } = {
+                ...this,
+                overrides: [],
+            };
+            delete json.toJSON;
+
+            // returns
+            if ( format ) {
+                return mergeArgs( json, overrides[ format ], true );
+            }
+
+            for ( const _t_format in overrides ) {
+                const _format = _t_format as keyof typeof overrides;
+
+                // continues
+                if ( !overrides[ _format ] ) {
+                    continue;
+                }
+
+                // continues
+                if ( isObjectEmpty( overrides[ _format ] ) ) {
+                    continue;
+                }
+
+                switch ( _format ) {
+
+                    case 'css':
+                    case 'html':
+                    case 'js':
+                    case 'json':
+                    case 'md':
+                    case 'mdx':
+                    case 'scss':
+                    case 'ts':
+                        json.overrides.push( {
+                            files: '*.' + _format,
+                            options: overrides[ _format ],
+                        } );
+                        break;
+
+                    case 'yaml':
+                        json.overrides.push( {
+                            files: [
+                                '*.yaml',
+                                '*.yml',
+                            ],
+                            options: overrides[ _format ],
+                        } );
+                        break;
+
+                    default:
+                        // tests that all possibilties are in the switch
+                        type _KeyTest = Test.Expect<Test.Exactly<typeof _format, never>>;
+                        true as _KeyTest;
+                        break;
+                }
+            }
+
+            return json;
+        }
+
+        const config = {
+
+            // checkIgnorePragma: false, // default
+            // insertPragma: false, // default
+            // objectWrap: 'preserve', // default
+            // rangeEnd: Number.POSITIVE_INFINITY, // default
+            // rangeStart: 0, // default
+            // requirePragma: false, // default
+
+            bracketSameLine: false, // default
+            bracketSpacing: true, // default
+            experimentalOperatorPosition: 'start',
+            experimentalTernaries: true,
+            htmlWhitespaceSensitivity: 'strict',
+            jsxSingleQuote: true, // default
+            printWidth: 80, // default
+            proseWrap: 'preserve', // default
+            semi: true, // default
+            singleAttributePerLine: true,
+            singleQuote: true,
+            tabWidth: 4,
+            trailingComma: 'all', // default
+            useTabs: false,
+
+            overrides: {
+
+                css: {
+                    singleQuote: false,
+                },
+
+                html: {
+                    printWidth: 10000,
+                    singleQuote: false,
+                },
+
+                md: {
+                    printWidth: 10000,
+                },
+
+                mdx: {
+                    printWidth: 10000,
+                },
+
+                js: undefined,
+                json: undefined,
+                scss: undefined,
+                ts: undefined,
+                yaml: undefined,
+            },
+
+            toJSON,
+
+        } satisfies prettier.Options & {
+            overrides: {
+                [ Key in FileSystemType.Prettier.Format ]: undefined | prettier.Options;
+            };
+        };
+
+        config.toJSON = config.toJSON.bind( config );
+        config.valueOf = config.toJSON;
+
+        return config;
+    }
 
 
 
@@ -89,6 +249,22 @@ export class FileSystem extends node.NodeFiles {
             ],
         } as const satisfies Partial<FileSystemType.Glob.Args>;
 
+        const prettier = {
+
+            _: FileSystem.prettierConfig,
+
+            css: FileSystem.prettierConfig.overrides.css,
+            html: FileSystem.prettierConfig.overrides.html,
+            js: FileSystem.prettierConfig.overrides.js,
+            json: FileSystem.prettierConfig.overrides.json,
+            md: FileSystem.prettierConfig.overrides.md,
+            mdx: FileSystem.prettierConfig.overrides.mdx,
+            scss: FileSystem.prettierConfig.overrides.scss,
+            ts: FileSystem.prettierConfig.overrides.ts,
+            yaml: FileSystem.prettierConfig.overrides.yaml,
+
+        } as const satisfies Objects.Classify<FileSystemType.Prettier.Args.MultiFormat>;
+
         return {
             ...node.NodeFiles.prototype.ARGS_DEFAULT,
             argsRecursive: true,
@@ -96,7 +272,7 @@ export class FileSystem extends node.NodeFiles {
             copy,
             glob,
             minify: FileSystem.minify.ARGS_DEFAULT,
-            prettier: FileSystem.prettier.ARGS_DEFAULT,
+            prettier,
 
         } as const satisfies FileSystemType.Args;
     }
@@ -837,36 +1013,22 @@ export namespace FileSystem {
          * Default args for the {@link FileSystem.prettier} method
          * 
          * @since 0.1.0-alpha
+         * 
+         * @deprecated ___PKG_VERSION___ — Replaced by static accessor {@link FileSystem.prettierConfig}.
          */
         export const ARGS_DEFAULT = {
 
-            _: {
-                bracketSameLine: false,
-                bracketSpacing: true,
-                experimentalOperatorPosition: 'start',
-                experimentalTernaries: false,
-                htmlWhitespaceSensitivity: 'strict',
-                jsxSingleQuote: false,
-                printWidth: 80,
-                proseWrap: 'preserve',
-                semi: true,
-                singleAttributePerLine: true,
-                singleQuote: true,
-                tabWidth: 4,
-                trailingComma: 'all',
-                useTabs: false,
+            _: FileSystem.prettierConfig,
 
-                glob: {},
-            },
-
-            css: {
-                singleQuote: false,
-            },
-
-            html: {
-                printWidth: 10000,
-            },
-
-        } as const satisfies FileSystemType.Prettier.Args.MultiFormat;
+            css: FileSystem.prettierConfig.overrides.css,
+            html: FileSystem.prettierConfig.overrides.html,
+            js: FileSystem.prettierConfig.overrides.js,
+            json: FileSystem.prettierConfig.overrides.json,
+            md: FileSystem.prettierConfig.overrides.md,
+            mdx: FileSystem.prettierConfig.overrides.mdx,
+            scss: FileSystem.prettierConfig.overrides.scss,
+            ts: FileSystem.prettierConfig.overrides.ts,
+            yaml: FileSystem.prettierConfig.overrides.yaml,
+        };
     };
 }

@@ -35,6 +35,7 @@ import {
     isConfigValid,
     internalConfig,
     getDefaultStageClass,
+    logError,
 } from '../../lib/@internal.js';
 
 
@@ -310,7 +311,24 @@ export async function getConfig(
     console.vi.debug( { configFileContent }, level );
 
     fs.write( configPath, configFileContent, { force } );
-    await fs.prettier( configPath, 'js' );
+
+    try {
+        await fs.prettier( configPath, 'js' );
+    } catch ( error ) {
+
+        logError(
+            'Error caught while trying to run prettier on config file; rewriting config file',
+            error,
+            level,
+            {
+                console,
+                fs,
+            }
+        );
+
+        // re-writing to make sure the file is at least valid
+        fs.write( configPath, configFileContent, { force } );
+    }
 
     return configInstance;
 }

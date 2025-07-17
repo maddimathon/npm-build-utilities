@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import {
@@ -86,11 +86,10 @@ export class CompileStage extends AbstractStage {
             return;
         }
         const subStageArgs =
-            typeof this.args.scss === 'object'
-                ? mergeArgs(this.ARGS_DEFAULT.scss, this.args.scss)
-                : this.args.scss
-                  ? this.ARGS_DEFAULT.scss
-                  : false;
+            typeof this.args.scss === 'object' ?
+                mergeArgs(this.ARGS_DEFAULT.scss, this.args.scss)
+            : this.args.scss ? this.ARGS_DEFAULT.scss
+            : false;
         if (!subStageArgs) {
             return;
         } // here for extra type-safety
@@ -196,9 +195,9 @@ export class CompileStage extends AbstractStage {
                 escRegExp(
                     this.fs
                         .pathRelative(
-                            this.fs.isFile(_path)
-                                ? this.fs.dirname(_path)
-                                : _path,
+                            this.fs.isFile(_path) ?
+                                this.fs.dirname(_path)
+                            :   _path,
                         )
                         .replace(/\/$/g, '') + '/',
                 ),

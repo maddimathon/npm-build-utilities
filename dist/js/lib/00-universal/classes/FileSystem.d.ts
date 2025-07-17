@@ -4,9 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
+import * as prettier from "prettier";
 import type { Objects } from '@maddimathon/utility-typescript/types';
 import { node } from '@maddimathon/utility-typescript/classes';
 import type { Stage } from '../../../types/index.js';
@@ -21,6 +22,58 @@ import { AbstractError } from '../../@internal/index.js';
  * @since 0.1.0-alpha
  */
 export declare class FileSystem extends node.NodeFiles {
+    /**
+     * Default {@link prettier} configuration file.
+     *
+     * @satisfies {prettier.Options}
+     *
+     * @since 0.2.0-alpha.2.draft
+     */
+    static get prettierConfig(): {
+        bracketSameLine: false;
+        bracketSpacing: true;
+        experimentalOperatorPosition: "start";
+        experimentalTernaries: true;
+        htmlWhitespaceSensitivity: "strict";
+        jsxSingleQuote: true;
+        printWidth: number;
+        proseWrap: "preserve";
+        semi: true;
+        singleAttributePerLine: true;
+        singleQuote: true;
+        tabWidth: number;
+        trailingComma: "all";
+        useTabs: false;
+        overrides: {
+            css: {
+                singleQuote: false;
+            };
+            html: {
+                printWidth: number;
+                singleQuote: false;
+            };
+            md: {
+                printWidth: number;
+            };
+            mdx: {
+                printWidth: number;
+            };
+            js: undefined;
+            json: undefined;
+            scss: undefined;
+            ts: undefined;
+            yaml: undefined;
+        };
+        toJSON: (this: prettier.Options & {
+            overrides: { [Key in FileSystemType.Prettier.Format]?: prettier.Options; };
+        }, format?: FileSystemType.Prettier.Format) => Omit<prettier.Options, "overrides"> & {
+            toJSON?: /*elided*/ any;
+            overrides: {
+                files: string | string[];
+                options: prettier.Options;
+            }[];
+        };
+    };
     /**
      * Instance used to log messages within the class.
      *
@@ -54,28 +107,68 @@ export declare class FileSystem extends node.NodeFiles {
         };
         readonly prettier: {
             readonly _: {
-                readonly bracketSameLine: false;
-                readonly bracketSpacing: true;
-                readonly experimentalOperatorPosition: "start";
-                readonly experimentalTernaries: false;
-                readonly htmlWhitespaceSensitivity: "strict";
-                readonly jsxSingleQuote: false;
-                readonly printWidth: 80;
-                readonly proseWrap: "preserve";
-                readonly semi: true;
-                readonly singleAttributePerLine: true;
-                readonly singleQuote: true;
-                readonly tabWidth: 4;
-                readonly trailingComma: "all";
-                readonly useTabs: false;
-                readonly glob: {};
+                bracketSameLine: false;
+                bracketSpacing: true;
+                experimentalOperatorPosition: "start";
+                experimentalTernaries: true;
+                htmlWhitespaceSensitivity: "strict";
+                jsxSingleQuote: true;
+                printWidth: number;
+                proseWrap: "preserve";
+                semi: true;
+                singleAttributePerLine: true;
+                singleQuote: true;
+                tabWidth: number;
+                trailingComma: "all";
+                useTabs: false;
+                overrides: {
+                    css: {
+                        singleQuote: false;
+                    };
+                    html: {
+                        printWidth: number;
+                        singleQuote: false;
+                    };
+                    md: {
+                        printWidth: number;
+                    };
+                    mdx: {
+                        printWidth: number;
+                    };
+                    js: undefined;
+                    json: undefined;
+                    scss: undefined;
+                    ts: undefined;
+                    yaml: undefined;
+                };
+                toJSON: (this: prettier.Options & {
+                    overrides: { [Key in FileSystemType.Prettier.Format]?: prettier.Options; };
+                }, format?: FileSystemType.Prettier.Format) => Omit<prettier.Options, "overrides"> & {
+                    toJSON?: /*elided*/ any;
+                    overrides: {
+                        files: string | string[];
+                        options: prettier.Options;
+                    }[];
+                };
             };
             readonly css: {
-                readonly singleQuote: false;
+                singleQuote: false;
             };
             readonly html: {
-                readonly printWidth: 10000;
+                printWidth: number;
+                singleQuote: false;
             };
+            readonly js: undefined;
+            readonly json: undefined;
+            readonly md: {
+                printWidth: number;
+            };
+            readonly mdx: {
+                printWidth: number;
+            };
+            readonly scss: undefined;
+            readonly ts: undefined;
+            readonly yaml: undefined;
         };
         readonly copyFile: {
             readonly force: true;
@@ -263,31 +356,73 @@ export declare namespace FileSystem {
          * Default args for the {@link FileSystem.prettier} method
          *
          * @since 0.1.0-alpha
+         *
+         * @deprecated 0.2.0-alpha.2.draft — Replaced by static accessor {@link FileSystem.prettierConfig}.
          */
         const ARGS_DEFAULT: {
-            readonly _: {
-                readonly bracketSameLine: false;
-                readonly bracketSpacing: true;
-                readonly experimentalOperatorPosition: "start";
-                readonly experimentalTernaries: false;
-                readonly htmlWhitespaceSensitivity: "strict";
-                readonly jsxSingleQuote: false;
-                readonly printWidth: 80;
-                readonly proseWrap: "preserve";
-                readonly semi: true;
-                readonly singleAttributePerLine: true;
-                readonly singleQuote: true;
-                readonly tabWidth: 4;
-                readonly trailingComma: "all";
-                readonly useTabs: false;
-                readonly glob: {};
+            _: {
+                bracketSameLine: false;
+                bracketSpacing: true;
+                experimentalOperatorPosition: "start";
+                experimentalTernaries: true;
+                htmlWhitespaceSensitivity: "strict";
+                jsxSingleQuote: true;
+                printWidth: number;
+                proseWrap: "preserve";
+                semi: true;
+                singleAttributePerLine: true;
+                singleQuote: true;
+                tabWidth: number;
+                trailingComma: "all";
+                useTabs: false;
+                overrides: {
+                    css: {
+                        singleQuote: false;
+                    };
+                    html: {
+                        printWidth: number;
+                        singleQuote: false;
+                    };
+                    md: {
+                        printWidth: number;
+                    };
+                    mdx: {
+                        printWidth: number;
+                    };
+                    js: undefined;
+                    json: undefined;
+                    scss: undefined;
+                    ts: undefined;
+                    yaml: undefined;
+                };
+                toJSON: (this: import("prettier").Options & {
+                    overrides: { [Key in FileSystemType.Prettier.Format]?: import("prettier").Options; };
+                }, format?: FileSystemType.Prettier.Format) => Omit<import("prettier").Options, "overrides"> & {
+                    toJSON?: /*elided*/ any;
+                    overrides: {
+                        files: string | string[];
+                        options: import("prettier").Options;
+                    }[];
+                };
             };
-            readonly css: {
-                readonly singleQuote: false;
+            css: {
+                singleQuote: false;
             };
-            readonly html: {
-                readonly printWidth: 10000;
+            html: {
+                printWidth: number;
+                singleQuote: false;
             };
+            js: undefined;
+            json: undefined;
+            md: {
+                printWidth: number;
+            };
+            mdx: {
+                printWidth: number;
+            };
+            scss: undefined;
+            ts: undefined;
+            yaml: undefined;
         };
     }
 }

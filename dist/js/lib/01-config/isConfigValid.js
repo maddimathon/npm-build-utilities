@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 /**
@@ -41,9 +41,10 @@ export function isConfigValid(test) {
         if (requiredKeys[key] === null) {
             continue;
         }
-        const allowedTypes = Array.isArray(requiredKeys[key])
-            ? requiredKeys[key]
-            : [requiredKeys[key]];
+        const allowedTypes =
+            Array.isArray(requiredKeys[key]) ?
+                requiredKeys[key]
+            :   [requiredKeys[key]];
         // continues - this passes because it is defined and has no defined type
         if (!allowedTypes.length) {
             continue;

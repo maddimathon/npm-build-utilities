@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import {
@@ -49,10 +49,9 @@ export function writeLog(msg, filename, t_args) {
         + slugify(filename.replace(/\.[a-z]+[a-z0-9\-]*$/gi, ''))
         + '.txt';
     const logDirPath =
-        typeof config.paths?.scripts === 'string'
-            ? (config.paths?.scripts.replace(/\/$/gi, '') ?? '.scripts')
-              + '/logs'
-            : (config.paths?.scripts?.logs ?? '.scripts/logs');
+        typeof config.paths?.scripts === 'string' ?
+            (config.paths?.scripts.replace(/\/$/gi, '') ?? '.scripts') + '/logs'
+        :   (config.paths?.scripts?.logs ?? '.scripts/logs');
     const filepath = fs.pathResolve(logDirPath, ...subDir, filename);
     return fs.write(
         filepath,

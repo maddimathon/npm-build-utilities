@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import { timestamp } from '@maddimathon/utility-typescript/functions';
@@ -15,6 +15,7 @@ import {
     isConfigValid,
     internalConfig,
     getDefaultStageClass,
+    logError,
 } from '../../lib/@internal.js';
 /**
  * Gets the configuration object for the current node package.
@@ -189,27 +190,36 @@ export async function getConfig(params, console = null, level = 0) {
             },
             stages: {
                 ...defaultConfig.stages,
-                document: (await console.nc.prompt.bool({
-                    message: 'Include document stage?',
-                    default: !!defaultConfig.stages.document,
-                    msgArgs,
-                }))
-                    ? [getDefaultStageClass('document')]
-                    : false,
-                snapshot: (await console.nc.prompt.bool({
-                    message: 'Include snapshot stage?',
-                    default: !!defaultConfig.stages.snapshot,
-                    msgArgs,
-                }))
-                    ? [getDefaultStageClass('snapshot')]
-                    : false,
-                test: (await console.nc.prompt.bool({
-                    message: 'Include test stage?',
-                    default: !!defaultConfig.stages.test,
-                    msgArgs,
-                }))
-                    ? [getDefaultStageClass('test')]
-                    : false,
+                document:
+                    (
+                        (await console.nc.prompt.bool({
+                            message: 'Include document stage?',
+                            default: !!defaultConfig.stages.document,
+                            msgArgs,
+                        }))
+                    ) ?
+                        [getDefaultStageClass('document')]
+                    :   false,
+                snapshot:
+                    (
+                        (await console.nc.prompt.bool({
+                            message: 'Include snapshot stage?',
+                            default: !!defaultConfig.stages.snapshot,
+                            msgArgs,
+                        }))
+                    ) ?
+                        [getDefaultStageClass('snapshot')]
+                    :   false,
+                test:
+                    (
+                        (await console.nc.prompt.bool({
+                            message: 'Include test stage?',
+                            default: !!defaultConfig.stages.test,
+                            msgArgs,
+                        }))
+                    ) ?
+                        [getDefaultStageClass('test')]
+                    :   false,
             },
         };
     }
@@ -228,15 +238,16 @@ export async function getConfig(params, console = null, level = 0) {
             msgArgs,
         })) ?? defaultConfigPaths[0];
     /** Whether to force-write the config file. */
-    const force = fs.exists(configPath)
-        ? await console.nc.prompt.bool({
-              message:
-                  'Should the new config file overwrite the current file at `'
-                  + configPath
-                  + '`?',
-              msgArgs,
-          })
-        : true;
+    const force =
+        fs.exists(configPath) ?
+            await console.nc.prompt.bool({
+                message:
+                    'Should the new config file overwrite the current file at `'
+                    + configPath
+                    + '`?',
+                msgArgs,
+            })
+        :   true;
     const configFileContent = [
         `#!/usr/bin/env node`,
         `// @ts-check`,
@@ -257,7 +268,21 @@ export async function getConfig(params, console = null, level = 0) {
     ].join('\n');
     console.vi.debug({ configFileContent }, level);
     fs.write(configPath, configFileContent, { force });
-    await fs.prettier(configPath, 'js');
+    try {
+        await fs.prettier(configPath, 'js');
+    } catch (error) {
+        logError(
+            'Error caught while trying to run prettier on config file; rewriting config file',
+            error,
+            level,
+            {
+                console,
+                fs,
+            },
+        );
+        // re-writing to make sure the file is at least valid
+        fs.write(configPath, configFileContent, { force });
+    }
     return configInstance;
 }
 //# sourceMappingURL=getConfig.js.map

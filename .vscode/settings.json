@@ -1,4 +1,6 @@
 {
+    "markdown.extension.toc.updateOnSave": false,
+    
     "todo.embedded.exclude": [
         "**/._*",
         "**/._*/**",
@@ -11,5 +13,4 @@
         "docs/**",
         "public/**",
     ],
-    "markdown.extension.toc.updateOnSave": false,
 }

@@ -12,15 +12,9 @@ import {
     softWrapText,
 } from '@maddimathon/utility-typescript/functions';
 
-import type {
-    AbstractStage,
+import type { Stage } from '../../src/ts/index.js';
 
-    Stage,
-} from "../../src/ts/index.js";
-
-import {
-    BuildStage,
-} from '../../src/ts/index.js';
+import { BuildStage } from '../../src/ts/index.js';
 
 // import type {
 // } from "../../src/ts/lib/@internal.js";
@@ -31,23 +25,19 @@ import {
 /**
  * Extension of the built-in one.
  */
-export class Build extends BuildStage implements AbstractStage<
-    Build.Args,
-    Build.SubStage
-> {
+export class Build extends BuildStage {
 
-    public override readonly subStages = [
+    public override readonly subStages: Stage.SubStage.Build[] = [
         'compile',
-        'tscheck',
+        'tscheck' as Stage.SubStage.Build,
         'replace',
-        'readme',
+        'readme' as Stage.SubStage.Build,
         'prettify',
         'minimize',
         'test',
         'document',
-        'demos',
-    ] as Stage.SubStage.Build[];
-
+        'demos' as Stage.SubStage.Build,
+    ];
 
     protected async demos() {
         this.console.progress( 'updating demo files...', 1 );
@@ -105,7 +95,7 @@ export class Build extends BuildStage implements AbstractStage<
                     baseUrl: '../../',
                     noEmit: false,
                     outDir: '../../dist/js',
-                }
+                },
             }, null, 4 ),
             { force: true }
         );
@@ -144,14 +134,14 @@ export class Build extends BuildStage implements AbstractStage<
                     // update to the version being release for testing
                     _replaced = _replaced.replace(
                         /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
-                        escRegExpReplace( `"@maddimathon/build-utilities": "${ this.version.toString( false ) }"` )
+                        escRegExpReplace( `"@maddimathon/build-utilities": "${ this.version.toString( false ) }"` ),
                     );
                 } else {
 
                     // update to be a file path for development
                     _replaced = _replaced.replace(
                         /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
-                        escRegExpReplace( `"@maddimathon/build-utilities": "file:../.."` )
+                        escRegExpReplace( `"@maddimathon/build-utilities": "file:../.."` ),
                     );
                 }
             }
@@ -172,9 +162,9 @@ export class Build extends BuildStage implements AbstractStage<
         ];
 
         await Promise.all( tsPaths.map(
-            tsc => {
+            ( tsc ) => {
                 this.console.verbose( 'checking project: ' + tsc, 2 );
-                return this.compiler.typescript( tsc, ( this.params.verbose ? 3 : 2 ) );
+                return this.compiler.typescript( tsc, this.params.verbose ? 3 : 2 );
             }
         ) );
     }
@@ -185,8 +175,10 @@ export class Build extends BuildStage implements AbstractStage<
         const headerRegex = /(<!--README_HEADER-->).*?(<!--\/README_HEADER-->)/gs;
 
         let readmeContent = this.fs.readFile( 'README.md' )
-            .replace( headerRegex, '$1\n' + escRegExpReplace( `# ${ this.config.title } @ ${ this.version.toString( this.isDraftVersion ) }` ) + '\n$2' );
-
+            .replace(
+                headerRegex,
+                '$1\n' + escRegExpReplace( `# ${ this.config.title } @ ${ this.version.toString( this.isDraftVersion ) }` ) + '\n$2',
+            );
 
         // READ DOCS
         readmeContent = readmeContent.replace(
@@ -252,12 +244,4 @@ export class Build extends BuildStage implements AbstractStage<
 
         this.fs.write( 'README.md', readmeContent, { force: true } );
     }
-}
-
-export namespace Build {
-
-    export interface Args extends Stage.Args.Build {
-    }
-
-    export type SubStage = Stage.SubStage.Build | "demos" | "readme" | "tscheck";
 }

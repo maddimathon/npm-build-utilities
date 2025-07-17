@@ -15,6 +15,7 @@ import {
 } from "../src/ts/index.js";
 
 import { Build } from './classes/Build.js';
+import { Compile } from './classes/Compile.js';
 
 const _defaults = {
     build: Build.prototype.ARGS_DEFAULT,
@@ -42,10 +43,10 @@ const config: Config = {
 
     stages: {
 
-        compile: {
+        compile: [ Compile, {
             scss: false,
             files: false,
-        },
+        } ],
 
         build: [ Build, {
 

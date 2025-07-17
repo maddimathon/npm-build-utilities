@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
@@ -228,9 +228,9 @@ export class BuildStage extends AbstractStage {
         }
         this.console.progress('minimizing built files...', 1);
         const args =
-            typeof this.args.minimize === 'function'
-                ? this.args.minimize(this)
-                : this.args.minimize;
+            typeof this.args.minimize === 'function' ?
+                this.args.minimize(this)
+            :   this.args.minimize;
         // returns
         if (!Object.keys(args).length) {
             this.console.verbose(
@@ -248,9 +248,10 @@ export class BuildStage extends AbstractStage {
             ) {
                 continue;
             }
-            const _formatArgs = Array.isArray(args[_format])
-                ? { globs: args[_format] }
-                : args[_format];
+            const _formatArgs =
+                Array.isArray(args[_format]) ?
+                    { globs: args[_format] }
+                :   args[_format];
             // continues
             if (
                 !Array.isArray(_formatArgs.globs)
@@ -299,9 +300,9 @@ export class BuildStage extends AbstractStage {
         }
         this.console.progress('prettifying built files...', 1);
         const args =
-            typeof this.args.prettify === 'function'
-                ? this.args.prettify(this)
-                : this.args.prettify;
+            typeof this.args.prettify === 'function' ?
+                this.args.prettify(this)
+            :   this.args.prettify;
         // returns
         if (!Object.keys(args).length) {
             this.console.verbose(

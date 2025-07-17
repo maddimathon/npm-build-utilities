@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import postcss from 'postcss';
@@ -357,12 +357,12 @@ export class Stage_Compiler {
      */
     getTsConfigOutDir(tsconfig, level, errorIfNotFound = true) {
         const config_obj =
-            typeof tsconfig === 'string'
-                ? {
-                      ...this.getTsConfig(tsconfig, level, errorIfNotFound),
-                      path: tsconfig,
-                  }
-                : tsconfig;
+            typeof tsconfig === 'string' ?
+                {
+                    ...this.getTsConfig(tsconfig, level, errorIfNotFound),
+                    path: tsconfig,
+                }
+            :   tsconfig;
         return (
             (config_obj.compilerOptions?.noEmit !== true
                 && config_obj.compilerOptions?.outDir
@@ -524,10 +524,11 @@ export class Stage_Compiler {
         if (outDir && this.args.ts.tidyGlobs?.length) {
             this.console.verbose('tidying compiled files...', 0 + level);
             const _globs = (
-                Array.isArray(this.args.ts.tidyGlobs)
-                    ? this.args.ts.tidyGlobs
-                    : [this.args.ts.tidyGlobs]
-            ).map((_glob) => this.fs.pathResolve(outDir, _glob));
+                Array.isArray(this.args.ts.tidyGlobs) ?
+                    this.args.ts.tidyGlobs
+                :   [this.args.ts.tidyGlobs]).map((_glob) =>
+                this.fs.pathResolve(outDir, _glob),
+            );
             this.console.vi.debug(
                 { tidyGlobs: _globs },
                 (this.params.verbose ? 1 : 0) + level,

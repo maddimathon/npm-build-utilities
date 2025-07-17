@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import node_SemVer from 'semver';
@@ -136,9 +136,10 @@ export class SemVer {
                 );
             }
         }
-        this.prerelease = matches[4]?.includes('.')
-            ? matches[4].split('.').filter((val) => val.length)
-            : matches[4];
+        this.prerelease =
+            matches[4]?.includes('.') ?
+                matches[4].split('.').filter((val) => val.length)
+            :   matches[4];
         // if it's empty, it should be undefined
         if (!this.prerelease?.length) {
             this.prerelease = undefined;
@@ -194,9 +195,10 @@ export class SemVer {
             this.minor.toFixed(0),
             this.patch.toFixed(0),
         ].join('.');
-        let prerelease = Array.isArray(this.prerelease)
-            ? [...this.prerelease]
-            : this.prerelease;
+        let prerelease =
+            Array.isArray(this.prerelease) ?
+                [...this.prerelease]
+            :   this.prerelease;
         let meta = this.meta;
         if (draft) {
             if (!prerelease) {
@@ -211,9 +213,9 @@ export class SemVer {
             version =
                 version
                 + '-'
-                + (Array.isArray(prerelease)
-                    ? prerelease.join('.')
-                    : prerelease);
+                + (Array.isArray(prerelease) ?
+                    prerelease.join('.')
+                :   prerelease);
         }
         if (meta) {
             version = version + '+' + meta;

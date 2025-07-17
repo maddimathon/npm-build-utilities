@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import { timestamp } from '@maddimathon/utility-typescript/functions';
@@ -28,9 +28,9 @@ const _dummyConsole = new DummyConsole();
 export function defaultConfig(args) {
     const fs = new FileSystem(args && !('pkg' in args) ? args : _dummyConsole);
     const pkg =
-        args && 'pkg' in args
-            ? args.pkg
-            : catchOrReturn(getPackageJson, 0, fs.console, fs, [fs]);
+        args && 'pkg' in args ?
+            args.pkg
+        :   catchOrReturn(getPackageJson, 0, fs.console, fs, [fs]);
     const paths = {
         changelog: 'CHANGELOG.md',
         readme: 'README.md',

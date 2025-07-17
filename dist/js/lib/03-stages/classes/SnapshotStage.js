@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import { slugify, timestamp } from '@maddimathon/utility-typescript/functions';
@@ -116,9 +116,9 @@ export class SnapshotStage extends AbstractStage {
             {
                 follow: false,
                 ignore:
-                    typeof this.args.ignoreGlobs === 'function'
-                        ? this.args.ignoreGlobs(this)
-                        : this.args.ignoreGlobs,
+                    typeof this.args.ignoreGlobs === 'function' ?
+                        this.args.ignoreGlobs(this)
+                    :   this.args.ignoreGlobs,
             },
         ]).filter((_p) => !this.fs.isSymLink(_p));
         this.fs.mkdir(this.path);

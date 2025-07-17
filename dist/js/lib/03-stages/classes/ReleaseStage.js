@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import {
@@ -174,18 +174,18 @@ export class ReleaseStage extends AbstractStage {
                 message: inputVersionMessage,
                 default: this.pkg.version,
                 validate: (value) =>
-                    value.trim().match(SemVer.regex)
-                        ? true
-                        : softWrapText(
-                              'The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, `-rc[.#]`, another valid version code, or metadata prefixed with `+`.',
-                              Math.max(
-                                  20,
-                                  (this.console.nc.msg.args.msg.maxWidth ?? 80)
-                                      - inputVersionIndent.length,
-                              ),
-                          )
-                              .split(/\n/g)
-                              .join('\n' + inputVersionIndent),
+                    value.trim().match(SemVer.regex) ?
+                        true
+                    :   softWrapText(
+                            'The version should be in [MAJOR].[MINOR].[PATCH] format, optionally suffixed with `-alpha[.#]`, `-beta[.#]`, `-rc[.#]`, another valid version code, or metadata prefixed with `+`.',
+                            Math.max(
+                                20,
+                                (this.console.nc.msg.args.msg.maxWidth ?? 80)
+                                    - inputVersionIndent.length,
+                            ),
+                        )
+                            .split(/\n/g)
+                            .join('\n' + inputVersionIndent),
             })) ?? ''
         ).trim();
         if (inputVersion !== this.pkg.version) {
@@ -323,9 +323,10 @@ export class ReleaseStage extends AbstractStage {
                 process.exit();
             }
         }
-        let t_currentChangelog = changelogExists
-            ? this.fs.readFile(changelogPath)
-            : this.DEFAULT_CHANGELOG + '\n\n\n<!--CHANGELOG_NEW-->\n';
+        let t_currentChangelog =
+            changelogExists ?
+                this.fs.readFile(changelogPath)
+            :   this.DEFAULT_CHANGELOG + '\n\n\n<!--CHANGELOG_NEW-->\n';
         const newEntryRegex = /(\n+)\s*<!--CHANGELOG_NEW-->\s*(\n|$)/g;
         // exits if not adding pleaceholder
         if (

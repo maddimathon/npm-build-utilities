@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.2.0-alpha.1",
+    "version": "0.2.0-alpha.2",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
     "description": "Opinionated utilities for easy build systems in npm projects.",
@@ -71,6 +71,9 @@
         
         "./package.json": "./package.json",
 
+        "./prettierrc":      "./dist/json/prettierrc.json",
+        "./prettierrc.json": "./dist/json/prettierrc.json",
+
         "./tsconfig":      "./tsconfig.base.json",
         "./tsconfig.json": "./tsconfig.base.json",
 
@@ -127,7 +130,7 @@
         
         "package": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts package --config .scripts/build.config.ts",
         
-        "dryrun":  "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts release --config .scripts/build.config.ts --dryrun --without-package zip",
+        "dryrun":  "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts release --config .scripts/build.config.ts --dryrun --without-package snapshot,zip",
         "release": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts release --config .scripts/build.config.ts"
     },
     

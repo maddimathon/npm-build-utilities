@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import { slugify, typeOf } from '@maddimathon/utility-typescript/functions';
@@ -86,17 +86,18 @@ export function errorStringify(error, level, console, fs, args) {
             default_info.details = {
                 cause: err.cause,
             };
-            const causeString = err.cause
-                ? _msgMaker.msgs(
-                      _errorStringifyInternal(
-                          err.cause,
-                          1 + level,
-                          console,
-                          fs,
-                          args,
-                      ),
-                  )
-                : '';
+            const causeString =
+                err.cause ?
+                    _msgMaker.msgs(
+                        _errorStringifyInternal(
+                            err.cause,
+                            1 + level,
+                            console,
+                            fs,
+                            args,
+                        ),
+                    )
+                :   '';
             if (causeString.length) {
                 default_info.cause = undefined;
                 default_info.output = causeString;
@@ -140,11 +141,11 @@ export function errorStringify(error, level, console, fs, args) {
                         signal: _typedError.signal,
                         status: _typedError.status,
                         path:
-                            typeof _typedError.path === 'string'
-                                ? fs
-                                      .pathRelative(_typedError.path)
-                                      .replace(' ', '%20')
-                                : _typedError.path,
+                            typeof _typedError.path === 'string' ?
+                                fs
+                                    .pathRelative(_typedError.path)
+                                    .replace(' ', '%20')
+                            :   _typedError.path,
                         pid: _typedError.pid,
                     },
                 });

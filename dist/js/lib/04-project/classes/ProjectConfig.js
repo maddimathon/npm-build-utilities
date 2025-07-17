@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 var _a;
@@ -233,11 +233,12 @@ export class ProjectConfig {
             }
             // continues - args are defined
             if (_stageValue[1]) {
-                stages[_stage] = isObjectEmpty(_stageValue[1])
-                    ? !!_stageValue != !!defaults.stages[_stage]
-                        ? true
-                        : undefined
-                    : _stageValue[1];
+                stages[_stage] =
+                    isObjectEmpty(_stageValue[1]) ?
+                        !!_stageValue != !!defaults.stages[_stage] ?
+                            true
+                        :   undefined
+                    :   _stageValue[1];
                 continue;
             }
             if (!!_stageValue != !!defaults.stages[_stage]) {

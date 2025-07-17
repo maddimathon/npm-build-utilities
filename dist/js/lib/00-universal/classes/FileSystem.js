@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import { globSync } from 'glob';
@@ -16,7 +16,11 @@ import {
     mergeArgs,
 } from '@maddimathon/utility-typescript/functions';
 import { node } from '@maddimathon/utility-typescript/classes';
-import { AbstractError, logError } from '../../@internal/index.js';
+import {
+    AbstractError,
+    isObjectEmpty,
+    logError,
+} from '../../@internal/index.js';
 /**
  * Extends the {@link node.NodeFiles} class with some custom logic useful to this package.
  *
@@ -25,6 +29,115 @@ import { AbstractError, logError } from '../../@internal/index.js';
  * @since 0.1.0-alpha
  */
 export class FileSystem extends node.NodeFiles {
+    /* STATIC
+     * ====================================================================== */
+    /**
+     * Default {@link prettier} configuration file.
+     *
+     * @satisfies {prettier.Options}
+     *
+     * @since 0.2.0-alpha.2.draft
+     */
+    static get prettierConfig() {
+        /**
+         * @param format  If defined, the override for the given format is
+         *                merged into the object. If undefined, all
+         *                overrides are formatted for a JSON config file.
+         */
+        function toJSON(format) {
+            const overrides = this.overrides;
+            const json = {
+                ...this,
+                overrides: [],
+            };
+            delete json.toJSON;
+            // returns
+            if (format) {
+                return mergeArgs(json, overrides[format], true);
+            }
+            for (const _t_format in overrides) {
+                const _format = _t_format;
+                // continues
+                if (!overrides[_format]) {
+                    continue;
+                }
+                // continues
+                if (isObjectEmpty(overrides[_format])) {
+                    continue;
+                }
+                switch (_format) {
+                    case 'css':
+                    case 'html':
+                    case 'js':
+                    case 'json':
+                    case 'md':
+                    case 'mdx':
+                    case 'scss':
+                    case 'ts':
+                        json.overrides.push({
+                            files: '*.' + _format,
+                            options: overrides[_format],
+                        });
+                        break;
+                    case 'yaml':
+                        json.overrides.push({
+                            files: ['*.yaml', '*.yml'],
+                            options: overrides[_format],
+                        });
+                        break;
+                    default:
+                        true;
+                        break;
+                }
+            }
+            return json;
+        }
+        const config = {
+            // checkIgnorePragma: false, // default
+            // insertPragma: false, // default
+            // objectWrap: 'preserve', // default
+            // rangeEnd: Number.POSITIVE_INFINITY, // default
+            // rangeStart: 0, // default
+            // requirePragma: false, // default
+            bracketSameLine: false, // default
+            bracketSpacing: true, // default
+            experimentalOperatorPosition: 'start',
+            experimentalTernaries: true,
+            htmlWhitespaceSensitivity: 'strict',
+            jsxSingleQuote: true, // default
+            printWidth: 80, // default
+            proseWrap: 'preserve', // default
+            semi: true, // default
+            singleAttributePerLine: true,
+            singleQuote: true,
+            tabWidth: 4,
+            trailingComma: 'all', // default
+            useTabs: false,
+            overrides: {
+                css: {
+                    singleQuote: false,
+                },
+                html: {
+                    printWidth: 10000,
+                    singleQuote: false,
+                },
+                md: {
+                    printWidth: 10000,
+                },
+                mdx: {
+                    printWidth: 10000,
+                },
+                js: undefined,
+                json: undefined,
+                scss: undefined,
+                ts: undefined,
+                yaml: undefined,
+            },
+            toJSON,
+        };
+        config.toJSON = config.toJSON.bind(config);
+        return config;
+    }
     /* LOCAL PROPERTIES
      * ====================================================================== */
     /**
@@ -51,13 +164,25 @@ export class FileSystem extends node.NodeFiles {
             dot: true,
             ignore: [...FileSystem.globs.SYSTEM],
         };
+        const prettier = {
+            _: FileSystem.prettierConfig,
+            css: FileSystem.prettierConfig.overrides.css,
+            html: FileSystem.prettierConfig.overrides.html,
+            js: FileSystem.prettierConfig.overrides.js,
+            json: FileSystem.prettierConfig.overrides.json,
+            md: FileSystem.prettierConfig.overrides.md,
+            mdx: FileSystem.prettierConfig.overrides.mdx,
+            scss: FileSystem.prettierConfig.overrides.scss,
+            ts: FileSystem.prettierConfig.overrides.ts,
+            yaml: FileSystem.prettierConfig.overrides.yaml,
+        };
         return {
             ...node.NodeFiles.prototype.ARGS_DEFAULT,
             argsRecursive: true,
             copy,
             glob,
             minify: FileSystem.minify.ARGS_DEFAULT,
-            prettier: FileSystem.prettier.ARGS_DEFAULT,
+            prettier,
         };
     }
     buildArgs(args) {
@@ -143,9 +268,9 @@ export class FileSystem extends node.NodeFiles {
             globs = [globs];
         }
         const copyPaths = this.glob(
-            sourceDir
-                ? globs.map((glob) => this.pathResolve(sourceDir, glob))
-                : globs,
+            sourceDir ?
+                globs.map((glob) => this.pathResolve(sourceDir, glob))
+            :   globs,
             args.glob,
         );
         const sourceDirRegex =
@@ -159,9 +284,9 @@ export class FileSystem extends node.NodeFiles {
             const source_relative = this.pathRelative(source);
             const destination = this.pathResolve(
                 outputDir,
-                sourceDirRegex
-                    ? source_relative.replace(sourceDirRegex, '')
-                    : source_relative,
+                sourceDirRegex ?
+                    source_relative.replace(sourceDirRegex, '')
+                :   source_relative,
             );
             this.console.debug(
                 `(TESTING) ${source_relative} → ${this.pathRelative(destination)}`,
@@ -247,9 +372,9 @@ export class FileSystem extends node.NodeFiles {
      */
     async minify(globs, format, level, args, renamer) {
         args = mergeArgs(
-            typeof this.args.minify === 'function'
-                ? this.args.minify(format)
-                : this.args.minify,
+            typeof this.args.minify === 'function' ?
+                this.args.minify(format)
+            :   this.args.minify,
             args ?? {},
             true,
         );
@@ -422,8 +547,9 @@ export class FileSystem extends node.NodeFiles {
             return [];
         }
         const replacements = (
-            Array.isArray(replace[0]) ? replace : [replace]
-        ).filter(([find, repl]) => find && typeof repl !== 'undefined');
+            Array.isArray(replace[0]) ? replace : [replace]).filter(
+            ([find, repl]) => find && typeof repl !== 'undefined',
+        );
         // returns
         if (!replacements.length) {
             this.console.verbose(
@@ -476,9 +602,9 @@ export class FileSystem extends node.NodeFiles {
             }
             for (const [find, repl] of replacements) {
                 const _regex =
-                    find instanceof RegExp
-                        ? find
-                        : new RegExp(escRegExp(find), 'g');
+                    find instanceof RegExp ? find : (
+                        new RegExp(escRegExp(find), 'g')
+                    );
                 if (!!_content.match(_regex)) {
                     _content = _content.replace(
                         _regex,
@@ -648,31 +774,20 @@ export class FileSystem extends node.NodeFiles {
          * Default args for the {@link FileSystem.prettier} method
          *
          * @since 0.1.0-alpha
+         *
+         * @deprecated 0.2.0-alpha.2.draft — Replaced by static accessor {@link FileSystem.prettierConfig}.
          */
         prettier.ARGS_DEFAULT = {
-            _: {
-                bracketSameLine: false,
-                bracketSpacing: true,
-                experimentalOperatorPosition: 'start',
-                experimentalTernaries: false,
-                htmlWhitespaceSensitivity: 'strict',
-                jsxSingleQuote: false,
-                printWidth: 80,
-                proseWrap: 'preserve',
-                semi: true,
-                singleAttributePerLine: true,
-                singleQuote: true,
-                tabWidth: 4,
-                trailingComma: 'all',
-                useTabs: false,
-                glob: {},
-            },
-            css: {
-                singleQuote: false,
-            },
-            html: {
-                printWidth: 10000,
-            },
+            _: FileSystem.prettierConfig,
+            css: FileSystem.prettierConfig.overrides.css,
+            html: FileSystem.prettierConfig.overrides.html,
+            js: FileSystem.prettierConfig.overrides.js,
+            json: FileSystem.prettierConfig.overrides.json,
+            md: FileSystem.prettierConfig.overrides.md,
+            mdx: FileSystem.prettierConfig.overrides.mdx,
+            scss: FileSystem.prettierConfig.overrides.scss,
+            ts: FileSystem.prettierConfig.overrides.ts,
+            yaml: FileSystem.prettierConfig.overrides.yaml,
         };
     })((prettier = FileSystem.prettier || (FileSystem.prettier = {})));
 })(FileSystem || (FileSystem = {}));

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -37,10 +37,9 @@ export class DocumentStage extends AbstractStage {
     static typeDocConfig(stage) {
         const homepage = stage.pkg.homepage?.replace(/\/+$/gi, '');
         const repository = (
-            typeof stage.pkg.repository === 'string'
-                ? stage.pkg.repository
-                : stage.pkg.repository?.url
-        )?.replace(/(\/+|\.git)$/gi, '');
+            typeof stage.pkg.repository === 'string' ?
+                stage.pkg.repository
+            :   stage.pkg.repository?.url)?.replace(/(\/+|\.git)$/gi, '');
         const navigationLinks = {
             // 'About': `${ homepage }/ReadMe.html`,
             GitHub: repository ?? '',
@@ -496,9 +495,9 @@ export class DocumentStage extends AbstractStage {
             entryPoints.push(_mainExportPath);
         }
         const config =
-            typeof this.args.typeDoc === 'function'
-                ? this.args.typeDoc(this)
-                : this.args.typeDoc;
+            typeof this.args.typeDoc === 'function' ?
+                this.args.typeDoc(this)
+            :   this.args.typeDoc;
         config.entryPoints = entryPoints;
         // deletes any existing files
         if (config.out) {

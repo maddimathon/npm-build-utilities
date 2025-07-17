@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import {
@@ -111,9 +111,9 @@ export class AbstractStage {
             this.#pkg = this.try(getPackageJson, 1, [this.fs]);
         }
         const repository =
-            typeof this.#pkg?.repository === 'string'
-                ? this.#pkg?.repository
-                : this.#pkg?.repository?.url;
+            typeof this.#pkg?.repository === 'string' ?
+                this.#pkg?.repository
+            :   this.#pkg?.repository?.url;
         return {
             name: this.#pkg?.name,
             version: this.#pkg?.version,
@@ -297,9 +297,9 @@ export class AbstractStage {
      */
     replaceInFiles(globs, version, level, ignore = [], docsMode = false) {
         let replacements =
-            typeof this.config.replace === 'function'
-                ? this.config.replace(this)[version]
-                : this.config.replace[version];
+            typeof this.config.replace === 'function' ?
+                this.config.replace(this)[version]
+            :   this.config.replace[version];
         // returns
         if (!replacements) {
             return [];
@@ -607,41 +607,43 @@ export class AbstractStage {
             which: which?.toUpperCase() ?? '',
         };
         const messages =
-            watcherVersion
-            && (this.params.watchedWatcher
-                || this.params.watchedFilename
-                || this.params.watchedEvent)
-                ? {
-                      default: [
-                          ['👀 ', { flag: false }],
-                          [
-                              `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
-                          ],
-                      ],
-                      start: [
-                          ['🚨 ', { flag: false }],
-                          [
-                              `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
-                          ],
-                      ],
-                      end: [
-                          ['✅ ', { flag: false }],
-                          [
-                              `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
-                          ],
-                      ],
-                  }
-                : {
-                      default: [[`${uppercase.which}ING ${uppercase.name}`]],
-                      start: [[`${uppercase.name} ${uppercase.which}ING...`]],
-                      end: [
-                          ['✓ ', { flag: false }],
-                          [
-                              `${toTitleCase(this.name)} Complete!`,
-                              { italic: true },
-                          ],
-                      ],
-                  };
+            (
+                watcherVersion
+                && (this.params.watchedWatcher
+                    || this.params.watchedFilename
+                    || this.params.watchedEvent)
+            ) ?
+                {
+                    default: [
+                        ['👀 ', { flag: false }],
+                        [
+                            `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
+                        ],
+                    ],
+                    start: [
+                        ['🚨 ', { flag: false }],
+                        [
+                            `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
+                        ],
+                    ],
+                    end: [
+                        ['✅ ', { flag: false }],
+                        [
+                            `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
+                        ],
+                    ],
+                }
+            :   {
+                    default: [[`${uppercase.which}ING ${uppercase.name}`]],
+                    start: [[`${uppercase.name} ${uppercase.which}ING...`]],
+                    end: [
+                        ['✓ ', { flag: false }],
+                        [
+                            `${toTitleCase(this.name)} Complete!`,
+                            { italic: true },
+                        ],
+                    ],
+                };
         this.console.startOrEnd(messages[which ?? 'default'], which);
     }
     /* RUNNING ===================================== */
@@ -883,9 +885,9 @@ export class AbstractStage {
                 escRegExp(
                     this.fs
                         .pathRelative(
-                            this.fs.isFile(_path)
-                                ? this.fs.dirname(_path)
-                                : _path,
+                            this.fs.isFile(_path) ?
+                                this.fs.dirname(_path)
+                            :   _path,
                         )
                         .replace(/\/$/g, '') + '/',
                 ),

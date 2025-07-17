@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import { DummyConsole, errorHandler } from '../../@internal/index.js';
@@ -63,9 +63,9 @@ export class Project {
     constructor(config, params) {
         this.params = params;
         this.config =
-            config instanceof ProjectConfig
-                ? config
-                : new ProjectConfig(config);
+            config instanceof ProjectConfig ? config : (
+                new ProjectConfig(config)
+            );
     }
     /* LOCAL METHODS
      * ====================================================================== */

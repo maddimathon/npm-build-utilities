@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
@@ -158,19 +158,19 @@ export class Stage_Console {
             linesOut: 0,
         };
         const bulkMsgs =
-            typeof msg === 'string'
-                ? [[msg]]
-                : msg.map((item) => {
-                      // returns
-                      if (typeof item === 'string') {
-                          return [item, itemArgs];
-                      }
-                      item[1] = {
-                          ...(item[1] ?? {}),
-                          ...itemArgs,
-                      };
-                      return item;
-                  });
+            typeof msg === 'string' ?
+                [[msg]]
+            :   msg.map((item) => {
+                    // returns
+                    if (typeof item === 'string') {
+                        return [item, itemArgs];
+                    }
+                    item[1] = {
+                        ...(item[1] ?? {}),
+                        ...itemArgs,
+                    };
+                    return item;
+                });
         switch (which) {
             case 'start':
                 linesOut = 0;

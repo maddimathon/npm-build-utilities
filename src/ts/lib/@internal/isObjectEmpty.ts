@@ -58,7 +58,10 @@ export function isObjectEmpty( obj: unknown ) {
     }
 
     return (
-        Object.keys( obj ).length === 0
-        && obj.constructor === Object
+        (
+            Object.keys( obj ).length === 0
+            || Object.values( obj ).every( _val => typeof _val === 'undefined' )
+        )
+        && obj.constructor.name === 'Object'
     );
 }

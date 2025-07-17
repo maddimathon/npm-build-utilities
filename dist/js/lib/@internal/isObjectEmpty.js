@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.1
+ * @maddimathon/build-utilities@0.2.0-alpha.2.draft
  * @license MIT
  */
 /**
@@ -48,6 +48,10 @@ export function isObjectEmpty(obj) {
     if (obj === null) {
         return true;
     }
-    return Object.keys(obj).length === 0 && obj.constructor === Object;
+    return (
+        (Object.keys(obj).length === 0
+            || Object.values(obj).every((_val) => typeof _val === 'undefined'))
+        && obj.constructor.name === 'Object'
+    );
 }
 //# sourceMappingURL=isObjectEmpty.js.map
