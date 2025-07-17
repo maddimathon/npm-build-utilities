@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha
+ * @maddimathon/build-utilities@0.2.0-alpha.1
  * @license MIT
  */
 import {
@@ -733,22 +733,30 @@ export class AbstractStage {
      *
      * @category Running
      *
-     * @param subpath  The subdriectory, relative to src path.
-     * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     * @param subpath       The subdriectory, relative to src path.
+     * @param _distDir      Optionally force a diffrent output directory than the auto-generated one.
+     * @param logLevelBase  Base output level for log messages.
      *
      * @since 0.1.4-alpha
+     * @since 0.2.0-alpha.1 — Added logLevelBase param.
      *
      * @experimental
      */
-    async runCustomDirCopySubStage(subpath, _distDir) {
-        this.console.progress('copying ' + subpath + ' to dist...', 1);
+    async runCustomDirCopySubStage(subpath, _distDir, logLevelBase = 1) {
+        this.console.progress(
+            'copying ' + subpath + ' to dist...',
+            0 + logLevelBase,
+        );
         const distDir =
             _distDir ?? this.getDistDir(undefined).replace(/\/$/g, '');
         if (this.fs.exists(distDir)) {
-            this.console.verbose('deleting any existing files...', 2);
+            this.console.verbose(
+                'deleting any existing files...',
+                1 + logLevelBase,
+            );
             this.fs.delete(
                 [distDir + '/' + subpath],
-                this.params.verbose ? 3 : 2,
+                (this.params.verbose ? 2 : 1) + logLevelBase,
             );
         }
         const srcDir = this.getSrcDir(undefined).replace(/\/+$/gi, '');
@@ -758,7 +766,7 @@ export class AbstractStage {
                 'ⅹ source dir '
                     + this.fs.pathRelative(srcDir)
                     + ' does not exist, exiting...',
-                2,
+                1 + logLevelBase,
             );
             return;
         }
@@ -768,16 +776,22 @@ export class AbstractStage {
                 'ⅹ source dir '
                     + this.fs.pathRelative(srcDir)
                     + ' is not a directory, exiting...',
-                2,
+                1 + logLevelBase,
             );
             return;
         }
-        this.console.verbose('copying files...', 2);
-        this.fs.copy(subpath, 2, distDir, srcDir, {
-            force: true,
-            rename: true,
-            recursive: true,
-        });
+        this.console.verbose('copying files...', 1 + logLevelBase);
+        this.fs.copy(
+            subpath,
+            (this.params.verbose ? 2 : 1) + logLevelBase,
+            distDir,
+            srcDir,
+            {
+                force: true,
+                rename: true,
+                recursive: true,
+            },
+        );
     }
     /**
      * This runs a custom sub-stage that uses globs to find non-partial
@@ -788,22 +802,38 @@ export class AbstractStage {
      *
      * @category Running
      *
-     * @param subpath   The subdriectory, relative to src path.
-     * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
-     * @param postCSS   Whether to run PostCSS on the output css. Default true.
+     * @param subpath       The subdriectory, relative to src path.
+     * @param _distDir      Optionally force a diffrent output directory than the auto-generated one.
+     * @param postCSS       Whether to run PostCSS on the output css. Default true.
+     * @param logLevelBase  Base output level for log messages.
      *
      * @since 0.1.4-alpha
      * @since 0.2.0-alpha — Added postCSS param and PostCSS compatibility.
+     * @since 0.2.0-alpha.1 — Added logLevelBase param.
      *
      * @experimental
      */
-    async runCustomScssDirSubStage(subpath, _distDir, postCSS = true) {
-        this.console.progress('compiling ' + subpath + ' to css...', 1);
+    async runCustomScssDirSubStage(
+        subpath,
+        _distDir,
+        postCSS = true,
+        logLevelBase = 1,
+    ) {
+        this.console.progress(
+            'compiling ' + subpath + ' to css...',
+            0 + logLevelBase,
+        );
         const distDir =
             _distDir ?? this.getDistDir(undefined, subpath).replace(/\/$/g, '');
         if (this.fs.exists(distDir)) {
-            this.console.verbose('deleting any existing files...', 2);
-            this.fs.delete([distDir], this.params.verbose ? 3 : 2);
+            this.console.verbose(
+                'deleting any existing files...',
+                1 + logLevelBase,
+            );
+            this.fs.delete(
+                [distDir],
+                (this.params.verbose ? 2 : 1) + logLevelBase,
+            );
         }
         const srcDir = this.getSrcDir(undefined, subpath).replace(/\/+$/gi, '');
         // returns
@@ -812,7 +842,7 @@ export class AbstractStage {
                 'ⅹ source dir '
                     + this.fs.pathRelative(srcDir)
                     + ' does not exist, exiting...',
-                2,
+                1 + logLevelBase,
             );
             return;
         }
@@ -822,7 +852,7 @@ export class AbstractStage {
                 'ⅹ source dir '
                     + this.fs.pathRelative(srcDir)
                     + ' is not a directory, exiting...',
-                2,
+                1 + logLevelBase,
             );
             return;
         }
@@ -841,10 +871,13 @@ export class AbstractStage {
             .map(this.fs.pathRelative);
         // returns
         if (!scssPaths.length) {
-            this.console.verbose('ⅹ no css, sass, or scss files found', 2);
+            this.console.verbose(
+                'ⅹ no css, sass, or scss files found',
+                1 + logLevelBase,
+            );
             return;
         }
-        this.console.verbose('building path arguments...', 2);
+        this.console.verbose('building path arguments...', 1 + logLevelBase);
         const scssPathArgs = scssPaths.map((_path) => {
             const _srcDirRegex = new RegExp(
                 escRegExp(
@@ -867,25 +900,38 @@ export class AbstractStage {
                 output: _output,
             };
         });
-        this.console.vi.debug({ scssPathArgs }, this.params.verbose ? 3 : 2);
-        this.console.verbose('compiling to css at ' + distDir + '...', 2);
+        this.console.vi.debug(
+            { scssPathArgs },
+            (this.params.verbose ? 2 : 1) + logLevelBase,
+        );
+        this.console.verbose(
+            'compiling to css at ' + distDir + '...',
+            1 + logLevelBase,
+        );
         await Promise.all(
             scssPathArgs.map(({ input, output }) =>
-                this.atry(this.compiler.scss, this.params.verbose ? 3 : 2, [
-                    input,
-                    output,
-                    this.params.verbose ? 3 : 2,
-                ]),
+                this.atry(
+                    this.compiler.scss,
+                    (this.params.verbose ? 2 : 1) + logLevelBase,
+                    [
+                        input,
+                        output,
+                        (this.params.verbose ? 2 : 1) + logLevelBase,
+                    ],
+                ),
             ),
         );
         if (postCSS) {
-            this.console.verbose('processing with postcss...', 2);
+            this.console.verbose(
+                'processing with postcss...',
+                1 + logLevelBase,
+            );
             await this.atry(
                 this.compiler.postCSS,
-                this.params.verbose ? 3 : 2,
+                (this.params.verbose ? 2 : 1) + logLevelBase,
                 [
                     scssPathArgs.map((_o) => ({ from: _o.output })),
-                    this.params.verbose ? 3 : 2,
+                    (this.params.verbose ? 2 : 1) + logLevelBase,
                 ],
             );
         }

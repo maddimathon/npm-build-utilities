@@ -19,6 +19,15 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.2.0-alpha.1** — 2025-07-08
+
+Quick fix.
+
+### Fixed
+- Added logLevelBase param to AbstractStage.runCustomDirCopySubStage() and
+  AbstractStage.runCustomScssDirSubStage() methods
+
+
 ## **0.2.0-alpha** — 2025-07-01
 
 Added PostCSS support (enabled by default) and better uncaught error handling.

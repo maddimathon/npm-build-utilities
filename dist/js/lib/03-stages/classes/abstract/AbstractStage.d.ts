@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha
+ * @maddimathon/build-utilities@0.2.0-alpha.1
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -359,14 +359,16 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @category Running
      *
-     * @param subpath  The subdriectory, relative to src path.
-     * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
+     * @param subpath       The subdriectory, relative to src path.
+     * @param _distDir      Optionally force a diffrent output directory than the auto-generated one.
+     * @param logLevelBase  Base output level for log messages.
      *
      * @since 0.1.4-alpha
+     * @since 0.2.0-alpha.1 — Added logLevelBase param.
      *
      * @experimental
      */
-    protected runCustomDirCopySubStage(subpath: string, _distDir?: string): Promise<void>;
+    protected runCustomDirCopySubStage(subpath: string, _distDir?: string, logLevelBase?: number): Promise<void>;
     /**
      * This runs a custom sub-stage that uses globs to find non-partial
      * scss/sass files and compile them at the given subpath from the source to
@@ -376,15 +378,17 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @category Running
      *
-     * @param subpath   The subdriectory, relative to src path.
-     * @param _distDir  Optionally force a diffrent output directory than the auto-generated one.
-     * @param postCSS   Whether to run PostCSS on the output css. Default true.
+     * @param subpath       The subdriectory, relative to src path.
+     * @param _distDir      Optionally force a diffrent output directory than the auto-generated one.
+     * @param postCSS       Whether to run PostCSS on the output css. Default true.
+     * @param logLevelBase  Base output level for log messages.
      *
      * @since 0.1.4-alpha
      * @since 0.2.0-alpha — Added postCSS param and PostCSS compatibility.
+     * @since 0.2.0-alpha.1 — Added logLevelBase param.
      *
      * @experimental
      */
-    protected runCustomScssDirSubStage(subpath: string, _distDir?: string, postCSS?: boolean): Promise<void>;
+    protected runCustomScssDirSubStage(subpath: string, _distDir?: string, postCSS?: boolean, logLevelBase?: number): Promise<void>;
 }
 //# sourceMappingURL=AbstractStage.d.ts.map

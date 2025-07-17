@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha
+ * @maddimathon/build-utilities@0.2.0-alpha.1
  * @license MIT
  */
 import { slugify } from '@maddimathon/utility-typescript/functions';
