@@ -19,6 +19,12 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.2.0-alpha.3** — 2025-08-21
+
+### Fixed
+- Updated dependencies
+
+
 ## **0.2.0-alpha.2** — 2025-08-21
 
 ### Added
