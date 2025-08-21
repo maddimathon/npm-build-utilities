@@ -1146,38 +1146,65 @@ export abstract class AbstractStage<
         );
     }
 
+
     /**
      * This runs a custom sub-stage that uses globs to find non-partial
      * scss/sass files and compile them at the given subpath from the source to
      * the dist directories.
      *
      * Deletes any existing, logs update messages, etc.
-     * 
-     * @category Running
      *
-     * @param subpath       The subdriectory, relative to src path.
-     * @param _distDir      Optionally force a diffrent output directory than the auto-generated one.
-     * @param postCSS       Whether to run PostCSS on the output css. Default true.
-     * @param logLevelBase  Base output level for log messages.
+     * @param subpath       The subdirectory, relative to src path.
+     * @param distDir       Force a diffrent output directory than the auto-generated one.
+     * @param opts          Additional options. See {@link AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS} for defaults.
+     * @param logLevelBase  Base output level for log messages. Default 1.
      *
      * @since 0.1.4-alpha
-     * @since 0.2.0-alpha — Added postCSS param and PostCSS compatibility.
-     * @since 0.2.0-alpha.1 — Added logLevelBase param.
+     * @since 0.2.0-alpha — Added `postCSS` param and PostCSS compatibility.
+     * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
+     * 
+     * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding. 
+     */
+    protected async runCustomScssDirSubStage(
+        subpath: string,
+        distDir?: string,
+        opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
+        logLevelBase?: number,
+    ): Promise<string[]>;
+
+    /**
+     * Deprecated overload here for forward-compatibility.  Please use the
+     * overload above instead.
      *
+     * @deprecated 0.2.0-alpha.2 — Please pass an
+     *             {@link AbstractStage.runCustomScssDirSubStage.Opts} object as 
+     *             the third param instead.
+     */
+    protected async runCustomScssDirSubStage(
+        subpath: string,
+        distDir?: string,
+        postCSS?: boolean,
+        logLevelBase?: number,
+    ): Promise<string[]>;
+
+    /**
+     * @category Running
+     * 
      * @experimental
      */
     protected async runCustomScssDirSubStage(
         subpath: string,
         _distDir?: string,
-        postCSS: boolean = true,
+        _opts?: boolean | Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
         logLevelBase: number = 1,
-    ) {
+    ): Promise<string[]> {
         this.console.progress( 'compiling ' + subpath + ' to css...', 0 + logLevelBase );
 
         const distDir = _distDir ?? this.getDistDir( undefined, subpath ).replace( /\/$/g, '' );
 
+        // if the output dir exists, we should delete the old contents
         if ( this.fs.exists( distDir ) ) {
-            this.console.verbose( 'deleting any existing files...', 1 + logLevelBase );
+            this.console.verbose( 'deleting existing dist files...', 1 + logLevelBase );
             this.fs.delete( [ distDir ], ( this.params.verbose ? 2 : 1 ) + logLevelBase );
         }
 
@@ -1185,26 +1212,29 @@ export abstract class AbstractStage<
 
         // returns
         if ( !this.fs.exists( srcDir ) ) {
-            this.console.verbose( 'ⅹ source dir ' + this.fs.pathRelative( srcDir ) + ' does not exist, exiting...', 1 + logLevelBase );
-            return;
+            this.console.progress( 'ⅹ source dir ' + this.fs.pathRelative( srcDir ) + ' does not exist, exiting...', 1 + logLevelBase );
+            return [];
         }
 
         // returns
         if ( !this.fs.isDirectory( srcDir ) ) {
-            this.console.verbose( 'ⅹ source dir ' + this.fs.pathRelative( srcDir ) + ' is not a directory, exiting...', 1 + logLevelBase );
-            return;
+            this.console.progress( 'ⅹ source dir ' + this.fs.pathRelative( srcDir ) + ' is not a directory, exiting...', 1 + logLevelBase );
+            return [];
         }
 
+        const opts = mergeArgs(
+            AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS,
+            typeof _opts === 'boolean' ? { postCSS: _opts, } : _opts
+        );
+
+        this.params.debug && this.console.verbose( 'globbing for scss files...', 1 + logLevelBase );
+
         const scssPaths = this.fs.glob(
-            [
-                srcDir + '/**/*.scss',
-                srcDir + '/**/*.sass',
-                srcDir + '/**/*.css',
-            ],
+            opts.globs.map( _g => srcDir + '/' + _g.replace( /^\//gi, '' ) ),
             {
                 ignore: [
                     ...FileSystem.globs.SYSTEM,
-                    '**/_*',
+                    ...opts.ignoreGlobs,
                 ]
             },
         ).filter( this.fs.isFile ).map( this.fs.pathRelative );
@@ -1212,33 +1242,31 @@ export abstract class AbstractStage<
         // returns
         if ( !scssPaths.length ) {
             this.console.verbose( 'ⅹ no css, sass, or scss files found', 1 + logLevelBase );
-            return;
+            return [];
         }
 
+        const regex = {
+            srcDir: new RegExp(
+                escRegExp( srcDir.replace( /\/$/g, '' ) + '/' ),
+                'gi'
+            ),
+        };
 
-        this.console.verbose( 'building path arguments...', 1 + logLevelBase );
+
+        this.params.debug && this.console.verbose( 'building path arguments...', 1 + logLevelBase );
 
         const scssPathArgs = scssPaths.map(
             ( _path ) => {
 
-                const _srcDirRegex = new RegExp(
-                    escRegExp(
-                        this.fs.pathRelative(
-                            this.fs.isFile( _path ) ? this.fs.dirname( _path ) : _path
-                        ).replace( /\/$/g, '' ) + '/'
-                    ),
-                    'g'
-                );
-
                 const _output = this.fs.pathRelative( _path )
                     .replace(
-                        _srcDirRegex,
+                        regex.srcDir,
                         escRegExpReplace( distDir + '/' )
                     )
-                    .replace(
-                        /\.scss$/gi,
-                        '.css'
-                    );
+                    .replace( /\.(sass|scss)$/gi, '.css' )
+                    .replace( /\/_?index\.css$/gi, '.css' );
+
+                this.params.debug && this.console.verbose( `${ _path } → ${ _output }`, 2 + logLevelBase, { italic: true } );
 
                 return {
                     input: _path,
@@ -1252,14 +1280,20 @@ export abstract class AbstractStage<
 
         this.console.verbose( 'compiling to css at ' + distDir + '...', 1 + logLevelBase );
         await Promise.all( scssPathArgs.map(
-            ( { input, output } ) => this.atry(
-                this.compiler.scss,
-                ( this.params.verbose ? 2 : 1 ) + logLevelBase,
-                [ input, output, ( this.params.verbose ? 2 : 1 ) + logLevelBase ],
-            )
+            ( { input, output } ) => {
+
+                const _level = ( this.params.verbose ? 2 : 1 )
+                    + logLevelBase;
+
+                return this.atry(
+                    this.compiler.scss,
+                    _level,
+                    [ input, output, _level ],
+                );
+            }
         ) );
 
-        if ( postCSS ) {
+        if ( opts.postCSS ) {
 
             this.console.verbose( 'processing with postcss...', 1 + logLevelBase );
             await this.atry(
@@ -1268,9 +1302,86 @@ export abstract class AbstractStage<
                 [
                     scssPathArgs.map( _o => ( { from: _o.output } ) ),
                     ( this.params.verbose ? 2 : 1 ) + logLevelBase,
-
                 ],
             );
+        }
+
+        return scssPathArgs.map( _o => _o.output );
+    }
+}
+
+/**
+ * Utilities for the {@link AbstractStage} class.
+ * 
+ * @since 0.2.0-alpha.2
+ */
+export namespace AbstractStage {
+
+    /**
+     * Utilities for the {@link AbstractStage.runCustomScssDirSubStage} method.
+     * 
+     * @since 0.2.0-alpha.2
+     */
+    export namespace runCustomScssDirSubStage {
+
+        /**
+         * Default options for the {@link AbstractStage.runCustomScssDirSubStage}
+         * method.
+         * 
+         * @see {@link Opts} For property details.
+         *
+         * @since 0.2.0-alpha.2
+         * 
+         * @source
+         */
+        export const DEFAULT_OPTS: AbstractStage.runCustomScssDirSubStage.Opts = {
+
+            globs: [
+                '**/*.scss',
+                '**/*.sass',
+                '**/*.css',
+            ],
+
+            ignoreGlobs: [
+                '**/_*',
+            ],
+
+            postCSS: true,
+        };
+
+        /**
+         * Options for the {@link AbstractStage.runCustomScssDirSubStage}
+         * method.
+         *
+         * @since 0.2.0-alpha.2
+         */
+        export interface Opts {
+
+            /**
+             * Globs used to find scss files to compile. Relative to subpath param.
+             * 
+             * @default 
+             * [
+             *     '/**\/*.scss',
+             *     '/**\/*.sass',
+             *     '/**\/*.css',
+             * ]
+             */
+            globs: string[];
+
+            /**
+             * Globs of files to ignore when fetching scss files to compile.
+             *
+             * @default [ '**\/_ *' ]
+             */
+            ignoreGlobs: string[];
+
+            /**
+             * Whether to run PostCSS on the output css.
+             * 
+             * @default true
+             */
+            postCSS: boolean;
         }
     }
 }

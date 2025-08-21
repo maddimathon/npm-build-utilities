@@ -19,6 +19,28 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.2.0-alpha.2** — 2025-08-21
+
+### Added
+- New static accessor FileSystem.prettierConfig for easily making prettier json
+  config files
+- Custom Compile build stage to compile json files
+- Error catching to prettifying written config file
+
+### Changed
+- Added peer dependencies (optional) for jest, postcss, postcss-preset-env,
+  prettier, sass, typedoc, typedoc-plugin-inline-sources, and typescript
+
+### Deprecated
+- FileSystem.prettier.ARGS_DEFAULT deprecated and replaced by static accessor
+  FileSystem.prettierConfig
+- AbstractStage.runCustomScssDirSubStage() third param changed from a boolean to
+  an args object
+
+### Fixed
+- Updated dependencies
+
+
 ## **0.2.0-alpha.1** — 2025-07-08
 
 Quick fix.
