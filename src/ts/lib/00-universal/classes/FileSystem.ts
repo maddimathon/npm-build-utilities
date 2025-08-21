@@ -57,11 +57,11 @@ export class FileSystem extends node.NodeFiles {
      * ====================================================================== */
 
     /**
-     * Default {@link prettier} configuration file.
+     * Default {@link prettier} configuration object.
      * 
-     * @satisfies {prettier.Options}
+     * @category Args
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.2.0-alpha.2
      */
     public static get prettierConfig() {
 
@@ -1014,7 +1014,7 @@ export namespace FileSystem {
          * 
          * @since 0.1.0-alpha
          * 
-         * @deprecated ___PKG_VERSION___ — Replaced by static accessor {@link FileSystem.prettierConfig}.
+         * @deprecated 0.2.0-alpha.2 — Replaced by static accessor {@link FileSystem.prettierConfig}.
          */
         export const ARGS_DEFAULT = {
 

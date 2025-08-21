@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.2.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.2
  * @license MIT
  */
 import {} from './classes/index.js';

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.2.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.2
  * @license MIT
  */
 import { globSync } from 'glob';
@@ -32,11 +32,11 @@ export class FileSystem extends node.NodeFiles {
     /* STATIC
      * ====================================================================== */
     /**
-     * Default {@link prettier} configuration file.
+     * Default {@link prettier} configuration object.
      *
-     * @satisfies {prettier.Options}
+     * @category Args
      *
-     * @since 0.2.0-alpha.2.draft
+     * @since 0.2.0-alpha.2
      */
     static get prettierConfig() {
         /**
@@ -136,6 +136,7 @@ export class FileSystem extends node.NodeFiles {
             toJSON,
         };
         config.toJSON = config.toJSON.bind(config);
+        config.valueOf = config.toJSON;
         return config;
     }
     /* LOCAL PROPERTIES
@@ -775,7 +776,7 @@ export class FileSystem extends node.NodeFiles {
          *
          * @since 0.1.0-alpha
          *
-         * @deprecated 0.2.0-alpha.2.draft — Replaced by static accessor {@link FileSystem.prettierConfig}.
+         * @deprecated 0.2.0-alpha.2 — Replaced by static accessor {@link FileSystem.prettierConfig}.
          */
         prettier.ARGS_DEFAULT = {
             _: FileSystem.prettierConfig,

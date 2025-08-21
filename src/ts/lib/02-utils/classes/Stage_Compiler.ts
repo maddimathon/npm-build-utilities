@@ -533,13 +533,13 @@ export class Stage_Compiler implements Stage.Compiler {
                     }
 
                     if ( to ) {
-                        this.console.verbose(
+                        this.params.debug && this.console.verbose(
                             'processed: ' + this.fs.pathRelative( from ) + ' → ' + this.fs.pathRelative( to ),
                             level,
                             { maxWidth: null },
                         );
                     } else {
-                        this.console.verbose(
+                        this.params.debug && this.console.verbose(
                             'processed: ' + this.fs.pathRelative( from ),
                             level,
                             { maxWidth: null },
@@ -576,7 +576,7 @@ export class Stage_Compiler implements Stage.Compiler {
         this.params.debug && this.console.vi.verbose( { compiled }, level );
 
         if ( compiled.css ) {
-            this.console.verbose( 'writing css to path: ' + this.fs.pathRelative( output ), level, { maxWidth: null } );
+            this.params.debug && this.console.verbose( 'writing css to path: ' + this.fs.pathRelative( output ), level, { maxWidth: null } );
             this.fs.write( output, compiled.css, { force: true } );
         }
 

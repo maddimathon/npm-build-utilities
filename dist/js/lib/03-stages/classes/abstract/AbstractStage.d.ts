@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.2.draft
+ * @maddimathon/build-utilities@0.2.0-alpha.2
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -376,19 +376,82 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * Deletes any existing, logs update messages, etc.
      *
-     * @category Running
-     *
-     * @param subpath       The subdriectory, relative to src path.
-     * @param _distDir      Optionally force a diffrent output directory than the auto-generated one.
-     * @param postCSS       Whether to run PostCSS on the output css. Default true.
-     * @param logLevelBase  Base output level for log messages.
+     * @param subpath       The subdirectory, relative to src path.
+     * @param distDir       Force a diffrent output directory than the auto-generated one.
+     * @param opts          Additional options. See {@link AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS} for defaults.
+     * @param logLevelBase  Base output level for log messages. Default 1.
      *
      * @since 0.1.4-alpha
-     * @since 0.2.0-alpha — Added postCSS param and PostCSS compatibility.
-     * @since 0.2.0-alpha.1 — Added logLevelBase param.
+     * @since 0.2.0-alpha — Added `postCSS` param and PostCSS compatibility.
+     * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
      *
-     * @experimental
+     * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      */
-    protected runCustomScssDirSubStage(subpath: string, _distDir?: string, postCSS?: boolean, logLevelBase?: number): Promise<void>;
+    protected runCustomScssDirSubStage(subpath: string, distDir?: string, opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>, logLevelBase?: number): Promise<string[]>;
+    /**
+     * Deprecated overload here for forward-compatibility.  Please use the
+     * overload above instead.
+     *
+     * @deprecated 0.2.0-alpha.2 — Please pass an
+     *             {@link AbstractStage.runCustomScssDirSubStage.Opts} object as
+     *             the third param instead.
+     */
+    protected runCustomScssDirSubStage(subpath: string, distDir?: string, postCSS?: boolean, logLevelBase?: number): Promise<string[]>;
+}
+/**
+ * Utilities for the {@link AbstractStage} class.
+ *
+ * @since 0.2.0-alpha.2
+ */
+export declare namespace AbstractStage {
+    /**
+     * Utilities for the {@link AbstractStage.runCustomScssDirSubStage} method.
+     *
+     * @since 0.2.0-alpha.2
+     */
+    namespace runCustomScssDirSubStage {
+        /**
+         * Default options for the {@link AbstractStage.runCustomScssDirSubStage}
+         * method.
+         *
+         * @see {@link Opts} For property details.
+         *
+         * @since 0.2.0-alpha.2
+         *
+         * @source
+         */
+        const DEFAULT_OPTS: AbstractStage.runCustomScssDirSubStage.Opts;
+        /**
+         * Options for the {@link AbstractStage.runCustomScssDirSubStage}
+         * method.
+         *
+         * @since 0.2.0-alpha.2
+         */
+        interface Opts {
+            /**
+             * Globs used to find scss files to compile. Relative to subpath param.
+             *
+             * @default
+             * [
+             *     '/**\/*.scss',
+             *     '/**\/*.sass',
+             *     '/**\/*.css',
+             * ]
+             */
+            globs: string[];
+            /**
+             * Globs of files to ignore when fetching scss files to compile.
+             *
+             * @default [ '**\/_ *' ]
+             */
+            ignoreGlobs: string[];
+            /**
+             * Whether to run PostCSS on the output css.
+             *
+             * @default true
+             */
+            postCSS: boolean;
+        }
+    }
 }
 //# sourceMappingURL=AbstractStage.d.ts.map
