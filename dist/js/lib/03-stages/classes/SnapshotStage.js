@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.2
+ * @maddimathon/build-utilities@0.2.0-alpha.3+1
  * @license MIT
  */
 import { slugify, timestamp } from '@maddimathon/utility-typescript/functions';

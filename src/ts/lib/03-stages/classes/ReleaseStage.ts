@@ -530,7 +530,10 @@ export class ReleaseStage extends AbstractStage<
             updatedPaths = this.args.commit( this, updatedPaths );
         }
 
-        const gitCmd = `git add "${ updatedPaths.join( '" "' ) }"`
+        const gitCmd = ''
+            + `git fetch`
+            + ' && '
+            + `git add "${ updatedPaths.join( '" "' ) }"`
             + ' && '
             + `git commit -a --allow-empty -m "[${ timestamp( null, { date: true, time: false } ) }] release: ${ version }"`;
 

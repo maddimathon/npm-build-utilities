@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.2
+ * @maddimathon/build-utilities@0.2.0-alpha.3+1
  * @license MIT
  */
 import {
@@ -449,7 +449,10 @@ export class ReleaseStage extends AbstractStage {
             updatedPaths = this.args.commit(this, updatedPaths);
         }
         const gitCmd =
-            `git add "${updatedPaths.join('" "')}"`
+            ''
+            + `git fetch`
+            + ' && '
+            + `git add "${updatedPaths.join('" "')}"`
             + ' && '
             + `git commit -a --allow-empty -m "[${timestamp(null, { date: true, time: false })}] release: ${version}"`;
         // returns

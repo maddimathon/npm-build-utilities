@@ -19,6 +19,18 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.2.0-alpha.3+1** — 2025-08-21
+
+Rebuild to double-check ReleaseStage.commit() fix and resolve a local git issue.
+
+
+## **0.2.0-alpha.3** — 2025-08-21
+
+### Fixed
+- Updated dependencies
+- Added `git fetch` step to ReleaseStage.commit()
+
+
 ## **0.2.0-alpha.2** — 2025-08-21
 
 ### Added
