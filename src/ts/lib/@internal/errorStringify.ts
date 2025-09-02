@@ -8,10 +8,6 @@
  * @license MIT
  */
 
-import type {
-    Objects,
-} from '@maddimathon/utility-typescript/types';
-
 import {
     slugify,
     typeOf,
@@ -36,186 +32,84 @@ import {
 import { writeLog } from './writeLog.js';
 
 
-const _msgMaker = new MessageMaker();
+const _msgMaker = new MessageMaker( { paintFormat: null } );
 
 /**
- * Returns a string representation of the error for logging a child object of an
- * error.
- *
+ * Gets some basic, standardized info for any input error.
+ * 
+ * @since 0.2.0-alpha.4
+ * 
  * @internal
- * @hidden
  */
-function _errorStringifyInternal(
+export function getErrorInfo(
     error: AbstractError.Input,
     level: number,
     console: Logger,
     fs: FileSystemType,
     args: Partial<AbstractError.Handler.Args>,
-): MessageMaker.BulkMsgs {
-    args = {
-        ...args,
-
-        bold: false,
-
-        linesIn: 0,
-        linesOut: 0,
-    };
-
-    if ( typeof error !== 'object' ) {
-        return [ [ String( error ), args ] ];
-    }
-
-    const bulkMsgs: MessageMaker.BulkMsgs = [];
-
-    let i = 0;
-    for ( const [ _msg, _args ] of errorStringify(
-        error,
-        1 + level,
-        console,
-        fs,
-        args,
-    ) ) {
-
-        bulkMsgs.push( [ _msg, {
-            depth: ( i > 0 ? 1 : 0 ),
-            ..._args,
-        } ] );
-
-        i++;
-    }
-
-    return bulkMsgs;
-}
-
-/**
- * Returns a string(s) representation of an error for logging.
- * 
- * @category Errors
- * 
- * @param error    Error to convery.
- * @param level    Depth level for output to the console.
- * @param console  Instance used to log messages and debugging info.
- * @param fs       Instance used to work with paths and files.
- * @param args     Overrides for default options.
- * 
- * @since 0.1.0-alpha
- * 
- * @internal
- */
-export function errorStringify(
-    error: AbstractError.Input,
-    level: number,
-    console: Logger,
-    fs: FileSystemType,
-    args: Partial<AbstractError.Handler.Args>,
-): MessageMaker.BulkMsgs {
+) {
 
     /**
-     * Sectioned information for the error message.
+     * Categorized information for the error message.
      */
-    let t_errorInfo: {
-        name: string;
-        message: string | undefined;
-        output: string;
-        cause: unknown | undefined;
-        stack: string | undefined;
-        details: string | { [ key: string ]: any; };
-    };
+    let t_errorInfo: errorStringify.Info;
 
     const errorType = typeOf( error );
-
-    const _defaultErrorInfo = (
-        err: Exclude<object & typeof error, any[]> | UnknownCaughtError,
-        info?: Partial<typeof t_errorInfo>,
-    ) => {
-
-        const default_info: typeof t_errorInfo = {
-            name: err.name ?? 'Error',
-            message: err.message ?? '',
-            output: ( err as { [ key: string ]: any; } ).output ?? '',
-            cause: err.cause,
-            stack: err.stack,
-
-            details: {},
-        };
-
-        if ( err instanceof UnknownCaughtError ) {
-
-            default_info.details = {
-                cause: err.cause,
-            };
-
-            const causeString = err.cause
-                ? _msgMaker.msgs( _errorStringifyInternal(
-                    err.cause,
-                    1 + level,
-                    console,
-                    fs,
-                    args,
-                ) )
-                : '';
-
-            if ( causeString.length ) {
-                default_info.cause = undefined;
-                default_info.output = causeString;
-            }
-        } else if ( err instanceof AbstractError && !default_info.output ) {
-            default_info.output = console.nc.msg.msgs( err.getOutput(), {
-                ...args,
-
-                bold: false,
-                italic: false,
-            } );
-        }
-
-        return {
-            ...default_info,
-            ...info,
-        } as const satisfies typeof t_errorInfo;
-    };
 
     switch ( typeof error ) {
 
         case 'object':
             // breaks
+            // pass to the default object handler
             if ( error instanceof AbstractError ) {
-                t_errorInfo = _defaultErrorInfo( error );
+                t_errorInfo = getErrorInfo.object( error, level, console, fs, args );
                 break;
             }
 
             // breaks
+            // fix the output information, then pass to the default object handler
             if ( error instanceof Error ) {
+                const _typedError = error as Error & Partial<AbstractError.NodeCliError>;
 
-                const _typedError = error as Partial<AbstractError.NodeCliError>;
+                t_errorInfo = getErrorInfo.object(
+                    error,
+                    level,
+                    console,
+                    fs,
+                    args,
+                    {
+                        message: _typedError.message,
+                        output: [
+                            _typedError.output
+                            || _typedError.stderr
+                            || _typedError.stdout
+                            || []
+                        ].flat().filter(
+                            v => v !== null
+                        ).map(
+                            _str => getErrorInfo.stringToBulkMsgs( _str )
+                        ).flat( 1 ),
 
-                const output = [
-                    _typedError.output
-                    || _typedError.stderr
-                    || _typedError.stdout
-                    || []
-                ].flat().filter( v => v !== null ).join( '\n\n' );
+                        details: {
+                            code: _typedError.code,
+                            signal: _typedError.signal,
+                            status: _typedError.status,
 
-                t_errorInfo = _defaultErrorInfo( _typedError, {
-                    message: _typedError.message,
-                    output: output,
+                            path: typeof _typedError.path === 'string'
+                                ? fs.pathRelative( _typedError.path ).replace( ' ', '%20' )
+                                : _typedError.path,
 
-                    details: {
-                        code: _typedError.code,
-                        signal: _typedError.signal,
-                        status: _typedError.status,
-
-                        path: typeof _typedError.path === 'string'
-                            ? fs.pathRelative( _typedError.path ).replace( ' ', '%20' )
-                            : _typedError.path,
-
-                        pid: _typedError.pid,
+                            pid: _typedError.pid,
+                        },
                     },
-                } );
+                );
 
                 break;
             }
 
             // breaks
+            // generate UnknownCaughtError for non-object type, then pass to the
+            // default object handler
             if ( error === null || Array.isArray( error ) ) {
 
                 error = new UnknownCaughtError(
@@ -223,7 +117,7 @@ export function errorStringify(
                     error,
                 );
 
-                t_errorInfo = _defaultErrorInfo( error );
+                t_errorInfo = getErrorInfo.object( error, level, console, fs, args );
                 break;
             }
 
@@ -233,12 +127,20 @@ export function errorStringify(
                 _objConstructorName = _objConstructorName.toLowerCase();
             }
 
-            t_errorInfo = _defaultErrorInfo( error, {
-                message: [
-                    `Unknown error object type: <${ _objConstructorName }>`,
-                    error.message ?? '',
-                ].filter( str => str.length ).join( ' — ' ),
-            } );
+            // it is weird that this isn't an error object if it's an object
+            t_errorInfo = getErrorInfo.object(
+                error,
+                level,
+                console,
+                fs,
+                args,
+                {
+                    message: [
+                        `Unknown error object type: <${ _objConstructorName }>`,
+                        error.message ?? '',
+                    ].filter( str => str.length ).join( ' — ' ),
+                },
+            );
             break;
 
         case 'boolean':
@@ -265,7 +167,8 @@ export function errorStringify(
                 `<${ errorType }> ${ _errorString }`,
                 { cause: error }
             );
-            t_errorInfo = _defaultErrorInfo( error );
+
+            t_errorInfo = getErrorInfo.object( error, level, console, fs, args );
             break;
 
         default:
@@ -273,89 +176,431 @@ export function errorStringify(
                 `Unknown error type: <${ errorType }> \n${ String( error ) }`,
                 { cause: error }
             );
-            t_errorInfo = _defaultErrorInfo( error );
+
+            t_errorInfo = getErrorInfo.object( error, level, console, fs, args );
             break;
     }
 
-    const errorInfo = {
+    return [ error, {
         ...t_errorInfo,
 
         message: t_errorInfo.message?.trim(),
-        output: t_errorInfo.output.trim(),
-    };
+        output: t_errorInfo.output,
+    } ] as [ typeof error, typeof t_errorInfo ];
+}
 
-    const _msgHeading = ( heading: string ): MessageMaker.BulkMsgs => [
-        [ '' ],
-        [
-            `-- ${ heading } --`,
-            { bold: true, italic: true, },
-        ],
-    ];
+/**
+ * @since 0.2.0-alpha.4
+ * 
+ * @internal
+ */
+export namespace getErrorInfo {
 
-    const bulkMsgs: MessageMaker.BulkMsgs = [
-        [ `[${ errorInfo.name }] ${ errorInfo.message ?? '' }` ],
-    ];
+    /**
+     * Converts a given string into a valid bulk msgs argument.
+     */
+    export function stringToBulkMsgs(
+        str: string,
+        _opts?: Partial<{
+            removeNodeStyles: boolean;
+        }>,
+    ): MessageMaker.BulkMsgs {
 
-    if ( errorInfo.output ) {
+        const opts = {
+            removeNodeStyles: true,
+            ..._opts,
+        };
 
-        let _abridgedOutput = false;
-
-        // checks if it is too long for the console
-        if ( errorInfo.output.split( '\n' ).length > 100 ) {
-
-            const _logResult = writeLog(
-                errorInfo.output,
-                slugify( error.name ),
-                {
-                    config: console.config,
-                    fs,
-                },
-            );
-
-            if ( _logResult ) {
-                _abridgedOutput = true;
-                errorInfo.output = 'Long output message written to ' + fs.pathRelative( _logResult ).replace( ' ', '%20' );
-            }
+        if ( opts.removeNodeStyles ) {
+            str = str.replace( /\\x1b\[[\d|;|:]*\d+m/g, '' );
         }
 
-        if ( _abridgedOutput ) {
-            bulkMsgs.push( [ errorInfo.output, { bold: false, italic: true, maxWidth: null } ] );
-        } else if ( error instanceof AbstractError ) {
-            bulkMsgs.push( [ errorInfo.output, { bold: false, maxWidth: null } ] );
-        } else {
-            bulkMsgs.push( [ errorInfo.output, { bold: false, clr: 'black', maxWidth: null } ] );
-        }
+        return [ [ str ] ];
     }
 
-    if ( errorInfo.cause ) {
+    /** 
+     * Parses an error object in the most basic way.
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export function object(
+        error: Error | Partial<Error> | Partial<AbstractError.NodeCliError> | UnknownCaughtError,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+        info: Partial<errorStringify.Info> = {},
+    ) {
 
-        if ( errorInfo.output || !( error instanceof UnknownCaughtError ) ) {
+        const default_info = {
+            name: error.name ?? 'Error',
+            message: error.message ?? '',
+            output: ( 'output' in error && error.output ) ? [ [ error.output.filter( _item => _item !== null ) ] ] : [],
+            cause: error.cause,
+            stack: error.stack,
 
-            for ( const arr of _msgHeading( 'Cause' ) ) {
-                bulkMsgs.push( arr );
-            }
+            details: {},
+        } as const satisfies errorStringify.Info;
+
+        if ( error instanceof AbstractError && !info?.output ) {
+            info.output = error.getOutput();
         }
 
-        for ( const arr of _errorStringifyInternal(
-            errorInfo.cause,
-            1 + level,
+        const merged = {
+            ...default_info,
+            ...info,
+
+            details: typeof info?.details === 'object' ? {
+                ...default_info.details,
+                ...info?.details,
+            } : ( info?.details ?? default_info.details ),
+
+        } as const satisfies errorStringify.Info;
+
+        return merged;
+    };
+}
+
+/**
+ * Returns a string(s) representation of an error for logging.
+ * 
+ * @category Errors
+ * 
+ * @param _error   Error to convery.
+ * @param level    Depth level for output to the console.
+ * @param console  Instance used to log messages and debugging info.
+ * @param fs       Instance used to work with paths and files.
+ * @param args     Overrides for default options.
+ * 
+ * @since 0.1.0-alpha
+ * 
+ * @internal
+ */
+export function errorStringify(
+    _error: AbstractError.Input,
+    level: number,
+    console: Logger,
+    fs: FileSystemType,
+    args: Partial<AbstractError.Handler.Args>,
+): MessageMaker.BulkMsgs {
+
+    const [ error, info ] = getErrorInfo( _error, level, console, fs, args );
+
+    const msgs: MessageMaker.BulkMsgs = [
+        ...errorStringify.message( error, info, level, console, fs, args ),
+        ...errorStringify.output( error, info, level, console, fs, args ),
+        ...errorStringify.cause( error, info, level, console, fs, args ),
+        ...errorStringify.stack( error, info, level, console, fs, args ),
+        ...errorStringify.details( error, info, level, console, fs, args ),
+    ];
+
+    if (
+        (
+            error instanceof UnknownCaughtError
+            && !( error.cause instanceof Error )
+        )
+        || console.params.debug
+    ) {
+
+        msgs.push(
+            ...errorStringify.heading( 'Dump' ),
+            ...errorStringify.validateMsgsLength(
+                info,
+                console,
+                fs,
+                args,
+                [
+                    [
+                        VariableInspector.stringify( { info } ),
+                        { bold: false, italic: false, maxWidth: null, }
+                    ],
+                    [
+                        VariableInspector.stringify( { error } ),
+                        { bold: false, italic: false, maxWidth: null, }
+                    ],
+                    [
+                        VariableInspector.stringify( { 'error.toString()': error.toString() } ),
+                        { bold: false, italic: false, maxWidth: null, }
+                    ],
+                ],
+            ),
+        );
+    } else if ( console.params.debug ) {
+        msgs.push(
+            ...errorStringify.heading( 'Dump' ),
+            [ 'No content.', { bold: false, italic: true } ]
+        );
+    }
+
+    return msgs;
+}
+
+/**
+ * Utility functions used by the {@link errorStringify} function.
+ * 
+ * @category Errors
+ * 
+ * @since 0.2.0-alpha.4
+ * @internal
+ */
+export namespace errorStringify {
+
+    /**
+     * Basic, structured and parsed information about an error.
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export interface Info {
+        name: string;
+        message: string | undefined;
+        output: MessageMaker.BulkMsgs;
+        cause: unknown | undefined;
+        stack: string | undefined;
+        details: string | { [ key: string ]: any; };
+    };
+
+    /**
+     * Returns a string representation of a child object of an error.
+     *
+     * @internal
+     * @hidden
+     */
+    export function _childStringify(
+        _error: AbstractError.Input,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+    ): MessageMaker.BulkMsgs {
+        args = {
+            ...args,
+
+            bold: false,
+
+            linesIn: 0,
+            linesOut: 0,
+        };
+
+        if ( typeof _error !== 'object' ) {
+            return [ [ String( _error ), args ] ];
+        }
+
+        const [ error, info ] = getErrorInfo( _error, level, console, fs, args );
+
+        const msgs: MessageMaker.BulkMsgs = [];
+
+        let i = 0;
+        for ( const [ _msg, _args ] of [
+            ...errorStringify.message( error, info, level, console, fs, args ),
+            ...errorStringify.output( error, info, level, console, fs, args ),
+            ...errorStringify.cause( error, info, level, console, fs, args ),
+            // ...errorStringify.stack( error, info, level, console, fs, args ),
+            // ...errorStringify.details( error, info, level, console, fs, args ),
+        ] ) {
+
+            msgs.push( [ _msg, {
+                depth: ( i > 0 ? 1 : 0 ),
+                ..._args,
+            } ] );
+
+            i++;
+        }
+
+        return msgs;
+    }
+
+    /**
+     * Formats a heading for output.
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export function heading( heading: string ): MessageMaker.BulkMsgs {
+
+        return [
+            [ '' ],
+            [
+                `-- ${ heading } --`,
+                { bold: true, italic: true, },
+            ],
+        ];
+    }
+
+    /**
+     * Checks the length of the output message and writes it to a file instead
+     * when applicable (changing the returned message to reflect the log
+     * location).
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export function validateMsgsLength(
+        info: errorStringify.Info,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+        msg: MessageMaker.BulkMsgs,
+        _maxLines: number = 80,
+    ): MessageMaker.BulkMsgs {
+
+        const joined = typeof msg === 'string' ? _msgMaker.msg( msg ) : _msgMaker.msgs( msg );
+
+        const abridgedOutput = joined.split( '\n' ).length > _maxLines
+            || joined.length > ( _maxLines * 120 );
+
+        // returns
+        if ( !abridgedOutput ) {
+            return msg;
+        }
+
+        const fileWriteResult = writeLog(
+            joined.trim(),
+            slugify( info.name ),
+            {
+                config: console.config,
+                fs,
+            },
+        );
+
+        if ( fileWriteResult ) {
+            msg = [ [
+                'Long output message written to ' + fs.pathRelative( fileWriteResult ).replace( ' ', '%20' ),
+                { bold: false, clr: args.clr, italic: true }
+            ] ];
+        }
+
+        return msg;
+    }
+
+    /**
+     * Formats the getErrorInfo message property.
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export function message(
+        error: ReturnType<typeof getErrorInfo>[ 0 ],
+        info: errorStringify.Info,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+    ): MessageMaker.BulkMsgs {
+
+        return [
+            [ `[${ info.name }] ${ info.message ?? '' }` ],
+        ];
+    }
+
+    /**
+     * Formats the getErrorInfo output property.
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export function output(
+        error: ReturnType<typeof getErrorInfo>[ 0 ],
+        info: errorStringify.Info,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+    ): MessageMaker.BulkMsgs {
+
+        // returns
+        if ( !info.output.length ) {
+            return console.params.debug ? [
+                ...errorStringify.heading( 'Output' ),
+                [ 'No content.', { bold: false, italic: true } ]
+            ] : [];
+        }
+
+        const output = validateMsgsLength(
+            info,
             console,
             fs,
             args,
-        ) ) {
-            bulkMsgs.push( arr );
-        }
+            info.output.map(
+                ( [ _msg, _opts ] ) => [ _msg, {
+                    bold: false,
+                    clr: error instanceof AbstractError ? args.clr : 'black',
+                    maxWidth: null,
+                    ..._opts,
+                } ]
+            ),
+        );
+
+        const msgs: MessageMaker.BulkMsgs = [
+            // ...errorStringify.heading( 'Output' ),
+            ...output,
+        ];
+
+        return msgs;
     }
 
-    if ( errorInfo.stack ) {
+    /**
+     * Formats the getErrorInfo cause property.
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export function cause(
+        error: ReturnType<typeof getErrorInfo>[ 0 ],
+        info: errorStringify.Info,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+    ): MessageMaker.BulkMsgs {
 
-        for ( const arr of _msgHeading( 'Stack' ) ) {
-            bulkMsgs.push( arr );
+        // returns
+        if ( typeof info.cause === 'undefined' ) {
+            return console.params.debug ? [
+                ...errorStringify.heading( 'Cause' ),
+                [ 'No content.', { bold: false, italic: true } ]
+            ] : [];
+        }
+
+        const msgs: MessageMaker.BulkMsgs = [
+            ...errorStringify.heading( 'Cause' ),
+            ...validateMsgsLength(
+                info,
+                console,
+                fs,
+                args,
+                errorStringify._childStringify(
+                    info.cause,
+                    1 + level,
+                    console,
+                    fs,
+                    args,
+                ),
+            ),
+        ];
+
+        return msgs;
+    }
+
+    /**
+     * Formats the getErrorInfo stack property.
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export function stack(
+        error: ReturnType<typeof getErrorInfo>[ 0 ],
+        info: errorStringify.Info,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+    ): MessageMaker.BulkMsgs {
+
+        // returns
+        if ( !info.stack?.length ) {
+            return console.params.debug ? [
+                ...errorStringify.heading( 'Stack' ),
+                [ 'No content.', { bold: false, italic: true } ]
+            ] : [];
         }
 
         const _stackPathRegex = /(^\s*at\s+[^\n]*?\s+)\((?:file\:\/\/)?([^\(\)]+)\)(?=(?:\s*$))/;
 
-        const _trimmedStack = errorInfo.stack.split( '\n' ).map( ( path ) => {
+        const _trimmedStack = info.stack.split( '\n' ).map( ( path ) => {
 
             const _matches = path.match( _stackPathRegex );
 
@@ -367,85 +612,67 @@ export function errorStringify(
             return path;
         } );
 
-        bulkMsgs.push( [
-            _trimmedStack,
-            { bold: false, italic: true, maxWidth: null }
-        ] );
+        const msgs: MessageMaker.BulkMsgs = [
+            ...errorStringify.heading( 'Stack' ),
+            ...validateMsgsLength( info, console, fs, args, [ [
+                _trimmedStack,
+                { bold: false, italic: true, maxWidth: null }
+            ] ] ),
+        ];
+
+        return msgs;
     }
 
-    const details: string[] = [];
+    /**
+     * Formats the getErrorInfo details property.
+     * 
+     * @since 0.2.0-alpha.4
+     */
+    export function details(
+        error: ReturnType<typeof getErrorInfo>[ 0 ],
+        info: errorStringify.Info,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+    ): MessageMaker.BulkMsgs {
 
-    if ( typeof errorInfo.details == 'string' ) {
-        details.push( errorInfo.details );
-    } else {
+        const details: string[] = [];
 
-        for ( const key in errorInfo.details ) {
+        if ( typeof info.details == 'string' ) {
+            details.push( info.details );
+        } else {
 
-            const _inspectArgs = {
-                childArgs: {} as Objects.RecursivePartial<VariableInspector.Args[ 'childArgs' ]>,
-            };
-
-            if (
-                typeof errorInfo.details[ key ] === 'object'
-                && errorInfo.details[ key ] !== null
-                && !Array.isArray( errorInfo.details[ key ] )
-                && errorInfo.details[ key ].constructor.name.toLowerCase() !== 'object'
-            ) {
-                _inspectArgs.childArgs.includeValue = false;
+            for ( const key in info.details ) {
+                details.push(
+                    VariableInspector.stringify( { [ key ]: info.details[ key ] } )
+                );
             }
-
-            details.push( VariableInspector.stringify(
-                { [ key ]: errorInfo.details[ key ] },
-                _inspectArgs
-            ) );
-        }
-    }
-
-    if ( details.length ) {
-
-        for ( const arr of _msgHeading( 'Details' ) ) {
-            bulkMsgs.push( arr );
         }
 
-        bulkMsgs.push( [ details.join( '\n' ), { bold: false, italic: false, maxWidth: null, } ] );
-    }
-
-    if ( !( error instanceof Error ) ) {
-
-        for ( const arr of _msgHeading( 'Dump' ) ) {
-            bulkMsgs.push( arr );
+        // returns
+        if ( !details.length ) {
+            return console.params.debug ? [
+                ...errorStringify.heading( 'Details' ),
+                [ 'No content.', { bold: false, italic: true } ]
+            ] : [];
         }
 
-        const _inspectArgs = {
-            childArgs: {} as Objects.RecursivePartial<VariableInspector.Args[ 'childArgs' ]>,
-        };
-
-        if (
-            typeof error === 'object'
-            && !Array.isArray( error )
-            && error.constructor.name.toLowerCase() !== 'object'
-        ) {
-            _inspectArgs.childArgs.includeValue = false;
-        }
-
-        bulkMsgs.push( [
-            VariableInspector.stringify( { error }, _inspectArgs ),
-            { bold: false, italic: false, maxWidth: null, }
-        ] );
-
-        if ( !_inspectArgs.childArgs.includeValue ) {
-
-            bulkMsgs.push( [
-                'child value inspection was skipped to avoid a super-long output message — to inspect the value, catch the error and log it before handling with the default handler',
-                {
+        const msgs: MessageMaker.BulkMsgs = [
+            ...errorStringify.heading( 'Details' ),
+            ...validateMsgsLength(
+                info,
+                console,
+                fs,
+                args,
+                [ [ details.join( '\n' ), {
                     bold: false,
-                    clr: 'grey',
-                    depth: 1,
-                    italic: true,
-                }
-            ] );
-        }
-    }
+                    italic: false,
+                    maxWidth: null,
+                } ] ],
+            ),
+        ];
 
-    return bulkMsgs;
+        return msgs;
+    }
 }

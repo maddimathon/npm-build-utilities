@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.3+1
+ * @maddimathon/build-utilities@0.2.0-alpha.4
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -20,9 +20,9 @@ import type { Logger } from '../../../../types/Logger.js';
  *
  * @since 0.1.0-alpha
  */
-export declare abstract class AbstractError<T_Args extends object | never = never> extends Error {
+export declare abstract class AbstractError<T_Args extends object | never = never, T_Context extends object = AbstractError.Context> extends Error {
     /** {@inheritDoc internal.AbstractError.Context} */
-    readonly context: null | AbstractError.Context;
+    readonly context: null | T_Context;
     /**
      * Represents the cause of the error (e.g., a different exception that was
      * caught).
@@ -46,7 +46,7 @@ export declare abstract class AbstractError<T_Args extends object | never = neve
     protected readonly ARGS_DEFAULT?: T_Args;
     /** @hidden */
     private buildArgs;
-    constructor(message: string, context: null | AbstractError.Context, cause?: AbstractError.Input, args?: Partial<T_Args>);
+    constructor(message: string, context: null | T_Context, cause?: AbstractError.Input, args?: Partial<T_Args>);
     /**
      * Gets a detailed output message for error handlers.
      */
@@ -56,7 +56,7 @@ export declare abstract class AbstractError<T_Args extends object | never = neve
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
      */
-    toJSON(): AbstractError.JSON;
+    toJSON(): AbstractError.JSON<T_Context>;
     /**
      * Overrides the default function to return a string representation of this
      * object.
@@ -71,7 +71,7 @@ export declare abstract class AbstractError<T_Args extends object | never = neve
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
      */
-    valueOf(): AbstractError.JSON;
+    valueOf(): AbstractError.JSON<T_Context>;
 }
 /**
  * Types used for {@link AbstractError} classes.
@@ -174,11 +174,12 @@ export declare namespace AbstractError {
      *
      * @since 0.1.0-alpha
      */
-    interface JSON extends Objects.Classify<Omit<AbstractError, "args" | "getOutput" | "toJSON" | "toString" | "valueOf">> {
+    interface JSON<T_Context extends object = AbstractError.Context> extends Objects.Classify<Omit<AbstractError<never, T_Context>, "args" | "getOutput" | "toJSON" | "toString" | "valueOf">> {
         /**
          * Result of this.toString().
          */
         string: string;
+        [key: string]: unknown;
     }
     /**
      * An approximation of the error thrown by node run via npm, which I can't

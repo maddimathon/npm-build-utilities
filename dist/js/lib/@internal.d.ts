@@ -17,7 +17,7 @@
  * @internal
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.3+1
+ * @maddimathon/build-utilities@0.2.0-alpha.4
  * @license MIT
  */
 export type * from '../types/FileSystemType.js';

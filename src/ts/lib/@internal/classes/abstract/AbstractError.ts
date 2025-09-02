@@ -39,6 +39,7 @@ import type { Logger } from '../../../../types/Logger.js';
  */
 export abstract class AbstractError<
     T_Args extends object | never = never,
+    T_Context extends object = AbstractError.Context,
 > extends Error {
 
 
@@ -47,7 +48,7 @@ export abstract class AbstractError<
      * ====================================================================== */
 
     /** {@inheritDoc internal.AbstractError.Context} */
-    public readonly context: null | AbstractError.Context;
+    public readonly context: null | T_Context;
 
 
     /* Args ===================================== */
@@ -89,7 +90,7 @@ export abstract class AbstractError<
 
     public constructor (
         message: string,
-        context: null | AbstractError.Context,
+        context: null | T_Context,
         cause?: AbstractError.Input,
         args?: Partial<T_Args>,
     ) {
@@ -129,7 +130,7 @@ export abstract class AbstractError<
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#description | JSON.stringify}
      */
-    public toJSON(): AbstractError.JSON {
+    public toJSON(): AbstractError.JSON<T_Context> {
 
         return {
             name: this.name,
@@ -299,8 +300,10 @@ export namespace AbstractError {
      * 
      * @since 0.1.0-alpha
      */
-    export interface JSON extends Objects.Classify<Omit<
-        AbstractError,
+    export interface JSON<
+        T_Context extends object = AbstractError.Context,
+    > extends Objects.Classify<Omit<
+        AbstractError<never, T_Context>,
         "args" | "getOutput" | "toJSON" | "toString" | "valueOf"
     >> {
 
@@ -308,6 +311,8 @@ export namespace AbstractError {
          * Result of this.toString().
          */
         string: string;
+
+        [ key: string ]: unknown;
     };
 
     /**

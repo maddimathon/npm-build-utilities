@@ -19,6 +19,14 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.2.0-alpha.4** — 2025-09-02
+
+### Changed
+- Added overflow condition to details output in errorStringify (writes to log
+  instead of console)
+- Improvements to structure and inline documentation for errorStringify
+
+
 ## **0.2.0-alpha.3+1** — 2025-08-21
 
 Rebuild to double-check ReleaseStage.commit() fix and resolve a local git issue.
