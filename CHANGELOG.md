@@ -19,6 +19,12 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha** — 2025-09-21
+
+### Changed
+- Changed postcss preservation defaults
+
+
 ## **0.2.0-alpha.4** — 2025-09-02
 
 ### Changed

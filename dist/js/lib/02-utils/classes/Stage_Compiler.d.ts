@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.4
+ * @maddimathon/build-utilities@0.3.0-alpha
  * @license MIT
  */
 import * as postcss_PresetEnv from 'postcss-preset-env';
@@ -56,7 +56,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'cascade-layers': true;
                 readonly 'case-insensitive-attributes': true;
                 readonly clamp: {
-                    readonly preserve: true;
+                    readonly preserve: false;
                 };
                 readonly 'color-function': {
                     readonly preserve: true;
@@ -101,7 +101,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'logical-viewport-units': true;
                 readonly 'media-queries-aspect-ratio-number-values': false;
                 readonly 'media-query-ranges': true;
-                readonly 'nested-calc': true;
+                readonly 'nested-calc': {
+                    readonly preserve: false;
+                };
                 readonly 'nesting-rules': true;
                 readonly 'not-pseudo-class': false;
                 readonly 'oklab-function': {

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.2.0-alpha.4
+ * @maddimathon/build-utilities@0.3.0-alpha
  * @license MIT
  */
 import postcss from 'postcss';
@@ -171,7 +171,7 @@ export class Stage_Compiler {
             'break-properties': true,
             'cascade-layers': true,
             'case-insensitive-attributes': true,
-            clamp: { preserve: true },
+            clamp: { preserve: false },
             'color-function': { preserve: true },
             'color-functional-notation': false,
             'color-mix': false,
@@ -207,7 +207,7 @@ export class Stage_Compiler {
             'logical-viewport-units': true,
             'media-queries-aspect-ratio-number-values': false,
             'media-query-ranges': true,
-            'nested-calc': true,
+            'nested-calc': { preserve: false },
             'nesting-rules': true,
             'not-pseudo-class': false,
             'oklab-function': { preserve: true },

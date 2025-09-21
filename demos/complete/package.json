@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities--demos--complete",
-    "version": "0.2.0-alpha.4",
+    "version": "0.3.0-alpha",
 
     "files": [
         "./dist/**/*",
@@ -40,7 +40,7 @@
     "dependencies": {
     },
     "devDependencies": {
-        "@maddimathon/build-utilities": "0.2.0-alpha.4"
+        "@maddimathon/build-utilities": "0.3.0-alpha"
     },
 
     "browserslist": [
