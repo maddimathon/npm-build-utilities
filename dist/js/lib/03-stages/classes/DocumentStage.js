@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha
+ * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -45,7 +45,7 @@ export class DocumentStage extends AbstractStage {
             GitHub: repository ?? '',
             'by Maddi Mathon': 'https://www.maddimathon.com',
         };
-        if (!repository) {
+        if (!repository || !navigationLinks.GitHub) {
             delete navigationLinks.GitHub;
         }
         return {
@@ -500,7 +500,7 @@ export class DocumentStage extends AbstractStage {
             :   this.args.typeDoc;
         config.entryPoints = entryPoints;
         // deletes any existing files
-        if (config.out) {
+        if (!this.isWatchedUpdate && config.out) {
             this.console.verbose('deleting existing files...', 2);
             const outDir = config.out.replace(/\/+$/gi, '');
             this.fs.delete(

@@ -863,7 +863,27 @@ export namespace Stage {
             output: string,
             level: number,
             sassOpts?: Compiler.Args.Sass,
-        ): Promise<void>;
+        ): Promise<string>;
+
+        /**
+         * Compile multiple scss files at once.
+         * 
+         * @param paths.input   Scss input path.
+         * @param paths.output  Scss output path.
+         * 
+         * @param level         Depth level for this message.
+         * @param sassOpts      Overrides for the configured sass options in {@link Stage.Compiler.args}.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        scssBulk(
+            paths: {
+                input: string;
+                output: string;
+            }[],
+            level: number,
+            sassOpts?: Compiler.Args.Sass,
+        ): Promise<string[]>;
 
         /**
          * Compile typescript using the 
@@ -991,6 +1011,15 @@ export namespace Stage {
              * @interface
              */
             export type Sass = {
+
+                /**
+                 * Whether the current stage is the result of a watched file.
+                 * 
+                 * @since ___PKG_VERSION___
+                 */
+                isWatchedUpdate?: boolean;
+
+            } & {
                 [ K in keyof sass.Options<"sync"> ]: sass.Options<"sync">[ K ];
             };
         }

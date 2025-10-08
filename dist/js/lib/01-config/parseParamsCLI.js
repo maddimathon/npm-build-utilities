@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha
+ * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
 /**
@@ -20,18 +20,18 @@
  */
 export function parseParamsCLI(input) {
     const defaultParams = parseParamsCLI.DEFAULT(input);
+    if (!input) {
+        return defaultParams;
+    }
     const parsed = {
         ...defaultParams,
         ...(input ?? {}),
     };
-    if (!input) {
-        return parsed;
-    }
     for (const t_key in input) {
         const _key = t_key;
         if (typeof input[_key] === 'undefined') {
-            // @ts-expect-error - I honestly have no idea what's going wrong here
             // UPGRADE - figure this out
+            // @ts-expect-error - I honestly have no idea what's going wrong here
             parsed[_key] = defaultParams[_key];
         }
     }

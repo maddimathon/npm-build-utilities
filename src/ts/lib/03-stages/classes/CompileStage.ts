@@ -278,7 +278,7 @@ export class CompileStage extends AbstractStage<
             ( { input, output } ) => this.atry(
                 this.compiler.scss,
                 this.params.verbose ? 3 : 2,
-                [ input, output, this.params.verbose ? 3 : 2 ],
+                [ input, output, this.params.verbose ? 3 : 2, this.sassOpts ],
             )
         ) );
 

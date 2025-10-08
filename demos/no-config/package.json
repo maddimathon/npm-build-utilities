@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities--demos--no-config",
-    "version": "0.3.0-alpha",
+    "version": "0.3.0-alpha.1",
 
     "config": {
         "title": "NPM Build Utilities No-config Demo"

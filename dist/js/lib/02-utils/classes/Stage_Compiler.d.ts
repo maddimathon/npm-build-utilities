@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha
+ * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
 import * as postcss_PresetEnv from 'postcss-preset-env';
@@ -198,7 +198,11 @@ export declare class Stage_Compiler implements Stage.Compiler {
         from: string;
         to?: string;
     }[], level: number, _postCssOpts?: Stage.Compiler.Args.PostCSS): Promise<void>;
-    scss(input: string, output: string, level: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<void>;
+    scss(input: string, output: string, level: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string>;
+    scssBulk(paths: {
+        input: string;
+        output: string;
+    }[], level: number, sassOpts?: Stage.Compiler.Args.Sass, maxConcurrent?: number): Promise<string[]>;
     /**
      * {@inheritDoc Stage.Compiler.typescript}
      *

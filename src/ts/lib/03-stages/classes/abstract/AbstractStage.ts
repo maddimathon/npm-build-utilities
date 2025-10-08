@@ -389,6 +389,34 @@ export abstract class AbstractStage<
     }
 
     /**
+     * Whether the current run is the result of a watched change.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    public get isWatchedUpdate(): boolean {
+
+        return Boolean(
+            !( this.params?.packaging || this.params?.releasing )
+            && (
+                this.params.watchedWatcher
+                || this.params.watchedFilename
+                || this.params.watchedEvent
+            )
+        );
+    }
+
+    /**
+     * Default scss options according to config & params.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    public get sassOpts(): Stage.Compiler.Args.Sass {
+        return {
+            isWatchedUpdate: this.isWatchedUpdate,
+        };
+    }
+
+    /**
      * Replaces placeholders in files as defined by {@link Config.replace}.
      * 
      * @category Utilities
@@ -922,11 +950,7 @@ export abstract class AbstractStage<
         handlerArgs?: Partial<AbstractError.Handler.Args>,
     ): Promise<T_Return | "FAILED"> {
 
-        try {
-
-            return await tryer( ...( params ?? [] as T_Params ) );
-
-        } catch ( error ) {
+        return tryer( ...( params ?? [] as T_Params ) ).catch( ( error ) => {
 
             this.handleError(
                 error,
@@ -935,7 +959,7 @@ export abstract class AbstractStage<
             );
 
             return 'FAILED';
-        }
+        } );
     }
 
 
@@ -950,29 +974,47 @@ export abstract class AbstractStage<
         which: "start" | "end" | null,
         watcherVersion: boolean = false,
     ): void | Promise<void> {
+        watcherVersion = watcherVersion && this.isWatchedUpdate;
 
         const uppercase = {
             name: this.name.toUpperCase(),
             which: which?.toUpperCase() ?? '',
         };
 
+        const watchFileName = () => {
+
+            let msg = '';
+
+            if ( this.params.watchedEvent ) {
+                msg += ` ${ this.params.watchedEvent }`;
+
+                if ( this.params.watchedFilename ) {
+                    msg += `: ${ this.params.watchedFilename }`;
+                }
+            } else if ( this.params.watchedFilename ) {
+                msg += ` ${ this.params.watchedFilename }`;
+            }
+
+            return msg;
+        };
+
+        const watchFileNameMsg = watcherVersion && watchFileName();
+
         const messages: {
             default: MessageMaker.BulkMsgs,
             start: MessageMaker.BulkMsgs,
             end: MessageMaker.BulkMsgs,
-        } = ( watcherVersion && (
-            this.params.watchedWatcher
-            || this.params.watchedFilename
-            || this.params.watchedEvent
-        ) ) ? {
-                default: [ [ '👀 ', { flag: false } ], [ `[watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }` ] ],
-                start: [ [ '🚨 ', { flag: false } ], [ `[watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }` ] ],
-                end: [ [ '✅ ', { flag: false } ], [ `[watch-change-${ which }] file ${ this.params.watchedEvent }: ${ this.params.watchedFilename }` ] ],
-            } : {
-                default: [ [ `${ uppercase.which }ING ${ uppercase.name }` ] ],
-                start: [ [ `${ uppercase.name } ${ uppercase.which }ING...` ] ],
-                end: [ [ '✓ ', { flag: false } ], [ `${ toTitleCase( this.name ) } Complete!`, { italic: true } ] ],
-            };
+        } = watcherVersion
+                ? {
+                    default: [ [ '👀 ', { flag: false } ], [ `[watch-change-${ which }] ${ watchFileNameMsg || '' }` ] ],
+                    start: [ [ '🚨 ', { flag: false } ], [ `[watch-change-${ which }] ${ watchFileNameMsg || '' }` ] ],
+                    end: [ [ '✅ ', { flag: false } ], [ `[watch-change-${ which }] ${ watchFileNameMsg || '' }` ] ],
+                }
+                : {
+                    default: [ [ `${ uppercase.which }ING ${ uppercase.name }` ] ],
+                    start: [ [ `${ uppercase.name } ${ uppercase.which }ING...` ] ],
+                    end: [ [ '✓ ', { flag: false } ], [ `${ toTitleCase( this.name ) } Complete!`, { italic: true } ] ],
+                };
 
         this.console.startOrEnd( messages[ which ?? 'default' ], which );
     }
@@ -1110,7 +1152,7 @@ export abstract class AbstractStage<
 
         const distDir = _distDir ?? this.getDistDir( undefined ).replace( /\/$/g, '' );
 
-        if ( this.fs.exists( distDir ) ) {
+        if ( !this.isWatchedUpdate && this.fs.exists( distDir ) ) {
             this.console.verbose( 'deleting any existing files...', 1 + logLevelBase );
             this.fs.delete(
                 [ distDir + '/' + subpath ],
@@ -1133,16 +1175,20 @@ export abstract class AbstractStage<
         }
 
         this.console.verbose( 'copying files...', 1 + logLevelBase );
-        this.fs.copy(
-            subpath,
+        this.try(
+            this.fs.copy,
             ( this.params.verbose ? 2 : 1 ) + logLevelBase,
-            distDir,
-            srcDir,
-            {
-                force: true,
-                rename: true,
-                recursive: true,
-            },
+            [
+                subpath,
+                ( this.params.verbose ? 2 : 1 ) + logLevelBase,
+                distDir,
+                srcDir,
+                {
+                    force: true,
+                    rename: false,
+                    recursive: true,
+                },
+            ],
         );
     }
 
@@ -1164,12 +1210,15 @@ export abstract class AbstractStage<
      * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
      * 
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding. 
+     * 
+     * @since ___PKG_VERSION___ — Added `sassOpts` param.
      */
     protected async runCustomScssDirSubStage(
         subpath: string,
         distDir?: string,
         opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
         logLevelBase?: number,
+        sassOpts?: Stage.Compiler.Args.Sass,
     ): Promise<string[]>;
 
     /**
@@ -1185,6 +1234,7 @@ export abstract class AbstractStage<
         distDir?: string,
         postCSS?: boolean,
         logLevelBase?: number,
+        sassOpts?: Stage.Compiler.Args.Sass,
     ): Promise<string[]>;
 
     /**
@@ -1197,13 +1247,14 @@ export abstract class AbstractStage<
         _distDir?: string,
         _opts?: boolean | Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
         logLevelBase: number = 1,
+        sassOpts: Stage.Compiler.Args.Sass = {},
     ): Promise<string[]> {
         this.console.progress( 'compiling ' + subpath + ' to css...', 0 + logLevelBase );
 
         const distDir = _distDir ?? this.getDistDir( undefined, subpath ).replace( /\/$/g, '' );
 
         // if the output dir exists, we should delete the old contents
-        if ( this.fs.exists( distDir ) ) {
+        if ( !this.isWatchedUpdate && this.fs.exists( distDir ) ) {
             this.console.verbose( 'deleting existing dist files...', 1 + logLevelBase );
             this.fs.delete( [ distDir ], ( this.params.verbose ? 2 : 1 ) + logLevelBase );
         }
@@ -1253,45 +1304,22 @@ export abstract class AbstractStage<
         };
 
 
-        this.params.debug && this.console.verbose( 'building path arguments...', 1 + logLevelBase );
-
-        const scssPathArgs = scssPaths.map(
-            ( _path ) => {
-
-                const _output = this.fs.pathRelative( _path )
+        this.console.verbose( 'compiling to css at ' + distDir + '...', 1 + logLevelBase );
+        const outputPaths: string[] = await this.compiler.scssBulk(
+            scssPaths.map( ( input ) => ( {
+                input,
+                output: this.fs.pathRelative( input )
                     .replace(
                         regex.srcDir,
                         escRegExpReplace( distDir + '/' )
                     )
                     .replace( /\.(sass|scss)$/gi, '.css' )
-                    .replace( /\/_?index\.css$/gi, '.css' );
-
-                this.params.debug && this.console.verbose( `${ _path } → ${ _output }`, 2 + logLevelBase, { italic: true } );
-
-                return {
-                    input: _path,
-                    output: _output,
-                };
-            }
+                    .replace( /\/_?index\.css$/gi, '.css' ),
+            } ) ),
+            ( this.params.verbose ? 2 : 1 ) + logLevelBase,
+            { ...this.sassOpts, ...sassOpts },
+            opts.maxConcurrent,
         );
-
-        this.console.vi.debug( { scssPathArgs }, ( this.params.verbose ? 2 : 1 ) + logLevelBase );
-
-
-        this.console.verbose( 'compiling to css at ' + distDir + '...', 1 + logLevelBase );
-        await Promise.all( scssPathArgs.map(
-            ( { input, output } ) => {
-
-                const _level = ( this.params.verbose ? 2 : 1 )
-                    + logLevelBase;
-
-                return this.atry(
-                    this.compiler.scss,
-                    _level,
-                    [ input, output, _level ],
-                );
-            }
-        ) );
 
         if ( opts.postCSS ) {
 
@@ -1300,13 +1328,13 @@ export abstract class AbstractStage<
                 this.compiler.postCSS,
                 ( this.params.verbose ? 2 : 1 ) + logLevelBase,
                 [
-                    scssPathArgs.map( _o => ( { from: _o.output } ) ),
+                    outputPaths.map( from => ( { from } ) ),
                     ( this.params.verbose ? 2 : 1 ) + logLevelBase,
                 ],
             );
         }
 
-        return scssPathArgs.map( _o => _o.output );
+        return outputPaths;
     }
 }
 
@@ -1346,6 +1374,8 @@ export namespace AbstractStage {
                 '**/_*',
             ],
 
+            maxConcurrent: undefined,
+
             postCSS: true,
         };
 
@@ -1375,6 +1405,13 @@ export namespace AbstractStage {
              * @default [ '**\/_ *' ]
              */
             ignoreGlobs: string[];
+
+            /**
+             * Passed to {@link Stage.Compiler.sassBulk}.
+             * 
+             * @since ___PKG_VERSION___
+             */
+            maxConcurrent: undefined | number;
 
             /**
              * Whether to run PostCSS on the output css.

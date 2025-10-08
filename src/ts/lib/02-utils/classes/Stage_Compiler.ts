@@ -550,51 +550,88 @@ export class Stage_Compiler implements Stage.Compiler {
         ) );
     }
 
-    // UPGRADE - convert input to allow for arrays
     public async scss(
         input: string,
         output: string,
         level: number,
         sassOpts?: Stage.Compiler.Args.Sass,
-    ): Promise<void> {
-        this.console.vi.debug( { 'Stage_Compiler.scss() params': { input, output, level, sassOpts } }, level, { bold: true } );
+    ): Promise<string> {
 
-        sassOpts = mergeArgs( this.args.sass, sassOpts, true );
-        sassOpts = {
-            ...sassOpts,
+        const prom: Promise<string> = new Promise(
+            ( resolve ) => resolve( input )
+        );
 
-            importers: [
-                ...sassOpts.importers ?? [],
-                new sass.NodePackageImporter(),
-            ],
-        };
+        return prom.then(
+            ( input ) => {
+                sassOpts = mergeArgs( this.args.sass, sassOpts, true );
+                sassOpts = {
+                    ...sassOpts,
 
-        const compiled = sass.compile( input, {
-            ...sassOpts,
-        } );
+                    importers: [
+                        ...sassOpts.importers ?? [],
+                        new sass.NodePackageImporter(),
+                    ],
+                };
 
-        this.params.debug && this.console.vi.verbose( { compiled }, level );
+                const compiled = sass.compile( input, sassOpts );
 
-        if ( compiled.css ) {
-            this.params.debug && this.console.verbose( 'writing css to path: ' + this.fs.pathRelative( output ), level, { maxWidth: null } );
-            this.fs.write( output, compiled.css, { force: true } );
-        }
+                this.params.debug && this.console.verbose( 'writing css to path: ' + this.fs.pathRelative( output ), level, { maxWidth: null } );
+                this.fs.write( output, compiled.css, { force: true } );
 
-        if ( compiled.sourceMap ) {
+                // returns
+                if ( !compiled.sourceMap ) {
+                    return output;
+                }
 
-            const sourceMap = output.replace( /\.(s?css)$/g, '.$1.map' );
+                const sourceMap = output.replace( /\.(s?css)$/g, '.$1.map' );
 
-            this.params.debug && this.console.verbose( 'writing sourceMap to path: ' + this.fs.pathRelative( sourceMap ), 1 + level );
-            this.fs.write(
-                sourceMap,
-                JSON.stringify(
-                    compiled.sourceMap,
-                    null,
-                    this.params.packaging ? 0 : 4,
-                ),
-                { force: true }
+                this.params.debug && this.console.verbose( 'writing sourceMap to path: ' + this.fs.pathRelative( sourceMap ), 1 + level );
+                this.fs.write(
+                    sourceMap,
+                    JSON.stringify(
+                        compiled.sourceMap,
+                        null,
+                        this.params.packaging ? 0 : 4,
+                    ),
+                    { force: true }
+                );
+
+                return output;
+            }
+        );
+    }
+
+    public async scssBulk(
+        paths: {
+            input: string;
+            output: string;
+        }[],
+        level: number,
+        sassOpts?: Stage.Compiler.Args.Sass,
+        maxConcurrent: number = 10,
+    ): Promise<string[]> {
+
+        const compiledPaths: string[] = [];
+
+        for ( let i = 0; i < paths.length; i += maxConcurrent ) {
+
+            const chunk = paths.slice( i, i + maxConcurrent );
+
+            const compiled = await Promise.all(
+                chunk.map(
+                    ( { input, output } ) => this.scss(
+                        input,
+                        output,
+                        level,
+                        sassOpts,
+                    )
+                )
             );
+
+            compiledPaths.push( ...compiled );
         }
+
+        return compiledPaths;
     }
 
     /**

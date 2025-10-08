@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha
+ * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -677,7 +677,22 @@ export declare namespace Stage {
          * @param level     Depth level for this message.
          * @param sassOpts  Overrides for the configured sass options in {@link Stage.Compiler.args}.
          */
-        scss(input: string, output: string, level: number, sassOpts?: Compiler.Args.Sass): Promise<void>;
+        scss(input: string, output: string, level: number, sassOpts?: Compiler.Args.Sass): Promise<string>;
+        /**
+         * Compile multiple scss files at once.
+         *
+         * @param paths.input   Scss input path.
+         * @param paths.output  Scss output path.
+         *
+         * @param level         Depth level for this message.
+         * @param sassOpts      Overrides for the configured sass options in {@link Stage.Compiler.args}.
+         *
+         * @since 0.3.0-alpha.1.draft
+         */
+        scssBulk(paths: {
+            input: string;
+            output: string;
+        }[], level: number, sassOpts?: Compiler.Args.Sass): Promise<string[]>;
         /**
          * Compile typescript using the
          * {@link https://www.npmjs.com/package/typescript | typescript npm package}.
@@ -786,6 +801,13 @@ export declare namespace Stage {
              * @interface
              */
             type Sass = {
+                /**
+                 * Whether the current stage is the result of a watched file.
+                 *
+                 * @since 0.3.0-alpha.1.draft
+                 */
+                isWatchedUpdate?: boolean;
+            } & {
                 [K in keyof sass.Options<"sync">]: sass.Options<"sync">[K];
             };
         }

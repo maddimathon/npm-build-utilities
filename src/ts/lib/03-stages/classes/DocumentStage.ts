@@ -83,7 +83,7 @@ export class DocumentStage extends AbstractStage<
             'by Maddi Mathon': 'https://www.maddimathon.com',
         };
 
-        if ( !repository ) {
+        if ( !repository || !navigationLinks.GitHub ) {
             delete navigationLinks.GitHub;
         }
 
@@ -594,7 +594,7 @@ export class DocumentStage extends AbstractStage<
         config.entryPoints = entryPoints;
 
         // deletes any existing files
-        if ( config.out ) {
+        if ( !this.isWatchedUpdate && config.out ) {
             this.console.verbose( 'deleting existing files...', 2 );
 
             const outDir = config.out.replace( /\/+$/gi, '' );

@@ -7,7 +7,7 @@ children:
 ---
 
 <!--README_HEADER-->
-# NPM Build Utilities @ 0.3.0-alpha
+# NPM Build Utilities @ 0.3.0-alpha.1.draft
 <!--/README_HEADER-->
 
 <!--README_DESC-->

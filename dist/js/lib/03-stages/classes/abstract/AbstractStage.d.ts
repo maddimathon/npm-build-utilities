@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha
+ * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -162,6 +162,18 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
     constructor(name: string, clr: MessageMaker.Colour, config: Config.Class, params: CLI.Params, args: Partial<T_Args>, pkg: Json.PackageJson | undefined, version: SemVer | undefined);
     /** {@inheritDoc Stage.isDraftVersion} */
     get isDraftVersion(): boolean;
+    /**
+     * Whether the current run is the result of a watched change.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    get isWatchedUpdate(): boolean;
+    /**
+     * Default scss options according to config & params.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    get sassOpts(): Stage.Compiler.Args.Sass;
     /**
      * Replaces placeholders in files as defined by {@link Config.replace}.
      *
@@ -386,8 +398,10 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
      *
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
+     *
+     * @since 0.3.0-alpha.1.draft — Added `sassOpts` param.
      */
-    protected runCustomScssDirSubStage(subpath: string, distDir?: string, opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>, logLevelBase?: number): Promise<string[]>;
+    protected runCustomScssDirSubStage(subpath: string, distDir?: string, opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>, logLevelBase?: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string[]>;
     /**
      * Deprecated overload here for forward-compatibility.  Please use the
      * overload above instead.
@@ -396,7 +410,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *             {@link AbstractStage.runCustomScssDirSubStage.Opts} object as
      *             the third param instead.
      */
-    protected runCustomScssDirSubStage(subpath: string, distDir?: string, postCSS?: boolean, logLevelBase?: number): Promise<string[]>;
+    protected runCustomScssDirSubStage(subpath: string, distDir?: string, postCSS?: boolean, logLevelBase?: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string[]>;
 }
 /**
  * Utilities for the {@link AbstractStage} class.
@@ -445,6 +459,12 @@ export declare namespace AbstractStage {
              * @default [ '**\/_ *' ]
              */
             ignoreGlobs: string[];
+            /**
+             * Passed to {@link Stage.Compiler.sassBulk}.
+             *
+             * @since 0.3.0-alpha.1.draft
+             */
+            maxConcurrent: undefined | number;
             /**
              * Whether to run PostCSS on the output css.
              *

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha
+ * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
 import {
@@ -223,6 +223,7 @@ export class CompileStage extends AbstractStage {
                     input,
                     output,
                     this.params.verbose ? 3 : 2,
+                    this.sassOpts,
                 ]),
             ),
         );

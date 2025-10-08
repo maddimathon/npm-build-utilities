@@ -26,21 +26,21 @@ export function parseParamsCLI( input: Partial<CLI.Params> ): CLI.Params {
 
     const defaultParams: CLI.Params = parseParamsCLI.DEFAULT( input );
 
+    if ( !input ) {
+        return defaultParams;
+    }
+
     const parsed: CLI.Params = {
         ...defaultParams,
         ...input ?? {},
     };
 
-    if ( !input ) {
-        return parsed;
-    }
-
     for ( const t_key in input ) {
         const _key = t_key as keyof CLI.Params;
 
         if ( typeof input[ _key ] === 'undefined' ) {
-            // @ts-expect-error - I honestly have no idea what's going wrong here
             // UPGRADE - figure this out
+            // @ts-expect-error - I honestly have no idea what's going wrong here
             parsed[ _key ] = defaultParams[ _key ];
         }
     }

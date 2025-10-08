@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha
+ * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
 import postcss from 'postcss';
@@ -441,33 +441,18 @@ export class Stage_Compiler {
             }),
         );
     }
-    // UPGRADE - convert input to allow for arrays
     async scss(input, output, level, sassOpts) {
-        this.console.vi.debug(
-            {
-                'Stage_Compiler.scss() params': {
-                    input,
-                    output,
-                    level,
-                    sassOpts,
-                },
-            },
-            level,
-            { bold: true },
-        );
-        sassOpts = mergeArgs(this.args.sass, sassOpts, true);
-        sassOpts = {
-            ...sassOpts,
-            importers: [
-                ...(sassOpts.importers ?? []),
-                new sass.NodePackageImporter(),
-            ],
-        };
-        const compiled = sass.compile(input, {
-            ...sassOpts,
-        });
-        this.params.debug && this.console.vi.verbose({ compiled }, level);
-        if (compiled.css) {
+        const prom = new Promise((resolve) => resolve(input));
+        return prom.then((input) => {
+            sassOpts = mergeArgs(this.args.sass, sassOpts, true);
+            sassOpts = {
+                ...sassOpts,
+                importers: [
+                    ...(sassOpts.importers ?? []),
+                    new sass.NodePackageImporter(),
+                ],
+            };
+            const compiled = sass.compile(input, sassOpts);
             this.params.debug
                 && this.console.verbose(
                     'writing css to path: ' + this.fs.pathRelative(output),
@@ -475,8 +460,10 @@ export class Stage_Compiler {
                     { maxWidth: null },
                 );
             this.fs.write(output, compiled.css, { force: true });
-        }
-        if (compiled.sourceMap) {
+            // returns
+            if (!compiled.sourceMap) {
+                return output;
+            }
             const sourceMap = output.replace(/\.(s?css)$/g, '.$1.map');
             this.params.debug
                 && this.console.verbose(
@@ -493,7 +480,21 @@ export class Stage_Compiler {
                 ),
                 { force: true },
             );
+            return output;
+        });
+    }
+    async scssBulk(paths, level, sassOpts, maxConcurrent = 10) {
+        const compiledPaths = [];
+        for (let i = 0; i < paths.length; i += maxConcurrent) {
+            const chunk = paths.slice(i, i + maxConcurrent);
+            const compiled = await Promise.all(
+                chunk.map(({ input, output }) =>
+                    this.scss(input, output, level, sassOpts),
+                ),
+            );
+            compiledPaths.push(...compiled);
         }
+        return compiledPaths;
     }
     /**
      * {@inheritDoc Stage.Compiler.typescript}

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha
+ * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
 import {
@@ -280,6 +280,29 @@ export class AbstractStage {
             !(this.params?.packaging || this.params?.releasing)
             || !!this.params?.dryrun
         );
+    }
+    /**
+     * Whether the current run is the result of a watched change.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    get isWatchedUpdate() {
+        return Boolean(
+            !(this.params?.packaging || this.params?.releasing)
+                && (this.params.watchedWatcher
+                    || this.params.watchedFilename
+                    || this.params.watchedEvent),
+        );
+    }
+    /**
+     * Default scss options according to config & params.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    get sassOpts() {
+        return {
+            isWatchedUpdate: this.isWatchedUpdate,
+        };
     }
     /**
      * Replaces placeholders in files as defined by {@link Config.replace}.
@@ -588,12 +611,10 @@ export class AbstractStage {
      * @experimental
      */
     async atry(tryer, level, params, handlerArgs) {
-        try {
-            return await tryer(...(params ?? []));
-        } catch (error) {
+        return tryer(...(params ?? [])).catch((error) => {
             this.handleError(error, level, handlerArgs);
             return 'FAILED';
-        }
+        });
     }
     /* MESSAGES ===================================== */
     /**
@@ -602,35 +623,38 @@ export class AbstractStage {
      * @category Running
      */
     startEndNotice(which, watcherVersion = false) {
+        watcherVersion = watcherVersion && this.isWatchedUpdate;
         const uppercase = {
             name: this.name.toUpperCase(),
             which: which?.toUpperCase() ?? '',
         };
+        const watchFileName = () => {
+            let msg = '';
+            if (this.params.watchedEvent) {
+                msg += ` ${this.params.watchedEvent}`;
+                if (this.params.watchedFilename) {
+                    msg += `: ${this.params.watchedFilename}`;
+                }
+            } else if (this.params.watchedFilename) {
+                msg += ` ${this.params.watchedFilename}`;
+            }
+            return msg;
+        };
+        const watchFileNameMsg = watcherVersion && watchFileName();
         const messages =
-            (
-                watcherVersion
-                && (this.params.watchedWatcher
-                    || this.params.watchedFilename
-                    || this.params.watchedEvent)
-            ) ?
+            watcherVersion ?
                 {
                     default: [
                         ['👀 ', { flag: false }],
-                        [
-                            `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
-                        ],
+                        [`[watch-change-${which}] ${watchFileNameMsg || ''}`],
                     ],
                     start: [
                         ['🚨 ', { flag: false }],
-                        [
-                            `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
-                        ],
+                        [`[watch-change-${which}] ${watchFileNameMsg || ''}`],
                     ],
                     end: [
                         ['✅ ', { flag: false }],
-                        [
-                            `[watch-change-${which}] file ${this.params.watchedEvent}: ${this.params.watchedFilename}`,
-                        ],
+                        [`[watch-change-${which}] ${watchFileNameMsg || ''}`],
                     ],
                 }
             :   {
@@ -751,7 +775,7 @@ export class AbstractStage {
         );
         const distDir =
             _distDir ?? this.getDistDir(undefined).replace(/\/$/g, '');
-        if (this.fs.exists(distDir)) {
+        if (!this.isWatchedUpdate && this.fs.exists(distDir)) {
             this.console.verbose(
                 'deleting any existing files...',
                 1 + logLevelBase,
@@ -783,24 +807,30 @@ export class AbstractStage {
             return;
         }
         this.console.verbose('copying files...', 1 + logLevelBase);
-        this.fs.copy(
+        this.try(this.fs.copy, (this.params.verbose ? 2 : 1) + logLevelBase, [
             subpath,
             (this.params.verbose ? 2 : 1) + logLevelBase,
             distDir,
             srcDir,
             {
                 force: true,
-                rename: true,
+                rename: false,
                 recursive: true,
             },
-        );
+        ]);
     }
     /**
      * @category Running
      *
      * @experimental
      */
-    async runCustomScssDirSubStage(subpath, _distDir, _opts, logLevelBase = 1) {
+    async runCustomScssDirSubStage(
+        subpath,
+        _distDir,
+        _opts,
+        logLevelBase = 1,
+        sassOpts = {},
+    ) {
         this.console.progress(
             'compiling ' + subpath + ' to css...',
             0 + logLevelBase,
@@ -808,7 +838,7 @@ export class AbstractStage {
         const distDir =
             _distDir ?? this.getDistDir(undefined, subpath).replace(/\/$/g, '');
         // if the output dir exists, we should delete the old contents
-        if (this.fs.exists(distDir)) {
+        if (!this.isWatchedUpdate && this.fs.exists(distDir)) {
             this.console.verbose(
                 'deleting existing dist files...',
                 1 + logLevelBase,
@@ -871,45 +901,22 @@ export class AbstractStage {
                 'gi',
             ),
         };
-        this.params.debug
-            && this.console.verbose(
-                'building path arguments...',
-                1 + logLevelBase,
-            );
-        const scssPathArgs = scssPaths.map((_path) => {
-            const _output = this.fs
-                .pathRelative(_path)
-                .replace(regex.srcDir, escRegExpReplace(distDir + '/'))
-                .replace(/\.(sass|scss)$/gi, '.css')
-                .replace(/\/_?index\.css$/gi, '.css');
-            this.params.debug
-                && this.console.verbose(
-                    `${_path} → ${_output}`,
-                    2 + logLevelBase,
-                    { italic: true },
-                );
-            return {
-                input: _path,
-                output: _output,
-            };
-        });
-        this.console.vi.debug(
-            { scssPathArgs },
-            (this.params.verbose ? 2 : 1) + logLevelBase,
-        );
         this.console.verbose(
             'compiling to css at ' + distDir + '...',
             1 + logLevelBase,
         );
-        await Promise.all(
-            scssPathArgs.map(({ input, output }) => {
-                const _level = (this.params.verbose ? 2 : 1) + logLevelBase;
-                return this.atry(this.compiler.scss, _level, [
-                    input,
-                    output,
-                    _level,
-                ]);
-            }),
+        const outputPaths = await this.compiler.scssBulk(
+            scssPaths.map((input) => ({
+                input,
+                output: this.fs
+                    .pathRelative(input)
+                    .replace(regex.srcDir, escRegExpReplace(distDir + '/'))
+                    .replace(/\.(sass|scss)$/gi, '.css')
+                    .replace(/\/_?index\.css$/gi, '.css'),
+            })),
+            (this.params.verbose ? 2 : 1) + logLevelBase,
+            { ...this.sassOpts, ...sassOpts },
+            opts.maxConcurrent,
         );
         if (opts.postCSS) {
             this.console.verbose(
@@ -920,12 +927,12 @@ export class AbstractStage {
                 this.compiler.postCSS,
                 (this.params.verbose ? 2 : 1) + logLevelBase,
                 [
-                    scssPathArgs.map((_o) => ({ from: _o.output })),
+                    outputPaths.map((from) => ({ from })),
                     (this.params.verbose ? 2 : 1) + logLevelBase,
                 ],
             );
         }
-        return scssPathArgs.map((_o) => _o.output);
+        return outputPaths;
     }
 }
 /**
@@ -954,6 +961,7 @@ export class AbstractStage {
         runCustomScssDirSubStage.DEFAULT_OPTS = {
             globs: ['**/*.scss', '**/*.sass', '**/*.css'],
             ignoreGlobs: ['**/_*'],
+            maxConcurrent: undefined,
             postCSS: true,
         };
     })(
