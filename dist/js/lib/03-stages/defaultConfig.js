@@ -102,7 +102,7 @@ export function defaultConfig(args) {
         snapshot: [getDefaultStageClass('snapshot')],
         test: false,
     };
-    const title = pkg.config?.title ?? pkg.name;
+    const title = pkg.config?.['title'] ?? pkg.name;
     return {
         title,
         clr: 'black',

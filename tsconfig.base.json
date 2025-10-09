@@ -23,6 +23,8 @@
         "noImplicitOverride": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
         "pretty": true,
         "removeComments": false,

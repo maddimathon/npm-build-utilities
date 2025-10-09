@@ -143,6 +143,11 @@ export class Stage_Compiler implements Stage.Compiler {
 
         const tsSrcDir = stage.getSrcDir( 'ts' )[ 0 ];
 
+        // returns
+        if ( !tsSrcDir ) {
+            return [];
+        }
+
         const _tsConfigDefaultPath = stage.fs.pathRelative( stage.fs.pathResolve(
             tsSrcDir,
             './tsconfig.json'
@@ -294,10 +299,10 @@ export class Stage_Compiler implements Stage.Compiler {
 
         const tsSrcDir = this.config.getSrcDir( this.fs, 'ts' )[ 0 ];
 
-        const baseUrl = tsSrcDir.replace( /(?<=^|\/)[^\/]+(\/|$)/g, '..\/' );
+        const baseUrl = tsSrcDir?.replace( /(?<=^|\/)[^\/]+(\/|$)/g, '..\/' );
 
         const outDir = this.fs.pathRelative( this.fs.pathResolve(
-            baseUrl,
+            baseUrl ?? '.',
             this.config.getDistDir( this.fs ),
             'ts',
         ) );

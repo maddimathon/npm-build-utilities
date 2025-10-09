@@ -114,6 +114,7 @@ export async function getConfig(
             continue;
         }
 
+        // TODO - document why this is here
         const content = ( await import( path + '?t=' + Date.now() ) ).default;
 
         console.vi.debug( { content }, 2 + level );
@@ -282,6 +283,11 @@ export async function getConfig(
         choices: defaultConfigPaths,
         msgArgs,
     } ) ?? defaultConfigPaths[ 0 ];
+
+    // returns
+    if ( !configPath ) {
+        return configInstance;
+    }
 
     /** Whether to force-write the config file. */
     const force = fs.exists( configPath )

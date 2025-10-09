@@ -73,6 +73,7 @@ export async function getConfig(params, console = null, level = 0) {
         if (!fs.exists(path)) {
             continue;
         }
+        // TODO - document why this is here
         const content = (await import(path + '?t=' + Date.now())).default;
         console.vi.debug({ content }, 2 + level);
         if (content && typeof content === 'object') {
@@ -237,6 +238,10 @@ export async function getConfig(params, console = null, level = 0) {
             choices: defaultConfigPaths,
             msgArgs,
         })) ?? defaultConfigPaths[0];
+    // returns
+    if (!configPath) {
+        return configInstance;
+    }
     /** Whether to force-write the config file. */
     const force =
         fs.exists(configPath) ?

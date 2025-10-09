@@ -143,7 +143,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
         readonly compilerOptions: {
             readonly exactOptionalPropertyTypes: false;
             readonly outDir: string;
-            readonly baseUrl: string;
+            readonly baseUrl: string | undefined;
         };
     };
     get ARGS_DEFAULT(): {

@@ -142,7 +142,7 @@ export function defaultConfig(
         test: false,
     } as const satisfies Config.Internal.Stages;
 
-    const title: string = pkg.config?.title ?? pkg.name;
+    const title: string = pkg.config?.[ 'title' ] ?? pkg.name;
 
     return {
 

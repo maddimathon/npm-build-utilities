@@ -83,8 +83,8 @@ export class DocumentStage extends AbstractStage<
             'by Maddi Mathon': 'https://www.maddimathon.com',
         };
 
-        if ( !repository || !navigationLinks.GitHub ) {
-            delete navigationLinks.GitHub;
+        if ( !repository || !navigationLinks[ 'GitHub' ] ) {
+            delete navigationLinks[ 'GitHub' ];
         }
 
         return {
