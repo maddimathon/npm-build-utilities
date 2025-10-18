@@ -105,7 +105,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
                     readonly preserve: false;
                 };
                 readonly 'nesting-rules': true;
-                readonly 'not-pseudo-class': false;
+                readonly 'not-pseudo-class': true;
                 readonly 'oklab-function': {
                     readonly preserve: true;
                 };
@@ -148,8 +148,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
     };
     get ARGS_DEFAULT(): {
         /**
-         * This is the value of the {@link Stage_Compiler.postCssConfig}
-         * static accessor.
+         * This is actually the value of the
+         * {@link Stage_Compiler.postCssConfig} static accessor, but not as
+         * const for ease and smoother integration.
          */
         readonly postCSS: Stage.Compiler.Args.PostCSS;
         readonly sass: {

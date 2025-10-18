@@ -250,7 +250,7 @@ export class Stage_Compiler implements Stage.Compiler {
             'media-query-ranges': true,
             'nested-calc': { preserve: false },
             'nesting-rules': true,
-            'not-pseudo-class': false,
+            'not-pseudo-class': true,
             'oklab-function': { preserve: true },
             'opacity-percentage': true,
             'overflow-property': true,
@@ -331,8 +331,9 @@ export class Stage_Compiler implements Stage.Compiler {
         return {
 
             /**
-             * This is the value of the {@link Stage_Compiler.postCssConfig}
-             * static accessor.
+             * This is actually the value of the
+             * {@link Stage_Compiler.postCssConfig} static accessor, but not as
+             * const for ease and smoother integration.
              */
             postCSS: Stage_Compiler.postCssConfig as Stage.Compiler.Args.PostCSS,
 
@@ -652,17 +653,6 @@ export class Stage_Compiler implements Stage.Compiler {
         this.console.verbose( 'running tsc...', level );
 
         const outDir = this.getTsConfigOutDir( tsconfig, 1 + level, errorIfNotFound );
-
-        if ( outDir ) {
-            this.console.debug(
-                'deleting existing files from ' + this.fs.pathRelative( outDir ).replace( ' ', '%20' ) + ' ...',
-                ( this.params.verbose ? 1 : 0 ) + level
-            );
-            this.fs.delete(
-                outDir + '/*',
-                ( this.params.debug ? 1 : 0 ) + ( this.params.verbose ? 1 : 0 ) + level,
-            );
-        }
 
         catchOrReturn(
             this.console.nc.cmd,
