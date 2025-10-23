@@ -399,6 +399,24 @@ export declare namespace Stage {
             };
         }
         /**
+         * Input options for files to copy during build stages.
+         *
+         * If a string, the string is the source file and will be copied to the
+         * default dist directory.
+         *
+         * @since 0.3.0-alpha.1.draft
+         */
+        type CopyFilesInput = string | {
+            /**
+             * Source file path.
+             */
+            from: string;
+            /**
+             * File output path.
+             */
+            to?: string | null | undefined;
+        };
+        /**
          * The required shape for a compile stage.
          *
          * @see {@link CompileStage.ARGS_DEFAULT}  For defaults.
@@ -411,18 +429,18 @@ export declare namespace Stage {
              *
              * If an object, paths to files copied to the dist directory during
              * compile.
+             *
+             * @since 0.3.0-alpha.1.draft — Now using new {@link CopyFilesInput} type.
              */
             files: false | {
                 /**
-                 * Paths relative to the project root — to copy to the dist
-                 * directory.
+                 * Paths relative to the project root.
                  */
-                root?: string[];
+                root?: CopyFilesInput[];
                 /**
-                 * Paths relative to the source directory — to copy to the dist
-                 * directory.
+                 * Paths relative to the source directory.
                  */
-                src?: string[];
+                src?: CopyFilesInput[];
             };
             /**
              * Whether to include this sub-stage.

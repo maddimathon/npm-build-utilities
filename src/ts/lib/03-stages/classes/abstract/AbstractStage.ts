@@ -879,7 +879,7 @@ export abstract class AbstractStage<
         T_Params extends never[],
         T_Return extends unknown,
     >(
-        tryer: () => Promise<T_Return>,
+        tryer: () => T_Return | Promise<T_Return>,
         level: number,
         params?: NoInfer<T_Params>,
         handlerArgs?: Partial<AbstractError.Handler.Args> & { exitProcess?: false; },
@@ -894,7 +894,7 @@ export abstract class AbstractStage<
         T_Params extends unknown[],
         T_Return extends unknown,
     >(
-        tryer: ( ...params: T_Params ) => Promise<T_Return>,
+        tryer: ( ...params: T_Params ) => T_Return | Promise<T_Return>,
         level: number,
         params: NoInfer<T_Params>,
         handlerArgs?: Partial<AbstractError.Handler.Args> & { exitProcess?: false; },
@@ -909,7 +909,7 @@ export abstract class AbstractStage<
         T_Params extends never[],
         T_Return extends unknown,
     >(
-        tryer: () => Promise<T_Return>,
+        tryer: () => T_Return | Promise<T_Return>,
         level: number,
         params: NoInfer<T_Params> | undefined,
         handlerArgs: Partial<AbstractError.Handler.Args> & { exitProcess: true | boolean; },
@@ -922,7 +922,7 @@ export abstract class AbstractStage<
         T_Params extends unknown[],
         T_Return extends unknown,
     >(
-        tryer: ( ...params: T_Params ) => Promise<T_Return>,
+        tryer: ( ...params: T_Params ) => T_Return | Promise<T_Return>,
         level: number,
         params: NoInfer<T_Params>,
         handlerArgs: Partial<AbstractError.Handler.Args> & { exitProcess: true | boolean; },
@@ -944,13 +944,15 @@ export abstract class AbstractStage<
         T_Params extends unknown[] | never[],
         T_Return extends unknown,
     >(
-        tryer: ( ...params: T_Params ) => Promise<T_Return>,
+        tryer: ( ...params: T_Params ) => T_Return | Promise<T_Return>,
         level: number,
         params?: NoInfer<T_Params>,
         handlerArgs?: Partial<AbstractError.Handler.Args>,
     ): Promise<T_Return | "FAILED"> {
 
-        return tryer( ...( params ?? [] as T_Params ) ).catch( ( error ) => {
+        const asyncTryer = async () => tryer( ...( params ?? [] as T_Params ) );
+
+        return asyncTryer().catch( ( error ) => {
 
             this.handleError(
                 error,

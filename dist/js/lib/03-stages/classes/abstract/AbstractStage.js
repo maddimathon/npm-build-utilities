@@ -611,7 +611,8 @@ export class AbstractStage {
      * @experimental
      */
     async atry(tryer, level, params, handlerArgs) {
-        return tryer(...(params ?? [])).catch((error) => {
+        const asyncTryer = async () => tryer(...(params ?? []));
+        return asyncTryer().catch((error) => {
             this.handleError(error, level, handlerArgs);
             return 'FAILED';
         });

@@ -240,7 +240,6 @@ export class CompileStage extends AbstractStage<
         }
 
         const scssDistDir = this.fs.pathRelative( this.getDistDir( 'scss' ) );
-        // this.console.vi.verbose( { scssDistDir }, this.params.verbose ? 3 : 2 );
 
         this.console.verbose( 'deleting existing files...', 2 );
         this.fs.delete( [ scssDistDir ], 3 );
@@ -334,25 +333,88 @@ export class CompileStage extends AbstractStage<
      */
     protected async files() {
         if ( !this.args.files ) { return; }
+        this.console.progress( `copying files project files...`, 1 );
 
-        const distDir = this.getDistDir().trim().replace( /\/$/g, '' );
-        this.console.progress( `copying files to ${ distDir }...`, 1 );
+        const distDir = './' + this.getDistDir().trim().replace( /(^\.\/|\/$)/g, '' ) + '/';
+        const srcDir = this.getSrcDir().trim().replace( /\/$/g, '' );
 
-        const rootPaths = this.args.files.root;
+        const filePathNormalizer = (
+            srcDir: null | string,
+            _input: Stage.Args.CopyFilesInput,
+        ): {
+            from: string;
+            to: string;
+        } => {
 
-        if ( !rootPaths?.length ) {
-            this.console.verbose( `no files to copy from the root directory`, 2 );
-        } else {
-            this.fs.copy( rootPaths, 2, distDir, null, { force: true, rename: true } );
-        }
+            srcDir = srcDir && './' + srcDir.replace( /(^\.\/|\/$)/g, '' ) + '/';
 
-        const srcPaths = this.args.files.src;
+            let input: {
+                from: string;
+                to?: string | null | undefined;
+            } = typeof _input === 'string'
+                    ? { from: _input }
+                    : _input;
 
-        if ( !srcPaths?.length ) {
-            this.console.verbose( `no files to copy from the source directory`, 2 );
-        } else {
-            const srcDir = this.getSrcDir().trim().replace( /\/$/g, '' );
-            this.fs.copy( srcPaths, 2, distDir, srcDir, { force: true, rename: true } );
-        }
+            const source_relative = this.fs.pathRelative( input.from );
+
+            const from = srcDir
+                ? this.fs.pathResolve( srcDir, input.from )
+                : this.fs.pathResolve( input.from );
+
+            const sourceDirRegex = srcDir && new RegExp(
+                '^' + escRegExp( this.fs.pathRelative( srcDir ) + '/' ),
+                'gi'
+            );
+
+            const to = this.fs.pathResolve(
+                distDir,
+                input.to ?? (
+                    sourceDirRegex
+                        ? source_relative.replace( sourceDirRegex, '' )
+                        : source_relative
+                ),
+            );
+
+            return { from, to };
+        };
+
+        this.console.verbose( `normalizing paths...`, 2 );
+
+        const rootPaths = this.args.files.root?.map(
+            path => filePathNormalizer( null, path )
+        );
+
+        const srcPaths = this.args.files.src?.map(
+            path => filePathNormalizer( srcDir, path )
+        );
+
+        this.console.verbose( `copying files...`, 2 );
+
+        const copyFileArgs = mergeArgs( this.fs.args.copy, {}, true );
+
+        const fileCopier = async (
+            srcDir: null | string,
+            paths: undefined | ReturnType<typeof filePathNormalizer>[],
+        ) => {
+
+            // returns
+            if ( !paths || !paths.length ) {
+                this.console.verbose( `no files to copy from ${ srcDir ?? 'the root directory' }`, 3, { italic: true } );
+                return;
+            }
+
+            return Promise.all( paths.map(
+                async ( { from, to } ) => this.atry(
+                    this.fs.copyFile,
+                    this.params.verbose ? 3 : 2,
+                    [ from, to, copyFileArgs ],
+                )
+            ) );
+        };
+
+        return Promise.all( [
+            fileCopier( null, rootPaths ),
+            fileCopier( srcDir, srcPaths, ),
+        ].flat() );
     }
 }

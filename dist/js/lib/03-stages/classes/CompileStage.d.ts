@@ -66,6 +66,6 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
      *
      * @category Sub-Stages
      */
-    protected files(): Promise<void>;
+    protected files(): Promise<((string | false)[] | undefined)[] | undefined>;
 }
 //# sourceMappingURL=CompileStage.d.ts.map
