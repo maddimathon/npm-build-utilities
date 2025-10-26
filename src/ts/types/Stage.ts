@@ -13,7 +13,7 @@
 import type postcss from 'postcss';
 import type * as postcss_PresetEnv from 'postcss-preset-env';
 
-import type * as sass from 'sass';
+import type * as sass from 'sass-embedded';
 import type * as typeDoc from "typedoc";
 
 import type {
@@ -1071,15 +1071,8 @@ export namespace Stage {
                  */
                 isWatchedUpdate?: boolean;
 
-                /**
-                 * Whether to use the sass package's async package.
-                 * 
-                 * @since ___PKG_VERSION___
-                 */
-                useAsyncCompiler?: boolean;
-
             } & {
-                [ K in keyof sass.Options<"sync"> ]: sass.Options<"sync">[ K ];
+                [ K in keyof sass.Options<"async"> ]: sass.Options<"async">[ K ];
             };
 
             /**
@@ -1093,14 +1086,14 @@ export namespace Stage {
                 'embed-sources'?: boolean;
                 'embed-source-map'?: boolean;
                 'error-css'?: boolean;
-                'fatal-deprecation'?: sass.Options<"sync">[ 'fatalDeprecations' ];
-                'future-deprecation'?: sass.Options<"sync">[ 'futureDeprecations' ];
+                'fatal-deprecation'?: sass.Options<"async">[ 'fatalDeprecations' ];
+                'future-deprecation'?: sass.Options<"async">[ 'futureDeprecations' ];
                 indented?: boolean;
                 'load-path'?: string | string[];
                 'pkg-importer'?: "node";
                 'source-map'?: boolean;
                 'source-map-urls'?: "absolute" | "relative";
-                style?: sass.Options<"sync">[ 'style' ];
+                style?: sass.Options<"async">[ 'style' ];
                 update?: true;
             }
         }

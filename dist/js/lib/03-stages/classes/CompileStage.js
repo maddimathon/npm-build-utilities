@@ -216,22 +216,40 @@ export class CompileStage extends AbstractStage {
         });
         this.console.vi.debug({ scssPathArgs }, this.params.verbose ? 3 : 2);
         this.console.verbose('compiling to css...', 2);
-        await this.atry(this.compiler.scssBulk, this.params.verbose ? 3 : 2, [
-            scssPathArgs,
-            this.params.verbose ? 3 : 2,
-            this.sassOpts,
-        ]);
-        if (subStageArgs.postCSS) {
+        const compile =
+            (
+                scssPathArgs.length < 2
+                && scssPathArgs[0]?.input
+                && scssPathArgs[0]?.output
+            ) ?
+                this.atry(this.compiler.scss, this.params.verbose ? 2 : 1, [
+                    scssPathArgs[0].input,
+                    scssPathArgs[0].output,
+                    this.params.verbose ? 3 : 2,
+                    this.sassOpts,
+                ])
+            :   this.atry(this.compiler.scssBulk, this.params.verbose ? 2 : 1, [
+                    scssPathArgs,
+                    this.params.verbose ? 3 : 2,
+                    this.sassOpts,
+                ]);
+        return compile.then(async (_outputPaths) => {
+            const outputPaths =
+                typeof _outputPaths == 'string' ? [_outputPaths] : _outputPaths;
+            // returns
+            if (!subStageArgs.postCSS) {
+                return outputPaths;
+            }
             this.console.verbose('processing with postcss...', 2);
-            await this.atry(
+            return this.atry(
                 this.compiler.postCSS,
                 this.params.verbose ? 3 : 2,
                 [
-                    scssPathArgs.map((_o) => ({ from: _o.output })),
+                    outputPaths.map((from) => ({ from })),
                     this.params.verbose ? 3 : 2,
                 ],
-            );
-        }
+            ).then(() => outputPaths);
+        });
     }
     /**
      * Compiles typescript to javascript.

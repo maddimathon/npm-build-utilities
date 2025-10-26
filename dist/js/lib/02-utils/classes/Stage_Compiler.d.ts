@@ -9,7 +9,7 @@
  */
 import { DateTime } from 'luxon';
 import * as postcss_PresetEnv from 'postcss-preset-env';
-import * as sass from 'sass';
+import * as sass from 'sass-embedded';
 import type { Json, Objects } from '@maddimathon/utility-typescript/types';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import { FileSystem } from '../../00-universal/index.js';
@@ -174,7 +174,6 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly sourceMap: true;
             readonly sourceMapIncludeSources: true;
             readonly style: "expanded";
-            readonly useAsyncCompiler: false;
             readonly verbose: undefined;
         };
         readonly ts: {};
@@ -220,32 +219,36 @@ export declare class Stage_Compiler implements Stage.Compiler {
         to?: string;
     }[], level: number, _postCssOpts?: Stage.Compiler.Args.PostCSS): Promise<void>;
     /**
-     * Creates the message for the benchmark end notice.
+     * Logs the message for the benchmark end notice.
      *
      * @since 0.3.0-alpha.1.draft
      */
-    protected benchmarkStartTimeMaker(msg: string, start: DateTime): string;
+    protected benchmarkEndTimeLog(msg: string, level: number, start: DateTime, end: DateTime): void;
     /**
-     * Creates the message for the benchmark end notice.
+     * Logs the message for the benchmark start notice.
      *
      * @since 0.3.0-alpha.1.draft
      */
-    protected benchmarkEndTimeMaker(msg: string, start: DateTime, end?: DateTime): string;
+    protected benchmarkStartTimeLog(msg: string, level: number, start: DateTime): void;
     /**
-     * Runs the compiler from the sass package.
+     * Runs the compileAsync from the sass package and returns with an ending
+     * timestamp.
      *
      * @since 0.3.0-alpha.1.draft
      */
-    protected sassCompiler(input: string, opts: Stage.Compiler.Args.Sass): Promise<{
+    protected sassCompileAsync(input: string, opts: Stage.Compiler.Args.Sass): Promise<{
         compiled: sass.CompileResult;
         end: DateTime<true>;
     }>;
     /**
-     * This skips compiling options and validating values.
+     * Compiles scss via API. This skips compiling options and validating values.
      *
      * @since 0.3.0-alpha.1.draft
      */
-    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<string>;
+    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, compileFn?: (input: string, opts: Stage.Compiler.Args.Sass) => Promise<{
+        compiled: sass.CompileResult;
+        end: DateTime;
+    }>): Promise<string>;
     /**
      * Coverts scss args for the CLI.
      *
@@ -257,10 +260,10 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.3.0-alpha.1.draft
      */
-    protected scssCLI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<{
-        compiled: string;
-        end: DateTime<true>;
-    }>;
+    protected scssCLI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<string>;
+    /**
+     * Best for CLI or single-file compiles. Otherwise use scssBulk.
+     */
     scss(input: string, output: string, level: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string>;
     scssBulk(paths: {
         input: string;

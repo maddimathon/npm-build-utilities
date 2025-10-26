@@ -901,27 +901,47 @@ export class AbstractStage {
                 'gi',
             ),
         };
+        const scssPaths_mapped = scssPaths.map((input) => ({
+            input,
+            output: this.fs
+                .pathRelative(input)
+                .replace(regex.srcDir, escRegExpReplace(distDir + '/'))
+                .replace(/\.(sass|scss)$/gi, '.css')
+                .replace(/\/_?index\.css$/gi, '.css'),
+        }));
         this.console.verbose(
             'compiling to css at ' + distDir + '...',
             1 + logLevelBase,
         );
-        return this.atry(
-            this.compiler.scssBulk,
-            (this.params.verbose ? 2 : 1) + logLevelBase,
-            [
-                scssPaths.map((input) => ({
-                    input,
-                    output: this.fs
-                        .pathRelative(input)
-                        .replace(regex.srcDir, escRegExpReplace(distDir + '/'))
-                        .replace(/\.(sass|scss)$/gi, '.css')
-                        .replace(/\/_?index\.css$/gi, '.css'),
-                })),
-                (this.params.verbose ? 2 : 1) + logLevelBase,
-                { ...this.sassOpts, ...sassOpts },
-                opts.maxConcurrent,
-            ],
-        ).then(async (outputPaths) => {
+        const compile =
+            (
+                scssPaths_mapped.length < 2
+                && scssPaths_mapped[0]?.input
+                && scssPaths_mapped[0]?.output
+            ) ?
+                this.atry(
+                    this.compiler.scss,
+                    (this.params.verbose ? 2 : 1) + logLevelBase,
+                    [
+                        scssPaths_mapped[0].input,
+                        scssPaths_mapped[0].output,
+                        (this.params.verbose ? 2 : 1) + logLevelBase,
+                        { ...this.sassOpts, ...sassOpts },
+                    ],
+                )
+            :   this.atry(
+                    this.compiler.scssBulk,
+                    (this.params.verbose ? 2 : 1) + logLevelBase,
+                    [
+                        scssPaths_mapped,
+                        (this.params.verbose ? 2 : 1) + logLevelBase,
+                        { ...this.sassOpts, ...sassOpts },
+                        opts.maxConcurrent,
+                    ],
+                );
+        return compile.then(async (_outputPaths) => {
+            const outputPaths =
+                typeof _outputPaths == 'string' ? [_outputPaths] : _outputPaths;
             // returns
             if (!opts.postCSS) {
                 return outputPaths;
