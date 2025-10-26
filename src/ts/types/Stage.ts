@@ -18,6 +18,7 @@ import type * as typeDoc from "typedoc";
 
 import type {
     Json,
+    Objects,
 } from '@maddimathon/utility-typescript/types';
 
 import type {
@@ -839,7 +840,9 @@ export namespace Stage {
         /**
          * A completed args object.
          */
-        readonly args: Stage.Compiler.Args;
+        readonly args: Stage.Compiler.Args & {
+            sass: Objects.Classify<Compiler.Args.Sass>;
+        };
 
         /**
          * Default values for the args property.
@@ -1034,15 +1037,72 @@ export namespace Stage {
             export type Sass = {
 
                 /**
+                 * Whether to output the exact compile time.
+                 * 
+                 * @since ___PKG_VERSION___
+                 */
+                benchmarkCompileTime?: boolean;
+
+                /**
+                 * Extra options that only apply to the CLI.
+                 * 
+                 * @since ___PKG_VERSION___
+                 */
+                cli?: {
+                    'embed-sources'?: boolean;
+                    'embed-source-map'?: boolean;
+                    'error-css'?: boolean;
+                    indented?: boolean;
+                    'source-map-urls'?: "absolute" | "relative";
+                    update?: true;
+                };
+
+                /**
+                 * Whether to compile via CLI rather than the JS API.
+                 * 
+                 * @since ___PKG_VERSION___
+                 */
+                compileViaCLI?: boolean;
+
+                /**
                  * Whether the current stage is the result of a watched file.
                  * 
                  * @since ___PKG_VERSION___
                  */
                 isWatchedUpdate?: boolean;
 
+                /**
+                 * Whether to use the sass package's async package.
+                 * 
+                 * @since ___PKG_VERSION___
+                 */
+                useAsyncCompiler?: boolean;
+
             } & {
                 [ K in keyof sass.Options<"sync"> ]: sass.Options<"sync">[ K ];
             };
+
+            /**
+             * Format used to transalate the sass options to a CLI-compatible
+             * version.
+             *
+             * @since ___PKG_VERSION___
+             */
+            export interface SassCLI {
+                charset?: boolean;
+                'embed-sources'?: boolean;
+                'embed-source-map'?: boolean;
+                'error-css'?: boolean;
+                'fatal-deprecation'?: sass.Options<"sync">[ 'fatalDeprecations' ];
+                'future-deprecation'?: sass.Options<"sync">[ 'futureDeprecations' ];
+                indented?: boolean;
+                'load-path'?: string | string[];
+                'pkg-importer'?: "node";
+                'source-map'?: boolean;
+                'source-map-urls'?: "absolute" | "relative";
+                style?: sass.Options<"sync">[ 'style' ];
+                update?: true;
+            }
         }
     };
 

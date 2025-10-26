@@ -56,7 +56,7 @@ export class Compile extends CompileStage {
             { force: true },
         );
 
-        await this.atry(
+        return this.atry(
             this.fs.prettier,
             this.params.verbose ? 3 : 2,
             [ jsonDistDir + '/**/*.json', 'json' ],

@@ -318,23 +318,17 @@ export async function getConfig(
 
     fs.write( configPath, configFileContent, { force } );
 
-    try {
-        await fs.prettier( configPath, 'js' );
-    } catch ( error ) {
+    return fs.prettier( configPath, 'js' ).catch( ( error ) => {
 
         logError(
-            'Error caught while trying to run prettier on config file; rewriting config file',
+            'Error caught while trying to run prettier on config file; rewriting config file without formatting',
             error,
             level,
-            {
-                console,
-                fs,
-            }
+            { console, fs }
         );
 
         // re-writing to make sure the file is at least valid
         fs.write( configPath, configFileContent, { force } );
-    }
 
-    return configInstance;
+    } ).then( () => configInstance );
 }

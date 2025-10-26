@@ -500,7 +500,7 @@ export class DocumentStage extends AbstractStage<
      * ====================================================================== */
 
     protected async runSubStage( subStage: Stage.SubStage.Document ) {
-        await this[ subStage ]();
+        return this[ subStage ]();
     }
 
     /**
@@ -638,7 +638,7 @@ export class DocumentStage extends AbstractStage<
             return;
         }
 
-        // for some unknown reason, this breaks if I use this.try
+        // for some unknown reason, this breaks if I use this.atry
         try {
 
             await app.generateOutputs( project );

@@ -420,7 +420,7 @@ export class DocumentStage extends AbstractStage {
     /* RUNNING METHODS
      * ====================================================================== */
     async runSubStage(subStage) {
-        await this[subStage]();
+        return this[subStage]();
     }
     /**
      * Replaces placeholders in the built files and directories.
@@ -537,7 +537,7 @@ export class DocumentStage extends AbstractStage {
             );
             return;
         }
-        // for some unknown reason, this breaks if I use this.try
+        // for some unknown reason, this breaks if I use this.atry
         try {
             await app.generateOutputs(project);
         } catch (error) {

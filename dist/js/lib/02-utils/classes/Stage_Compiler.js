@@ -7,6 +7,7 @@
  * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
+import { DateTime, Interval } from 'luxon';
 import postcss from 'postcss';
 import * as postcss_PresetEnv from 'postcss-preset-env';
 import * as sass from 'sass';
@@ -278,10 +279,26 @@ export class Stage_Compiler {
              */
             postCSS: Stage_Compiler.postCssConfig,
             sass: {
+                alertAscii: undefined,
+                alertColor: undefined,
+                benchmarkCompileTime: undefined,
                 charset: true,
+                cli: undefined,
+                compileViaCLI: undefined,
+                fatalDeprecations: undefined,
+                functions: undefined,
+                futureDeprecations: undefined,
+                importers: undefined,
+                isWatchedUpdate: undefined,
+                loadPaths: undefined,
+                logger: undefined,
+                quietDeps: undefined,
+                silenceDeprecations: undefined,
                 sourceMap: true,
                 sourceMapIncludeSources: true,
                 style: 'expanded',
+                useAsyncCompiler: false,
+                verbose: undefined,
             },
             ts: {},
         };
@@ -301,8 +318,11 @@ export class Stage_Compiler {
         this.console = console;
         this.fs = fs;
         this.args = mergeArgs(this.ARGS_DEFAULT, config.compiler, true);
+        this.getTsConfig = this.getTsConfig.bind(this);
+        this.getTsConfigOutDir = this.getTsConfigOutDir.bind(this);
         this.postCSS = this.postCSS.bind(this);
         this.scss = this.scss.bind(this);
+        this.scssBulk = this.scssBulk.bind(this);
         this.typescript = this.typescript.bind(this);
     }
     /* LOCAL METHODS
@@ -450,58 +470,308 @@ export class Stage_Compiler {
             }),
         );
     }
-    async scss(input, output, level, sassOpts) {
-        const prom = new Promise((resolve) => resolve(input));
-        return prom.then((input) => {
-            sassOpts = mergeArgs(this.args.sass, sassOpts, true);
-            sassOpts = {
-                ...sassOpts,
+    /**
+     * Creates the message for the benchmark end notice.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    benchmarkStartTimeMaker(msg, start) {
+        return `${msg} @ ${start.toFormat('H:mm:ss.SSS')}`;
+    }
+    /**
+     * Creates the message for the benchmark end notice.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    benchmarkEndTimeMaker(msg, start, end = DateTime.now()) {
+        const timePassed = Interval.fromDateTimes(start, end);
+        const durationInSeconds = timePassed.toDuration().toMillis() / 1000;
+        return this.params.verbose ?
+                `${msg} @ ${end.toFormat('H:mm:ss.SSS')} (${durationInSeconds.toString()}s)`
+            :   `${msg} (${durationInSeconds.toString()}s)`;
+    }
+    /**
+     * Runs the compiler from the sass package.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    async sassCompiler(input, opts) {
+        return Promise.resolve(
+            opts.useAsyncCompiler ?
+                sass.compileAsync(input, opts)
+            :   sass.compile(input, opts),
+        ).then((compiled) => ({
+            compiled,
+            end: DateTime.now(),
+        }));
+    }
+    /**
+     * This skips compiling options and validating values.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    async scssAPI(input, output, level, sassCompleteOpts) {
+        return Promise.resolve().then(async () => {
+            const opts = {
+                ...sassCompleteOpts,
                 importers: [
-                    ...(sassOpts.importers ?? []),
+                    ...(sassCompleteOpts.importers ?? []),
                     new sass.NodePackageImporter(),
                 ],
             };
-            const compiled = sass.compile(input, sassOpts);
-            this.params.debug
-                && this.console.verbose(
-                    'writing css to path: ' + this.fs.pathRelative(output),
+            const start = DateTime.now();
+            if (opts.benchmarkCompileTime) {
+                this.console.verbose(
+                    this.benchmarkStartTimeMaker(`compiling ${input}`, start),
                     level,
-                    { maxWidth: null },
+                    { italic: true, linesIn: 0, linesOut: 0 },
                 );
-            this.fs.write(output, compiled.css, { force: true });
-            // returns
-            if (!compiled.sourceMap) {
-                return output;
             }
-            const sourceMap = output.replace(/\.(s?css)$/g, '.$1.map');
-            this.params.debug
-                && this.console.verbose(
-                    'writing sourceMap to path: '
-                        + this.fs.pathRelative(sourceMap),
-                    1 + level,
-                );
-            this.fs.write(
-                sourceMap,
-                JSON.stringify(
-                    compiled.sourceMap,
-                    null,
-                    this.params.packaging ? 0 : 4,
-                ),
-                { force: true },
+            const benchmarkEnd = (end) => {
+                if (opts.benchmarkCompileTime) {
+                    this.console.log(
+                        this.benchmarkEndTimeMaker(
+                            `compile finished: ${input}`,
+                            start,
+                            end,
+                        ),
+                        level,
+                        { italic: true, linesIn: 0, linesOut: 0 },
+                    );
+                }
+            };
+            // returns
+            if (opts.compileViaCLI) {
+                return this.scssCLI(
+                    input,
+                    output,
+                    level
+                        + (opts.benchmarkCompileTime && this.params.verbose ?
+                            1
+                        :   0),
+                    opts,
+                ).then(({ compiled, end }) => {
+                    benchmarkEnd(end);
+                    return compiled;
+                });
+            }
+            return this.sassCompiler(input, opts).then(
+                async ({ compiled, end }) => {
+                    // returns
+                    if (!compiled) {
+                        this.console.log(
+                            this.benchmarkEndTimeMaker(
+                                `compile FAILED: ${input}`,
+                                start,
+                                end,
+                            ),
+                            level,
+                            { italic: true, linesIn: 0, linesOut: 0 },
+                        );
+                        return output;
+                    }
+                    benchmarkEnd(end);
+                    this.params.debug
+                        && this.console.verbose(
+                            'writing css to path: '
+                                + this.fs.pathRelative(output),
+                            level,
+                            { maxWidth: null },
+                        );
+                    this.fs.write(output, compiled.css, { force: true });
+                    // returns
+                    if (!compiled.sourceMap) {
+                        return output;
+                    }
+                    const sourceMap = output.replace(/\.(s?css)$/g, '.$1.map');
+                    this.params.debug
+                        && this.console.verbose(
+                            'writing sourceMap to path: '
+                                + this.fs.pathRelative(sourceMap),
+                            1 + level,
+                        );
+                    this.fs.write(
+                        sourceMap,
+                        JSON.stringify(
+                            compiled.sourceMap,
+                            null,
+                            this.params.packaging ? 0 : 4,
+                        ),
+                        { force: true },
+                    );
+                    return output;
+                },
             );
-            return output;
         });
+    }
+    /**
+     * Coverts scss args for the CLI.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    scssCLI_args(completeSassOpts) {
+        const opts = {
+            charset: completeSassOpts.charset,
+            'embed-sources':
+                completeSassOpts.cli?.['embed-sources']
+                ?? completeSassOpts.sourceMap
+                ?? true,
+            'embed-source-map':
+                completeSassOpts.cli?.['embed-source-map']
+                ?? completeSassOpts.sourceMap
+                ?? true,
+            'error-css': completeSassOpts.cli?.['error-css'],
+            'fatal-deprecation': completeSassOpts.fatalDeprecations,
+            'future-deprecation': completeSassOpts.futureDeprecations,
+            'load-path': completeSassOpts.loadPaths,
+            indented: completeSassOpts.cli?.indented,
+            'pkg-importer': 'node',
+            'source-map': completeSassOpts.sourceMap,
+            'source-map-urls':
+                completeSassOpts.cli?.['source-map-urls'] ?? 'relative',
+            style: completeSassOpts.style,
+            update: completeSassOpts.cli?.update,
+        };
+        const argString = ['--no-color', '--trace'];
+        for (const _key in opts) {
+            const key = _key;
+            const value = opts[key];
+            switch (typeof value) {
+                case 'boolean':
+                    argString.push(value ? `--${key}` : `--no-${key}`);
+                    break;
+                case 'object':
+                    if (Array.isArray(value)) {
+                        value.forEach((val) =>
+                            argString.push(`--${key}=${val}`),
+                        );
+                    }
+                    break;
+                case 'bigint':
+                case 'number':
+                case 'string':
+                    argString.push(`--${key}=${value}`);
+                    break;
+            }
+        }
+        return argString.join(' ');
+    }
+    /**
+     * Compiles scs via CLI. This skips compiling options and validating values.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    async scssCLI(input, output, level, sassCompleteOpts) {
+        return Promise.resolve().then(() => {
+            this.console.nc.cmd(
+                `sass ${this.fs.pathRelative(input)}:${this.fs.pathRelative(output)} ${this.scssCLI_args(sassCompleteOpts)}`,
+            );
+            return {
+                compiled: output,
+                end: DateTime.now(),
+            };
+        });
+    }
+    async scss(input, output, level, sassOpts) {
+        return this.scssAPI(
+            input,
+            output,
+            level,
+            mergeArgs(this.args.sass, sassOpts, true),
+        );
     }
     async scssBulk(paths, level, sassOpts, maxConcurrent = 10) {
         const compiledPaths = [];
-        for (let i = 0; i < paths.length; i += maxConcurrent) {
-            const chunk = paths.slice(i, i + maxConcurrent);
+        const benchmarkCompileTime =
+            sassOpts?.benchmarkCompileTime
+            ?? this.args.sass.benchmarkCompileTime;
+        const compileViaCLI =
+            sassOpts?.compileViaCLI ?? this.args.sass.compileViaCLI;
+        const startTime = DateTime.now();
+        if (benchmarkCompileTime) {
+            this.console.verbose(
+                this.benchmarkStartTimeMaker('bulk compiling', startTime),
+                level,
+                { italic: true },
+            );
+        }
+        // returns
+        if (compileViaCLI) {
+            return Promise.resolve().then(() => {
+                const opts = mergeArgs(this.args.sass, sassOpts, true);
+                const filePathArgs = paths.map(
+                    ({ input, output }) =>
+                        `${this.fs.pathRelative(input)}:${this.fs.pathRelative(output)}`,
+                );
+                this.console.nc.cmd(
+                    `sass ${filePathArgs.join(' ')} ${this.scssCLI_args(opts)}`,
+                );
+                if (benchmarkCompileTime) {
+                    this.console.log(
+                        this.benchmarkEndTimeMaker(
+                            `bulk compile finished`,
+                            startTime,
+                        ),
+                        level,
+                        { italic: true, linesIn: 0, linesOut: 0 },
+                    );
+                }
+                return paths.map((p) => p.output);
+            });
+        }
+        const opts = mergeArgs(this.args.sass, sassOpts, true);
+        let chunks;
+        if (paths.length > maxConcurrent) {
+            chunks = [];
+            for (let i = 0; i < paths.length; i += maxConcurrent) {
+                chunks.push(paths.slice(i, i + maxConcurrent));
+            }
+        } else {
+            chunks = [paths];
+        }
+        let i = 1;
+        for (const chunk of chunks) {
+            const _chunkStart = DateTime.now();
+            if (opts.benchmarkCompileTime) {
+                this.console.verbose(
+                    this.benchmarkStartTimeMaker(
+                        `compiling chunk #${i}`,
+                        _chunkStart,
+                    ),
+                    1 + level,
+                    { italic: true, linesIn: 0, linesOut: 0 },
+                );
+            }
             const compiled = await Promise.all(
                 chunk.map(({ input, output }) =>
-                    this.scss(input, output, level, sassOpts),
+                    this.scssAPI(
+                        input,
+                        output,
+                        (this.params.verbose && benchmarkCompileTime ? 2 : 0)
+                            + level,
+                        opts,
+                    ),
                 ),
             );
             compiledPaths.push(...compiled);
+            if (opts.benchmarkCompileTime) {
+                this.console.verbose(
+                    this.benchmarkEndTimeMaker(
+                        `done compiling chunk #${i}`,
+                        _chunkStart,
+                    ),
+                    1 + level,
+                    { italic: true, linesIn: 0, linesOut: 0 },
+                );
+            }
+            i++;
+        }
+        if (benchmarkCompileTime) {
+            this.console.log(
+                this.benchmarkEndTimeMaker(`bulk compile finished`, startTime),
+                level,
+                { italic: true, linesIn: 0, linesOut: 0 },
+            );
         }
         return compiledPaths;
     }

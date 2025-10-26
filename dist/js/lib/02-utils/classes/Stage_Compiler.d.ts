@@ -7,8 +7,10 @@
  * @maddimathon/build-utilities@0.3.0-alpha.1.draft
  * @license MIT
  */
+import { DateTime } from 'luxon';
 import * as postcss_PresetEnv from 'postcss-preset-env';
-import type { Json } from '@maddimathon/utility-typescript/types';
+import * as sass from 'sass';
+import type { Json, Objects } from '@maddimathon/utility-typescript/types';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 import type { Stage_Console } from './Stage_Console.js';
@@ -154,14 +156,32 @@ export declare class Stage_Compiler implements Stage.Compiler {
          */
         readonly postCSS: Stage.Compiler.Args.PostCSS;
         readonly sass: {
+            readonly alertAscii: undefined;
+            readonly alertColor: undefined;
+            readonly benchmarkCompileTime: undefined;
             readonly charset: true;
+            readonly cli: undefined;
+            readonly compileViaCLI: undefined;
+            readonly fatalDeprecations: undefined;
+            readonly functions: undefined;
+            readonly futureDeprecations: undefined;
+            readonly importers: undefined;
+            readonly isWatchedUpdate: undefined;
+            readonly loadPaths: undefined;
+            readonly logger: undefined;
+            readonly quietDeps: undefined;
+            readonly silenceDeprecations: undefined;
             readonly sourceMap: true;
             readonly sourceMapIncludeSources: true;
             readonly style: "expanded";
+            readonly useAsyncCompiler: false;
+            readonly verbose: undefined;
         };
         readonly ts: {};
     };
-    readonly args: Stage.Compiler.Args;
+    readonly args: Stage.Compiler.Args & {
+        sass: Objects.Classify<Stage.Compiler.Args.Sass>;
+    };
     /**
      * @param config   Current project config.
      * @param params   Current CLI params.
@@ -199,6 +219,48 @@ export declare class Stage_Compiler implements Stage.Compiler {
         from: string;
         to?: string;
     }[], level: number, _postCssOpts?: Stage.Compiler.Args.PostCSS): Promise<void>;
+    /**
+     * Creates the message for the benchmark end notice.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    protected benchmarkStartTimeMaker(msg: string, start: DateTime): string;
+    /**
+     * Creates the message for the benchmark end notice.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    protected benchmarkEndTimeMaker(msg: string, start: DateTime, end?: DateTime): string;
+    /**
+     * Runs the compiler from the sass package.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    protected sassCompiler(input: string, opts: Stage.Compiler.Args.Sass): Promise<{
+        compiled: sass.CompileResult;
+        end: DateTime<true>;
+    }>;
+    /**
+     * This skips compiling options and validating values.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<string>;
+    /**
+     * Coverts scss args for the CLI.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    protected scssCLI_args(completeSassOpts: Stage.Compiler.Args.Sass): string;
+    /**
+     * Compiles scs via CLI. This skips compiling options and validating values.
+     *
+     * @since 0.3.0-alpha.1.draft
+     */
+    protected scssCLI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<{
+        compiled: string;
+        end: DateTime<true>;
+    }>;
     scss(input: string, output: string, level: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string>;
     scssBulk(paths: {
         input: string;

@@ -199,7 +199,7 @@ export class BuildStage extends AbstractStage {
     /* RUNNING METHODS
      * ====================================================================== */
     async runSubStage(subStage) {
-        await this[subStage]();
+        return this[subStage]();
     }
     /**
      * Runs the project's compile class.
@@ -207,7 +207,7 @@ export class BuildStage extends AbstractStage {
      * @category Sub-Stages
      */
     async compile() {
-        await this.runStage('compile', 1);
+        return this.runStage('compile', 1);
     }
     /**
      * Runs the project's document class.
@@ -215,7 +215,7 @@ export class BuildStage extends AbstractStage {
      * @category Sub-Stages
      */
     async document() {
-        await this.runStage('document', 1);
+        return this.runStage('document', 1);
     }
     /**
      * Minimizes files.
@@ -365,7 +365,7 @@ export class BuildStage extends AbstractStage {
      * @category Sub-Stages
      */
     async test() {
-        await this.runStage('test', 1);
+        return this.runStage('test', 1);
     }
 }
 //# sourceMappingURL=BuildStage.js.map

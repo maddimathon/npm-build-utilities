@@ -273,21 +273,18 @@ export async function getConfig(params, console = null, level = 0) {
     ].join('\n');
     console.vi.debug({ configFileContent }, level);
     fs.write(configPath, configFileContent, { force });
-    try {
-        await fs.prettier(configPath, 'js');
-    } catch (error) {
-        logError(
-            'Error caught while trying to run prettier on config file; rewriting config file',
-            error,
-            level,
-            {
-                console,
-                fs,
-            },
-        );
-        // re-writing to make sure the file is at least valid
-        fs.write(configPath, configFileContent, { force });
-    }
-    return configInstance;
+    return fs
+        .prettier(configPath, 'js')
+        .catch((error) => {
+            logError(
+                'Error caught while trying to run prettier on config file; rewriting config file without formatting',
+                error,
+                level,
+                { console, fs },
+            );
+            // re-writing to make sure the file is at least valid
+            fs.write(configPath, configFileContent, { force });
+        })
+        .then(() => configInstance);
 }
 //# sourceMappingURL=getConfig.js.map

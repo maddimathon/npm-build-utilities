@@ -950,9 +950,9 @@ export abstract class AbstractStage<
         handlerArgs?: Partial<AbstractError.Handler.Args>,
     ): Promise<T_Return | "FAILED"> {
 
-        const asyncTryer = async () => tryer( ...( params ?? [] as T_Params ) );
-
-        return asyncTryer().catch( ( error ) => {
+        return Promise.resolve(
+            tryer( ...( params ?? [] as T_Params ) )
+        ).catch( ( error ) => {
 
             this.handleError(
                 error,
@@ -1307,36 +1307,41 @@ export abstract class AbstractStage<
 
 
         this.console.verbose( 'compiling to css at ' + distDir + '...', 1 + logLevelBase );
-        const outputPaths: string[] = await this.compiler.scssBulk(
-            scssPaths.map( ( input ) => ( {
-                input,
-                output: this.fs.pathRelative( input )
-                    .replace(
-                        regex.srcDir,
-                        escRegExpReplace( distDir + '/' )
-                    )
-                    .replace( /\.(sass|scss)$/gi, '.css' )
-                    .replace( /\/_?index\.css$/gi, '.css' ),
-            } ) ),
+        return this.atry(
+            this.compiler.scssBulk,
             ( this.params.verbose ? 2 : 1 ) + logLevelBase,
-            { ...this.sassOpts, ...sassOpts },
-            opts.maxConcurrent,
-        );
+            [
+                scssPaths.map( ( input ) => ( {
+                    input,
+                    output: this.fs.pathRelative( input )
+                        .replace(
+                            regex.srcDir,
+                            escRegExpReplace( distDir + '/' )
+                        )
+                        .replace( /\.(sass|scss)$/gi, '.css' )
+                        .replace( /\/_?index\.css$/gi, '.css' ),
+                } ) ),
+                ( this.params.verbose ? 2 : 1 ) + logLevelBase,
+                { ...this.sassOpts, ...sassOpts },
+                opts.maxConcurrent,
+            ],
+        ).then( async ( outputPaths ) => {
 
-        if ( opts.postCSS ) {
+            // returns
+            if ( !opts.postCSS ) {
+                return outputPaths;
+            }
 
             this.console.verbose( 'processing with postcss...', 1 + logLevelBase );
-            await this.atry(
+            return this.atry(
                 this.compiler.postCSS,
                 ( this.params.verbose ? 2 : 1 ) + logLevelBase,
                 [
                     outputPaths.map( from => ( { from } ) ),
                     ( this.params.verbose ? 2 : 1 ) + logLevelBase,
                 ],
-            );
-        }
-
-        return outputPaths;
+            ).then( () => outputPaths );
+        } );
     }
 }
 

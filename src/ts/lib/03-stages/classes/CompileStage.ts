@@ -273,13 +273,15 @@ export class CompileStage extends AbstractStage<
         this.console.vi.debug( { scssPathArgs }, this.params.verbose ? 3 : 2 );
 
         this.console.verbose( 'compiling to css...', 2 );
-        await Promise.all( scssPathArgs.map(
-            ( { input, output } ) => this.atry(
-                this.compiler.scss,
+        await this.atry(
+            this.compiler.scssBulk,
+            this.params.verbose ? 3 : 2,
+            [
+                scssPathArgs,
                 this.params.verbose ? 3 : 2,
-                [ input, output, this.params.verbose ? 3 : 2, this.sassOpts ],
-            )
-        ) );
+                this.sassOpts,
+            ],
+        );
 
         if ( subStageArgs.postCSS ) {
 

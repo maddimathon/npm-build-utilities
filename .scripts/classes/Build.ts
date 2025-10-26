@@ -161,7 +161,7 @@ export class Build extends BuildStage {
             'src/docs/tsconfig.json',
         ];
 
-        await Promise.all( tsPaths.map(
+        return Promise.all( tsPaths.map(
             ( tsc ) => {
                 this.console.verbose( 'checking project: ' + tsc, 2 );
                 return this.compiler.typescript( tsc, this.params.verbose ? 3 : 2 );

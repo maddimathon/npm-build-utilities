@@ -323,7 +323,7 @@ export class BuildStage extends AbstractStage<
      * ====================================================================== */
 
     protected async runSubStage( subStage: Stage.SubStage.Build ) {
-        await this[ subStage ]();
+        return this[ subStage ]();
     }
 
     /**
@@ -332,7 +332,7 @@ export class BuildStage extends AbstractStage<
      * @category Sub-Stages
      */
     protected async compile() {
-        await this.runStage( 'compile', 1 );
+        return this.runStage( 'compile', 1 );
     }
 
     /**
@@ -341,7 +341,7 @@ export class BuildStage extends AbstractStage<
      * @category Sub-Stages
      */
     protected async document() {
-        await this.runStage( 'document', 1 );
+        return this.runStage( 'document', 1 );
     }
 
     /** 
@@ -512,6 +512,6 @@ export class BuildStage extends AbstractStage<
      * @category Sub-Stages
      */
     protected async test() {
-        await this.runStage( 'test', 1 );
+        return this.runStage( 'test', 1 );
     }
 }

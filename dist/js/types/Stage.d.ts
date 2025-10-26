@@ -13,7 +13,7 @@ import type postcss from 'postcss';
 import type * as postcss_PresetEnv from 'postcss-preset-env';
 import type * as sass from 'sass';
 import type * as typeDoc from "typedoc";
-import type { Json } from '@maddimathon/utility-typescript/types';
+import type { Json, Objects } from '@maddimathon/utility-typescript/types';
 import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
@@ -663,7 +663,9 @@ export declare namespace Stage {
         /**
          * A completed args object.
          */
-        readonly args: Stage.Compiler.Args;
+        readonly args: Stage.Compiler.Args & {
+            sass: Objects.Classify<Compiler.Args.Sass>;
+        };
         /**
          * Default values for the args property.
          */
@@ -820,14 +822,66 @@ export declare namespace Stage {
              */
             type Sass = {
                 /**
+                 * Whether to output the exact compile time.
+                 *
+                 * @since 0.3.0-alpha.1.draft
+                 */
+                benchmarkCompileTime?: boolean;
+                /**
+                 * Extra options that only apply to the CLI.
+                 *
+                 * @since 0.3.0-alpha.1.draft
+                 */
+                cli?: {
+                    'embed-sources'?: boolean;
+                    'embed-source-map'?: boolean;
+                    'error-css'?: boolean;
+                    indented?: boolean;
+                    'source-map-urls'?: "absolute" | "relative";
+                    update?: true;
+                };
+                /**
+                 * Whether to compile via CLI rather than the JS API.
+                 *
+                 * @since 0.3.0-alpha.1.draft
+                 */
+                compileViaCLI?: boolean;
+                /**
                  * Whether the current stage is the result of a watched file.
                  *
                  * @since 0.3.0-alpha.1.draft
                  */
                 isWatchedUpdate?: boolean;
+                /**
+                 * Whether to use the sass package's async package.
+                 *
+                 * @since 0.3.0-alpha.1.draft
+                 */
+                useAsyncCompiler?: boolean;
             } & {
                 [K in keyof sass.Options<"sync">]: sass.Options<"sync">[K];
             };
+            /**
+             * Format used to transalate the sass options to a CLI-compatible
+             * version.
+             *
+             * @since 0.3.0-alpha.1.draft
+             */
+            interface SassCLI {
+                charset?: boolean;
+                'embed-sources'?: boolean;
+                'embed-source-map'?: boolean;
+                'error-css'?: boolean;
+                'fatal-deprecation'?: sass.Options<"sync">['fatalDeprecations'];
+                'future-deprecation'?: sass.Options<"sync">['futureDeprecations'];
+                indented?: boolean;
+                'load-path'?: string | string[];
+                'pkg-importer'?: "node";
+                'source-map'?: boolean;
+                'source-map-urls'?: "absolute" | "relative";
+                style?: sass.Options<"sync">['style'];
+                update?: true;
+            }
         }
     }
     /**
