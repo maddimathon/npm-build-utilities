@@ -236,19 +236,13 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.3.0-alpha.1.draft
      */
-    protected sassCompileAsync(input: string, opts: Stage.Compiler.Args.Sass): Promise<{
-        compiled: sass.CompileResult;
-        end: DateTime<true>;
-    }>;
+    protected sassCompileAsync(input: string, level: number, opts: Stage.Compiler.Args.Sass): Promise<sass.CompileResult>;
     /**
      * Compiles scss via API. This skips compiling options and validating values.
      *
      * @since 0.3.0-alpha.1.draft
      */
-    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, compileFn?: (input: string, opts: Stage.Compiler.Args.Sass) => Promise<{
-        compiled: sass.CompileResult;
-        end: DateTime;
-    }>): Promise<string>;
+    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<string>;
     /**
      * Coverts scss args for the CLI.
      *

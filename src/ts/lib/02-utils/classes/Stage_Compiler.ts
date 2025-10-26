@@ -402,7 +402,10 @@ export class Stage_Compiler implements Stage.Compiler {
         this.getTsConfigOutDir = this.getTsConfigOutDir.bind( this );
         this.postCSS = this.postCSS.bind( this );
         this.scss = this.scss.bind( this );
+        this.scssAPI = this.scssAPI.bind( this );
+        this.scssCLI = this.scssCLI.bind( this );
         this.scssBulk = this.scssBulk.bind( this );
+        this.sassCompileAsync = this.sassCompileAsync.bind( this );
         this.typescript = this.typescript.bind( this );
     }
 
@@ -625,7 +628,7 @@ export class Stage_Compiler implements Stage.Compiler {
         start: DateTime,
     ) {
 
-        this.console.log(
+        this.console.verbose(
             `${ msg } @ ${ start.toFormat( 'H:mm:ss.SSS' ) }`,
             level,
             {
@@ -647,12 +650,38 @@ export class Stage_Compiler implements Stage.Compiler {
      */
     protected async sassCompileAsync(
         input: string,
+        level: number,
         opts: Stage.Compiler.Args.Sass,
     ) {
-        const compiled = await sass.compileAsync( input, opts );
-        const end = DateTime.now();
+        const start = DateTime.now();
 
-        return { compiled, end };
+        if ( opts.benchmarkCompileTime ) {
+            this.benchmarkStartTimeLog( `compiling ${ input }`, level, start );
+        }
+
+        const compiled = await sass.compileAsync( input, opts );
+
+        // returns
+        if ( !compiled ) {
+            this.benchmarkEndTimeLog(
+                `compile FAILED: ${ input }`,
+                level,
+                start,
+                DateTime.now(),
+            );
+            return compiled;
+        }
+
+        if ( opts.benchmarkCompileTime ) {
+            this.benchmarkEndTimeLog(
+                `compile finished: ${ input }`,
+                level,
+                start,
+                DateTime.now(),
+            );
+        }
+
+        return compiled;
     }
 
     /**
@@ -667,11 +696,9 @@ export class Stage_Compiler implements Stage.Compiler {
         sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
         compileFn?: (
             input: string,
+            level: number,
             opts: Stage.Compiler.Args.Sass,
-        ) => Promise<{
-            compiled: sass.CompileResult,
-            end: DateTime,
-        }>,
+        ) => Promise<sass.CompileResult>,
     ) {
         const opts = {
             ...sassCompleteOpts,
@@ -682,33 +709,8 @@ export class Stage_Compiler implements Stage.Compiler {
             ],
         };
 
-        const start = DateTime.now();
-
-        if ( opts.benchmarkCompileTime ) {
-            this.benchmarkStartTimeLog( `compiling ${ input }`, level, start );
-        }
-
-        return ( compileFn ?? this.sassCompileAsync )( input, opts ).then(
-            async ( { compiled, end } ) => {
-                // returns
-                if ( !compiled ) {
-                    this.benchmarkEndTimeLog(
-                        `compile FAILED: ${ input }`,
-                        level,
-                        start,
-                        end,
-                    );
-                    return output;
-                }
-
-                if ( opts.benchmarkCompileTime ) {
-                    this.benchmarkEndTimeLog(
-                        `compile finished: ${ input }`,
-                        level,
-                        start,
-                        end,
-                    );
-                }
+        return ( compileFn ?? this.sassCompileAsync )( input, level, opts ).then(
+            async ( compiled ) => {
 
                 this.params.debug && this.console.verbose(
                     'writing css to path: ' + this.fs.pathRelative( output ),
@@ -900,13 +902,39 @@ export class Stage_Compiler implements Stage.Compiler {
         const compiler = await sass.initAsyncCompiler();
 
         const compileFn = async (
-            input: string,
-            opts: Stage.Compiler.Args.Sass,
+            _input: string,
+            _level: number,
+            _opts: Stage.Compiler.Args.Sass,
         ) => {
-            const compiled = await compiler.compileAsync( input, opts );
-            const end = DateTime.now();
+            const start = DateTime.now();
 
-            return { compiled, end };
+            if ( _opts.benchmarkCompileTime ) {
+                this.benchmarkStartTimeLog( `compiling ${ _input }`, _level, start );
+            }
+
+            const compiled = await compiler.compileAsync( _input, _opts );
+
+            // returns
+            if ( !compiled ) {
+                this.benchmarkEndTimeLog(
+                    `compile FAILED: ${ _input }`,
+                    _level,
+                    start,
+                    DateTime.now(),
+                );
+                return compiled;
+            }
+
+            if ( opts.benchmarkCompileTime ) {
+                this.benchmarkEndTimeLog(
+                    `compile finished: ${ _input }`,
+                    _level,
+                    start,
+                    DateTime.now(),
+                );
+            }
+
+            return compiled;
         };
 
         for ( let i = 0; i < paths.length; i += maxConcurrent ) {

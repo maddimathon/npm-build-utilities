@@ -321,7 +321,10 @@ export class Stage_Compiler {
         this.getTsConfigOutDir = this.getTsConfigOutDir.bind(this);
         this.postCSS = this.postCSS.bind(this);
         this.scss = this.scss.bind(this);
+        this.scssAPI = this.scssAPI.bind(this);
+        this.scssCLI = this.scssCLI.bind(this);
         this.scssBulk = this.scssBulk.bind(this);
+        this.sassCompileAsync = this.sassCompileAsync.bind(this);
         this.typescript = this.typescript.bind(this);
     }
     /* LOCAL METHODS
@@ -496,12 +499,16 @@ export class Stage_Compiler {
      * @since 0.3.0-alpha.1.draft
      */
     benchmarkStartTimeLog(msg, level, start) {
-        this.console.log(`${msg} @ ${start.toFormat('H:mm:ss.SSS')}`, level, {
-            clr: 'grey',
-            italic: true,
-            linesIn: 0,
-            linesOut: 0,
-        });
+        this.console.verbose(
+            `${msg} @ ${start.toFormat('H:mm:ss.SSS')}`,
+            level,
+            {
+                clr: 'grey',
+                italic: true,
+                linesIn: 0,
+                linesOut: 0,
+            },
+        );
     }
     /**
      * Runs the compileAsync from the sass package and returns with an ending
@@ -509,10 +516,31 @@ export class Stage_Compiler {
      *
      * @since 0.3.0-alpha.1.draft
      */
-    async sassCompileAsync(input, opts) {
+    async sassCompileAsync(input, level, opts) {
+        const start = DateTime.now();
+        if (opts.benchmarkCompileTime) {
+            this.benchmarkStartTimeLog(`compiling ${input}`, level, start);
+        }
         const compiled = await sass.compileAsync(input, opts);
-        const end = DateTime.now();
-        return { compiled, end };
+        // returns
+        if (!compiled) {
+            this.benchmarkEndTimeLog(
+                `compile FAILED: ${input}`,
+                level,
+                start,
+                DateTime.now(),
+            );
+            return compiled;
+        }
+        if (opts.benchmarkCompileTime) {
+            this.benchmarkEndTimeLog(
+                `compile finished: ${input}`,
+                level,
+                start,
+                DateTime.now(),
+            );
+        }
+        return compiled;
     }
     /**
      * Compiles scss via API. This skips compiling options and validating values.
@@ -527,30 +555,8 @@ export class Stage_Compiler {
                 new sass.NodePackageImporter(),
             ],
         };
-        const start = DateTime.now();
-        if (opts.benchmarkCompileTime) {
-            this.benchmarkStartTimeLog(`compiling ${input}`, level, start);
-        }
-        return (compileFn ?? this.sassCompileAsync)(input, opts).then(
-            async ({ compiled, end }) => {
-                // returns
-                if (!compiled) {
-                    this.benchmarkEndTimeLog(
-                        `compile FAILED: ${input}`,
-                        level,
-                        start,
-                        end,
-                    );
-                    return output;
-                }
-                if (opts.benchmarkCompileTime) {
-                    this.benchmarkEndTimeLog(
-                        `compile finished: ${input}`,
-                        level,
-                        start,
-                        end,
-                    );
-                }
+        return (compileFn ?? this.sassCompileAsync)(input, level, opts).then(
+            async (compiled) => {
                 this.params.debug
                     && this.console.verbose(
                         'writing css to path: ' + this.fs.pathRelative(output),
@@ -702,10 +708,35 @@ export class Stage_Compiler {
         }
         const compiledPaths = [];
         const compiler = await sass.initAsyncCompiler();
-        const compileFn = async (input, opts) => {
-            const compiled = await compiler.compileAsync(input, opts);
-            const end = DateTime.now();
-            return { compiled, end };
+        const compileFn = async (_input, _level, _opts) => {
+            const start = DateTime.now();
+            if (_opts.benchmarkCompileTime) {
+                this.benchmarkStartTimeLog(
+                    `compiling ${_input}`,
+                    _level,
+                    start,
+                );
+            }
+            const compiled = await compiler.compileAsync(_input, _opts);
+            // returns
+            if (!compiled) {
+                this.benchmarkEndTimeLog(
+                    `compile FAILED: ${_input}`,
+                    _level,
+                    start,
+                    DateTime.now(),
+                );
+                return compiled;
+            }
+            if (opts.benchmarkCompileTime) {
+                this.benchmarkEndTimeLog(
+                    `compile finished: ${_input}`,
+                    _level,
+                    start,
+                    DateTime.now(),
+                );
+            }
+            return compiled;
         };
         for (let i = 0; i < paths.length; i += maxConcurrent) {
             const chunk = paths.slice(i, i + maxConcurrent);
