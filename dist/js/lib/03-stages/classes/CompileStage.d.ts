@@ -54,7 +54,7 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
      *
      * @since 0.2.0-alpha — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
      */
-    protected scss(): Promise<string[] | undefined>;
+    protected scss(): Promise<void>;
     /**
      * Compiles typescript to javascript.
      *

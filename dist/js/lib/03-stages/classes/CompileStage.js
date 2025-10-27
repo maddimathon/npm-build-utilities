@@ -238,10 +238,10 @@ export class CompileStage extends AbstractStage {
                 typeof _outputPaths == 'string' ? [_outputPaths] : _outputPaths;
             // returns
             if (!subStageArgs.postCSS) {
-                return outputPaths;
+                return;
             }
             this.console.verbose('processing with postcss...', 2);
-            return this.atry(
+            await this.atry(
                 this.compiler.postCSS,
                 this.params.verbose ? 3 : 2,
                 [

@@ -293,6 +293,24 @@ export interface Stage<
 export namespace Stage {
 
     /**
+     * Any stage class compatible with this package.
+     * 
+     * These are all lowercase on purpose.
+     * 
+     * @since 0.1.0-alpha
+     * 
+     * @expand
+     */
+    export type Name =
+        | "snapshot"
+        | "compile"
+        | "test"
+        | "document"
+        | "build"
+        | "package"
+        | "release";
+
+    /**
      * An object with an instance of each stage's class.
      *
      * Those that are optional only have abstract classes included in this
@@ -1098,24 +1116,6 @@ export namespace Stage {
             }
         }
     };
-
-    /**
-     * Any stage class compatible with this package.
-     * 
-     * These are all lowercase on purpose.
-     * 
-     * @since 0.1.0-alpha
-     * 
-     * @expand
-     */
-    export type Name =
-        | "snapshot"
-        | "compile"
-        | "test"
-        | "document"
-        | "build"
-        | "package"
-        | "release";
 
     /**
      * Default substage names.

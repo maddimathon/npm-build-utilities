@@ -825,54 +825,59 @@ export class AbstractStage {
      * @experimental
      */
     async runCustomScssDirSubStage(
-        subpath,
+        _subpath,
         _distDir,
         _opts,
         logLevelBase = 1,
         sassOpts = {},
     ) {
+        const subpaths = Array.isArray(_subpath) ? _subpath : [_subpath];
         this.console.progress(
-            'compiling ' + subpath + ' to css...',
+            'compiling ' + subpaths.join(', ') + ' to css...',
             0 + logLevelBase,
         );
-        const distDir =
-            _distDir ?? this.getDistDir(undefined, subpath).replace(/\/$/g, '');
+        const distDir = (_distDir ?? this.getDistDir()).replace(/\/$/g, '');
+        const distSubpaths = subpaths.map((path) =>
+            this.fs.pathResolve(distDir, path),
+        );
         // if the output dir exists, we should delete the old contents
-        if (!this.isWatchedUpdate && this.fs.exists(distDir)) {
+        if (
+            !this.isWatchedUpdate
+            && distSubpaths.filter(this.fs.exists).length
+        ) {
             this.console.verbose(
                 'deleting existing dist files...',
                 1 + logLevelBase,
             );
             this.fs.delete(
-                [distDir],
+                distDir,
                 (this.params.verbose ? 2 : 1) + logLevelBase,
             );
-        }
-        const srcDir = this.getSrcDir(undefined, subpath).replace(/\/+$/gi, '');
-        // returns
-        if (!this.fs.exists(srcDir)) {
-            this.console.progress(
-                'ⅹ source dir '
-                    + this.fs.pathRelative(srcDir)
-                    + ' does not exist, exiting...',
-                1 + logLevelBase,
-            );
-            return [];
-        }
-        // returns
-        if (!this.fs.isDirectory(srcDir)) {
-            this.console.progress(
-                'ⅹ source dir '
-                    + this.fs.pathRelative(srcDir)
-                    + ' is not a directory, exiting...',
-                1 + logLevelBase,
-            );
-            return [];
         }
         const opts = mergeArgs(
             AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS,
             typeof _opts === 'boolean' ? { postCSS: _opts } : _opts,
         );
+        const srcDir = (opts.srcDir ?? this.getSrcDir()).replace(/\/$/g, '');
+        const srcSubpaths = subpaths.map((path) =>
+            this.fs.pathResolve(srcDir, path),
+        );
+        // returns
+        if (!srcSubpaths.filter(this.fs.exists).length) {
+            this.console.progress(
+                `ⅹ source dir(s) ${subpaths.map(this.fs.pathRelative).join(', ')} do not exist in ${srcDir}, exiting...`,
+                1 + logLevelBase,
+            );
+            return [];
+        }
+        // returns
+        if (!srcSubpaths.filter(this.fs.isDirectory).length) {
+            this.console.progress(
+                `ⅹ source dir(s) ${subpaths.map(this.fs.pathRelative).join(', ')} in ${srcDir} are not directories, exiting...`,
+                1 + logLevelBase,
+            );
+            return [];
+        }
         this.params.debug
             && this.console.verbose(
                 'globbing for scss files...',
@@ -880,7 +885,13 @@ export class AbstractStage {
             );
         const scssPaths = this.fs
             .glob(
-                opts.globs.map((_g) => srcDir + '/' + _g.replace(/^\//gi, '')),
+                opts.globs
+                    .map((_g) =>
+                        srcSubpaths.map(
+                            (src) => src + '/' + _g.replace(/^\//gi, ''),
+                        ),
+                    )
+                    .flat(),
                 {
                     ignore: [...FileSystem.globs.SYSTEM, ...opts.ignoreGlobs],
                 },
@@ -889,23 +900,24 @@ export class AbstractStage {
             .map(this.fs.pathRelative);
         // returns
         if (!scssPaths.length) {
-            this.console.verbose(
-                'ⅹ no css, sass, or scss files found',
+            this.console.progress(
+                `ⅹ no css, sass, or scss files found in ${srcDir} subpaths ${subpaths.map(this.fs.pathRelative).join(', ')}, exiting...`,
                 1 + logLevelBase,
+                { italic: true },
             );
             return [];
         }
         const regex = {
-            srcDir: new RegExp(
-                escRegExp(srcDir.replace(/\/$/g, '') + '/'),
-                'gi',
-            ),
+            srcDir: new RegExp(escRegExp(srcDir + '/'), 'gi'),
+        };
+        const regex_replace = {
+            distDir: escRegExpReplace(distDir + '/'),
         };
         const scssPaths_mapped = scssPaths.map((input) => ({
             input,
             output: this.fs
                 .pathRelative(input)
-                .replace(regex.srcDir, escRegExpReplace(distDir + '/'))
+                .replace(regex.srcDir, regex_replace.distDir)
                 .replace(/\.(sass|scss)$/gi, '.css')
                 .replace(/\/_?index\.css$/gi, '.css'),
         }));

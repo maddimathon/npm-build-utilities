@@ -399,9 +399,9 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      *
-     * @since 0.3.0-alpha.1.draft — Added `sassOpts` param.
+     * @since 0.3.0-alpha.1.draft — Added `sassOpts` param and allowed `subpath` to be an array.
      */
-    protected runCustomScssDirSubStage(subpath: string, distDir?: string, opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>, logLevelBase?: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string[]>;
+    protected runCustomScssDirSubStage(subpath: string | string[], distDir?: string, opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>, logLevelBase?: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string[]>;
     /**
      * Deprecated overload here for forward-compatibility.  Please use the
      * overload above instead.
@@ -410,7 +410,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *             {@link AbstractStage.runCustomScssDirSubStage.Opts} object as
      *             the third param instead.
      */
-    protected runCustomScssDirSubStage(subpath: string, distDir?: string, postCSS?: boolean, logLevelBase?: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string[]>;
+    protected runCustomScssDirSubStage(subpath: string | string[], distDir?: string, postCSS?: boolean, logLevelBase?: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string[]>;
 }
 /**
  * Utilities for the {@link AbstractStage} class.
@@ -471,6 +471,13 @@ export declare namespace AbstractStage {
              * @default true
              */
             postCSS: boolean;
+            /**
+             * The base path for the source directory (used to rewrite the
+             * output path).
+             *
+             * @since 0.3.0-alpha.1.draft
+             */
+            srcDir?: string;
         }
     }
 }

@@ -1213,10 +1213,10 @@ export abstract class AbstractStage<
      * 
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding. 
      * 
-     * @since ___PKG_VERSION___ — Added `sassOpts` param.
+     * @since ___PKG_VERSION___ — Added `sassOpts` param and allowed `subpath` to be an array.
      */
     protected async runCustomScssDirSubStage(
-        subpath: string,
+        subpath: string | string[],
         distDir?: string,
         opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
         logLevelBase?: number,
@@ -1232,7 +1232,7 @@ export abstract class AbstractStage<
      *             the third param instead.
      */
     protected async runCustomScssDirSubStage(
-        subpath: string,
+        subpath: string | string[],
         distDir?: string,
         postCSS?: boolean,
         logLevelBase?: number,
@@ -1245,34 +1245,26 @@ export abstract class AbstractStage<
      * @experimental
      */
     protected async runCustomScssDirSubStage(
-        subpath: string,
+        _subpath: string | string[],
         _distDir?: string,
         _opts?: boolean | Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
         logLevelBase: number = 1,
         sassOpts: Stage.Compiler.Args.Sass = {},
     ): Promise<string[]> {
-        this.console.progress( 'compiling ' + subpath + ' to css...', 0 + logLevelBase );
+        const subpaths = Array.isArray( _subpath ) ? _subpath : [ _subpath ];
 
-        const distDir = _distDir ?? this.getDistDir( undefined, subpath ).replace( /\/$/g, '' );
+        this.console.progress( 'compiling ' + subpaths.join( ', ' ) + ' to css...', 0 + logLevelBase );
+
+        const distDir = ( _distDir ?? this.getDistDir() ).replace( /\/$/g, '' );
+
+        const distSubpaths = subpaths.map(
+            path => this.fs.pathResolve( distDir, path )
+        );
 
         // if the output dir exists, we should delete the old contents
-        if ( !this.isWatchedUpdate && this.fs.exists( distDir ) ) {
+        if ( !this.isWatchedUpdate && distSubpaths.filter( this.fs.exists ).length ) {
             this.console.verbose( 'deleting existing dist files...', 1 + logLevelBase );
-            this.fs.delete( [ distDir ], ( this.params.verbose ? 2 : 1 ) + logLevelBase );
-        }
-
-        const srcDir = this.getSrcDir( undefined, subpath ).replace( /\/+$/gi, '' );
-
-        // returns
-        if ( !this.fs.exists( srcDir ) ) {
-            this.console.progress( 'ⅹ source dir ' + this.fs.pathRelative( srcDir ) + ' does not exist, exiting...', 1 + logLevelBase );
-            return [];
-        }
-
-        // returns
-        if ( !this.fs.isDirectory( srcDir ) ) {
-            this.console.progress( 'ⅹ source dir ' + this.fs.pathRelative( srcDir ) + ' is not a directory, exiting...', 1 + logLevelBase );
-            return [];
+            this.fs.delete( distDir, ( this.params.verbose ? 2 : 1 ) + logLevelBase );
         }
 
         const opts = mergeArgs(
@@ -1280,10 +1272,36 @@ export abstract class AbstractStage<
             typeof _opts === 'boolean' ? { postCSS: _opts, } : _opts
         );
 
+        const srcDir = ( opts.srcDir ?? this.getSrcDir() ).replace( /\/$/g, '' );
+
+        const srcSubpaths = subpaths.map(
+            path => this.fs.pathResolve( srcDir, path )
+        );
+
+        // returns
+        if ( !srcSubpaths.filter( this.fs.exists ).length ) {
+            this.console.progress(
+                `ⅹ source dir(s) ${ subpaths.map( this.fs.pathRelative ).join( ', ' ) } do not exist in ${ srcDir }, exiting...`,
+                1 + logLevelBase,
+            );
+            return [];
+        }
+
+        // returns
+        if ( !srcSubpaths.filter( this.fs.isDirectory ).length ) {
+            this.console.progress(
+                `ⅹ source dir(s) ${ subpaths.map( this.fs.pathRelative ).join( ', ' ) } in ${ srcDir } are not directories, exiting...`,
+                1 + logLevelBase,
+            );
+            return [];
+        }
+
         this.params.debug && this.console.verbose( 'globbing for scss files...', 1 + logLevelBase );
 
         const scssPaths = this.fs.glob(
-            opts.globs.map( _g => srcDir + '/' + _g.replace( /^\//gi, '' ) ),
+            opts.globs.map( _g => srcSubpaths.map(
+                src => src + '/' + _g.replace( /^\//gi, '' )
+            ) ).flat(),
             {
                 ignore: [
                     ...FileSystem.globs.SYSTEM,
@@ -1294,25 +1312,30 @@ export abstract class AbstractStage<
 
         // returns
         if ( !scssPaths.length ) {
-            this.console.verbose( 'ⅹ no css, sass, or scss files found', 1 + logLevelBase );
+            this.console.progress(
+                `ⅹ no css, sass, or scss files found in ${ srcDir } subpaths ${ subpaths.map( this.fs.pathRelative ).join( ', ' ) }, exiting...`,
+                1 + logLevelBase,
+                { italic: true }
+            );
             return [];
         }
 
         const regex = {
             srcDir: new RegExp(
-                escRegExp( srcDir.replace( /\/$/g, '' ) + '/' ),
+                escRegExp( srcDir + '/' ),
                 'gi'
             ),
+        };
+
+        const regex_replace = {
+            distDir: escRegExpReplace( distDir + '/' ),
         };
 
         const scssPaths_mapped = scssPaths.map( ( input ) => ( {
             input,
             output: (
                 this.fs.pathRelative( input )
-                    .replace(
-                        regex.srcDir,
-                        escRegExpReplace( distDir + '/' )
-                    )
+                    .replace( regex.srcDir, regex_replace.distDir )
                     .replace( /\.(sass|scss)$/gi, '.css' )
                     .replace( /\/_?index\.css$/gi, '.css' )
             ),
@@ -1448,6 +1471,14 @@ export namespace AbstractStage {
              * @default true
              */
             postCSS: boolean;
+
+            /**
+             * The base path for the source directory (used to rewrite the
+             * output path).
+             *
+             * @since ___PKG_VERSION___
+             */
+            srcDir?: string;
         }
     }
 }
