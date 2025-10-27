@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.1.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.1
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -165,13 +165,13 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
     /**
      * Whether the current run is the result of a watched change.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     get isWatchedUpdate(): boolean;
     /**
      * Default scss options according to config & params.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     get sassOpts(): Stage.Compiler.Args.Sass;
     /**
@@ -399,7 +399,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      *
-     * @since 0.3.0-alpha.1.draft — Added `sassOpts` param and allowed `subpath` to be an array.
+     * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
      */
     protected runCustomScssDirSubStage(subpath: string | string[], distDir?: string, opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>, logLevelBase?: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string[]>;
     /**
@@ -462,7 +462,7 @@ export declare namespace AbstractStage {
             /**
              * Passed to {@link Stage.Compiler.sassBulk}.
              *
-             * @since 0.3.0-alpha.1.draft
+             * @since 0.3.0-alpha.1
              */
             maxConcurrent: undefined | number;
             /**
@@ -475,7 +475,7 @@ export declare namespace AbstractStage {
              * The base path for the source directory (used to rewrite the
              * output path).
              *
-             * @since 0.3.0-alpha.1.draft
+             * @since 0.3.0-alpha.1
              */
             srcDir?: string;
         }

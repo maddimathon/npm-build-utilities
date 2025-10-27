@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.1.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.1
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -414,7 +414,7 @@ export declare namespace Stage {
          * If a string, the string is the source file and will be copied to the
          * default dist directory.
          *
-         * @since 0.3.0-alpha.1.draft
+         * @since 0.3.0-alpha.1
          */
         type CopyFilesInput = string | {
             /**
@@ -440,7 +440,7 @@ export declare namespace Stage {
              * If an object, paths to files copied to the dist directory during
              * compile.
              *
-             * @since 0.3.0-alpha.1.draft — Now using new {@link CopyFilesInput} type.
+             * @since 0.3.0-alpha.1 — Now using new {@link CopyFilesInput} type.
              */
             files: false | {
                 /**
@@ -717,7 +717,7 @@ export declare namespace Stage {
          * @param level         Depth level for this message.
          * @param sassOpts      Overrides for the configured sass options in {@link Stage.Compiler.args}.
          *
-         * @since 0.3.0-alpha.1.draft
+         * @since 0.3.0-alpha.1
          */
         scssBulk(paths: {
             input: string;
@@ -834,13 +834,13 @@ export declare namespace Stage {
                 /**
                  * Whether to output the exact compile time.
                  *
-                 * @since 0.3.0-alpha.1.draft
+                 * @since 0.3.0-alpha.1
                  */
                 benchmarkCompileTime?: boolean;
                 /**
                  * Extra options that only apply to the CLI.
                  *
-                 * @since 0.3.0-alpha.1.draft
+                 * @since 0.3.0-alpha.1
                  */
                 cli?: {
                     'embed-sources'?: boolean;
@@ -853,13 +853,13 @@ export declare namespace Stage {
                 /**
                  * Whether to compile via CLI rather than the JS API.
                  *
-                 * @since 0.3.0-alpha.1.draft
+                 * @since 0.3.0-alpha.1
                  */
                 compileViaCLI?: boolean;
                 /**
                  * Whether the current stage is the result of a watched file.
                  *
-                 * @since 0.3.0-alpha.1.draft
+                 * @since 0.3.0-alpha.1
                  */
                 isWatchedUpdate?: boolean;
             } & {
@@ -869,7 +869,7 @@ export declare namespace Stage {
              * Format used to transalate the sass options to a CLI-compatible
              * version.
              *
-             * @since 0.3.0-alpha.1.draft
+             * @since 0.3.0-alpha.1
              */
             interface SassCLI {
                 charset?: boolean;

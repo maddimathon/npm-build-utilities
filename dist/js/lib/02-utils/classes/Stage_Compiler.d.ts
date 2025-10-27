@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.1.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.1
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -221,38 +221,38 @@ export declare class Stage_Compiler implements Stage.Compiler {
     /**
      * Logs the message for the benchmark end notice.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     protected benchmarkEndTimeLog(msg: string, level: number, start: DateTime, end: DateTime): void;
     /**
      * Logs the message for the benchmark start notice.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     protected benchmarkStartTimeLog(msg: string, level: number, start: DateTime): void;
     /**
      * Runs the compileAsync from the sass package and returns with an ending
      * timestamp.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     protected sassCompileAsync(input: string, level: number, opts: Stage.Compiler.Args.Sass): Promise<sass.CompileResult>;
     /**
      * Compiles scss via API. This skips compiling options and validating values.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<string>;
     /**
      * Coverts scss args for the CLI.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     protected scssCLI_args(completeSassOpts: Stage.Compiler.Args.Sass): string;
     /**
      * Compiles scs via CLI. This skips compiling options and validating values.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     protected scssCLI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<string>;
     /**

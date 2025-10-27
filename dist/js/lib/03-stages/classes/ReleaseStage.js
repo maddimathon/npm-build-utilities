@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.1.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.1
  * @license MIT
  */
 import {

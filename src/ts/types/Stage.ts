@@ -539,7 +539,7 @@ export namespace Stage {
          * If a string, the string is the source file and will be copied to the
          * default dist directory.
          *
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-alpha.1
          */
         export type CopyFilesInput = string | {
 
@@ -569,7 +569,7 @@ export namespace Stage {
              * If an object, paths to files copied to the dist directory during
              * compile.
              *
-             * @since ___PKG_VERSION___ — Now using new {@link CopyFilesInput} type.
+             * @since 0.3.0-alpha.1 — Now using new {@link CopyFilesInput} type.
              */
             files: false | {
 
@@ -916,7 +916,7 @@ export namespace Stage {
          * @param level         Depth level for this message.
          * @param sassOpts      Overrides for the configured sass options in {@link Stage.Compiler.args}.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-alpha.1
          */
         scssBulk(
             paths: {
@@ -1057,14 +1057,14 @@ export namespace Stage {
                 /**
                  * Whether to output the exact compile time.
                  * 
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-alpha.1
                  */
                 benchmarkCompileTime?: boolean;
 
                 /**
                  * Extra options that only apply to the CLI.
                  * 
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-alpha.1
                  */
                 cli?: {
                     'embed-sources'?: boolean;
@@ -1078,14 +1078,14 @@ export namespace Stage {
                 /**
                  * Whether to compile via CLI rather than the JS API.
                  * 
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-alpha.1
                  */
                 compileViaCLI?: boolean;
 
                 /**
                  * Whether the current stage is the result of a watched file.
                  * 
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-alpha.1
                  */
                 isWatchedUpdate?: boolean;
 
@@ -1097,7 +1097,7 @@ export namespace Stage {
              * Format used to transalate the sass options to a CLI-compatible
              * version.
              *
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-alpha.1
              */
             export interface SassCLI {
                 charset?: boolean;

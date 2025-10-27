@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.1.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.1
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -475,7 +475,7 @@ export class Stage_Compiler {
     /**
      * Logs the message for the benchmark end notice.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     benchmarkEndTimeLog(msg, level, start, end) {
         const timePassed = Interval.fromDateTimes(start, end);
@@ -496,7 +496,7 @@ export class Stage_Compiler {
     /**
      * Logs the message for the benchmark start notice.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     benchmarkStartTimeLog(msg, level, start) {
         this.console.verbose(
@@ -514,7 +514,7 @@ export class Stage_Compiler {
      * Runs the compileAsync from the sass package and returns with an ending
      * timestamp.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     async sassCompileAsync(input, level, opts) {
         const start = DateTime.now();
@@ -545,7 +545,7 @@ export class Stage_Compiler {
     /**
      * Compiles scss via API. This skips compiling options and validating values.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     async scssAPI(input, output, level, sassCompleteOpts, compileFn) {
         const opts = {
@@ -592,7 +592,7 @@ export class Stage_Compiler {
     /**
      * Coverts scss args for the CLI.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     scssCLI_args(completeSassOpts) {
         const opts = {
@@ -644,7 +644,7 @@ export class Stage_Compiler {
     /**
      * Compiles scs via CLI. This skips compiling options and validating values.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     async scssCLI(input, output, level, sassCompleteOpts) {
         const start = DateTime.now();

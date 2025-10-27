@@ -589,7 +589,7 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * Logs the message for the benchmark end notice.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.1
      */
     protected benchmarkEndTimeLog(
         msg: string,
@@ -620,7 +620,7 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * Logs the message for the benchmark start notice.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.1
      */
     protected benchmarkStartTimeLog(
         msg: string,
@@ -646,7 +646,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * Runs the compileAsync from the sass package and returns with an ending
      * timestamp.
      *
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.1
      */
     protected async sassCompileAsync(
         input: string,
@@ -687,7 +687,7 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * Compiles scss via API. This skips compiling options and validating values.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.1
      */
     protected async scssAPI(
         input: string,
@@ -749,7 +749,7 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * Coverts scss args for the CLI.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.1
      */
     protected scssCLI_args( completeSassOpts: Stage.Compiler.Args.Sass ) {
         const opts: Objects.Classify<Stage.Compiler.Args.SassCLI> = {
@@ -803,7 +803,7 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * Compiles scs via CLI. This skips compiling options and validating values.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.1
      */
     protected async scssCLI(
         input: string,

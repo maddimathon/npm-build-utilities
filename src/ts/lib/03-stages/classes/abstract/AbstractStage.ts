@@ -391,7 +391,7 @@ export abstract class AbstractStage<
     /**
      * Whether the current run is the result of a watched change.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.1
      */
     public get isWatchedUpdate(): boolean {
 
@@ -408,7 +408,7 @@ export abstract class AbstractStage<
     /**
      * Default scss options according to config & params.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.1
      */
     public get sassOpts(): Stage.Compiler.Args.Sass {
         return {
@@ -1213,7 +1213,7 @@ export abstract class AbstractStage<
      * 
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding. 
      * 
-     * @since ___PKG_VERSION___ — Added `sassOpts` param and allowed `subpath` to be an array.
+     * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
      */
     protected async runCustomScssDirSubStage(
         subpath: string | string[],
@@ -1461,7 +1461,7 @@ export namespace AbstractStage {
             /**
              * Passed to {@link Stage.Compiler.sassBulk}.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-alpha.1
              */
             maxConcurrent: undefined | number;
 
@@ -1476,7 +1476,7 @@ export namespace AbstractStage {
              * The base path for the source directory (used to rewrite the
              * output path).
              *
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-alpha.1
              */
             srcDir?: string;
         }

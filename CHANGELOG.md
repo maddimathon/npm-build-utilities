@@ -19,6 +19,35 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.1** — 2025-10-27
+
+Better compile concurrency and way improves sass compiling!
+
+### Misc. Breaking
+- Added noPropertyAccessFromIndexSignature and noUncheckedIndexedAccess to
+  tsconfig
+
+### Added
+- Added AbstractStage.isWatchedUpdate property
+- Added AbstractStage.sassOpts property
+- Added AbstractStage.runCustomScssDirSubStage sassOpts param
+- Added Stage_Compiler.sassBulk method to run sass compilation concurrently
+    - Updated Stage_Compiler.sass for this to work
+- Added more input options to Compile.files substage
+- Added benchmarkCompileTime option to sass compiler
+- Added option to compile scss via the CLI
+- Added array input to AbstractStage.runCustomScssDirSubStage
+
+### Changed
+- Converted Compile.files substage to be more properly asynchronous
+- Updated API used to sass-embedded for better performance (esp. async)
+
+### Fixed
+- Fixed a bug in AbstractStage.atry that wasn't letting the callback function be
+  actually async
+- Improved AbstractStage.startEndNotice when triggered by a watcher
+
+
 ## **0.3.0-alpha** — 2025-09-21
 
 ### Changed

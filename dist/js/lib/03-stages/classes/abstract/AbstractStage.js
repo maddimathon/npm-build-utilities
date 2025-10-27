@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.1.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.1
  * @license MIT
  */
 import {
@@ -284,7 +284,7 @@ export class AbstractStage {
     /**
      * Whether the current run is the result of a watched change.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     get isWatchedUpdate() {
         return Boolean(
@@ -297,7 +297,7 @@ export class AbstractStage {
     /**
      * Default scss options according to config & params.
      *
-     * @since 0.3.0-alpha.1.draft
+     * @since 0.3.0-alpha.1
      */
     get sassOpts() {
         return {
