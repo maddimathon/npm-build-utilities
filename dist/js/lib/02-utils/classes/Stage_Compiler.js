@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.1
+ * @maddimathon/build-utilities@0.3.0-alpha.2
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -171,17 +171,20 @@ export class Stage_Compiler {
     static get postCssConfig() {
         const features = {
             'all-property': false,
+            'alpha-function': { preserve: false },
             'any-link-pseudo-class': false,
             'blank-pseudo-class': false,
             'break-properties': true,
             'cascade-layers': true,
             'case-insensitive-attributes': true,
             clamp: { preserve: false },
+            'color-function-display-p3-linear': { preserve: false },
             'color-function': { preserve: true },
             'color-functional-notation': false,
-            'color-mix': false,
             'color-mix-variadic-function-arguments': false,
+            'color-mix': false,
             'content-alt-text': { preserve: true },
+            'contrast-color-function': { preserve: true },
             'custom-media-queries': false,
             'custom-properties': { preserve: true },
             'custom-selectors': false,

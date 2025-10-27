@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.1
+ * @maddimathon/build-utilities@0.3.0-alpha.2
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -52,6 +52,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
         readonly presetEnv: {
             readonly features: {
                 readonly 'all-property': false;
+                readonly 'alpha-function': {
+                    readonly preserve: false;
+                };
                 readonly 'any-link-pseudo-class': false;
                 readonly 'blank-pseudo-class': false;
                 readonly 'break-properties': true;
@@ -60,13 +63,19 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly clamp: {
                     readonly preserve: false;
                 };
+                readonly 'color-function-display-p3-linear': {
+                    readonly preserve: false;
+                };
                 readonly 'color-function': {
                     readonly preserve: true;
                 };
                 readonly 'color-functional-notation': false;
-                readonly 'color-mix': false;
                 readonly 'color-mix-variadic-function-arguments': false;
+                readonly 'color-mix': false;
                 readonly 'content-alt-text': {
+                    readonly preserve: true;
+                };
+                readonly 'contrast-color-function': {
                     readonly preserve: true;
                 };
                 readonly 'custom-media-queries': false;

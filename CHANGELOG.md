@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.2** — 2025-10-27
+
+Whoopsie. Forgot dependencies.
+
+
 ## **0.3.0-alpha.1** — 2025-10-27
 
 Better compile concurrency and way improves sass compiling!
