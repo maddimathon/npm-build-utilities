@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2
+ * @maddimathon/build-utilities@0.3.0-alpha.2.draft
  * @license MIT
  */
 import minimist from 'minimist';
@@ -33,4 +33,5 @@ switch (scriptName) {
         await help(params);
         break;
 }
+process.exit();
 //# sourceMappingURL=index.js.map

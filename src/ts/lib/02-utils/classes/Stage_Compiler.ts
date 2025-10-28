@@ -21,6 +21,7 @@ import type {
 } from '@maddimathon/utility-typescript/types';
 
 import {
+    escRegExpReplace,
     mergeArgs,
 } from '@maddimathon/utility-typescript/functions';
 
@@ -43,6 +44,7 @@ import {
 // } from '../../01-config/index.js';
 
 import type { Stage_Console } from './Stage_Console.js';
+import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
 
 
 /**
@@ -353,10 +355,12 @@ export class Stage_Compiler implements Stage.Compiler {
                 fatalDeprecations: undefined,
                 functions: undefined,
                 futureDeprecations: undefined,
+                ignoreWarningsInPackaging: undefined,
                 importers: undefined,
                 isWatchedUpdate: undefined,
                 loadPaths: undefined,
                 logger: undefined,
+                pathToProjectRoot: undefined,
                 quietDeps: undefined,
                 silenceDeprecations: undefined,
                 sourceMap: true,
@@ -655,36 +659,259 @@ export class Stage_Compiler implements Stage.Compiler {
         input: string,
         level: number,
         opts: Stage.Compiler.Args.Sass,
-    ) {
+    ): Promise<sass.CompileResult> {
         const start = DateTime.now();
 
         if ( opts.benchmarkCompileTime ) {
             this.benchmarkStartTimeLog( `compiling ${ input }`, level, start );
         }
 
-        const compiled = await sass.compileAsync( input, opts );
+        return sass.compileAsync( input, opts ).then(
 
-        // returns
-        if ( !compiled ) {
-            this.benchmarkEndTimeLog(
-                `compile FAILED: ${ input }`,
-                level,
-                start,
-                DateTime.now(),
+            ( compiled ) => {
+                if ( opts.benchmarkCompileTime ) {
+
+                    if ( !compiled ) {
+
+                        this.benchmarkEndTimeLog(
+                            `compile FAILED: ${ input }`,
+                            level,
+                            start,
+                            DateTime.now(),
+                        );
+                    } else {
+
+                        this.benchmarkEndTimeLog(
+                            `compile finished: ${ input }`,
+                            level,
+                            start,
+                            DateTime.now(),
+                        );
+                    }
+                }
+                return compiled;
+            },
+
+            ( error ) => {
+                if ( opts.benchmarkCompileTime ) {
+                    this.benchmarkEndTimeLog(
+                        `compile FAILED: ${ input }`,
+                        level,
+                        start,
+                        DateTime.now(),
+                    );
+                }
+                throw error;
+            },
+        );
+    }
+
+    protected _sassLoggerWarningDuringPackaging = false;
+
+    /**
+     * Filters the paths in stack traces from the sass compiler API.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    public sassErrorStackFilter(
+        stack: string,
+        opts: Stage.Compiler.Args.Sass,
+    ): string[] {
+
+        const sassStackRegex = /^(\s*)([^\s]+)\s+(\d+:\d+)(?=\s|$)/i;
+
+        const pathToProjectRoot = opts.pathToProjectRoot
+            ?? this.args.sass.pathToProjectRoot
+            ?? './node_modules/@maddimathon/build-utilities/node_modules';
+
+        const splitStack = stack.split( '\n' ).filter( l => l );
+
+        const sassPathsFiltered = splitStack.map(
+            ( line ) => {
+
+                const match = line.match( sassStackRegex ) as [ string, string, string, string ] | null;
+
+                if ( !match ) { return line; }
+
+                const [
+                    fullMatch,
+                    startPadding,
+                    path,
+                    lineLocation,
+                ] = match;
+
+                if ( !fullMatch ) { return line; }
+
+                const relativePath = this.fs.pathRelative(
+                    this.fs.pathResolve( pathToProjectRoot, path )
+                );
+
+                return line.replace(
+                    sassStackRegex,
+                    escRegExpReplace( `${ startPadding }${ relativePath }:${ lineLocation }` )
+                );
+            }
+        );
+
+        const stackPathRegex = /^(\s*at\s+[^\n]*?\s+)\(?(?:file\:\/\/)?([^\(\)]+)\)?(?=(?:\s*$))/;
+
+        const urlPathsFiltered = sassPathsFiltered.map( ( path ) => {
+
+            const _matches = path.match( stackPathRegex );
+
+            if ( _matches && _matches[ 2 ] ) {
+                path = path.replace( stackPathRegex, '$1' )
+                    + `(${ this.fs.pathRelative( decodeURI( _matches[ 2 ] ) ).replace( ' ', '%20' ) })`;
+            }
+
+            return path;
+        } );
+
+        return urlPathsFiltered;
+    }
+
+    /**
+     * Returns the logger argument for sass API opts.
+     * 
+     * Fires {@link Stage_Compiler._sassLoggerWarningDuringPackaging} event if a
+     * warning is encountered during packaging.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    protected sassLogger(
+        level: number,
+        sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
+    ) {
+
+        const optionSpanMaker = (
+            options: sass.LoggerWarnOptions | { span: sass.SourceSpan; },
+        ) => {
+            if ( !options.span ) {
+                return null;
+            }
+
+            const url = options.span.url && this.fs.pathRelative(
+                decodeURI( options.span.url.pathname )
             );
-            return compiled;
-        }
 
-        if ( opts.benchmarkCompileTime ) {
-            this.benchmarkEndTimeLog(
-                `compile finished: ${ input }`,
-                level,
-                start,
-                DateTime.now(),
-            );
-        }
+            return {
+                start: url && `${ url }:${ options.span.start.line }:${ options.span.start.column }`,
+                end: url && `${ url }:${ options.span.end.line }:${ options.span.end.column }`,
+            };
+        };
 
-        return compiled;
+        const messageMaker = (
+            options: sass.LoggerWarnOptions | { span: sass.SourceSpan; },
+        ): MessageMaker.BulkMsgs => {
+
+            const msgs: MessageMaker.BulkMsgs = [];
+
+            if ( 'stack' in options && options.stack ) {
+
+                const stack = this.sassErrorStackFilter(
+                    options.stack,
+                    sassCompleteOpts
+                );
+
+                stack.length && msgs.push(
+                    [
+                        '\n' + stack.join( '\n' ),
+                        {
+                            italic: true,
+                            maxWidth: null,
+                        }
+                    ]
+                );
+            }
+
+            return msgs;
+        };
+
+        return {
+
+            warn: ( message: string, options: sass.LoggerWarnOptions ) => {
+
+                const msgs: MessageMaker.BulkMsgs = [];
+
+                if ( options.deprecation ) {
+
+                    msgs.push( [
+                        `[Sass: Deprecated] ${ options.deprecationType }`,
+                        {
+                            bold: true,
+                            clr: 'yellow',
+                        },
+                    ] );
+                } else {
+
+                    msgs.push( [
+                        `[Sass: Warning]`,
+                        {
+                            bold: true,
+                        },
+                    ] );
+                }
+
+                if ( options.span ) {
+                    const span = optionSpanMaker( options );
+                    this.console.vi.log( { span }, level );
+                }
+
+                msgs.push( [
+                    message.trim(),
+                    {},
+                ] );
+
+                this.console.warn(
+                    msgs.concat( messageMaker( options ) ),
+                    level,
+                    {
+                        bold: false,
+                        clr: options.deprecation ? this.console.clr : ( this.params.packaging || this.params.releasing ) ? 'red' : 'orange',
+                        italic: false,
+                        linesIn: 1,
+                        linesOut: 1,
+                        joiner: '\n',
+                    },
+                );
+
+                // exits
+                if ( this.params.packaging || this.params.releasing ) {
+                    this._sassLoggerWarningDuringPackaging = true;
+                }
+            },
+
+            debug: ( message: string, options: { span: sass.SourceSpan; } ) => {
+
+                const msgs: MessageMaker.BulkMsgs = [];
+
+                if ( options.span ) {
+                    const span = optionSpanMaker( options );
+                    const spanMsg = span?.start ?? span?.end;
+
+                    spanMsg && msgs.push( [ spanMsg, { italic: true } ] );
+                }
+
+                this.console.log(
+                    [
+                        ...msgs,
+                        [ `[${ options.span ? '' : 'Sass: ' }Debug] `, { bold: true } ],
+                        [ message.trim(), { clr: 'black' } ],
+                        // ...messageMaker( options ),
+                    ],
+                    level,
+                    {
+                        bold: false,
+                        clr: 'grey',
+                        italic: false,
+                        linesIn: 0,
+                        linesOut: 0,
+                        joiner: ' ',
+                        maxWidth: null,
+                    },
+                );
+            },
+        };
     }
 
     /**
@@ -705,6 +932,8 @@ export class Stage_Compiler implements Stage.Compiler {
     ) {
         const opts = {
             ...sassCompleteOpts,
+
+            logger: this.sassLogger( level, sassCompleteOpts ),
 
             importers: [
                 ...sassCompleteOpts.importers ?? [],
@@ -757,7 +986,7 @@ export class Stage_Compiler implements Stage.Compiler {
     protected scssCLI_args( completeSassOpts: Stage.Compiler.Args.Sass ) {
         const opts: Objects.Classify<Stage.Compiler.Args.SassCLI> = {
             charset: completeSassOpts.charset,
-            'embed-sources': completeSassOpts.cli?.[ 'embed-sources' ] ?? completeSassOpts.sourceMap ?? true,
+            'embed-sources': completeSassOpts.cli?.[ 'embed-sources' ] ?? completeSassOpts.sourceMapIncludeSources ?? true,
             'embed-source-map': completeSassOpts.cli?.[ 'embed-source-map' ] ?? completeSassOpts.sourceMap ?? true,
             'error-css': completeSassOpts.cli?.[ 'error-css' ],
             'fatal-deprecation': completeSassOpts.fatalDeprecations,
@@ -845,7 +1074,6 @@ export class Stage_Compiler implements Stage.Compiler {
         level: number,
         sassOpts?: Stage.Compiler.Args.Sass,
     ): Promise<string> {
-
         const opts = mergeArgs( this.args.sass, sassOpts, true );
 
         return (
@@ -857,7 +1085,21 @@ export class Stage_Compiler implements Stage.Compiler {
                     opts,
                 )
                 : this.scssAPI( input, output, level, opts )
-        );
+        ).then( async ( compiled ) => {
+            // prompts for exit
+            if ( this._sassLoggerWarningDuringPackaging ) {
+                // exits process
+                if (
+                    ! await this.console.nc.prompt.bool( {
+                        message: 'A Sass warning fired during a packaging compile — do you want to continue?',
+                    } )
+                ) {
+                    process.exit();
+                }
+            }
+
+            return compiled;
+        } );
     }
 
     public async scssBulk(
@@ -908,37 +1150,54 @@ export class Stage_Compiler implements Stage.Compiler {
             _input: string,
             _level: number,
             _opts: Stage.Compiler.Args.Sass,
-        ) => {
+        ): Promise<sass.CompileResult> => {
             const start = DateTime.now();
 
             if ( _opts.benchmarkCompileTime ) {
                 this.benchmarkStartTimeLog( `compiling ${ _input }`, _level, start );
             }
 
-            const compiled = await compiler.compileAsync( _input, _opts );
+            return compiler.compileAsync( _input, _opts ).then(
 
-            // returns
-            if ( !compiled ) {
-                this.benchmarkEndTimeLog(
-                    `compile FAILED: ${ _input }`,
-                    _level,
-                    start,
-                    DateTime.now(),
-                );
-                return compiled;
-            }
+                ( compiled ) => {
+                    if ( opts.benchmarkCompileTime ) {
 
-            if ( opts.benchmarkCompileTime ) {
-                this.benchmarkEndTimeLog(
-                    `compile finished: ${ _input }`,
-                    _level,
-                    start,
-                    DateTime.now(),
-                );
-            }
+                        if ( !compiled ) {
 
-            return compiled;
+                            this.benchmarkEndTimeLog(
+                                `compile FAILED: ${ _input }`,
+                                _level,
+                                start,
+                                DateTime.now(),
+                            );
+                        } else {
+
+                            this.benchmarkEndTimeLog(
+                                `compile finished: ${ _input }`,
+                                _level,
+                                start,
+                                DateTime.now(),
+                            );
+                        }
+                    }
+                    return compiled;
+                },
+
+                ( error ) => {
+                    if ( opts.benchmarkCompileTime ) {
+                        this.benchmarkEndTimeLog(
+                            `compile FAILED: ${ _input }`,
+                            _level,
+                            start,
+                            DateTime.now(),
+                        );
+                    }
+                    throw error;
+                },
+            );
         };
+
+        const compileErrors: any[] = [];
 
         for ( let i = 0; i < paths.length; i += maxConcurrent ) {
             const chunk = paths.slice( i, i + maxConcurrent );
@@ -947,13 +1206,13 @@ export class Stage_Compiler implements Stage.Compiler {
 
             if ( opts.benchmarkCompileTime ) {
                 this.benchmarkStartTimeLog(
-                    `compiling chunk #${ i + 1 }`,
+                    `compiling chunk #${ ( i / maxConcurrent ) + 1 }`,
                     1 + level,
                     _chunkStart,
                 );
             }
 
-            const compiled = await Promise.all(
+            const compiled = await Promise.allSettled(
                 chunk.map(
                     ( { input, output } ) => this.scssAPI(
                         input,
@@ -963,6 +1222,17 @@ export class Stage_Compiler implements Stage.Compiler {
                         compileFn,
                     )
                 )
+            ).then(
+                arr => arr.map( result => {
+
+                    // returns
+                    if ( result.status == 'rejected' ) {
+                        compileErrors.push( result.reason );
+                        return false;
+                    }
+
+                    return result.value;
+                } ).filter( v => v !== false )
             );
 
             compiledPaths.push( ...compiled );
@@ -970,7 +1240,7 @@ export class Stage_Compiler implements Stage.Compiler {
             if ( opts.benchmarkCompileTime ) {
 
                 this.benchmarkEndTimeLog(
-                    `done compiling chunk #${ i + 1 }`,
+                    `done compiling chunk #${ ( i / maxConcurrent ) + 1 }`,
                     1 + level,
                     _chunkStart,
                     DateTime.now(),
@@ -986,8 +1256,24 @@ export class Stage_Compiler implements Stage.Compiler {
                 DateTime.now(),
             );
         }
-
         await compiler.dispose();
+
+        // throws
+        if ( compileErrors.length ) {
+            compileErrors.forEach( ( err ) => { throw err; } );
+        }
+
+        // prompts for exit
+        if ( this._sassLoggerWarningDuringPackaging ) {
+            // exits process
+            if (
+                ! await this.console.nc.prompt.bool( {
+                    message: 'A Sass warning fired during a packaging compile — do you want to continue?',
+                } )
+            ) {
+                process.exit();
+            }
+        }
         return compiledPaths;
     }
 

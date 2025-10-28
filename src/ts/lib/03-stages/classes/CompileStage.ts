@@ -279,24 +279,28 @@ export class CompileStage extends AbstractStage<
             && scssPathArgs[ 0 ]?.input
             && scssPathArgs[ 0 ]?.output
         )
-            ? this.atry(
-                this.compiler.scss,
-                ( this.params.verbose ? 2 : 1 ),
-                [
-                    scssPathArgs[ 0 ].input,
-                    scssPathArgs[ 0 ].output,
+            ? this.compiler.scss(
+                scssPathArgs[ 0 ].input,
+                scssPathArgs[ 0 ].output,
+                this.params.verbose ? 3 : 2,
+                this.sassOpts,
+            ).catch(
+                error => this.sassErrorHandler(
+                    error,
                     this.params.verbose ? 3 : 2,
                     this.sassOpts,
-                ],
+                )
             )
-            : this.atry(
-                this.compiler.scssBulk,
-                ( this.params.verbose ? 2 : 1 ),
-                [
-                    scssPathArgs,
+            : this.compiler.scssBulk(
+                scssPathArgs,
+                this.params.verbose ? 3 : 2,
+                this.sassOpts,
+            ).catch(
+                error => this.sassErrorHandler(
+                    error,
                     this.params.verbose ? 3 : 2,
                     this.sassOpts,
-                ],
+                )
             );
 
         return compile.then( async ( _outputPaths ) => {
@@ -315,7 +319,7 @@ export class CompileStage extends AbstractStage<
                     outputPaths.map( from => ( { from } ) ),
                     this.params.verbose ? 3 : 2,
                 ],
-            ).then( () => outputPaths );
+            );
         } );
     }
 

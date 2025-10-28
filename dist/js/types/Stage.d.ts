@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2
+ * @maddimathon/build-utilities@0.3.0-alpha.2.draft
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -857,11 +857,24 @@ export declare namespace Stage {
                  */
                 compileViaCLI?: boolean;
                 /**
+                 * Whether to ignore warnings thrown during packaging. If
+                 * falsey, warnings will end the process.
+                 *
+                 * @since 0.3.0-alpha.2.draft
+                 */
+                ignoreWarningsInPackaging?: string;
+                /**
                  * Whether the current stage is the result of a watched file.
                  *
                  * @since 0.3.0-alpha.1
                  */
                 isWatchedUpdate?: boolean;
+                /**
+                 * Used to correct the output paths in the Sass stack trace.
+                 *
+                 * @since 0.3.0-alpha.2.draft
+                 */
+                pathToProjectRoot?: string;
             } & {
                 [K in keyof sass.Options<"async">]: sass.Options<"async">[K];
             };

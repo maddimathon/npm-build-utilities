@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2
+ * @maddimathon/build-utilities@0.3.0-alpha.2.draft
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -174,10 +174,12 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly fatalDeprecations: undefined;
             readonly functions: undefined;
             readonly futureDeprecations: undefined;
+            readonly ignoreWarningsInPackaging: undefined;
             readonly importers: undefined;
             readonly isWatchedUpdate: undefined;
             readonly loadPaths: undefined;
             readonly logger: undefined;
+            readonly pathToProjectRoot: undefined;
             readonly quietDeps: undefined;
             readonly silenceDeprecations: undefined;
             readonly sourceMap: true;
@@ -246,6 +248,27 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @since 0.3.0-alpha.1
      */
     protected sassCompileAsync(input: string, level: number, opts: Stage.Compiler.Args.Sass): Promise<sass.CompileResult>;
+    protected _sassLoggerWarningDuringPackaging: boolean;
+    /**
+     * Filters the paths in stack traces from the sass compiler API.
+     *
+     * @since 0.3.0-alpha.2.draft
+     */
+    sassErrorStackFilter(stack: string, opts: Stage.Compiler.Args.Sass): string[];
+    /**
+     * Returns the logger argument for sass API opts.
+     *
+     * Fires {@link Stage_Compiler._sassLoggerWarningDuringPackaging} event if a
+     * warning is encountered during packaging.
+     *
+     * @since 0.3.0-alpha.2.draft
+     */
+    protected sassLogger(level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): {
+        warn: (message: string, options: sass.LoggerWarnOptions) => void;
+        debug: (message: string, options: {
+            span: sass.SourceSpan;
+        }) => void;
+    };
     /**
      * Compiles scss via API. This skips compiling options and validating values.
      *

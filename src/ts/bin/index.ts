@@ -47,3 +47,5 @@ switch ( scriptName ) {
         await help( params );
         break;
 }
+
+process.exit();

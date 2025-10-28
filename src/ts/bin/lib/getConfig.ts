@@ -178,7 +178,7 @@ export async function getConfig(
 
     // exits process
     if ( noConfigPrompt === 'cancel' ) {
-        process.exit( 0 );
+        process.exit();
     }
 
     const msgArgs = {

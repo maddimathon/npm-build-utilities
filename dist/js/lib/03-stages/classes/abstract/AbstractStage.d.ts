@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2
+ * @maddimathon/build-utilities@0.3.0-alpha.2.draft
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -253,6 +253,12 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @since 0.2.0-alpha
      */
     uncaughtErrorListener(error: unknown): void;
+    /**
+     * Handles errors thrown during sass compile.
+     *
+     * @since 0.3.0-alpha.2.draft
+     */
+    protected sassErrorHandler(error: any, level: number, opts: Stage.Compiler.Args.Sass, args?: Partial<AbstractError.Handler.Args>): string[];
     /**
      * If the `tryer` function has no params, then they are optional.
      *

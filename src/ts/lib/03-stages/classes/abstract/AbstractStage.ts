@@ -8,6 +8,8 @@
  * @license MIT
  */
 
+import * as sass from 'sass-embedded';
+
 import type {
     Json,
 } from '@maddimathon/utility-typescript/types';
@@ -21,6 +23,7 @@ import {
 
 import {
     MessageMaker,
+    VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
 
 
@@ -38,6 +41,8 @@ import {
     SemVer,
     logError,
     StageError,
+    errorStringify,
+    getErrorInfo,
 } from '../../../@internal/index.js';
 
 import {
@@ -758,6 +763,126 @@ export abstract class AbstractStage<
         this.handleError( error as AbstractError.Input, 1 );
     }
 
+    /**
+     * Handles errors thrown during sass compile.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    protected sassErrorHandler(
+        error: any,
+        level: number,
+        opts: Stage.Compiler.Args.Sass,
+        args?: Partial<AbstractError.Handler.Args>,
+    ): string[] {
+
+        const msgs: MessageMaker.BulkMsgs = [];
+
+        if ( typeof error == 'object' ) {
+
+            const errArgs = { exitProcess: false };
+            const [ typedError, errInfo ] = getErrorInfo( error, level, this.console, this.fs, errArgs );
+
+            const isSassError = 'sassStack' in error || 'sassMessage' in error;
+
+            if ( isSassError ) {
+
+                const _typedError = typedError as ( typeof typedError ) & {
+                    sassMessage?: string;
+                    sassStack?: string;
+                    span?: sass.SourceSpan;
+                };
+
+                const fullMessage = this.compiler.sassErrorStackFilter(
+                    String( _typedError.message ).trim().replace( /^Error: /gi, '' ),
+                    opts,
+                ).join( '\n' ).trim();
+
+                const shortMessage = _typedError.sassMessage?.trim() ?? '';
+
+                const messageDetails = fullMessage.replace(
+                    new RegExp(
+                        `^\s*(Error:\s+)*\s*${ escRegExp( shortMessage ) }`,
+                        'gs'
+                    ),
+                    ''
+                ).replace(
+                    /^\s*(\\x1b\[[\d;:]+m\s*)*/gs,
+                    ''
+                ).trim();
+
+                msgs.push(
+                    [ `[Sass: Error] ${ shortMessage }`, { bold: true, italic: false } ],
+                    [ messageDetails, { bold: false, italic: false } ],
+                    ...errorStringify.cause( error, errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.output( error, errInfo, level, this.console, this.fs, errArgs ),
+                );
+
+                if ( error.stack ) {
+
+                    let _rawStack = String( error.stack );
+
+                    if ( error.message ) {
+                        _rawStack = _rawStack.replace(
+                            new RegExp(
+                                `^\s*(Error: )*\s*${ escRegExp( error.message ) }`,
+                                'g'
+                            ),
+                            ''
+                        );
+                    }
+
+                    msgs.push( [
+                        '\n' + this.compiler.sassErrorStackFilter( _rawStack, opts ).join( '\n' ),
+                        {
+                            bold: false,
+                            italic: true,
+                            maxWidth: null,
+                        }
+                    ] );
+                }
+
+                if ( this.params.debug ) {
+                    msgs.push( ...errorStringify.details( error, errInfo, level, this.console, this.fs, errArgs ) );
+                }
+
+            } else if ( error instanceof Error ) {
+
+                msgs.push(
+                    ...errorStringify.message( error, errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.output( error, errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.cause( error, errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.stack( error, errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.details( error, errInfo, level, this.console, this.fs, errArgs ),
+                );
+            } else {
+                msgs.push( [ VariableInspector.stringify( { error } ) ] );
+            }
+        } else {
+            msgs.push( [ VariableInspector.stringify( { error } ) ] );
+        }
+
+        this.console.warn( msgs, level, {
+            bold: true,
+            clr: 'red',
+            italic: false,
+
+            linesIn: 1,
+            linesOut: 1,
+
+            ...args ?? {},
+
+            joiner: '\n',
+        } );
+
+        // exits
+        if ( this.params.packaging || this.params.releasing ) {
+            process.exit();
+        }
+        process.exitCode = 0;
+
+        return [];
+    }
+
 
     /**
      * If the `tryer` function has no params, then they are optional.
@@ -1343,30 +1468,36 @@ export abstract class AbstractStage<
 
         this.console.verbose( 'compiling to css at ' + distDir + '...', 1 + logLevelBase );
 
+        const completeSassOpts = { ...this.sassOpts, ...sassOpts };
+
         const compile = (
             scssPaths_mapped.length < 2
             && scssPaths_mapped[ 0 ]?.input
             && scssPaths_mapped[ 0 ]?.output
         )
-            ? this.atry(
-                this.compiler.scss,
+            ? this.compiler.scss(
+                scssPaths_mapped[ 0 ].input,
+                scssPaths_mapped[ 0 ].output,
                 ( this.params.verbose ? 2 : 1 ) + logLevelBase,
-                [
-                    scssPaths_mapped[ 0 ].input,
-                    scssPaths_mapped[ 0 ].output,
+                completeSassOpts,
+            ).catch(
+                error => this.sassErrorHandler(
+                    error,
                     ( this.params.verbose ? 2 : 1 ) + logLevelBase,
-                    { ...this.sassOpts, ...sassOpts },
-                ],
+                    completeSassOpts,
+                )
             )
-            : this.atry(
-                this.compiler.scssBulk,
+            : this.compiler.scssBulk(
+                scssPaths_mapped,
                 ( this.params.verbose ? 2 : 1 ) + logLevelBase,
-                [
-                    scssPaths_mapped,
+                completeSassOpts,
+                opts.maxConcurrent,
+            ).catch(
+                error => this.sassErrorHandler(
+                    error,
                     ( this.params.verbose ? 2 : 1 ) + logLevelBase,
-                    { ...this.sassOpts, ...sassOpts },
-                    opts.maxConcurrent,
-                ],
+                    completeSassOpts,
+                )
             );
 
         return compile.then( async ( _outputPaths ) => {

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2
+ * @maddimathon/build-utilities@0.3.0-alpha.2.draft
  * @license MIT
  */
 import { timestamp } from '@maddimathon/utility-typescript/functions';
@@ -131,7 +131,7 @@ export async function getConfig(params, console = null, level = 0) {
     });
     // exits process
     if (noConfigPrompt === 'cancel') {
-        process.exit(0);
+        process.exit();
     }
     const msgArgs = {
         depth: level,

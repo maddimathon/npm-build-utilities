@@ -1083,11 +1083,26 @@ export namespace Stage {
                 compileViaCLI?: boolean;
 
                 /**
+                 * Whether to ignore warnings thrown during packaging. If
+                 * falsey, warnings will end the process.
+                 *
+                 * @since ___PKG_VERSION___
+                 */
+                ignoreWarningsInPackaging?: string;
+
+                /**
                  * Whether the current stage is the result of a watched file.
                  * 
                  * @since 0.3.0-alpha.1
                  */
                 isWatchedUpdate?: boolean;
+
+                /**
+                 * Used to correct the output paths in the Sass stack trace.
+                 * 
+                 * @since ___PKG_VERSION___
+                 */
+                pathToProjectRoot?: string;
 
             } & {
                 [ K in keyof sass.Options<"async"> ]: sass.Options<"async">[ K ];
