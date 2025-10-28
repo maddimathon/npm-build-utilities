@@ -25,7 +25,7 @@ Better sass logs & error handling!
 
 ### Added
 - Added custom sass logger functions in Stage_Compiler.sassAPI() via Stage_Compiler.sassLogger()
-- Added pathToProjectRoot option to compiler Sass args to aid in correcting stack path output
+- Added pathToSassLoggingRoot option to compiler Sass args to aid in correcting stack path output
 
 ### Changed
 - Stage_Compiler now prompts before continuing if a sass warning is encountered during a packaging compile

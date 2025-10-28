@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.3
+ * @maddimathon/build-utilities@0.3.0-alpha.4.draft
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -299,7 +299,7 @@ export class Stage_Compiler {
                 isWatchedUpdate: undefined,
                 loadPaths: undefined,
                 logger: undefined,
-                pathToProjectRoot: undefined,
+                pathToSassLoggingRoot: undefined,
                 quietDeps: undefined,
                 silenceDeprecations: undefined,
                 sourceMap: true,
@@ -571,9 +571,9 @@ export class Stage_Compiler {
      */
     sassErrorStackFilter(stack, opts) {
         const sassStackRegex = /^(\s*)([^\s]+)\s+(\d+:\d+)(?=\s|$)/i;
-        const pathToProjectRoot =
-            opts.pathToProjectRoot
-            ?? this.args.sass.pathToProjectRoot
+        const pathToSassLoggingRoot =
+            opts.pathToSassLoggingRoot
+            ?? this.args.sass.pathToSassLoggingRoot
             ?? './node_modules/@maddimathon/build-utilities/node_modules';
         const splitStack = stack.split('\n').filter((l) => l);
         const sassPathsFiltered = splitStack.map((line) => {
@@ -586,7 +586,7 @@ export class Stage_Compiler {
                 return line;
             }
             const relativePath = this.fs.pathRelative(
-                this.fs.pathResolve(pathToProjectRoot, path),
+                this.fs.pathResolve(pathToSassLoggingRoot, path),
             );
             return line.replace(
                 sassStackRegex,
@@ -696,14 +696,24 @@ export class Stage_Compiler {
                 if (options.span) {
                     const span = optionSpanMaker(options);
                     const spanMsg = span?.start ?? span?.end;
-                    spanMsg && msgs.push([spanMsg, { italic: true }]);
+                    spanMsg
+                        && msgs.push([
+                            spanMsg,
+                            {
+                                clr: 'black',
+                                italic: true,
+                            },
+                        ]);
                 }
                 this.console.log(
                     [
                         ...msgs,
                         [
                             `[${options.span ? '' : 'Sass: '}Debug] `,
-                            { bold: true },
+                            {
+                                bold: true,
+                                clr: 'grey',
+                            },
                         ],
                         [message.trim(), { clr: 'black' }],
                         // ...messageMaker( options ),
@@ -711,7 +721,6 @@ export class Stage_Compiler {
                     level,
                     {
                         bold: false,
-                        clr: 'grey',
                         italic: false,
                         linesIn: 0,
                         linesOut: 0,
@@ -870,6 +879,11 @@ export class Stage_Compiler {
                         !(await this.console.nc.prompt.bool({
                             message:
                                 'A Sass warning fired during a packaging compile — do you want to continue?',
+                            msgArgs: {
+                                clr: 'black',
+                                linesIn: 1,
+                                linesOut: 1,
+                            },
                         }))
                     ) {
                         process.exit();
@@ -1016,6 +1030,11 @@ export class Stage_Compiler {
                 !(await this.console.nc.prompt.bool({
                     message:
                         'A Sass warning fired during a packaging compile — do you want to continue?',
+                    msgArgs: {
+                        clr: 'black',
+                        linesIn: 1,
+                        linesOut: 1,
+                    },
                 }))
             ) {
                 process.exit();

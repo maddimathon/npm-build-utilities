@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.3
+ * @maddimathon/build-utilities@0.3.0-alpha.4.draft
  * @license MIT
  */
 import type { CLI, Config, Stage } from '../../../types/index.js';

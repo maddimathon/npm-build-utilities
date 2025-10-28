@@ -1102,7 +1102,7 @@ export namespace Stage {
                  * 
                  * @since 0.3.0-alpha.3
                  */
-                pathToProjectRoot?: string;
+                pathToSassLoggingRoot?: string;
 
             } & {
                 [ K in keyof sass.Options<"async"> ]: sass.Options<"async">[ K ];

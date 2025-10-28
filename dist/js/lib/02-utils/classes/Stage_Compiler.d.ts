@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.3
+ * @maddimathon/build-utilities@0.3.0-alpha.4.draft
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -179,7 +179,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly isWatchedUpdate: undefined;
             readonly loadPaths: undefined;
             readonly logger: undefined;
-            readonly pathToProjectRoot: undefined;
+            readonly pathToSassLoggingRoot: undefined;
             readonly quietDeps: undefined;
             readonly silenceDeprecations: undefined;
             readonly sourceMap: true;
