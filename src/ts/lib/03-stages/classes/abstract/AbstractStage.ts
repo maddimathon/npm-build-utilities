@@ -766,7 +766,7 @@ export abstract class AbstractStage<
     /**
      * Handles errors thrown during sass compile.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.3
      */
     protected sassErrorHandler(
         error: any,

@@ -19,6 +19,20 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.3** — 2025-10-27
+
+Better sass logs & error handling!
+
+### Added
+- Added custom sass logger functions in Stage_Compiler.sassAPI() via Stage_Compiler.sassLogger()
+- Added pathToProjectRoot option to compiler Sass args to aid in correcting stack path output
+
+### Changed
+- Stage_Compiler now prompts before continuing if a sass warning is encountered during a packaging compile
+- Sass errors in build stages now only end process during packaging or release 
+- Errors in Stage_Compiler.scssBulk are now caught & held until all files have compiled (then re-thrown)
+
+
 ## **0.3.0-alpha.2** — 2025-10-27
 
 Whoopsie. Forgot dependencies.

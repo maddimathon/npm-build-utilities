@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.3
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -256,7 +256,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
     /**
      * Handles errors thrown during sass compile.
      *
-     * @since 0.3.0-alpha.2.draft
+     * @since 0.3.0-alpha.3
      */
     protected sassErrorHandler(error: any, level: number, opts: Stage.Compiler.Args.Sass, args?: Partial<AbstractError.Handler.Args>): string[];
     /**

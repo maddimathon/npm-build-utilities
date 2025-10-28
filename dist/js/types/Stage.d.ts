@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.3
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -860,7 +860,7 @@ export declare namespace Stage {
                  * Whether to ignore warnings thrown during packaging. If
                  * falsey, warnings will end the process.
                  *
-                 * @since 0.3.0-alpha.2.draft
+                 * @since 0.3.0-alpha.3
                  */
                 ignoreWarningsInPackaging?: string;
                 /**
@@ -872,7 +872,7 @@ export declare namespace Stage {
                 /**
                  * Used to correct the output paths in the Sass stack trace.
                  *
-                 * @since 0.3.0-alpha.2.draft
+                 * @since 0.3.0-alpha.3
                  */
                 pathToProjectRoot?: string;
             } & {

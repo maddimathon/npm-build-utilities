@@ -1086,7 +1086,7 @@ export namespace Stage {
                  * Whether to ignore warnings thrown during packaging. If
                  * falsey, warnings will end the process.
                  *
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-alpha.3
                  */
                 ignoreWarningsInPackaging?: string;
 
@@ -1100,7 +1100,7 @@ export namespace Stage {
                 /**
                  * Used to correct the output paths in the Sass stack trace.
                  * 
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-alpha.3
                  */
                 pathToProjectRoot?: string;
 

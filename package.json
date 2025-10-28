@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.3.0-alpha.2",
+    "version": "0.3.0-alpha.3",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
     "description": "Opinionated utilities for easy build systems in npm projects.",

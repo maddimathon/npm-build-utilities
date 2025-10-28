@@ -711,7 +711,7 @@ export class Stage_Compiler implements Stage.Compiler {
     /**
      * Filters the paths in stack traces from the sass compiler API.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.3
      */
     public sassErrorStackFilter(
         stack: string,
@@ -776,7 +776,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * Fires {@link Stage_Compiler._sassLoggerWarningDuringPackaging} event if a
      * warning is encountered during packaging.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-alpha.3
      */
     protected sassLogger(
         level: number,

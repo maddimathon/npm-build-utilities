@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.3
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -567,7 +567,7 @@ export class Stage_Compiler {
     /**
      * Filters the paths in stack traces from the sass compiler API.
      *
-     * @since 0.3.0-alpha.2.draft
+     * @since 0.3.0-alpha.3
      */
     sassErrorStackFilter(stack, opts) {
         const sassStackRegex = /^(\s*)([^\s]+)\s+(\d+:\d+)(?=\s|$)/i;
@@ -614,7 +614,7 @@ export class Stage_Compiler {
      * Fires {@link Stage_Compiler._sassLoggerWarningDuringPackaging} event if a
      * warning is encountered during packaging.
      *
-     * @since 0.3.0-alpha.2.draft
+     * @since 0.3.0-alpha.3
      */
     sassLogger(level, sassCompleteOpts) {
         const optionSpanMaker = (options) => {

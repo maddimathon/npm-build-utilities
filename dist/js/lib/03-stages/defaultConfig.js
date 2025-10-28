@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.2.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.3
  * @license MIT
  */
 import { timestamp } from '@maddimathon/utility-typescript/functions';
