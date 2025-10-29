@@ -1125,8 +1125,10 @@ export class Stage_Compiler implements Stage.Compiler {
         const opts = mergeArgs( this.args.sass, sassOpts, true );
         const startTime = DateTime.now();
 
+        const pathCount = paths.length;
+
         if ( opts.benchmarkCompileTime ) {
-            this.benchmarkStartTimeLog( 'bulk compiling', level, startTime );
+            this.benchmarkStartTimeLog( `bulk compiling – ${ pathCount } files`, level, startTime );
         }
 
         // returns
@@ -1142,7 +1144,7 @@ export class Stage_Compiler implements Stage.Compiler {
 
             if ( opts.benchmarkCompileTime ) {
                 this.benchmarkEndTimeLog(
-                    `bulk compile finished`,
+                    `bulk compile finished – ${ pathCount } files`,
                     level,
                     startTime,
                     DateTime.now(),
@@ -1260,7 +1262,7 @@ export class Stage_Compiler implements Stage.Compiler {
 
         if ( opts.benchmarkCompileTime ) {
             this.benchmarkEndTimeLog(
-                `bulk compile finished`,
+                `bulk compile finished – ${ pathCount } files`,
                 level,
                 startTime,
                 DateTime.now(),
