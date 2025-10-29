@@ -1378,20 +1378,6 @@ export abstract class AbstractStage<
     ): Promise<string[]> {
         const subpaths = Array.isArray( _subpath ) ? _subpath : [ _subpath ];
 
-        this.console.progress( 'compiling ' + subpaths.join( ', ' ) + ' to css...', 0 + logLevelBase );
-
-        const distDir = ( _distDir ?? this.getDistDir() ).replace( /\/$/g, '' );
-
-        const distSubpaths = subpaths.map(
-            path => this.fs.pathResolve( distDir, path )
-        );
-
-        // if the output dir exists, we should delete the old contents
-        if ( !this.isWatchedUpdate && distSubpaths.filter( this.fs.exists ).length ) {
-            this.console.verbose( 'deleting existing dist files...', 1 + logLevelBase );
-            this.fs.delete( distDir, ( this.params.verbose ? 2 : 1 ) + logLevelBase );
-        }
-
         const opts = mergeArgs(
             AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS,
             typeof _opts === 'boolean' ? { postCSS: _opts, } : _opts
@@ -1402,6 +1388,20 @@ export abstract class AbstractStage<
         const srcSubpaths = subpaths.map(
             path => this.fs.pathResolve( srcDir, path )
         );
+
+        const distDir = ( _distDir ?? this.getDistDir() ).replace( /\/$/g, '' );
+
+        this.console.progress( 'compiling ' + srcSubpaths.map( this.fs.pathRelative ).join( ', ' ) + ' to css at ' + distDir + '...', 0 + logLevelBase );
+
+        const distSubpaths = subpaths.map(
+            path => this.fs.pathResolve( distDir, path )
+        );
+
+        // if the output dir exists, we should delete the old contents
+        if ( !this.isWatchedUpdate && distSubpaths.filter( this.fs.exists ).length ) {
+            this.console.verbose( 'deleting existing dist files...', 1 + logLevelBase );
+            this.fs.delete( distDir, ( this.params.verbose ? 2 : 1 ) + logLevelBase );
+        }
 
         // returns
         if ( !srcSubpaths.filter( this.fs.exists ).length ) {

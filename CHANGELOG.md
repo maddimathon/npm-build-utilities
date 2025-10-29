@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.4** — 2025-10-29
+
+Very slight updates to progress output in sass compilers.
+
+
 ## **0.3.0-alpha.3** — 2025-10-27
 
 Better sass logs & error handling!

@@ -15,7 +15,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.4.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.4
  * @license MIT
  */
 export type * from './types/index.js';

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.4.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.4
  * @license MIT
  */
 import * as sass from 'sass-embedded';
@@ -1000,11 +1000,23 @@ export class AbstractStage {
         sassOpts = {},
     ) {
         const subpaths = Array.isArray(_subpath) ? _subpath : [_subpath];
-        this.console.progress(
-            'compiling ' + subpaths.join(', ') + ' to css...',
-            0 + logLevelBase,
+        const opts = mergeArgs(
+            AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS,
+            typeof _opts === 'boolean' ? { postCSS: _opts } : _opts,
+        );
+        const srcDir = (opts.srcDir ?? this.getSrcDir()).replace(/\/$/g, '');
+        const srcSubpaths = subpaths.map((path) =>
+            this.fs.pathResolve(srcDir, path),
         );
         const distDir = (_distDir ?? this.getDistDir()).replace(/\/$/g, '');
+        this.console.progress(
+            'compiling '
+                + srcSubpaths.map(this.fs.pathRelative).join(', ')
+                + ' to css at '
+                + distDir
+                + '...',
+            0 + logLevelBase,
+        );
         const distSubpaths = subpaths.map((path) =>
             this.fs.pathResolve(distDir, path),
         );
@@ -1022,14 +1034,6 @@ export class AbstractStage {
                 (this.params.verbose ? 2 : 1) + logLevelBase,
             );
         }
-        const opts = mergeArgs(
-            AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS,
-            typeof _opts === 'boolean' ? { postCSS: _opts } : _opts,
-        );
-        const srcDir = (opts.srcDir ?? this.getSrcDir()).replace(/\/$/g, '');
-        const srcSubpaths = subpaths.map((path) =>
-            this.fs.pathResolve(srcDir, path),
-        );
         // returns
         if (!srcSubpaths.filter(this.fs.exists).length) {
             this.console.progress(

@@ -360,7 +360,7 @@ export class CompileStage extends AbstractStage<
      */
     protected async files() {
         if ( !this.args.files ) { return; }
-        this.console.progress( `copying files project files...`, 1 );
+        this.console.progress( `copying project files...`, 1 );
 
         const distDir = './' + this.getDistDir().trim().replace( /(^\.\/|\/$)/g, '' ) + '/';
         const srcDir = this.getSrcDir().trim().replace( /\/$/g, '' );

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.4.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.4
  * @license MIT
  */
 import {
@@ -302,7 +302,7 @@ export class CompileStage extends AbstractStage {
         if (!this.args.files) {
             return;
         }
-        this.console.progress(`copying files project files...`, 1);
+        this.console.progress(`copying project files...`, 1);
         const distDir =
             './'
             + this.getDistDir()
