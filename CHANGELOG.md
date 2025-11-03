@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.5** — 2025-11-03
+
+Fixing erroneous __filename uses and TypeDoc external reference config.
+
+
 ## **0.3.0-alpha.4** — 2025-10-29
 
 Very slight updates to progress output in sass compilers.

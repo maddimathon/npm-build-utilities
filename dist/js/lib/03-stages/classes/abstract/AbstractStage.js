@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.4
+ * @maddimathon/build-utilities@0.3.0-alpha.5
  * @license MIT
  */
 import * as sass from 'sass-embedded';
@@ -181,7 +181,7 @@ export class AbstractStage {
                     {
                         class: 'AbstractStage',
                         method: 'get version',
-                        file: __filename,
+                        file: 'src/ts/lib/03-stages/classes/abstract/AbstractStage.ts',
                     },
                     { cause: error },
                 );
@@ -216,7 +216,7 @@ export class AbstractStage {
                 {
                     class: 'AbstractStage',
                     method: 'set version',
-                    file: __filename,
+                    file: 'src/ts/lib/03-stages/classes/abstract/AbstractStage.ts',
                 },
                 { cause: error },
             );

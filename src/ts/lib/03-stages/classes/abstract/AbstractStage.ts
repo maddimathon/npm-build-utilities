@@ -248,7 +248,7 @@ export abstract class AbstractStage<
                     {
                         class: 'AbstractStage',
                         method: 'get version',
-                        file: __filename,
+                        file: 'src/ts/lib/03-stages/classes/abstract/AbstractStage.ts',
                     },
                     { cause: error }
                 );
@@ -287,7 +287,7 @@ export abstract class AbstractStage<
                 {
                     class: 'AbstractStage',
                     method: 'set version',
-                    file: __filename,
+                    file: 'src/ts/lib/03-stages/classes/abstract/AbstractStage.ts',
                 },
                 { cause: error }
             );

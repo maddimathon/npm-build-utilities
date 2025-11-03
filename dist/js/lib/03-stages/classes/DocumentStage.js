@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.4
+ * @maddimathon/build-utilities@0.3.0-alpha.5
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -28,6 +28,192 @@ import { AbstractStage } from './abstract/AbstractStage.js';
 export class DocumentStage extends AbstractStage {
     /* STATIC
      * ====================================================================== */
+    /**
+     * Returns external symbol mappings for TypeDoc.
+     *
+     * @category Config
+     *
+     * @since 0.3.0-alpha.5
+     */
+    static get typeDocConfig_externalSymbolLinkMappings() {
+        const sass = {
+            Logger: 'https://sass-lang.com/documentation/js-api/interfaces/logger-1/',
+            NodePackageImporter:
+                'https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/',
+            Options:
+                'https://sass-lang.com/documentation/js-api/interfaces/options/',
+            SassBoolean:
+                'https://sass-lang.com/documentation/js-api/classes/sassboolean/',
+            SassCalculation:
+                'https://sass-lang.com/documentation/js-api/classes/sasscalculation/',
+            SassColor:
+                'https://sass-lang.com/documentation/js-api/classes/sasscolor/',
+            SassFunction:
+                'https://sass-lang.com/documentation/js-api/classes/sassfunction/',
+            SassList:
+                'https://sass-lang.com/documentation/js-api/classes/sasslist/',
+            SassMap:
+                'https://sass-lang.com/documentation/js-api/classes/sassmap/',
+            SassMixin:
+                'https://sass-lang.com/documentation/js-api/classes/sassmixin/',
+            SassNumber:
+                'https://sass-lang.com/documentation/js-api/classes/sassnumber/',
+            SassString:
+                'https://sass-lang.com/documentation/js-api/classes/sassstring/',
+            StringOptions:
+                'https://sass-lang.com/documentation/js-api/interfaces/stringoptions/',
+            Value: 'https://sass-lang.com/documentation/js-api/classes/value/',
+        };
+        const typescript = {
+            Error: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error',
+            'Error.cause':
+                'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause',
+            'Error.name':
+                'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name',
+            Promise:
+                'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise',
+            RegExp: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp',
+            Awaited:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#awaitedtype',
+            Capitalize:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
+            ConstructorParameters:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#constructorparameterstype',
+            Exclude:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#excludeuniontype-excludedmembers',
+            Extract:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#extracttype-union',
+            InstanceType:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype',
+            Lowercase:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
+            NoInfer:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#noinfertype',
+            NonNullable:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#nonnullabletype',
+            Omit: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys',
+            OmitThisParameter:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#omitthisparametertype',
+            Parameters:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype',
+            Partial:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype',
+            Pick: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys',
+            Record: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type',
+            Required:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype',
+            ReturnType:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype',
+            ThisParameterType:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#thisparametertypetype',
+            ThisType:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#thistypetype',
+            Uncapitalize:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
+            Uppercase:
+                'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
+        };
+        return {
+            '@maddimathon/utility-typescript': {
+                mergeArgs:
+                    'https://maddimathon.github.io/utility-typescript/functions/mergeArgs.html',
+                node: 'https://maddimathon.github.io/utility-typescript/classes/node.html',
+                NodeConsole:
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
+                'node.NodeConsole':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
+                NodeFiles:
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles.html',
+                'node.NodeFiles':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles.html',
+                'NodeFiles.Args':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
+                'node.NodeFiles.Args':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
+                'NodeFiles.CopyFileArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/CopyFileArgs.html',
+                'node.NodeFiles.CopyFileArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/CopyFileArgs.html',
+                'NodeFiles.ReadDirArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadDirArgs.html',
+                'node.NodeFiles.ReadDirArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadDirArgs.html',
+                'NodeFiles.ReadFileArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadFileArgs.html',
+                'node.NodeFiles.ReadFileArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadFileArgs.html',
+                'NodeFiles.WriteFileArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/WriteFileArgs.html',
+                'node.NodeFiles.WriteFileArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/WriteFileArgs.html',
+                CustomError:
+                    'https://maddimathon.github.io/utility-typescript/classes/CustomError.html',
+                'CustomError.Args':
+                    'https://maddimathon.github.io/utility-typescript/classes/CustomError/Args.html',
+                'CustomError.NodeCliError':
+                    'https://maddimathon.github.io/utility-typescript/classes/CustomError/NodeCliError.html',
+                Logger: 'https://maddimathon.github.io/utility-typescript/classes/Logger.html',
+                'Logger.Args':
+                    'https://maddimathon.github.io/utility-typescript/classes/Logger/Args.html',
+                MessageMaker:
+                    'https://maddimathon.github.io/utility-typescript/classes/MessageMaker.html',
+                'MessageMaker.BulkMsgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgs.html',
+                'MessageMaker.Colour':
+                    'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/Colour.html',
+                'MessageMaker.MsgArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/MsgArgs.html',
+                'MessageMaker.BulkMsgArgs':
+                    'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgArgs.html',
+                VariableInspector:
+                    'https://maddimathon.github.io/utility-typescript/classes/VariableInspector.html',
+                Json: 'https://maddimathon.github.io/utility-typescript/Types/Json.html',
+                PackageJson:
+                    'https://maddimathon.github.io/utility-typescript/Types/Json/PackageJson.html',
+                'Json.PackageJson':
+                    'https://maddimathon.github.io/utility-typescript/Types/Json/PackageJson.html',
+                Objects:
+                    'https://maddimathon.github.io/utility-typescript/Types/Objects.html',
+                Classify:
+                    'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
+                'Objects.Classify':
+                    'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
+                RecursivePartial:
+                    'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
+                'Objects.RecursivePartial':
+                    'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
+                RecursiveRequired:
+                    'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
+                'Objects.RecursiveRequired':
+                    'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
+            },
+            glob: {
+                GlobOptions:
+                    'https://github.com/search?q=repo%3Aisaacs%2Fnode-glob+path%3A%2F%5Esrc%5C%2F%2F+symbol%3AGlobOptions&type=code',
+            },
+            global: {
+                'Error.name':
+                    'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name',
+            },
+            minify: {
+                Options:
+                    'https://github.com/search?q=repo%3ADefinitelyTyped%2FDefinitelyTyped+path%3A%2F%5Etypes%5C%2Fminify%5C%2F%2F+symbol%3AOptions&type=code',
+            },
+            postcss: {
+                'postcss.process': 'https://postcss.org/api/#processor-process',
+                'postcss.Parser': 'https://postcss.org/api/#postcss-parser',
+                'postcss.SourceMapOptions':
+                    'https://postcss.org/api/#sourcemapoptions',
+                'postcss.Syntax': 'https://postcss.org/api/#syntax',
+            },
+            prettier: {
+                Options: 'https://prettier.io/docs/options',
+            },
+            sass,
+            'sass-embedded': sass,
+            typescript,
+        };
+    }
     /**
      * Returns a default TypeDoc configuration object.  For use as
      * {@link Stage.Args.Document.typeDoc}.
@@ -81,161 +267,13 @@ export class DocumentStage extends AbstractStage {
             excludePrivate: false,
             excludeProtected: false,
             excludeReferences: false,
-            externalSymbolLinkMappings: {
-                '@maddimathon/utility-typescript': {
-                    mergeArgs:
-                        'https://maddimathon.github.io/utility-typescript/functions/mergeArgs.html',
-                    node: 'https://maddimathon.github.io/utility-typescript/classes/node.html',
-                    NodeConsole:
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
-                    'node.NodeConsole':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html',
-                    NodeFiles:
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles.html',
-                    'node.NodeFiles':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles.html',
-                    'NodeFiles.Args':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
-                    'node.NodeFiles.Args':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html',
-                    'NodeFiles.CopyFileArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/CopyFileArgs.html',
-                    'node.NodeFiles.CopyFileArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/CopyFileArgs.html',
-                    'NodeFiles.ReadDirArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadDirArgs.html',
-                    'node.NodeFiles.ReadDirArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadDirArgs.html',
-                    'NodeFiles.ReadFileArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadFileArgs.html',
-                    'node.NodeFiles.ReadFileArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadFileArgs.html',
-                    'NodeFiles.WriteFileArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/WriteFileArgs.html',
-                    'node.NodeFiles.WriteFileArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/WriteFileArgs.html',
-                    CustomError:
-                        'https://maddimathon.github.io/utility-typescript/classes/CustomError.html',
-                    'CustomError.Args':
-                        'https://maddimathon.github.io/utility-typescript/classes/CustomError/Args.html',
-                    'CustomError.NodeCliError':
-                        'https://maddimathon.github.io/utility-typescript/classes/CustomError/NodeCliError.html',
-                    Logger: 'https://maddimathon.github.io/utility-typescript/classes/Logger.html',
-                    'Logger.Args':
-                        'https://maddimathon.github.io/utility-typescript/classes/Logger/Args.html',
-                    MessageMaker:
-                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker.html',
-                    'MessageMaker.BulkMsgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgs.html',
-                    'MessageMaker.Colour':
-                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/Colour.html',
-                    'MessageMaker.MsgArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/MsgArgs.html',
-                    'MessageMaker.BulkMsgArgs':
-                        'https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgArgs.html',
-                    VariableInspector:
-                        'https://maddimathon.github.io/utility-typescript/classes/VariableInspector.html',
-                    Json: 'https://maddimathon.github.io/utility-typescript/Types/Json.html',
-                    PackageJson:
-                        'https://maddimathon.github.io/utility-typescript/Types/Json/PackageJson.html',
-                    'Json.PackageJson':
-                        'https://maddimathon.github.io/utility-typescript/Types/Json/PackageJson.html',
-                    Objects:
-                        'https://maddimathon.github.io/utility-typescript/Types/Objects.html',
-                    Classify:
-                        'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
-                    'Objects.Classify':
-                        'https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html',
-                    RecursivePartial:
-                        'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
-                    'Objects.RecursivePartial':
-                        'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html',
-                    RecursiveRequired:
-                        'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
-                    'Objects.RecursiveRequired':
-                        'https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html',
-                },
-                glob: {
-                    GlobOptions:
-                        'https://github.com/search?q=repo%3Aisaacs%2Fnode-glob+path%3A%2F%5Esrc%5C%2F%2F+symbol%3AGlobOptions&type=code',
-                },
-                global: {
-                    'Error.name':
-                        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name',
-                },
-                minify: {
-                    Options:
-                        'https://github.com/search?q=repo%3ADefinitelyTyped%2FDefinitelyTyped+path%3A%2F%5Etypes%5C%2Fminify%5C%2F%2F+symbol%3AOptions&type=code',
-                },
-                postcss: {
-                    'postcss.process':
-                        'https://postcss.org/api/#processor-process',
-                    'postcss.Parser': 'https://postcss.org/api/#postcss-parser',
-                    'postcss.SourceMapOptions':
-                        'https://postcss.org/api/#sourcemapoptions',
-                    'postcss.Syntax': 'https://postcss.org/api/#syntax',
-                },
-                prettier: {
-                    Options: 'https://prettier.io/docs/options',
-                },
-                sass: {
-                    Options:
-                        'https://sass-lang.com/documentation/js-api/interfaces/options/',
-                },
-                typescript: {
-                    Error: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error',
-                    'Error.cause':
-                        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause',
-                    'Error.name':
-                        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name',
-                    Promise:
-                        'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise',
-                    RegExp: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp',
-                    Awaited:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#awaitedtype',
-                    Capitalize:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
-                    ConstructorParameters:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#constructorparameterstype',
-                    Exclude:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#excludeuniontype-excludedmembers',
-                    Extract:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#extracttype-union',
-                    InstanceType:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype',
-                    Lowercase:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
-                    NoInfer:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#noinfertype',
-                    NonNullable:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#nonnullabletype',
-                    Omit: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys',
-                    OmitThisParameter:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#omitthisparametertype',
-                    Parameters:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype',
-                    Partial:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype',
-                    Pick: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys',
-                    Record: 'https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type',
-                    Required:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype',
-                    ReturnType:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype',
-                    ThisParameterType:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#thisparametertypetype',
-                    ThisType:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#thistypetype',
-                    Uncapitalize:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
-                    Uppercase:
-                        'https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types',
-                },
-            },
+            externalSymbolLinkMappings:
+                DocumentStage.typeDocConfig_externalSymbolLinkMappings,
             githubPages: true,
             groupOrder: [
                 '*',
                 'Documents',
+                'Variables',
                 'Constructors',
                 'Properties',
                 'Accessors',
@@ -282,6 +320,7 @@ export class DocumentStage extends AbstractStage {
             },
             includeVersion: false,
             kindSortOrder: [
+                'Document',
                 'Module',
                 'Constructor',
                 'Property',

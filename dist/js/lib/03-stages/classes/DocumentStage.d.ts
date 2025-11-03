@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.4
+ * @maddimathon/build-utilities@0.3.0-alpha.5
  * @license MIT
  */
 import * as typeDoc from "typedoc";
@@ -20,6 +20,132 @@ import { AbstractStage } from './abstract/AbstractStage.js';
  * @since 0.1.0-alpha
  */
 export declare class DocumentStage extends AbstractStage<Stage.Args.Document, Stage.SubStage.Document> {
+    /**
+     * Returns external symbol mappings for TypeDoc.
+     *
+     * @category Config
+     *
+     * @since 0.3.0-alpha.5
+     */
+    static get typeDocConfig_externalSymbolLinkMappings(): {
+        readonly '@maddimathon/utility-typescript': {
+            readonly mergeArgs: "https://maddimathon.github.io/utility-typescript/functions/mergeArgs.html";
+            readonly node: "https://maddimathon.github.io/utility-typescript/classes/node.html";
+            readonly NodeConsole: "https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html";
+            readonly 'node.NodeConsole': "https://maddimathon.github.io/utility-typescript/classes/node/NodeConsole.html";
+            readonly NodeFiles: "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles.html";
+            readonly 'node.NodeFiles': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles.html";
+            readonly 'NodeFiles.Args': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html";
+            readonly 'node.NodeFiles.Args': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/Args.html";
+            readonly 'NodeFiles.CopyFileArgs': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/CopyFileArgs.html";
+            readonly 'node.NodeFiles.CopyFileArgs': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/CopyFileArgs.html";
+            readonly 'NodeFiles.ReadDirArgs': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadDirArgs.html";
+            readonly 'node.NodeFiles.ReadDirArgs': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadDirArgs.html";
+            readonly 'NodeFiles.ReadFileArgs': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadFileArgs.html";
+            readonly 'node.NodeFiles.ReadFileArgs': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/ReadFileArgs.html";
+            readonly 'NodeFiles.WriteFileArgs': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/WriteFileArgs.html";
+            readonly 'node.NodeFiles.WriteFileArgs': "https://maddimathon.github.io/utility-typescript/classes/node/NodeFiles/WriteFileArgs.html";
+            readonly CustomError: "https://maddimathon.github.io/utility-typescript/classes/CustomError.html";
+            readonly 'CustomError.Args': "https://maddimathon.github.io/utility-typescript/classes/CustomError/Args.html";
+            readonly 'CustomError.NodeCliError': "https://maddimathon.github.io/utility-typescript/classes/CustomError/NodeCliError.html";
+            readonly Logger: "https://maddimathon.github.io/utility-typescript/classes/Logger.html";
+            readonly 'Logger.Args': "https://maddimathon.github.io/utility-typescript/classes/Logger/Args.html";
+            readonly MessageMaker: "https://maddimathon.github.io/utility-typescript/classes/MessageMaker.html";
+            readonly 'MessageMaker.BulkMsgs': "https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgs.html";
+            readonly 'MessageMaker.Colour': "https://maddimathon.github.io/utility-typescript/classes/MessageMaker/Colour.html";
+            readonly 'MessageMaker.MsgArgs': "https://maddimathon.github.io/utility-typescript/classes/MessageMaker/MsgArgs.html";
+            readonly 'MessageMaker.BulkMsgArgs': "https://maddimathon.github.io/utility-typescript/classes/MessageMaker/BulkMsgArgs.html";
+            readonly VariableInspector: "https://maddimathon.github.io/utility-typescript/classes/VariableInspector.html";
+            readonly Json: "https://maddimathon.github.io/utility-typescript/Types/Json.html";
+            readonly PackageJson: "https://maddimathon.github.io/utility-typescript/Types/Json/PackageJson.html";
+            readonly 'Json.PackageJson': "https://maddimathon.github.io/utility-typescript/Types/Json/PackageJson.html";
+            readonly Objects: "https://maddimathon.github.io/utility-typescript/Types/Objects.html";
+            readonly Classify: "https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html";
+            readonly 'Objects.Classify': "https://maddimathon.github.io/utility-typescript/Types/Objects/Classify.html";
+            readonly RecursivePartial: "https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html";
+            readonly 'Objects.RecursivePartial': "https://maddimathon.github.io/utility-typescript/Types/Objects/RecursivePartial.html";
+            readonly RecursiveRequired: "https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html";
+            readonly 'Objects.RecursiveRequired': "https://maddimathon.github.io/utility-typescript/Types/Objects/RecursiveRequired.html";
+        };
+        readonly glob: {
+            readonly GlobOptions: "https://github.com/search?q=repo%3Aisaacs%2Fnode-glob+path%3A%2F%5Esrc%5C%2F%2F+symbol%3AGlobOptions&type=code";
+        };
+        readonly global: {
+            readonly 'Error.name': "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name";
+        };
+        readonly minify: {
+            readonly Options: "https://github.com/search?q=repo%3ADefinitelyTyped%2FDefinitelyTyped+path%3A%2F%5Etypes%5C%2Fminify%5C%2F%2F+symbol%3AOptions&type=code";
+        };
+        readonly postcss: {
+            readonly 'postcss.process': "https://postcss.org/api/#processor-process";
+            readonly 'postcss.Parser': "https://postcss.org/api/#postcss-parser";
+            readonly 'postcss.SourceMapOptions': "https://postcss.org/api/#sourcemapoptions";
+            readonly 'postcss.Syntax': "https://postcss.org/api/#syntax";
+        };
+        readonly prettier: {
+            readonly Options: "https://prettier.io/docs/options";
+        };
+        readonly sass: {
+            readonly Logger: "https://sass-lang.com/documentation/js-api/interfaces/logger-1/";
+            readonly NodePackageImporter: "https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/";
+            readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";
+            readonly SassBoolean: "https://sass-lang.com/documentation/js-api/classes/sassboolean/";
+            readonly SassCalculation: "https://sass-lang.com/documentation/js-api/classes/sasscalculation/";
+            readonly SassColor: "https://sass-lang.com/documentation/js-api/classes/sasscolor/";
+            readonly SassFunction: "https://sass-lang.com/documentation/js-api/classes/sassfunction/";
+            readonly SassList: "https://sass-lang.com/documentation/js-api/classes/sasslist/";
+            readonly SassMap: "https://sass-lang.com/documentation/js-api/classes/sassmap/";
+            readonly SassMixin: "https://sass-lang.com/documentation/js-api/classes/sassmixin/";
+            readonly SassNumber: "https://sass-lang.com/documentation/js-api/classes/sassnumber/";
+            readonly SassString: "https://sass-lang.com/documentation/js-api/classes/sassstring/";
+            readonly StringOptions: "https://sass-lang.com/documentation/js-api/interfaces/stringoptions/";
+            readonly Value: "https://sass-lang.com/documentation/js-api/classes/value/";
+        };
+        readonly 'sass-embedded': {
+            readonly Logger: "https://sass-lang.com/documentation/js-api/interfaces/logger-1/";
+            readonly NodePackageImporter: "https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/";
+            readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";
+            readonly SassBoolean: "https://sass-lang.com/documentation/js-api/classes/sassboolean/";
+            readonly SassCalculation: "https://sass-lang.com/documentation/js-api/classes/sasscalculation/";
+            readonly SassColor: "https://sass-lang.com/documentation/js-api/classes/sasscolor/";
+            readonly SassFunction: "https://sass-lang.com/documentation/js-api/classes/sassfunction/";
+            readonly SassList: "https://sass-lang.com/documentation/js-api/classes/sasslist/";
+            readonly SassMap: "https://sass-lang.com/documentation/js-api/classes/sassmap/";
+            readonly SassMixin: "https://sass-lang.com/documentation/js-api/classes/sassmixin/";
+            readonly SassNumber: "https://sass-lang.com/documentation/js-api/classes/sassnumber/";
+            readonly SassString: "https://sass-lang.com/documentation/js-api/classes/sassstring/";
+            readonly StringOptions: "https://sass-lang.com/documentation/js-api/interfaces/stringoptions/";
+            readonly Value: "https://sass-lang.com/documentation/js-api/classes/value/";
+        };
+        readonly typescript: {
+            readonly Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error";
+            readonly 'Error.cause': "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/cause";
+            readonly 'Error.name': "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error/name";
+            readonly Promise: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise";
+            readonly RegExp: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp";
+            readonly Awaited: "https://www.typescriptlang.org/docs/handbook/utility-types.html#awaitedtype";
+            readonly Capitalize: "https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types";
+            readonly ConstructorParameters: "https://www.typescriptlang.org/docs/handbook/utility-types.html#constructorparameterstype";
+            readonly Exclude: "https://www.typescriptlang.org/docs/handbook/utility-types.html#excludeuniontype-excludedmembers";
+            readonly Extract: "https://www.typescriptlang.org/docs/handbook/utility-types.html#extracttype-union";
+            readonly InstanceType: "https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypetype";
+            readonly Lowercase: "https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types";
+            readonly NoInfer: "https://www.typescriptlang.org/docs/handbook/utility-types.html#noinfertype";
+            readonly NonNullable: "https://www.typescriptlang.org/docs/handbook/utility-types.html#nonnullabletype";
+            readonly Omit: "https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys";
+            readonly OmitThisParameter: "https://www.typescriptlang.org/docs/handbook/utility-types.html#omitthisparametertype";
+            readonly Parameters: "https://www.typescriptlang.org/docs/handbook/utility-types.html#parameterstype";
+            readonly Partial: "https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype";
+            readonly Pick: "https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys";
+            readonly Record: "https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type";
+            readonly Required: "https://www.typescriptlang.org/docs/handbook/utility-types.html#requiredtype";
+            readonly ReturnType: "https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype";
+            readonly ThisParameterType: "https://www.typescriptlang.org/docs/handbook/utility-types.html#thisparametertypetype";
+            readonly ThisType: "https://www.typescriptlang.org/docs/handbook/utility-types.html#thistypetype";
+            readonly Uncapitalize: "https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types";
+            readonly Uppercase: "https://www.typescriptlang.org/docs/handbook/utility-types.html#intrinsic-string-manipulation-types";
+        };
+    };
     /**
      * Returns a default TypeDoc configuration object.  For use as
      * {@link Stage.Args.Document.typeDoc}.
@@ -101,7 +227,36 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
                 readonly Options: "https://prettier.io/docs/options";
             };
             readonly sass: {
+                readonly Logger: "https://sass-lang.com/documentation/js-api/interfaces/logger-1/";
+                readonly NodePackageImporter: "https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/";
                 readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";
+                readonly SassBoolean: "https://sass-lang.com/documentation/js-api/classes/sassboolean/";
+                readonly SassCalculation: "https://sass-lang.com/documentation/js-api/classes/sasscalculation/";
+                readonly SassColor: "https://sass-lang.com/documentation/js-api/classes/sasscolor/";
+                readonly SassFunction: "https://sass-lang.com/documentation/js-api/classes/sassfunction/";
+                readonly SassList: "https://sass-lang.com/documentation/js-api/classes/sasslist/";
+                readonly SassMap: "https://sass-lang.com/documentation/js-api/classes/sassmap/";
+                readonly SassMixin: "https://sass-lang.com/documentation/js-api/classes/sassmixin/";
+                readonly SassNumber: "https://sass-lang.com/documentation/js-api/classes/sassnumber/";
+                readonly SassString: "https://sass-lang.com/documentation/js-api/classes/sassstring/";
+                readonly StringOptions: "https://sass-lang.com/documentation/js-api/interfaces/stringoptions/";
+                readonly Value: "https://sass-lang.com/documentation/js-api/classes/value/";
+            };
+            readonly 'sass-embedded': {
+                readonly Logger: "https://sass-lang.com/documentation/js-api/interfaces/logger-1/";
+                readonly NodePackageImporter: "https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/";
+                readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";
+                readonly SassBoolean: "https://sass-lang.com/documentation/js-api/classes/sassboolean/";
+                readonly SassCalculation: "https://sass-lang.com/documentation/js-api/classes/sasscalculation/";
+                readonly SassColor: "https://sass-lang.com/documentation/js-api/classes/sasscolor/";
+                readonly SassFunction: "https://sass-lang.com/documentation/js-api/classes/sassfunction/";
+                readonly SassList: "https://sass-lang.com/documentation/js-api/classes/sasslist/";
+                readonly SassMap: "https://sass-lang.com/documentation/js-api/classes/sassmap/";
+                readonly SassMixin: "https://sass-lang.com/documentation/js-api/classes/sassmixin/";
+                readonly SassNumber: "https://sass-lang.com/documentation/js-api/classes/sassnumber/";
+                readonly SassString: "https://sass-lang.com/documentation/js-api/classes/sassstring/";
+                readonly StringOptions: "https://sass-lang.com/documentation/js-api/interfaces/stringoptions/";
+                readonly Value: "https://sass-lang.com/documentation/js-api/classes/value/";
             };
             readonly typescript: {
                 readonly Error: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error";
@@ -133,7 +288,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
             };
         };
         readonly githubPages: true;
-        readonly groupOrder: ["*", "Documents", "Constructors", "Properties", "Accessors", "Functions", "Methods", "Classes", "Interfaces", "Type Aliases", "Namespaces", "Modules"];
+        readonly groupOrder: ["*", "Documents", "Variables", "Constructors", "Properties", "Accessors", "Functions", "Methods", "Classes", "Interfaces", "Type Aliases", "Namespaces", "Modules"];
         readonly groupReferencesByType: true;
         readonly hideGenerator: true;
         readonly highlightLanguages: [...import("@gerrit0/mini-shiki").BundledLanguage[], "astro", "csv", "handlebars", "jsx", "latex", "markdown", "md", "php", "regex", "regexp", "sass", "scss", "sh", "shell", "shellscript", "sql", "swift", "tsv", "vue-html", "vue", "xml", "yaml", "yml", "zsh"];
@@ -142,7 +297,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
             readonly exampleTag: false;
         };
         readonly includeVersion: false;
-        readonly kindSortOrder: ["Module", "Constructor", "Property", "Variable", "Function", "Accessor", "Method", "Enum", "EnumMember", "Class", "Interface", "TypeAlias", "TypeLiteral", "Namespace", "Reference", "Project", "Parameter", "TypeParameter", "CallSignature", "ConstructorSignature", "IndexSignature", "GetSignature", "SetSignature"];
+        readonly kindSortOrder: ["Document", "Module", "Constructor", "Property", "Variable", "Function", "Accessor", "Method", "Enum", "EnumMember", "Class", "Interface", "TypeAlias", "TypeLiteral", "Namespace", "Reference", "Project", "Parameter", "TypeParameter", "CallSignature", "ConstructorSignature", "IndexSignature", "GetSignature", "SetSignature"];
         readonly markdownLinkExternal: true;
         readonly name: string;
         readonly navigationLinks: {
