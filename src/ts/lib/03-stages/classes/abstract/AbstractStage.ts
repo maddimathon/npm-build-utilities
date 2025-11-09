@@ -793,18 +793,22 @@ export abstract class AbstractStage<
                 };
 
                 const fullMessage = this.compiler.sassErrorStackFilter(
-                    String( _typedError.message ).trim().replace( /^Error: /gi, '' ),
+                    String( _typedError.message ).trim().replace( /^\s*(Error:\s*)+\s+/gi, '' ),
                     opts,
                 ).join( '\n' ).trim();
 
                 const shortMessage = _typedError.sassMessage?.trim().replace(
-                    /^\s*(Error:\s+)*\s*/gs,
+                    /^\s*(Error:\s*)+\s+/gs,
                     ''
                 ) ?? '';
 
+                const shortMessage_regex = shortMessage.split( /\n+/ ).map(
+                    line => escRegExp( line )
+                ).join( '[\\n\\s]*' );
+
                 const messageDetails = fullMessage.replace(
                     new RegExp(
-                        `^\s*(Error:\s+)*\s*(${ escRegExp( shortMessage ) })?`,
+                        `^\s*((Error:\s*)*\s+)?\s*(${ shortMessage_regex })?`,
                         'gs'
                     ),
                     ''

@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.8** — 2025-11-09
+
+Quick fix to replacements in sass error handling of multi-line messages.
+
+
 ## **0.3.0-alpha.7** — 2025-11-09
 
 Quick fix to criteria for printing debug var dump in errors.

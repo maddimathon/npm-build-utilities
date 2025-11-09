@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.7
+ * @maddimathon/build-utilities@0.3.0-alpha.8
  * @license MIT
  */
 import * as sass from 'sass-embedded';
@@ -607,7 +607,7 @@ export class AbstractStage {
                     .sassErrorStackFilter(
                         String(_typedError.message)
                             .trim()
-                            .replace(/^Error: /gi, ''),
+                            .replace(/^\s*(Error:\s*)+\s+/gi, ''),
                         opts,
                     )
                     .join('\n')
@@ -615,11 +615,15 @@ export class AbstractStage {
                 const shortMessage =
                     _typedError.sassMessage
                         ?.trim()
-                        .replace(/^\s*(Error:\s+)*\s*/gs, '') ?? '';
+                        .replace(/^\s*(Error:\s*)+\s+/gs, '') ?? '';
+                const shortMessage_regex = shortMessage
+                    .split(/\n+/)
+                    .map((line) => escRegExp(line))
+                    .join('[\\n\\s]*');
                 const messageDetails = fullMessage
                     .replace(
                         new RegExp(
-                            `^\s*(Error:\s+)*\s*(${escRegExp(shortMessage)})?`,
+                            `^\s*((Error:\s*)*\s+)?\s*(${shortMessage_regex})?`,
                             'gs',
                         ),
                         '',
