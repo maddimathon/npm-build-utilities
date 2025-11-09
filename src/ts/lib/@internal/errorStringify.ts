@@ -294,41 +294,28 @@ export function errorStringify(
         ...errorStringify.details( error, info, level, console, fs, args ),
     ];
 
-    if (
-        (
-            error instanceof UnknownCaughtError
-            && !( error.cause instanceof Error )
-        )
-        || console.params.debug
-    ) {
+    // if (
+    //     (
+    //         error instanceof UnknownCaughtError
+    //         && !( error.cause instanceof Error )
+    //     )
+    //     || console.params.debug
+    // ) {
 
+    //     msgs.push(
+    //         ...errorStringify.heading( 'Dump' ),
+    //         ...errorStringify.dump( error, info, level, console, fs, args ),
+    //     );
+    // } else if ( console.params.debug ) {
+    //     msgs.push(
+    //         ...errorStringify.heading( 'Dump' ),
+    //         [ 'No content.', { bold: false, italic: true } ]
+    //     );
+    // }
+
+    if ( console.params.debug ) {
         msgs.push(
-            ...errorStringify.heading( 'Dump' ),
-            ...errorStringify.validateMsgsLength(
-                info,
-                console,
-                fs,
-                args,
-                [
-                    [
-                        VariableInspector.stringify( { info } ),
-                        { bold: false, italic: false, maxWidth: null, }
-                    ],
-                    [
-                        VariableInspector.stringify( { error } ),
-                        { bold: false, italic: false, maxWidth: null, }
-                    ],
-                    [
-                        VariableInspector.stringify( { 'error.toString()': error.toString() } ),
-                        { bold: false, italic: false, maxWidth: null, }
-                    ],
-                ],
-            ),
-        );
-    } else if ( console.params.debug ) {
-        msgs.push(
-            ...errorStringify.heading( 'Dump' ),
-            [ 'No content.', { bold: false, italic: true } ]
+            ...errorStringify.dump( error, info, level, console, fs, args ),
         );
     }
 
@@ -670,6 +657,67 @@ export namespace errorStringify {
                     italic: false,
                     maxWidth: null,
                 } ] ],
+            ),
+        ];
+
+        return msgs;
+    }
+
+    /**
+     * Formats a var dump of the error itself.
+     * 
+     * @since 0.3.0-alpha.6
+     */
+    export function dump(
+        error: ReturnType<typeof getErrorInfo>[ 0 ],
+        info: errorStringify.Info,
+        level: number,
+        console: Logger,
+        fs: FileSystemType,
+        args: Partial<AbstractError.Handler.Args>,
+    ): MessageMaker.BulkMsgs {
+        // returns
+        if (
+            (
+                error instanceof UnknownCaughtError
+                && !( error.cause instanceof Error )
+            )
+            || console.params.debug
+        ) {
+            return [
+                ...errorStringify.heading( 'Dump' ),
+                [ 'No content.', { bold: false, italic: true } ]
+            ];
+        }
+
+        const dumps: MessageMaker.BulkMsgs = [
+            [
+                VariableInspector.stringify( { error } ),
+                { bold: false, italic: false, maxWidth: null, }
+            ],
+        ];
+
+        if ( console.params.verbose ) {
+            dumps.push(
+                [
+                    VariableInspector.stringify( { info } ),
+                    { bold: false, italic: false, maxWidth: null, }
+                ],
+                [
+                    VariableInspector.stringify( { 'error.toString()': error.toString() } ),
+                    { bold: false, italic: false, maxWidth: null, }
+                ],
+            );
+        }
+
+        const msgs: MessageMaker.BulkMsgs = [
+            ...errorStringify.heading( 'Dump' ),
+            ...errorStringify.validateMsgsLength(
+                info,
+                console,
+                fs,
+                args,
+                dumps,
             ),
         ];
 

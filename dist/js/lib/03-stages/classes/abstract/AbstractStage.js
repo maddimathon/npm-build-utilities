@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.5
+ * @maddimathon/build-utilities@0.3.0-alpha.6
  * @license MIT
  */
 import * as sass from 'sass-embedded';
@@ -612,11 +612,14 @@ export class AbstractStage {
                     )
                     .join('\n')
                     .trim();
-                const shortMessage = _typedError.sassMessage?.trim() ?? '';
+                const shortMessage =
+                    _typedError.sassMessage
+                        ?.trim()
+                        .replace(/^\s*(Error:\s+)*\s*/gs, '') ?? '';
                 const messageDetails = fullMessage
                     .replace(
                         new RegExp(
-                            `^\s*(Error:\s+)*\s*${escRegExp(shortMessage)}`,
+                            `^\s*(Error:\s+)*\s*(${escRegExp(shortMessage)})?`,
                             'gs',
                         ),
                         '',
@@ -672,6 +675,14 @@ export class AbstractStage {
                 if (this.params.debug) {
                     msgs.push(
                         ...errorStringify.details(
+                            error,
+                            errInfo,
+                            level,
+                            this.console,
+                            this.fs,
+                            errArgs,
+                        ),
+                        ...errorStringify.dump(
                             error,
                             errInfo,
                             level,

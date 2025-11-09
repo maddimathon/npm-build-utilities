@@ -17,7 +17,7 @@
  * @internal
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.5
+ * @maddimathon/build-utilities@0.3.0-alpha.6
  * @license MIT
  */
 export * from './@internal/classes/abstract/AbstractError.js';

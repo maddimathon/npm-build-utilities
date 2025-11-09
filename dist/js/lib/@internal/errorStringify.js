@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.5
+ * @maddimathon/build-utilities@0.3.0-alpha.6
  * @license MIT
  */
 import { slugify, typeOf } from '@maddimathon/utility-typescript/functions';
@@ -225,34 +225,27 @@ export function errorStringify(_error, level, console, fs, args) {
         ...errorStringify.stack(error, info, level, console, fs, args),
         ...errorStringify.details(error, info, level, console, fs, args),
     ];
-    if (
-        (error instanceof UnknownCaughtError && !(error.cause instanceof Error))
-        || console.params.debug
-    ) {
+    // if (
+    //     (
+    //         error instanceof UnknownCaughtError
+    //         && !( error.cause instanceof Error )
+    //     )
+    //     || console.params.debug
+    // ) {
+    //     msgs.push(
+    //         ...errorStringify.heading( 'Dump' ),
+    //         ...errorStringify.dump( error, info, level, console, fs, args ),
+    //     );
+    // } else if ( console.params.debug ) {
+    //     msgs.push(
+    //         ...errorStringify.heading( 'Dump' ),
+    //         [ 'No content.', { bold: false, italic: true } ]
+    //     );
+    // }
+    if (console.params.debug) {
         msgs.push(
-            ...errorStringify.heading('Dump'),
-            ...errorStringify.validateMsgsLength(info, console, fs, args, [
-                [
-                    VariableInspector.stringify({ info }),
-                    { bold: false, italic: false, maxWidth: null },
-                ],
-                [
-                    VariableInspector.stringify({ error }),
-                    { bold: false, italic: false, maxWidth: null },
-                ],
-                [
-                    VariableInspector.stringify({
-                        'error.toString()': error.toString(),
-                    }),
-                    { bold: false, italic: false, maxWidth: null },
-                ],
-            ]),
+            ...errorStringify.dump(error, info, level, console, fs, args),
         );
-    } else if (console.params.debug) {
-        msgs.push(...errorStringify.heading('Dump'), [
-            'No content.',
-            { bold: false, italic: true },
-        ]);
     }
     return msgs;
 }
@@ -501,5 +494,55 @@ export function errorStringify(_error, level, console, fs, args) {
         return msgs;
     }
     errorStringify.details = details;
+    /**
+     * Formats a var dump of the error itself.
+     *
+     * @since 0.3.0-alpha.6
+     */
+    function dump(error, info, level, console, fs, args) {
+        // returns
+        if (
+            (error instanceof UnknownCaughtError
+                && !(error.cause instanceof Error))
+            || console.params.debug
+        ) {
+            return [
+                ...errorStringify.heading('Dump'),
+                ['No content.', { bold: false, italic: true }],
+            ];
+        }
+        const dumps = [
+            [
+                VariableInspector.stringify({ error }),
+                { bold: false, italic: false, maxWidth: null },
+            ],
+        ];
+        if (console.params.verbose) {
+            dumps.push(
+                [
+                    VariableInspector.stringify({ info }),
+                    { bold: false, italic: false, maxWidth: null },
+                ],
+                [
+                    VariableInspector.stringify({
+                        'error.toString()': error.toString(),
+                    }),
+                    { bold: false, italic: false, maxWidth: null },
+                ],
+            );
+        }
+        const msgs = [
+            ...errorStringify.heading('Dump'),
+            ...errorStringify.validateMsgsLength(
+                info,
+                console,
+                fs,
+                args,
+                dumps,
+            ),
+        ];
+        return msgs;
+    }
+    errorStringify.dump = dump;
 })(errorStringify || (errorStringify = {}));
 //# sourceMappingURL=errorStringify.js.map

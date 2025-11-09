@@ -19,6 +19,17 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.6** — 2025-11-09
+
+Slight sass error handling improvements.
+
+### Added
+- errorStringify.dump() function
+
+### Changed
+- Added more output to sass error handling in debug mode
+
+
 ## **0.3.0-alpha.5** — 2025-11-03
 
 Fixing erroneous __filename uses and TypeDoc external reference config.

@@ -797,11 +797,14 @@ export abstract class AbstractStage<
                     opts,
                 ).join( '\n' ).trim();
 
-                const shortMessage = _typedError.sassMessage?.trim() ?? '';
+                const shortMessage = _typedError.sassMessage?.trim().replace(
+                    /^\s*(Error:\s+)*\s*/gs,
+                    ''
+                ) ?? '';
 
                 const messageDetails = fullMessage.replace(
                     new RegExp(
-                        `^\s*(Error:\s+)*\s*${ escRegExp( shortMessage ) }`,
+                        `^\s*(Error:\s+)*\s*(${ escRegExp( shortMessage ) })?`,
                         'gs'
                     ),
                     ''
@@ -842,7 +845,10 @@ export abstract class AbstractStage<
                 }
 
                 if ( this.params.debug ) {
-                    msgs.push( ...errorStringify.details( error, errInfo, level, this.console, this.fs, errArgs ) );
+                    msgs.push(
+                        ...errorStringify.details( error, errInfo, level, this.console, this.fs, errArgs ),
+                        ...errorStringify.dump( error, errInfo, level, this.console, this.fs, errArgs ),
+                    );
                 }
 
             } else if ( error instanceof Error ) {
