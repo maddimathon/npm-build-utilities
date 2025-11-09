@@ -313,7 +313,13 @@ export function errorStringify(
     //     );
     // }
 
-    if ( console.params.debug ) {
+    if (
+        (
+            error instanceof UnknownCaughtError
+            && !( error.cause instanceof Error )
+        )
+        || console.params.debug
+    ) {
         msgs.push(
             ...errorStringify.dump( error, info, level, console, fs, args ),
         );
@@ -676,19 +682,6 @@ export namespace errorStringify {
         fs: FileSystemType,
         args: Partial<AbstractError.Handler.Args>,
     ): MessageMaker.BulkMsgs {
-        // returns
-        if (
-            (
-                error instanceof UnknownCaughtError
-                && !( error.cause instanceof Error )
-            )
-            || console.params.debug
-        ) {
-            return [
-                ...errorStringify.heading( 'Dump' ),
-                [ 'No content.', { bold: false, italic: true } ]
-            ];
-        }
 
         const dumps: MessageMaker.BulkMsgs = [
             [
