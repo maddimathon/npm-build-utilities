@@ -10,6 +10,8 @@
 
 import type { Test } from '@maddimathon/utility-typescript/types';
 
+import { test } from '@jest/globals';
+
 // import type {
 // } from '../../../types/index.js';
 
@@ -25,17 +27,13 @@ type _ClassType = ( new (
 ) => FileSystemType );
 
 // checks if the actual class can be assigned to its class type
-const testClass: _ClassType = FileSystem;
+export const testClass: _ClassType = FileSystem;
 
 // double-checks that the types match
-type TypeTest = [
+export type TypeTest = [
     Test.Expect<Test.Satisfies<typeof FileSystem, _ClassType>>,
     // Test.Expect<Test.Exactly<typeof FileSystem, _ClassType>>,
 ];
-
-// only here so that these are used and don’t throw errors
-true as TypeTest[ 0 ];
-testClass;
 
 // UPGRADE tests
 test.todo( 'FileSystem JS tests' );

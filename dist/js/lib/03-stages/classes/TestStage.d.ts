@@ -28,7 +28,9 @@ export declare class TestStage extends AbstractStage<Stage.Args.Test, Stage.SubS
      */
     protected tsConfigTidyPaths(level: number): Promise<string[]>;
     get ARGS_DEFAULT(): {
-        readonly js: {};
+        readonly js: {
+            readonly warnWhenNoConfigFile: true;
+        };
         readonly scss: false;
         readonly utils: {};
     };

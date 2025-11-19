@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import {
@@ -143,8 +143,6 @@ export class ReleaseStage extends AbstractStage {
         const promptArgs = {
             default: false,
             msgArgs: {
-                clr: this.clr,
-                depth: 1,
                 maxWidth: null,
             },
             styleClrs: {
@@ -152,9 +150,8 @@ export class ReleaseStage extends AbstractStage {
             },
         };
         this.params.dryrun =
-            (await this.console.nc.prompt.bool({
+            (await this.console.prompt.bool(`Is this a dry run?`, 1, {
                 ...promptArgs,
-                message: `Is this a dry run?`,
                 default: !!this.params.dryrun,
                 msgArgs: {
                     ...promptArgs.msgArgs,
@@ -169,9 +166,8 @@ export class ReleaseStage extends AbstractStage {
                 + 11,
         );
         const inputVersion = (
-            (await this.console.nc.prompt.input({
+            (await this.console.prompt.input(inputVersionMessage, 1, {
                 ...(promptArgs ?? {}),
-                message: inputVersionMessage,
                 default: this.pkg.version,
                 validate: (value) =>
                     value.trim().match(SemVer.regex) ?
@@ -212,7 +208,10 @@ export class ReleaseStage extends AbstractStage {
                 const maxWidth = this.console.nc.msg.args.msg.maxWidth ?? 120;
                 const _endMsg = [
                     ['✓ ', { flag: false }],
-                    ['Released!', { italic: true }],
+                    [
+                        this.params.dryrun ? 'Dry-run success!' : 'Released!',
+                        { italic: true },
+                    ],
                     [`${this.pkg.name}@${version}`, { flag: 'reverse' }],
                     ['  🎉 🎉 🎉', { flag: false }],
                     ['\n\n', { flag: false }],
@@ -263,32 +262,39 @@ export class ReleaseStage extends AbstractStage {
         const releaseNotesPath = this.config.paths.notes.release;
         // exits
         if (!this.fs.exists(releaseNotesPath)) {
+            const exitProcess = !this.params.dryrun && this.params.releasing;
             this.console.log(
-                'No release notes file was found, so the release cannot continue.',
+                exitProcess ?
+                    'No release notes file was found, so the release cannot continue.'
+                :   'No release notes file was found.',
                 2,
             );
             if (
-                await this.console.nc.prompt.bool({
-                    ...promptArgs,
-                    message:
-                        'Do you want to create a release notes file from the template?',
-                    default: true,
-                })
+                await this.console.prompt.bool(
+                    'Do you want to create a release notes file from the template?',
+                    3,
+                    {
+                        ...promptArgs,
+                        default: true,
+                    },
+                )
             ) {
                 this.fs.write(releaseNotesPath, this.DEFAULT_RELEASE_NOTES, {
                     force: true,
                 });
             }
-            process.exit();
+            exitProcess && process.exit();
         } else if (
-            !(await this.console.nc.prompt.bool({
-                ...promptArgs,
-                message:
-                    'Is the release notes file at '
+            !(await this.console.prompt.bool(
+                'Is the release notes file at '
                     + releaseNotesPath.replace(/ /g, '%20')
                     + ' updated?',
-                default: false,
-            }))
+                2,
+                {
+                    ...promptArgs,
+                    default: false,
+                },
+            ))
             && !this.params.dryrun
         ) {
             this.console.log(
@@ -304,20 +310,23 @@ export class ReleaseStage extends AbstractStage {
             /**
              * What to do since no changelog was found.
              */
-            const _noChangelogPrompt = await this.console.nc.prompt.select({
-                ...promptArgs,
-                message: `No changelog was found at configured path (${changelogPath}).  What next?`,
-                choices: [
-                    {
-                        name: 'Create new changelog file',
-                        value: 'create-new',
-                    },
-                    {
-                        name: 'Cancel and exit',
-                        value: 'cancel',
-                    },
-                ],
-            });
+            const _noChangelogPrompt = await this.console.prompt.select(
+                `No changelog was found at configured path (${changelogPath}).  What next?`,
+                2,
+                {
+                    ...promptArgs,
+                    choices: [
+                        {
+                            name: 'Create new changelog file',
+                            value: 'create-new',
+                        },
+                        {
+                            name: 'Cancel and exit',
+                            value: 'cancel',
+                        },
+                    ],
+                },
+            );
             // returns
             if (_noChangelogPrompt === 'cancel') {
                 process.exit();
@@ -346,31 +355,31 @@ export class ReleaseStage extends AbstractStage {
                 2,
                 { bold: true },
             );
-            const _noNewEntryPlaceholderPrompt = {
-                ...promptArgs,
-                message:
-                    'Once you’ve added the placeholder, please hit continue.',
-                choices: [
-                    {
-                        name: 'Continue',
-                        value: 'continue',
-                    },
-                    {
-                        name: 'Cancel and exit',
-                        value: 'cancel',
-                    },
-                ],
-            };
+            let _noNewEntryPlaceholderMessage =
+                'Once you’ve added the placeholder, please hit continue.';
             do {
-                const _noNewEntryPlaceholder =
-                    await this.console.nc.prompt.select(
-                        _noNewEntryPlaceholderPrompt,
-                    );
+                const _noNewEntryPlaceholder = await this.console.prompt.select(
+                    _noNewEntryPlaceholderMessage,
+                    2,
+                    {
+                        ...promptArgs,
+                        choices: [
+                            {
+                                name: 'Continue',
+                                value: 'continue',
+                            },
+                            {
+                                name: 'Cancel and exit',
+                                value: 'cancel',
+                            },
+                        ],
+                    },
+                );
                 // exits
                 if (_noNewEntryPlaceholder === 'cancel') {
                     process.exit();
                 }
-                _noNewEntryPlaceholderPrompt.message =
+                _noNewEntryPlaceholderMessage =
                     'The placeholder still wasn’t found, please check again and hit continue.';
                 t_currentChangelog = this.fs.readFile(changelogPath);
             } while (t_currentChangelog.match(newEntryRegex) === null);

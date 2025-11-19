@@ -4,9 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 export * from './classes/index.js';
 export * from './catchOrReturn.js';
+export * from './jestConfig.js';
 //# sourceMappingURL=index.d.ts.map

@@ -732,11 +732,26 @@ export namespace Stage {
             js: false | {
 
                 /**
+                 * Use an alternative jest CLI command.
+                 * 
+                 * @since 0.3.0-alpha.9
+                 */
+                jestCmd?: ( props: { params: CLI.Params, config: Config.Internal; } ) => string;
+
+                /**
                  * File globs to be removed after tests are complete.
                  *
                  * @since 0.2.0-alpha — If undefined, these paths are set by {@link TestStage.tsConfigTidyPaths}.
                  */
                 tidy?: string[];
+
+                /**
+                 * Whether to output a warning (and prompt to create) if no jest
+                 * config file is found at the expected paths.
+                 * 
+                 * @since 0.3.0-alpha.9
+                 */
+                warnWhenNoConfigFile?: boolean;
             },
 
             scss: boolean;

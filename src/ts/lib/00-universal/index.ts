@@ -11,3 +11,4 @@
 export * from './classes/index.js';
 
 export * from './catchOrReturn.js';
+export * from './jestConfig.js';

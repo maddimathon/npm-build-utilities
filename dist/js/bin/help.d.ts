@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import type { CLI } from '../types/index.js';

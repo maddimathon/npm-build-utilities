@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import { node, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
@@ -77,6 +77,39 @@ export declare class Stage_Console implements Logger {
     warn(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /** {@inheritDoc Logger.verbose} */
     verbose(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    get prompt(): {
+        readonly bool: (message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.bool>[0], "message">) => Promise<boolean | undefined>;
+        readonly input: (message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.input>[0], "message">) => Promise<string | undefined>;
+        readonly select: {
+            <T_Return extends string, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+                choices: T_Return[];
+            }>(message: string, level: number, opts: Omit<T_Config, "message" | "theme">): Promise<T_Return | undefined>;
+            <T_Return extends node.NodeConsole_Prompt.SelectValue, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+                choices: {
+                    value: T_Return;
+                    name?: string;
+                    description?: string;
+                    short?: string;
+                    disabled?: boolean | string;
+                }[];
+            }>(message: string, level: number, opts: Omit<T_Config, "message" | "theme">): Promise<T_Return | undefined>;
+        };
+    };
+    protected prompt_prepareOpts<T_Config extends node.NodeConsole_Prompt.Config>(level: number, opts?: Omit<T_Config, 'message'>): Pick<T_Config, 'msgArgs' | 'styleClrs'>;
+    protected prompt_bool(message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.bool>[0], 'message'>): Promise<boolean | undefined>;
+    protected prompt_input(message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.input>[0], 'message'>): Promise<string | undefined>;
+    protected prompt_select<T_Return extends string, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        choices: T_Return[];
+    }>(message: string, level: number, opts: Omit<T_Config, 'message' | 'theme'>): Promise<T_Return | undefined>;
+    protected prompt_select<T_Return extends node.NodeConsole_Prompt.SelectValue, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        choices: {
+            value: T_Return;
+            name?: string;
+            description?: string;
+            short?: string;
+            disabled?: boolean | string;
+        }[];
+    }>(message: string, level: number, opts: Omit<T_Config, 'message' | 'theme'>): Promise<T_Return | undefined>;
 }
 /**
  * To be used by {@link Stage_Console}.

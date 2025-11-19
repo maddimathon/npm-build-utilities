@@ -10,6 +10,8 @@
 
 import type { Test } from '@maddimathon/utility-typescript/types';
 
+import { test } from '@jest/globals';
+
 import type {
     Stage,
 } from '../../../types/index.js';
@@ -18,17 +20,13 @@ import { SnapshotStage } from './SnapshotStage.js';
 
 
 // checks if the actual class can be assigned to its class type
-const testStage: Stage.Class.Snapshot = SnapshotStage;
+export const testStage: Stage.Class.Snapshot = SnapshotStage;
 
 // double-checks that the types match
-type TypeTest = [
+export type TypeTest = [
     Test.Expect<Test.Satisfies<typeof SnapshotStage, Stage.Class.Snapshot>>,
     Test.ExpectNot<Test.Exactly<typeof SnapshotStage, Stage.Class.Snapshot>>,
 ];
-
-// only here so that these are used and don’t throw errors
-true as TypeTest[ 0 ];
-testStage;
 
 // UPGRADE tests
 test.todo( 'SnapshotStage JS tests' );

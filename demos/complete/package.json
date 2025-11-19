@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities--demos--complete",
-    "version": "0.3.0-alpha.8",
+    "version": "0.3.0-alpha.9",
 
     "files": [
         "./dist/**/*",
@@ -33,14 +33,19 @@
         "release": "build-utils release",
 
         "dryrun": "build-utils release --dryrun",
+        
+        "rm": "rm -f @releases/* .snapshots/* dist/* || echo ''",
 
-        "reset": "rm -f @releases/* .snapshots/* dist/*"
+        "reset": "run-s --silent rm reset:*",
+            "reset:uninstall": "rm -r package-lock.json node_modules",
+            "reset:install": "npm i"
     },
 
     "dependencies": {
     },
     "devDependencies": {
-        "@maddimathon/build-utilities": "0.3.0-alpha.8"
+        "@maddimathon/build-utilities": "0.3.0-alpha.9",
+        "npm-run-all": "4.1.5"
     },
 
     "browserslist": [

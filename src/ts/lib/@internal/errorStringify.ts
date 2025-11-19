@@ -294,25 +294,6 @@ export function errorStringify(
         ...errorStringify.details( error, info, level, console, fs, args ),
     ];
 
-    // if (
-    //     (
-    //         error instanceof UnknownCaughtError
-    //         && !( error.cause instanceof Error )
-    //     )
-    //     || console.params.debug
-    // ) {
-
-    //     msgs.push(
-    //         ...errorStringify.heading( 'Dump' ),
-    //         ...errorStringify.dump( error, info, level, console, fs, args ),
-    //     );
-    // } else if ( console.params.debug ) {
-    //     msgs.push(
-    //         ...errorStringify.heading( 'Dump' ),
-    //         [ 'No content.', { bold: false, italic: true } ]
-    //     );
-    // }
-
     if (
         (
             error instanceof UnknownCaughtError

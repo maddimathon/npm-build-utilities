@@ -19,6 +19,22 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.9** — 2025-11-19
+
+Some small fixes to improve default js testing.
+
+### Breaking
+- Updated dependencies (including glob to new major version)
+
+### Added
+- Added option to TestStage args to use a custom jest cli command
+- Added local prompt methods to Stage_Console for easier output styling
+  (including log-base-level)
+
+### Changed
+- Removed prettier and typedoc-plugin-inline-sources from peerDependencies
+
+
 ## **0.3.0-alpha.8** — 2025-11-09
 
 Quick fix to replacements in sass error handling of multi-line messages.

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
@@ -72,6 +72,10 @@ export class Stage_Console {
             this.msgArgs,
             this.nc,
         );
+        this.prompt_prepareOpts = this.prompt_prepareOpts.bind(this);
+        this.prompt_bool = this.prompt_bool.bind(this);
+        this.prompt_input = this.prompt_input.bind(this);
+        this.prompt_select = this.prompt_select.bind(this);
     }
     /* LOCAL METHODS
      * ====================================================================== */
@@ -217,6 +221,58 @@ export class Stage_Console {
             },
             timeArgs,
         );
+    }
+    /* PROMPTING ===================================== */
+    get prompt() {
+        return {
+            bool: this.prompt_bool,
+            input: this.prompt_input,
+            select: this.prompt_select,
+        };
+    }
+    prompt_prepareOpts(level, opts) {
+        const msgArgs = {
+            ...(opts?.msgArgs ?? {}),
+            depth:
+                (opts?.msgArgs?.depth ?? level) + this.params['log-base-level'],
+        };
+        const styleClrs = {
+            help: this.clr,
+            highlight: this.clr,
+            ...(opts?.styleClrs ?? {}),
+        };
+        return { msgArgs, styleClrs };
+    }
+    async prompt_bool(message, level, opts) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts(level, opts);
+        return this.nc.prompt.bool({
+            ...(opts ?? {}),
+            message,
+            msgArgs,
+            styleClrs,
+        });
+    }
+    async prompt_input(message, level, opts) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts(level, opts);
+        return this.nc.prompt.input({
+            ...(opts ?? {}),
+            message,
+            msgArgs,
+            styleClrs,
+        });
+    }
+    async prompt_select(message, level, opts) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts(level, opts);
+        const choices = opts.choices.map((choice) =>
+            typeof choice === 'string' ? { value: choice } : choice,
+        );
+        return this.nc.prompt.select({
+            ...opts,
+            message,
+            choices,
+            msgArgs,
+            styleClrs,
+        });
     }
 }
 /**

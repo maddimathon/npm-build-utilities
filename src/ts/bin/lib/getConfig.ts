@@ -153,28 +153,30 @@ export async function getConfig(
     /**
      * What to do since no valid config was found.
      */
-    const noConfigPrompt = await console.nc.prompt.select( {
-        message: 'No valid config file was found.  What next?',
-        choices: [
-            {
-                name: 'Create new config file',
-                value: 'create-new',
+    const noConfigPrompt = await console.prompt.select(
+        'No valid config file was found.  What next?',
+        level,
+        {
+            choices: [
+                {
+                    name: 'Create new config file',
+                    value: 'create-new',
+                },
+                {
+                    name: 'Don’t create a config file and proceed',
+                    value: 'proceed',
+                    description: 'You will still be prompted for the values of required fields.',
+                },
+                {
+                    name: 'Cancel script and exit',
+                    value: 'cancel',
+                },
+            ],
+            msgArgs: {
+                linesIn: 1,
             },
-            {
-                name: 'Don’t create a config file and proceed',
-                value: 'proceed',
-                description: 'You will still be prompted for the values of required fields.',
-            },
-            {
-                name: 'Cancel script and exit',
-                value: 'cancel',
-            },
-        ],
-        msgArgs: {
-            depth: level,
-            linesIn: 1,
         },
-    } );
+    );
 
     // exits process
     if ( noConfigPrompt === 'cancel' ) {
@@ -182,7 +184,6 @@ export async function getConfig(
     }
 
     const msgArgs = {
-        depth: level,
         linesIn: 0,
     };
 
@@ -198,27 +199,34 @@ export async function getConfig(
      */
     let newConfig: Config = {
 
-        title: await console.nc.prompt.input( {
-            message: 'What’s the project’s title? (human-readable, title case)',
-            default: config.title,
-            required: true,
-            msgArgs,
-        } ) ?? '',
+        title: await console.prompt.input(
+            'What’s the project’s title? (human-readable, title case)',
+            level,
+            {
+                default: config.title,
+                required: true,
+                msgArgs,
+            },
+        ) ?? '',
 
-        launchYear: await console.nc.prompt.input( {
-            message: 'What’s the project’s launch year? (four digits)',
-            default: config.launchYear ?? currentYear,
-            required: true,
-            msgArgs,
-        } ) ?? currentYear,
+        launchYear: await console.prompt.input(
+            'What’s the project’s launch year? (four digits)',
+            level,
+            {
+                default: config.launchYear ?? currentYear,
+                required: true,
+                msgArgs,
+            },
+        ) ?? currentYear,
     };
 
     let newCompleteConfig: Config.Internal | undefined = undefined;
 
-    if ( await console.nc.prompt.bool( {
-        message: 'Do you want to configure optional arguments too?',
-        msgArgs,
-    } ) ) {
+    if ( await console.prompt.bool(
+        'Do you want to configure optional arguments too?',
+        level,
+        { msgArgs },
+    ) ) {
         msgArgs.linesIn = 1;
 
         const defaultConfig = internalConfig( newConfig, console );
@@ -229,39 +237,54 @@ export async function getConfig(
             paths: {
                 ...defaultConfig.paths,
 
-                release: await console.nc.prompt.input( {
-                    message: 'What is the path for the release directory?',
-                    default: defaultConfig.paths.release,
-                    msgArgs,
-                } ) ?? defaultConfig.paths.release,
+                release: await console.prompt.input(
+                    'What is the path for the release directory?',
+                    level,
+                    {
+                        default: defaultConfig.paths.release,
+                        msgArgs,
+                    },
+                ) ?? defaultConfig.paths.release,
 
-                snapshot: await console.nc.prompt.input( {
-                    message: 'What is the path for the snapshot directory?',
-                    default: defaultConfig.paths.snapshot,
-                    msgArgs,
-                } ) ?? defaultConfig.paths.snapshot,
+                snapshot: await console.prompt.input(
+                    'What is the path for the snapshot directory?',
+                    level,
+                    {
+                        default: defaultConfig.paths.snapshot,
+                        msgArgs,
+                    },
+                ) ?? defaultConfig.paths.snapshot,
             },
 
             stages: {
                 ...defaultConfig.stages,
 
-                document: await console.nc.prompt.bool( {
-                    message: 'Include document stage?',
-                    default: !!defaultConfig.stages.document,
-                    msgArgs,
-                } ) ? [ getDefaultStageClass( 'document' ) ] : false,
+                document: await console.prompt.bool(
+                    'Include document stage?',
+                    level,
+                    {
+                        default: !!defaultConfig.stages.document,
+                        msgArgs,
+                    }
+                ) ? [ getDefaultStageClass( 'document' ) ] : false,
 
-                snapshot: await console.nc.prompt.bool( {
-                    message: 'Include snapshot stage?',
-                    default: !!defaultConfig.stages.snapshot,
-                    msgArgs,
-                } ) ? [ getDefaultStageClass( 'snapshot' ) ] : false,
+                snapshot: await console.prompt.bool(
+                    'Include snapshot stage?',
+                    level,
+                    {
+                        default: !!defaultConfig.stages.snapshot,
+                        msgArgs,
+                    },
+                ) ? [ getDefaultStageClass( 'snapshot' ) ] : false,
 
-                test: await console.nc.prompt.bool( {
-                    message: 'Include test stage?',
-                    default: !!defaultConfig.stages.test,
-                    msgArgs,
-                } ) ? [ getDefaultStageClass( 'test' ) ] : false,
+                test: await console.prompt.bool(
+                    'Include test stage?',
+                    level,
+                    {
+                        default: !!defaultConfig.stages.test,
+                        msgArgs,
+                    },
+                ) ? [ getDefaultStageClass( 'test' ) ] : false,
             },
         };
     }
@@ -278,11 +301,14 @@ export async function getConfig(
     }
 
     /** Path for writing the config file. */
-    const configPath = await console.nc.prompt.select( {
-        message: 'Where should we write the config file?',
-        choices: defaultConfigPaths,
-        msgArgs,
-    } ) ?? defaultConfigPaths[ 0 ];
+    const configPath = await console.prompt.select(
+        'Where should we write the config file?',
+        level,
+        {
+            choices: defaultConfigPaths,
+            msgArgs,
+        },
+    ) ?? defaultConfigPaths[ 0 ];
 
     // returns
     if ( !configPath ) {
@@ -291,10 +317,11 @@ export async function getConfig(
 
     /** Whether to force-write the config file. */
     const force = fs.exists( configPath )
-        ? ( await console.nc.prompt.bool( {
-            message: 'Should the new config file overwrite the current file at `' + configPath + '`?',
-            msgArgs,
-        } ) )
+        ? ( await console.prompt.bool(
+            'Should the new config file overwrite the current file at `' + configPath + '`?',
+            level,
+            { msgArgs },
+        ) )
         : true;
 
     const configFileContent = [

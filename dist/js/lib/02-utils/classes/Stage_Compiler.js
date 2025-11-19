@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -109,20 +109,18 @@ export class Stage_Compiler {
         if (tsPaths.length || !writeIfNotFound) {
             return tsPaths;
         }
-        const msgArgs = {
-            depth: level + stage.params['log-base-level'],
-        };
         // returns
         if (
-            !(await stage.console.nc.prompt.bool({
-                message:
-                    'No tsconfig.json files found, do you want to create one?',
-                default: true,
-                msgArgs: {
-                    ...msgArgs,
-                    linesIn: 1,
+            !(await stage.console.prompt.bool(
+                'No tsconfig.json files found, do you want to create one?',
+                level,
+                {
+                    default: true,
+                    msgArgs: {
+                        linesIn: 1,
+                    },
                 },
-            }))
+            ))
         ) {
             return [];
         }
@@ -134,15 +132,17 @@ export class Stage_Compiler {
         const _tsConfigDefaultPath = stage.fs.pathRelative(
             stage.fs.pathResolve(tsSrcDir, './tsconfig.json'),
         );
-        const tsConfigFile = await stage.console.nc.prompt.input({
-            message: 'Where should the tsconfig.json be written?',
-            default: _tsConfigDefaultPath,
-            msgArgs: {
-                ...msgArgs,
-                linesOut: 1,
+        const tsConfigFile = await stage.console.prompt.input(
+            'Where should the tsconfig.json be written?',
+            level,
+            {
+                default: _tsConfigDefaultPath,
+                msgArgs: {
+                    linesOut: 1,
+                },
+                required: true,
             },
-            required: true,
-        });
+        );
         stage.console.vi.debug({ tsConfigFile }, 3);
         // returns
         if (!tsConfigFile) {
@@ -876,15 +876,17 @@ export class Stage_Compiler {
                 if (this._sassLoggerWarningDuringPackaging) {
                     // exits process
                     if (
-                        !(await this.console.nc.prompt.bool({
-                            message:
-                                'A Sass warning fired during a packaging compile — do you want to continue?',
-                            msgArgs: {
-                                clr: 'black',
-                                linesIn: 1,
-                                linesOut: 1,
+                        !(await this.console.prompt.bool(
+                            'A Sass warning fired during a packaging compile — do you want to continue?',
+                            level,
+                            {
+                                msgArgs: {
+                                    clr: 'black',
+                                    linesIn: 1,
+                                    linesOut: 1,
+                                },
                             },
-                        }))
+                        ))
                     ) {
                         process.exit();
                     }
@@ -1032,15 +1034,17 @@ export class Stage_Compiler {
         if (this._sassLoggerWarningDuringPackaging) {
             // exits process
             if (
-                !(await this.console.nc.prompt.bool({
-                    message:
-                        'A Sass warning fired during a packaging compile — do you want to continue?',
-                    msgArgs: {
-                        clr: 'black',
-                        linesIn: 1,
-                        linesOut: 1,
+                !(await this.console.prompt.bool(
+                    'A Sass warning fired during a packaging compile — do you want to continue?',
+                    level,
+                    {
+                        msgArgs: {
+                            clr: 'black',
+                            linesIn: 1,
+                            linesOut: 1,
+                        },
                     },
-                }))
+                ))
             ) {
                 process.exit();
             }

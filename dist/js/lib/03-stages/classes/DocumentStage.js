@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -565,7 +565,7 @@ export class DocumentStage extends AbstractStage {
         // returns
         if (!project) {
             this.handleError(
-                new StageError('TypeDoc project setup failed', {
+                new StageError('ⅹ TypeDoc project setup failed', {
                     class: 'DocumentStage',
                     method: 'typeDoc',
                 }),

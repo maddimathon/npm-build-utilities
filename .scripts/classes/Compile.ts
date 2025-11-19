@@ -13,12 +13,6 @@ import type { Stage } from '../../src/ts/index.js';
 
 import { CompileStage, FileSystem } from '../../src/ts/index.js';
 
-// import type {
-// } from "../../src/ts/lib/@internal.js";
-
-// import {
-// } from '../../src/ts/lib/@internal.js';
-
 /**
  * Extension of the built-in one.
  */
@@ -65,13 +59,4 @@ export class Compile extends CompileStage {
             }
         );
     }
-}
-
-export namespace Compile {
-
-    export type SubStage =
-        | Stage.SubStage.Compile
-        | 'demos'
-        | 'readme'
-        | 'tscheck';
 }

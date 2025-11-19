@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */ import {
     arrayUnique,
@@ -74,8 +74,6 @@ export class PackageStage extends AbstractStage {
         const promptArgs = {
             default: false,
             msgArgs: {
-                clr: this.clr,
-                depth: 1,
                 maxWidth: null,
             },
             styleClrs: {
@@ -83,9 +81,8 @@ export class PackageStage extends AbstractStage {
             },
         };
         this.params.dryrun =
-            (await this.console.nc.prompt.bool({
+            (await this.console.prompt.bool(`Is this a dry run?`, 1, {
                 ...promptArgs,
-                message: `Is this a dry run?`,
                 default: !!this.params.dryrun,
                 msgArgs: {
                     ...promptArgs.msgArgs,

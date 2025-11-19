@@ -34,40 +34,40 @@ export class Build extends BuildStage {
         'readme' as Stage.SubStage.Build,
         'prettify',
         'minimize',
+        'demos' as Stage.SubStage.Build,
         'test',
         'document',
-        'demos' as Stage.SubStage.Build,
+        'tidy' as Stage.SubStage.Build,
     ];
+
+    protected demo_deleteGlobs() {
+
+        const deleteGlobs = [
+            'demos/*/.snapshots/',
+            'demos/*/@releases/',
+            'demos/*/dist/',
+            'demos/*/node_modules/',
+            'demos/*/src/',
+            'demos/*/.releasenotes.md',
+            'demos/*/package-lock.json',
+
+            '**/demos/no-config/.scripts/',
+            '**/demos/no-config/build-utils.config.js',
+            '**/demos/no-config/CHANGELOG.md',
+            '**/demos/no-config/jest.config.js',
+            '**/demos/no-config/tsconfig.json',
+        ];
+
+        return deleteGlobs;
+    }
 
     protected async demos() {
         this.console.progress( 'updating demo files...', 1 );
 
 
-        this.console.verbose( 'deleting compiled files...', 2 );
+        this.console.verbose( 'deleting existing compiled demo files...', 2 );
 
-        const deleteGlobs = [
-
-            'demos/complete/.snapshots',
-            'demos/complete/@releases',
-            'demos/complete/dist',
-
-            'demos/no-config/.scripts',
-            'demos/no-config/.snapshots',
-            'demos/no-config/@releases',
-            'demos/no-config/dist',
-            'demos/no-config/src',
-            'demos/no-config/.releasenotes.md',
-            'demos/no-config/build-utils.config.js',
-            'demos/no-config/CHANGELOG.md',
-            'demos/no-config/tsconfig.json',
-        ];
-
-        if ( this.params.releasing ) {
-            deleteGlobs.push( 'demos/complete/node_modules' );
-            deleteGlobs.push( 'demos/no-config/node_modules' );
-            deleteGlobs.push( 'demos/complete/package-lock.json' );
-            deleteGlobs.push( 'demos/no-config/package-lock.json' );
-        }
+        const deleteGlobs = this.demo_deleteGlobs();
 
         this.fs.delete( deleteGlobs, this.params.verbose ? 3 : 2 );
 
@@ -111,13 +111,20 @@ export class Build extends BuildStage {
             'demos/no-config',
             'src/demos',
         );
+    }
+
+    protected async tidy() {
+        this.console.progress( 'tidying built files...', 1 );
 
 
-        this.console.verbose( 'updating version numbers...', 2 );
-        for ( const _path of [
-            'demos/complete/package.json',
-            'demos/no-config/package.json',
-        ] ) {
+        this.console.verbose( 'deleting existing compiled demo files...', 2 );
+
+        this.fs.delete( this.demo_deleteGlobs(), this.params.verbose ? 3 : 2 );
+
+
+        this.console.verbose( 'updating demo version numbers...', 2 );
+
+        for ( const _path of this.fs.glob( 'demos/*/package.json' ) ) {
             const _currentPkgJson = this.fs.readFile( _path );
 
             let _replaced = _currentPkgJson;
@@ -127,30 +134,23 @@ export class Build extends BuildStage {
                 escRegExpReplace( `"version": "${ this.version.toString( false ) }"` )
             );
 
-            if ( this.params.releasing ) {
+            if ( this.params.releasing && !this.params.dryrun ) {
 
-                if ( this.version.prerelease ) {
+                // update to the version being release for testing
+                _replaced = _replaced.replace(
+                    /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
+                    escRegExpReplace( `"@maddimathon/build-utilities": "${ this.version.toString( false ) }"` ),
+                );
+            } else {
 
-                    // update to the version being release for testing
-                    _replaced = _replaced.replace(
-                        /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
-                        escRegExpReplace( `"@maddimathon/build-utilities": "${ this.version.toString( false ) }"` ),
-                    );
-                } else {
-
-                    // update to be a file path for development
-                    _replaced = _replaced.replace(
-                        /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
-                        escRegExpReplace( `"@maddimathon/build-utilities": "file:../.."` ),
-                    );
-                }
+                // update to be a file path for development
+                _replaced = _replaced.replace(
+                    /"@maddimathon\/build-utilities":\s*"[^"]*"/gi,
+                    escRegExpReplace( `"@maddimathon/build-utilities": "file:../.."` ),
+                );
             }
 
-            this.fs.write(
-                _path,
-                _replaced,
-                { force: true },
-            );
+            this.fs.write( _path, _replaced, { force: true } );
         }
     }
 

@@ -658,7 +658,7 @@ export class DocumentStage extends AbstractStage<
 
             this.handleError(
                 new StageError(
-                    'TypeDoc project setup failed',
+                    'ⅹ TypeDoc project setup failed',
                     { class: 'DocumentStage', method: 'typeDoc' },
                 ),
                 ( this.params.verbose ? 3 : 2 ),

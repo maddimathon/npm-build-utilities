@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities--demos--no-config",
-    "version": "0.3.0-alpha.8",
+    "version": "0.3.0-alpha.9",
 
     "config": {
         "title": "NPM Build Utilities No-config Demo"
@@ -38,13 +38,18 @@
 
         "dryrun": "build-utils release --dryrun",
 
-        "reset": "rm -rf .scripts @releases .snapshots dist .releasenotes.md CHANGELOG.md build-utils.config.js tsconfig.json src/tsconfig.json src/ts/tsconfig.json"
+        "rm": "rm -rf .scripts @releases .snapshots dist .releasenotes.md CHANGELOG.md build-utils.config.js jest.config.js tsconfig.json src/tsconfig.json src/ts/tsconfig.json || echo ''",
+
+        "reset": "run-s --silent rm reset:*",
+            "reset:uninstall": "rm -r package-lock.json node_modules",
+            "reset:install": "npm i"
     },
 
     "dependencies": {
     },
     "devDependencies": {
-        "@maddimathon/build-utilities": "0.3.0-alpha.8"
+        "@maddimathon/build-utilities": "0.3.0-alpha.9",
+        "npm-run-all": "4.1.5"
     },
 
     "browserslist": [

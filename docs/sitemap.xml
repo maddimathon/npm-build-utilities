@@ -2,754 +2,774 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/index.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/hierarchy.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/About.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/About/Changelog.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/About/MIT_License.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Configuration.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Using_the_Library.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Using_the_Library/CLI.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Using_the_Library/Javascript.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/bin.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/bin/getConfig.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorHandler.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/getDefaultStageClass.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/getErrorInfo.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/getPackageJson.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/internalConfig.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/isConfigValid.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/isObjectEmpty.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/logError.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/writeLog.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/ProjectError.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/Stage_Compiler.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/Stage_Console.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/StageError.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/UnknownCaughtError.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/_Stage_Console_VarInspect.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/Logger.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/JSON.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/NodeCliError.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Context.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Handler.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Input.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Context-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Context/Basic.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Context/Class.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Context/Function.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Handler-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/AbstractError/Handler/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/cause.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/details.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/dump.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/heading.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/message.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/output.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/stack.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/validateMsgsLength.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/errorStringify/Info.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Copy.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Copy/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Glob.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Glob/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Minify.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Minify/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Minify/Format.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Prettier.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Prettier/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Prettier/Format.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Prettier/Args-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/FileSystemType/Prettier/Args/MultiFormat.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/getErrorInfo-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/getErrorInfo/object.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/getErrorInfo/stringToBulkMsgs.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/logError-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/logError/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/Logger-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/Logger/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
+	</url>
+	<url>
+		<loc>https://maddimathon.github.io/npm-build-utilities/internal/Logger/Prompt.html</loc>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
+	</url>
+	<url>
+		<loc>https://maddimathon.github.io/npm-build-utilities/internal/Logger/Prompt_SelectMethod.html</loc>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/Logger/VarInspect.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer/Error.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer/Error-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer/Error/INVALID_INPUT.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer/Error/INVALID_META.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer/Error/INVALID_PRERELEASE.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer/Error/INVALID_VERSION.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/SemVer/Error/Code.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/writeLog-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/internal/writeLog/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/catchOrReturn.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/defaultConfig.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
+	</url>
+	<url>
+		<loc>https://maddimathon.github.io/npm-build-utilities/jestConfig.html</loc>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/parseParamsCLI.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/AbstractStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/BuildStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/CompileStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/DocumentStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/PackageStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Project.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/ProjectConfig.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/ReleaseStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/SnapshotStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/TestStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/AbstractStage-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/AbstractStage/runCustomScssDirSubStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/AbstractStage/runCustomScssDirSubStage/DEFAULT_OPTS.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/AbstractStage/runCustomScssDirSubStage/Opts.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/CLI.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/CLI/Params.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/CLI/Command.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Class.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Default.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Internal.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Paths.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Replace.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Stages.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Internal-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Internal/Paths.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Internal/Stages.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Paths-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Paths/SourceFunction.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Paths/DistDirectory.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Config/Paths/SourceDirectory.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/Error.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/globs.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/globs/IGNORE_PROJECT.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/globs/SYSTEM.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/globs/IGNORE_COMPILED.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/globs/IGNORE_COPIED.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/minify.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/minify/ARGS_DEFAULT.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/prettier.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/FileSystem/prettier/ARGS_DEFAULT.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
+	</url>
+	<url>
+		<loc>https://maddimathon.github.io/npm-build-utilities/jestConfig-1.html</loc>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
+	</url>
+	<url>
+		<loc>https://maddimathon.github.io/npm-build-utilities/jestConfig/DEFAULT.html</loc>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/parseParamsCLI-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/parseParamsCLI/DEFAULT.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/All.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/ClassTypeGeneric.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Compiler.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Build.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Compile.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Document.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Name.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Package.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Release.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Snapshot.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Test.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Build.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Compile.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Document.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Package.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Release.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Snapshot.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Test.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/All.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/CopyFilesInput.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Build-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Build/Minimize.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Args/Build/Prettify.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class/All.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class/Build.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class/Compile.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class/Document.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class/Package.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class/Release.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class/Snapshot.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Class/Test.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Compiler-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Compiler/Args.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Compiler/Args-1.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Compiler/Args/PostCSS.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Compiler/Args/Sass.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/Compiler/Args/SassCLI.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage/All.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage/Build.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage/Compile.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage/Document.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage/Package.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage/Release.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage/Snapshot.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 	<url>
 		<loc>https://maddimathon.github.io/npm-build-utilities/Stage/SubStage/Test.html</loc>
-		<lastmod>2025-11-09T23:22:08.149Z</lastmod>
+		<lastmod>2025-11-19T22:57:16.708Z</lastmod>
 	</url>
 </urlset>

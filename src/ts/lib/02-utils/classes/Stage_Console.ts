@@ -96,6 +96,11 @@ export class Stage_Console implements Logger {
             this.msgArgs,
             this.nc,
         );
+
+        this.prompt_prepareOpts = this.prompt_prepareOpts.bind( this );
+        this.prompt_bool = this.prompt_bool.bind( this );
+        this.prompt_input = this.prompt_input.bind( this );
+        this.prompt_select = this.prompt_select.bind( this );
     }
 
 
@@ -313,6 +318,136 @@ export class Stage_Console implements Logger {
             bold: false,
             ...msgArgs,
         }, timeArgs );
+    }
+
+
+    /* PROMPTING ===================================== */
+
+    public get prompt() {
+
+        return {
+            bool: this.prompt_bool,
+            input: this.prompt_input,
+            select: this.prompt_select,
+        } as const;
+    }
+
+    protected prompt_prepareOpts<T_Config extends node.NodeConsole_Prompt.Config>(
+        level: number,
+        opts?: Omit<T_Config, 'message'>,
+    ): Pick<T_Config, 'msgArgs' | 'styleClrs'> {
+        const msgArgs = {
+            ...opts?.msgArgs ?? {},
+            depth: ( opts?.msgArgs?.depth ?? level ) + this.params[ 'log-base-level' ],
+        };
+
+        const styleClrs = {
+            help: this.clr,
+            highlight: this.clr,
+            ...opts?.styleClrs ?? {},
+        };
+
+        return { msgArgs, styleClrs };
+    }
+
+    protected async prompt_bool(
+        message: string,
+        level: number,
+        opts?: Omit<Parameters<typeof this.nc.prompt.bool>[ 0 ], 'message'>,
+    ) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts( level, opts );
+
+        return this.nc.prompt.bool( {
+            ...opts ?? {},
+            message,
+            msgArgs,
+            styleClrs,
+        } );
+    }
+
+    protected async prompt_input(
+        message: string,
+        level: number,
+        opts?: Omit<Parameters<typeof this.nc.prompt.input>[ 0 ], 'message'>,
+    ) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts( level, opts );
+
+        return this.nc.prompt.input( {
+            ...opts ?? {},
+            message,
+            msgArgs,
+            styleClrs,
+        } );
+    }
+
+
+    protected async prompt_select<
+        T_Return extends string,
+        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+            choices: T_Return[];
+        },
+    >(
+        message: string,
+        level: number,
+        opts: Omit<T_Config, 'message' | 'theme'>,
+    ): Promise<T_Return | undefined>;
+
+    protected async prompt_select<
+        T_Return extends node.NodeConsole_Prompt.SelectValue,
+        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+            choices: {
+                value: T_Return;
+
+                name?: string;
+                description?: string;
+                short?: string;
+                disabled?: boolean | string;
+            }[];
+        },
+    >(
+        message: string,
+        level: number,
+        opts: Omit<T_Config, 'message' | 'theme'>,
+    ): Promise<T_Return | undefined>;
+
+    protected async prompt_select<
+        T_Return extends node.NodeConsole_Prompt.SelectValue,
+        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+            choices: [ string ] & string[] | {
+                value: T_Return;
+
+                name?: string;
+                description?: string;
+                short?: string;
+                disabled?: boolean | string;
+            }[];
+        },
+    >(
+        message: string,
+        level: number,
+        opts: Omit<T_Config, 'message' | 'theme'>,
+    ) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts(
+            level,
+            opts as Omit<node.NodeConsole_Prompt.Config<'select'>, 'message'>,
+        );
+
+        const choices: {
+            value: T_Return;
+
+            name?: string;
+            description?: string;
+            short?: string;
+            disabled?: boolean | string;
+        }[] = opts.choices.map( choice => typeof choice === 'string' ? { value: choice as T_Return } : choice );
+
+        return this.nc.prompt.select( {
+            ...opts,
+            message,
+            choices,
+            msgArgs,
+            styleClrs,
+        } );
     }
 }
 

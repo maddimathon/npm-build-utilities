@@ -12,6 +12,8 @@
 //     Test,
 // } from '@maddimathon/utility-typescript/types';
 
+import { test } from '@jest/globals';
+
 // import { AbstractStage } from './AbstractStage.js';
 
 // UPGRADE tests

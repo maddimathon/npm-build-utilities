@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -34,6 +34,12 @@ export interface Logger {
      * Current CLI params.
      */
     readonly params: Partial<CLI.Params>;
+    /**
+     * {@inheritDoc Logger.Prompt}
+     *
+     * @since 0.3.0-alpha.9
+     */
+    readonly prompt: Logger.Prompt;
     /**
      * Adds {@link VariableInspector} capabilities to the logger.
      */
@@ -118,6 +124,30 @@ export declare namespace Logger {
          * Arguments passed to the {@link node.NodeConsole} constructor.
          */
         nc: Objects.RecursivePartial<node.NodeConsole.Args>;
+    }
+    interface Prompt_SelectMethod {
+        <T_Return extends string, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+            choices: T_Return[];
+        }>(message: string, level: number, opts: Omit<T_Config, 'message' | 'theme'>): Promise<T_Return | undefined>;
+        <T_Return extends node.NodeConsole_Prompt.SelectValue, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+            choices: {
+                value: T_Return;
+                name?: string;
+                description?: string;
+                short?: string;
+                disabled?: boolean | string;
+            }[];
+        }>(message: string, level: number, opts: Omit<T_Config, 'message' | 'theme'>): Promise<T_Return | undefined>;
+    }
+    /**
+     * Local versions of prompt utilities for easier use.
+     *
+     * @since 0.3.0-alpha.9
+     */
+    interface Prompt {
+        readonly bool: (message: string, level: number, opts?: Omit<Parameters<node.NodeConsole['prompt']['bool']>[0], 'message'>) => Promise<boolean | undefined>;
+        readonly input: (message: string, level: number, opts?: Omit<Parameters<node.NodeConsole['prompt']['input']>[0], 'message'>) => Promise<string | undefined>;
+        readonly select: Prompt_SelectMethod;
     }
     /**
      * Shape of the variable inspection utility class to be available in each

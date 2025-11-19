@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import { slugify, typeOf } from '@maddimathon/utility-typescript/functions';
@@ -225,23 +225,6 @@ export function errorStringify(_error, level, console, fs, args) {
         ...errorStringify.stack(error, info, level, console, fs, args),
         ...errorStringify.details(error, info, level, console, fs, args),
     ];
-    // if (
-    //     (
-    //         error instanceof UnknownCaughtError
-    //         && !( error.cause instanceof Error )
-    //     )
-    //     || console.params.debug
-    // ) {
-    //     msgs.push(
-    //         ...errorStringify.heading( 'Dump' ),
-    //         ...errorStringify.dump( error, info, level, console, fs, args ),
-    //     );
-    // } else if ( console.params.debug ) {
-    //     msgs.push(
-    //         ...errorStringify.heading( 'Dump' ),
-    //         [ 'No content.', { bold: false, italic: true } ]
-    //     );
-    // }
     if (
         (error instanceof UnknownCaughtError && !(error.cause instanceof Error))
         || console.params.debug

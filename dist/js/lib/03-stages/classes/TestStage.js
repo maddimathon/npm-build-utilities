@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */ import { SemVer } from '../../@internal/index.js';
 // import {
@@ -68,7 +68,9 @@ export class TestStage extends AbstractStage {
     }
     get ARGS_DEFAULT() {
         return {
-            js: {},
+            js: {
+                warnWhenNoConfigFile: true,
+            },
             scss: false,
             utils: {},
         };
@@ -152,16 +154,76 @@ export class TestStage extends AbstractStage {
             return;
         }
         this.console.progress('running jest...', 1);
-        const result = this.try(
-            this.console.nc.cmd,
-            2,
-            [
-                'node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js',
-            ],
-            {
-                exitProcess: this.params.packaging && !this.params.dryrun,
-            },
-        );
+        if (this.args.js.warnWhenNoConfigFile) {
+            const configGlobs = [
+                'jest.config.js',
+                'jest.config.ts',
+                'jest.config.mjs',
+                'jest.config.cjs',
+                'jest.config.cts',
+                'jest.config.json',
+            ];
+            const configFileExists = await Promise.any(
+                configGlobs.map(
+                    async (path) =>
+                        new Promise((res, rjct) =>
+                            this.fs.exists(path) ?
+                                res(this.fs.isFile(path))
+                            :   rjct(false),
+                        ),
+                ),
+            ).catch(() => false);
+            if (!configFileExists) {
+                const msgArgs = {
+                    bold: false,
+                    linesIn: 0,
+                    linesOut: 0,
+                };
+                if (
+                    await this.console.prompt.bool(
+                        'No default jest config files were found, do you want to create one?',
+                        2,
+                        {
+                            default: true,
+                            msgArgs,
+                            timeout: 300000,
+                        },
+                    )
+                ) {
+                    const configPath =
+                        (await this.console.prompt.input(
+                            'Where should the jest config file be written?',
+                            2,
+                            {
+                                default: configGlobs[0],
+                                required: true,
+                                msgArgs,
+                            },
+                        )) ?? configGlobs[0];
+                    this.fs.write(
+                        configPath,
+                        [
+                            '// @ts-check',
+                            "import { jestConfig } from '@maddimathon/build-utilities';",
+                            'export default jestConfig();',
+                        ].join('\n\n'),
+                        { force: true },
+                    );
+                }
+            }
+        }
+        const cmd =
+            this.args.js.jestCmd ?
+                this.args.js.jestCmd({
+                    params: this.params,
+                    config: this.config,
+                })
+            :   'NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules --no-warnings" npx jest';
+        this.params.debug
+            && this.console.vi.verbose({ 'jest cli cmd': cmd }, 2);
+        const result = this.try(this.console.nc.cmd, 2, [cmd], {
+            exitProcess: this.params.packaging && !this.params.dryrun,
+        });
         this.testResults.push(result !== 'FAILED');
         this.console.verbose('tidying up...', 2);
         const tidyFiles =

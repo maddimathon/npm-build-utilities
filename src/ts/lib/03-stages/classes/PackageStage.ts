@@ -126,8 +126,6 @@ export class PackageStage extends AbstractStage<
             default: false,
 
             msgArgs: {
-                clr: this.clr,
-                depth: 1,
                 maxWidth: null,
             },
 
@@ -136,18 +134,18 @@ export class PackageStage extends AbstractStage<
             },
         };
 
-        this.params.dryrun = await this.console.nc.prompt.bool( {
-            ...promptArgs,
+        this.params.dryrun = await this.console.prompt.bool(
+            `Is this a dry run?`,
+            1,
+            {
+                ...promptArgs,
+                default: !!this.params.dryrun,
 
-            message: `Is this a dry run?`,
-            default: !!this.params.dryrun,
-
-            msgArgs: {
-                ...promptArgs.msgArgs,
-                linesIn: 1 + ( promptArgs.msgArgs?.linesIn ?? 0 ),
-            },
-
-        } ) ?? !!this.params.dryrun;
+                msgArgs: {
+                    ...promptArgs.msgArgs,
+                    linesIn: 1 + ( promptArgs.msgArgs?.linesIn ?? 0 ),
+                },
+            } ) ?? !!this.params.dryrun;
     }
 
     public override async startEndNotice( which: "start" | "end" | null ) {

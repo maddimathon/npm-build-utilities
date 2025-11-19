@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.8
+ * @maddimathon/build-utilities@0.3.0-alpha.9
  * @license MIT
  */
 import {
@@ -79,6 +79,60 @@ export class DummyConsole {
             return;
         }
         this.log(msg, level, msgArgs, timeArgs);
+    }
+    /* PROMPTING ===================================== */
+    get prompt() {
+        return {
+            bool: this.prompt_bool,
+            input: this.prompt_input,
+            select: this.prompt_select,
+        };
+    }
+    prompt_prepareOpts(level, opts) {
+        const msgArgs = {
+            ...(opts?.msgArgs ?? {}),
+            depth:
+                (opts?.msgArgs?.depth ?? level)
+                + (this.params['log-base-level'] ?? 0),
+            clr: 'purple',
+        };
+        const styleClrs = {
+            ...(opts?.styleClrs ?? {}),
+            help: 'purple',
+            highlight: 'purple',
+        };
+        return { msgArgs, styleClrs };
+    }
+    async prompt_bool(message, level, opts) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts(level, opts);
+        return this.nc.prompt.bool({
+            ...(opts ?? {}),
+            message,
+            msgArgs,
+            styleClrs,
+        });
+    }
+    async prompt_input(message, level, opts) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts(level, opts);
+        return this.nc.prompt.input({
+            ...(opts ?? {}),
+            message,
+            msgArgs,
+            styleClrs,
+        });
+    }
+    async prompt_select(message, level, opts) {
+        const { msgArgs, styleClrs } = this.prompt_prepareOpts(level, opts);
+        const choices = opts.choices.map((choice) =>
+            typeof choice === 'string' ? { value: choice } : choice,
+        );
+        return this.nc.prompt.select({
+            ...opts,
+            message,
+            choices,
+            msgArgs,
+            styleClrs,
+        });
     }
 }
 class _DummyConsole_VarDump {

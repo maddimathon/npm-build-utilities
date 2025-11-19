@@ -98,7 +98,9 @@ export class TestStage extends AbstractStage<
     public get ARGS_DEFAULT() {
 
         return {
-            js: {},
+            js: {
+                warnWhenNoConfigFile: true,
+            },
             scss: false,
             utils: {},
         } as const satisfies Stage.Args.Test;
@@ -196,10 +198,77 @@ export class TestStage extends AbstractStage<
         if ( !this.args.js ) { return; }
         this.console.progress( 'running jest...', 1 );
 
+        if ( this.args.js.warnWhenNoConfigFile ) {
+
+            const configGlobs = [
+                'jest.config.js',
+                'jest.config.ts',
+                'jest.config.mjs',
+                'jest.config.cjs',
+                'jest.config.cts',
+                'jest.config.json',
+            ] as const;
+
+            const configFileExists = await Promise.any( configGlobs.map(
+                async ( path ) => new Promise<boolean>(
+                    ( res, rjct ) => this.fs.exists( path ) ? res( this.fs.isFile( path ) ) : rjct( false )
+                )
+            ) ).catch( () => false );
+
+            if ( !configFileExists ) {
+
+                const msgArgs = {
+                    bold: false,
+                    linesIn: 0,
+                    linesOut: 0,
+                };
+
+                if ( await this.console.prompt.bool(
+                    'No default jest config files were found, do you want to create one?',
+                    2,
+                    {
+                        default: true,
+                        msgArgs,
+                        timeout: 300000,
+                    },
+                ) ) {
+
+                    const configPath = await this.console.prompt.input(
+                        'Where should the jest config file be written?',
+                        2,
+                        {
+                            default: configGlobs[ 0 ],
+                            required: true,
+                            msgArgs,
+                        },
+                    ) ?? configGlobs[ 0 ];
+
+                    this.fs.write(
+                        configPath,
+                        [
+                            '// @ts-check',
+                            "import { jestConfig } from '@maddimathon/build-utilities';",
+                            'export default jestConfig();',
+                        ].join( '\n\n' ),
+                        { force: true }
+                    );
+                }
+            }
+        }
+
+        const cmd = this.args.js.jestCmd
+            ? this.args.js.jestCmd( {
+                params: this.params,
+                config: this.config,
+            } )
+            : 'NODE_OPTIONS="$NODE_OPTIONS --experimental-vm-modules --no-warnings" npx jest';
+
+        this.params.debug && this.console.vi.verbose( { 'jest cli cmd': cmd }, 2 );
+
         const result = this.try(
             this.console.nc.cmd,
             2,
-            [ 'node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js' ],
+            [ cmd ],
             {
                 exitProcess: this.params.packaging && !this.params.dryrun,
             },

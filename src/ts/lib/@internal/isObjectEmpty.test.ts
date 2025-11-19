@@ -9,6 +9,7 @@
  */
 
 import type { Test } from '@maddimathon/utility-typescript/types';
+
 import { expect, test } from '@jest/globals';
 
 import { isObjectEmpty } from './isObjectEmpty.js';
