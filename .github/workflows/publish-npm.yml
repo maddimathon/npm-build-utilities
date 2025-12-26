@@ -5,29 +5,14 @@ on:
   release:
     types: [published]
 
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
 jobs:
-  publish-github:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22.x'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@maddimathon'
-      - run: npm ci
-      - run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   publish-npm:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-      packages: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
