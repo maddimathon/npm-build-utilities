@@ -19,6 +19,12 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.10** — 2025-12-26
+
+### Added
+- New option to run a custom stage class in AbstractStage.runStage()
+
+
 ## **0.3.0-alpha.9** — 2025-11-19
 
 Some small fixes to improve default js testing.

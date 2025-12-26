@@ -1206,14 +1206,23 @@ export abstract class AbstractStage<
      * @param level  Depth level for output to the console.
      * 
      * @category Running
+     * 
+     * @since 0.3.0-alpha.10 — Added option to run a custom stage class.
      */
     protected async runStage(
-        stage: Stage.Name,
+        stageInput: Stage.Name | [ string, Stage.Class ],
         level: number,
     ): Promise<void> {
 
-        const _onlyKey: `only-${ Stage.Name }` = `only-${ stage }`;
-        const _withoutKey: `without-${ Stage.Name }` = `without-${ stage }`;
+        const [
+            stage,
+            stageClassCustom,
+        ] = typeof stageInput === 'string'
+                ? [ stageInput ]
+                : stageInput;
+
+        const _onlyKey: `only-${ Stage.Name }` = `only-${ stage as Stage.Name }`;
+        const _withoutKey: `without-${ Stage.Name }` = `without-${ stage as Stage.Name }`;
 
         const _subParams: CLI.Params = {
             ...this.params,
@@ -1229,7 +1238,12 @@ export abstract class AbstractStage<
         const [
             stageClass,
             stageArgs = {},
-        ] = await this.config.getStage( stage, _subConsole, ) ?? [];
+        ] = stageClassCustom
+                ? [ stageClassCustom ]
+                : ( await this.config.getStage(
+                    stage as Stage.Name,
+                    _subConsole,
+                ) ?? [] );
 
         // returns
         if ( !stageClass ) {

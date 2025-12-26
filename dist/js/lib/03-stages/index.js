@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.9
+ * @maddimathon/build-utilities@0.3.0-alpha.10
  * @license MIT
  */
 export * from './classes/index.js';

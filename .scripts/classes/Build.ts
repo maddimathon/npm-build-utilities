@@ -119,7 +119,11 @@ export class Build extends BuildStage {
 
         this.console.verbose( 'deleting existing compiled demo files...', 2 );
 
-        this.fs.delete( this.demo_deleteGlobs(), this.params.verbose ? 3 : 2 );
+        this.fs.delete( this.demo_deleteGlobs(), this.params.verbose ? 3 : 2, false, {
+            ignore: [
+                'demos/*/src/',
+            ],
+        } );
 
 
         this.console.verbose( 'updating demo version numbers...', 2 );

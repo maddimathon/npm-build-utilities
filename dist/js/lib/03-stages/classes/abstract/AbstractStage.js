@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.9
+ * @maddimathon/build-utilities@0.3.0-alpha.10
  * @license MIT
  */
 import * as sass from 'sass-embedded';
@@ -898,8 +898,12 @@ export class AbstractStage {
      * @param level  Depth level for output to the console.
      *
      * @category Running
+     *
+     * @since 0.3.0-alpha.10 — Added option to run a custom stage class.
      */
-    async runStage(stage, level) {
+    async runStage(stageInput, level) {
+        const [stage, stageClassCustom] =
+            typeof stageInput === 'string' ? [stageInput] : stageInput;
         const _onlyKey = `only-${stage}`;
         const _withoutKey = `without-${stage}`;
         const _subParams = {
@@ -914,7 +918,9 @@ export class AbstractStage {
             _subParams,
         );
         const [stageClass, stageArgs = {}] =
-            (await this.config.getStage(stage, _subConsole)) ?? [];
+            stageClassCustom ?
+                [stageClassCustom]
+            :   ((await this.config.getStage(stage, _subConsole)) ?? []);
         // returns
         if (!stageClass) {
             return;

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.9
+ * @maddimathon/build-utilities@0.3.0-alpha.10
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -360,8 +360,10 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @param level  Depth level for output to the console.
      *
      * @category Running
+     *
+     * @since 0.3.0-alpha.10 — Added option to run a custom stage class.
      */
-    protected runStage(stage: Stage.Name, level: number): Promise<void>;
+    protected runStage(stageInput: Stage.Name | [string, Stage.Class], level: number): Promise<void>;
     /**
      * Used to run a single stage within this class; used by
      * {@link AbstractStage.run}.

@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities--demos--no-config",
-    "version": "0.3.0-alpha.9",
+    "version": "0.3.0-alpha.10",
 
     "config": {
         "title": "NPM Build Utilities No-config Demo"
@@ -48,7 +48,7 @@
     "dependencies": {
     },
     "devDependencies": {
-        "@maddimathon/build-utilities": "0.3.0-alpha.9",
+        "@maddimathon/build-utilities": "0.3.0-alpha.10",
         "npm-run-all": "4.1.5"
     },
 
