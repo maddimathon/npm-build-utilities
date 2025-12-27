@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.12
+ * @maddimathon/build-utilities@0.3.0-alpha.13
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -1093,7 +1093,7 @@ export class Stage_Compiler {
             const msgs = [];
             if (options.span) {
                 const span = this.optionSpanMaker(options);
-                const spanMsg = span?.start ?? span?.end;
+                const spanMsg = span?.end ?? span?.start;
                 spanMsg
                     && msgs.push([
                         spanMsg,
@@ -1274,8 +1274,8 @@ export class Stage_Compiler {
                             parsedInstances
                                 .map(
                                     (_psd) =>
-                                        (_psd.span?.start
-                                            ?? _psd.span?.end
+                                        (_psd.span?.end
+                                            ?? _psd.span?.start
                                             ?? _psd.stack
                                                 ?.trim()
                                                 .split(/\n+/)[0])
@@ -1303,8 +1303,8 @@ export class Stage_Compiler {
                         ...parsedInstances
                             .map((_inst) => {
                                 const _location = (
-                                    _inst.span?.start
-                                    ?? _inst.span?.end
+                                    _inst.span?.end
+                                    ?? _inst.span?.start
                                     ?? _inst.stack
                                         ?.trim()
                                         .split(/\n+/)

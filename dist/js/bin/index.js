@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.12
+ * @maddimathon/build-utilities@0.3.0-alpha.13
  * @license MIT
  */
 import minimist from 'minimist';

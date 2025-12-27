@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.13** — 2025-12-27
+
+Super-quick fix to deprecation warning location output.
+
+
 ## **0.3.0-alpha.12** — 2025-12-27
 
 Improved deprecation error handling in sass compilers.

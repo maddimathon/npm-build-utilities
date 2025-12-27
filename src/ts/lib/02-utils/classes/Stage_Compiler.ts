@@ -1365,7 +1365,7 @@ export namespace Stage_Compiler {
 
             if ( options.span ) {
                 const span = this.optionSpanMaker( options );
-                const spanMsg = span?.start ?? span?.end;
+                const spanMsg = span?.end ?? span?.start;
 
                 spanMsg && msgs.push( [ spanMsg, {
                     clr: 'black',
@@ -1558,8 +1558,8 @@ export namespace Stage_Compiler {
                         arrayUnique(
                             parsedInstances.map(
                                 _psd => (
-                                    _psd.span?.start
-                                    ?? _psd.span?.end
+                                    _psd.span?.end
+                                    ?? _psd.span?.start
                                     ?? _psd.stack?.trim().split( /\n+/ )[ 0 ]
                                 ) || false
                             ).filter( _psd => _psd !== false ).map( _l => `    ${ _l }` )
@@ -1586,8 +1586,8 @@ export namespace Stage_Compiler {
                             ( _inst ): MessageMaker.BulkMsgs => {
 
                                 const _location = (
-                                    _inst.span?.start
-                                    ?? _inst.span?.end
+                                    _inst.span?.end
+                                    ?? _inst.span?.start
                                     ?? _inst.stack?.trim().split( /\n+/ ).filter( _l => _l )[ 0 ]
                                 )?.trim();
 
