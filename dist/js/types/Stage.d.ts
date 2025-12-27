@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.11
+ * @maddimathon/build-utilities@0.3.0-alpha.12
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -873,6 +873,15 @@ export declare namespace Stage {
                  */
                 compileViaCLI?: boolean;
                 /**
+                 * Whether to wait to output deprecation warnings to the end of
+                 * compilation.
+                 *
+                 * @default true
+                 *
+                 * @since 0.3.0-alpha.12
+                 */
+                holdDeprecationsToEnd?: boolean;
+                /**
                  * Whether to ignore warnings thrown during packaging. If
                  * falsey, warnings will end the process.
                  *
@@ -885,6 +894,24 @@ export declare namespace Stage {
                  * @since 0.3.0-alpha.1
                  */
                 isWatchedUpdate?: boolean;
+                /**
+                 * If true, the messages and suggestions for individual
+                 * deprecation messages are always hidden. Otherwise, they are
+                 * only hidden if there are many instances.
+                 *
+                 * @since 0.3.0-alpha.12
+                 */
+                neverDisplayDeprecationDetails?: boolean;
+                /**
+                 * If true, each deprecation warning will only be output once,
+                 * even if it is thrown more than once.  Best used along with
+                 * `holdDeprecationsToEnd: true`.
+                 *
+                 * @default true
+                 *
+                 * @since 0.3.0-alpha.12
+                 */
+                onlyOneDeprecationWarningPerCompile?: boolean;
                 /**
                  * Used to correct the output paths in the Sass stack trace.
                  *
@@ -910,6 +937,7 @@ export declare namespace Stage {
                 indented?: boolean;
                 'load-path'?: string | string[];
                 'pkg-importer'?: "node";
+                'quiet-deps'?: boolean;
                 'source-map'?: boolean;
                 'source-map-urls'?: "absolute" | "relative";
                 style?: sass.Options<"async">['style'];

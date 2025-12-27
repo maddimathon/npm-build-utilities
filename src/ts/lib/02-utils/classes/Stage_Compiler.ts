@@ -21,9 +21,16 @@ import type {
 } from '@maddimathon/utility-typescript/types';
 
 import {
+    arrayUnique,
+    escRegExp,
     escRegExpReplace,
     mergeArgs,
 } from '@maddimathon/utility-typescript/functions';
+
+import {
+    type MessageMaker,
+    // VariableInspector,
+} from '@maddimathon/utility-typescript/classes';
 
 import type {
     CLI,
@@ -44,7 +51,6 @@ import {
 // } from '../../01-config/index.js';
 
 import type { Stage_Console } from './Stage_Console.js';
-import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
 
 
 /**
@@ -354,18 +360,21 @@ export class Stage_Compiler implements Stage.Compiler {
                 fatalDeprecations: undefined,
                 functions: undefined,
                 futureDeprecations: undefined,
+                holdDeprecationsToEnd: true,
                 ignoreWarningsInPackaging: undefined,
                 importers: undefined,
                 isWatchedUpdate: undefined,
                 loadPaths: undefined,
                 logger: undefined,
+                neverDisplayDeprecationDetails: undefined,
+                onlyOneDeprecationWarningPerCompile: true,
                 pathToSassLoggingRoot: undefined,
                 quietDeps: undefined,
                 silenceDeprecations: undefined,
                 sourceMap: true,
                 sourceMapIncludeSources: true,
                 style: 'expanded',
-                verbose: undefined,
+                verbose: true,
             },
 
             ts: {},
@@ -705,8 +714,6 @@ export class Stage_Compiler implements Stage.Compiler {
         );
     }
 
-    protected _sassLoggerWarningDuringPackaging = false;
-
     /**
      * Filters the paths in stack traces from the sass compiler API.
      * 
@@ -770,174 +777,31 @@ export class Stage_Compiler implements Stage.Compiler {
     }
 
     /**
-     * Returns the logger argument for sass API opts.
+     * Runs a bare-bones instance of the sass API to compile. Intended only for 
+     * use by {@link Stage_Compiler.scssAPI} and {@link Stage_Compiler.scssBulk}.
      * 
-     * Fires {@link Stage_Compiler._sassLoggerWarningDuringPackaging} event if a
-     * warning is encountered during packaging.
-     * 
-     * @since 0.3.0-alpha.3
+     * @since 0.3.0-alpha.12
      */
-    protected sassLogger(
-        level: number,
-        sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
-    ) {
-
-        const optionSpanMaker = (
-            options: sass.LoggerWarnOptions | { span: sass.SourceSpan; },
-        ) => {
-            if ( !options.span ) {
-                return null;
-            }
-
-            const url = options.span.url && this.fs.pathRelative(
-                decodeURI( options.span.url.pathname )
-            );
-
-            return {
-                start: url && `${ url }:${ options.span.start.line }:${ options.span.start.column }`,
-                end: url && `${ url }:${ options.span.end.line }:${ options.span.end.column }`,
-            };
-        };
-
-        const messageMaker = (
-            options: sass.LoggerWarnOptions | { span: sass.SourceSpan; },
-        ): MessageMaker.BulkMsgs => {
-
-            const msgs: MessageMaker.BulkMsgs = [];
-
-            if ( 'stack' in options && options.stack ) {
-
-                const stack = this.sassErrorStackFilter(
-                    options.stack,
-                    sassCompleteOpts
-                );
-
-                stack.length && msgs.push(
-                    [
-                        '\n' + stack.join( '\n' ),
-                        {
-                            italic: true,
-                            maxWidth: null,
-                        }
-                    ]
-                );
-            }
-
-            return msgs;
-        };
-
-        return {
-
-            warn: ( message: string, options: sass.LoggerWarnOptions ) => {
-
-                const msgs: MessageMaker.BulkMsgs = [];
-
-                if ( options.deprecation ) {
-
-                    msgs.push( [
-                        `[Sass: Deprecated] ${ options.deprecationType }`,
-                        {
-                            bold: true,
-                            clr: 'yellow',
-                        },
-                    ] );
-                } else {
-
-                    msgs.push( [
-                        `[Sass: Warning]`,
-                        {
-                            bold: true,
-                        },
-                    ] );
-                }
-
-                if ( options.span ) {
-                    const span = optionSpanMaker( options );
-                    this.console.vi.log( { span }, level );
-                }
-
-                msgs.push( [
-                    message.trim(),
-                    {},
-                ] );
-
-                this.console.warn(
-                    msgs.concat( messageMaker( options ) ),
-                    level,
-                    {
-                        bold: false,
-                        clr: options.deprecation ? this.console.clr : ( this.params.packaging || this.params.releasing ) ? 'red' : 'orange',
-                        italic: false,
-                        linesIn: 1,
-                        linesOut: 1,
-                        joiner: '\n',
-                    },
-                );
-
-                // exits
-                if ( this.params.packaging || this.params.releasing ) {
-                    this._sassLoggerWarningDuringPackaging = true;
-                }
-            },
-
-            debug: ( message: string, options: { span: sass.SourceSpan; } ) => {
-
-                const msgs: MessageMaker.BulkMsgs = [];
-
-                if ( options.span ) {
-                    const span = optionSpanMaker( options );
-                    const spanMsg = span?.start ?? span?.end;
-
-                    spanMsg && msgs.push( [ spanMsg, {
-                        clr: 'black',
-                        italic: true,
-                    } ] );
-                }
-
-                this.console.log(
-                    [
-                        ...msgs,
-                        [ `[${ options.span ? '' : 'Sass: ' }Debug] `, {
-                            bold: true,
-                            clr: 'grey',
-                        } ],
-                        [ message.trim(), { clr: 'black' } ],
-                        // ...messageMaker( options ),
-                    ],
-                    level,
-                    {
-                        bold: false,
-                        italic: false,
-                        linesIn: 0,
-                        linesOut: 0,
-                        joiner: ' ',
-                        maxWidth: null,
-                    },
-                );
-            },
-        };
-    }
-
-    /**
-     * Compiles scss via API. This skips compiling options and validating values.
-     * 
-     * @since 0.3.0-alpha.1
-     */
-    protected async scssAPI(
+    protected async scssAPI_barebones(
         input: string,
         output: string,
         level: number,
         sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
+        logger: Stage_Compiler.SassLogger,
         compileFn?: (
             input: string,
             level: number,
             opts: Stage.Compiler.Args.Sass,
         ) => Promise<sass.CompileResult>,
-    ) {
+    ): Promise<{
+        output: string;
+        logger: Stage_Compiler.SassLogger;
+    }> {
+
         const opts = {
             ...sassCompleteOpts,
 
-            logger: this.sassLogger( level, sassCompleteOpts ),
+            logger,
 
             importers: [
                 ...sassCompleteOpts.importers ?? [],
@@ -946,7 +810,10 @@ export class Stage_Compiler implements Stage.Compiler {
         };
 
         return ( compileFn ?? this.sassCompileAsync )( input, level, opts ).then(
-            async ( compiled ) => {
+            async ( compiled ): Promise<{
+                output: string;
+                logger: Stage_Compiler.SassLogger;
+            }> => {
 
                 this.params.debug && this.console.verbose(
                     'writing css to path: ' + this.fs.pathRelative( output ),
@@ -957,7 +824,7 @@ export class Stage_Compiler implements Stage.Compiler {
 
                 // returns
                 if ( !compiled.sourceMap ) {
-                    return output;
+                    return { output, logger };
                 }
 
                 const sourceMap = output.replace( /\.(s?css)$/g, '.$1.map' );
@@ -977,9 +844,54 @@ export class Stage_Compiler implements Stage.Compiler {
                     { force: true },
                 );
 
-                return output;
+                return { output, logger };
             }
         );
+    }
+
+    /**
+     * Compiles scss via API. This skips compiling options and validating values.
+     * 
+     * @since 0.3.0-alpha.1
+     */
+    protected async scssAPI(
+        input: string,
+        output: string,
+        level: number,
+        sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
+        logger?: Stage_Compiler.SassLogger,
+        compileFn?: (
+            input: string,
+            level: number,
+            opts: Stage.Compiler.Args.Sass,
+        ) => Promise<sass.CompileResult>,
+    ): Promise<{
+        output: string;
+        logger: Stage_Compiler.SassLogger;
+    }> {
+
+        return this.scssAPI_barebones(
+            input,
+            output,
+            level,
+            sassCompleteOpts,
+            logger ?? new Stage_Compiler.SassLogger(
+                this.console,
+                this.fs,
+                this.params,
+                this.sassErrorStackFilter,
+                level,
+                sassCompleteOpts,
+            ),
+            compileFn,
+        ).then( ( { output, logger } ) => {
+
+            if ( this.args.sass.holdDeprecationsToEnd ) {
+                logger.outputAllDeprecations();
+            }
+
+            return { output, logger };
+        } );
     }
 
     /**
@@ -998,6 +910,7 @@ export class Stage_Compiler implements Stage.Compiler {
             'load-path': completeSassOpts.loadPaths,
             indented: completeSassOpts.cli?.indented,
             'pkg-importer': 'node',
+            'quiet-deps': completeSassOpts.quietDeps,
             'source-map': completeSassOpts.sourceMap,
             'source-map-urls': completeSassOpts.cli?.[ 'source-map-urls' ] ?? 'relative',
             style: completeSassOpts.style,
@@ -1046,7 +959,10 @@ export class Stage_Compiler implements Stage.Compiler {
         output: string,
         level: number,
         sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
-    ) {
+    ): Promise<{
+        output: string;
+        logger: undefined;
+    }> {
         const start = DateTime.now();
 
         if ( sassCompleteOpts.benchmarkCompileTime ) {
@@ -1066,7 +982,7 @@ export class Stage_Compiler implements Stage.Compiler {
             );
         }
 
-        return output;
+        return { output, logger: undefined };
     }
 
     /**
@@ -1089,9 +1005,9 @@ export class Stage_Compiler implements Stage.Compiler {
                     opts,
                 )
                 : this.scssAPI( input, output, level, opts )
-        ).then( async ( compiled ) => {
+        ).then( async ( { output: compiled, logger } ) => {
             // prompts for exit
-            if ( this._sassLoggerWarningDuringPackaging ) {
+            if ( logger?.sassLoggerWarningDuringPackaging ) {
                 // exits process
                 if (
                     ! await this.console.prompt.bool(
@@ -1155,6 +1071,15 @@ export class Stage_Compiler implements Stage.Compiler {
 
             return paths.map( p => p.output );
         }
+
+        const logger = new Stage_Compiler.SassLogger(
+            this.console,
+            this.fs,
+            this.params,
+            this.sassErrorStackFilter,
+            level,
+            opts,
+        );
 
         const compiledPaths: string[] = [];
 
@@ -1228,11 +1153,12 @@ export class Stage_Compiler implements Stage.Compiler {
 
             const compiled = await Promise.allSettled(
                 chunk.map(
-                    ( { input, output } ) => this.scssAPI(
+                    ( { input, output } ) => this.scssAPI_barebones(
                         input,
                         output,
                         ( this.params.verbose && opts.benchmarkCompileTime ? 2 : 0 ) + level,
                         opts,
+                        logger,
                         compileFn,
                     )
                 )
@@ -1245,7 +1171,7 @@ export class Stage_Compiler implements Stage.Compiler {
                         return false;
                     }
 
-                    return result.value;
+                    return result.value.output;
                 } ).filter( v => v !== false )
             );
 
@@ -1277,8 +1203,13 @@ export class Stage_Compiler implements Stage.Compiler {
             compileErrors.forEach( ( err ) => { throw err; } );
         }
 
+        // outputs deprecation warnings
+        if ( this.args.sass.holdDeprecationsToEnd ) {
+            logger.outputAllDeprecations();
+        }
+
         // prompts for exit
-        if ( this._sassLoggerWarningDuringPackaging ) {
+        if ( logger.sassLoggerWarningDuringPackaging ) {
             // exits process
             if (
                 ! await this.console.prompt.bool(
@@ -1342,5 +1273,525 @@ export class Stage_Compiler implements Stage.Compiler {
                 ( this.params.debug ? 1 : 0 ) + ( this.params.verbose ? 1 : 0 ) + level,
             );
         }
+    }
+}
+
+/**
+ * Utilities for the {@link Stage_Compiler} class.
+ * 
+ * @since 0.3.0-alpha.12
+ */
+export namespace Stage_Compiler {
+
+    /**
+     * Handles logging for sass compilations.
+     * 
+     * @since 0.3.0-alpha.12
+     */
+    export class SassLogger implements sass.Logger {
+
+        protected readonly deprecationWarnings = new Map<
+            keyof sass.Deprecations,
+            Set<SassLogger.DeprecationWarning>
+        >();
+
+        protected _sassLoggerWarningDuringPackaging = false;
+
+        public get sassLoggerWarningDuringPackaging() {
+            return this._sassLoggerWarningDuringPackaging;
+        }
+
+
+        public constructor (
+            protected readonly console: Stage_Compiler[ 'console' ],
+            protected readonly fs: Stage_Compiler[ 'fs' ],
+            protected readonly params: Stage_Compiler[ 'params' ],
+            protected readonly sassErrorStackFilter: Stage_Compiler[ 'sassErrorStackFilter' ],
+            protected readonly level: number,
+            protected readonly args: Objects.Classify<Stage.Compiler.Args.Sass>,
+        ) { }
+
+
+        protected messageMaker(
+            options: sass.LoggerWarnOptions | { span: sass.SourceSpan; },
+        ): MessageMaker.BulkMsgs {
+
+            const msgs: MessageMaker.BulkMsgs = [];
+
+            if ( 'stack' in options && options.stack ) {
+
+                const stack = this.sassErrorStackFilter( options.stack, this.args );
+
+                stack.length && msgs.push(
+                    [
+                        '\n' + stack.join( '\n' ),
+                        {
+                            italic: true,
+                            maxWidth: null,
+                        },
+                    ],
+                );
+            }
+
+            return msgs;
+        }
+
+        protected optionSpanMaker(
+            options: sass.LoggerWarnOptions | { span: sass.SourceSpan; },
+        ) {
+            if ( !options.span ) {
+                return null;
+            }
+
+            const url = options.span.url && this.fs.pathRelative(
+                decodeURI( options.span.url.pathname )
+            );
+
+            return {
+                start: url && `${ url }:${ options.span.start.line }:${ options.span.start.column }`,
+                end: url && `${ url }:${ options.span.end.line }:${ options.span.end.column }`,
+            };
+        }
+
+
+        /**
+         * Outputs a debug message received from Sass.
+         * 
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        public debug( message: string, options: { span: sass.SourceSpan; } ) {
+
+            const msgs: MessageMaker.BulkMsgs = [];
+
+            if ( options.span ) {
+                const span = this.optionSpanMaker( options );
+                const spanMsg = span?.start ?? span?.end;
+
+                spanMsg && msgs.push( [ spanMsg, {
+                    clr: 'black',
+                    italic: true,
+                } ] );
+            }
+
+            this.console.log(
+                [
+                    ...msgs,
+                    [ `[${ options.span ? '' : 'Sass: ' }Debug] `, {
+                        bold: true,
+                        clr: 'grey',
+                    } ],
+                    [ message.trim(), { clr: 'black' } ],
+                    // ...messageMaker( options ),
+                ],
+                this.level,
+                {
+                    bold: false,
+                    italic: false,
+                    linesIn: 0,
+                    linesOut: 0,
+                    joiner: ' ',
+                    maxWidth: null,
+                },
+            );
+        }
+
+        /**
+         * @since 0.3.0-alpha.12
+         */
+        protected deprecation_headerMessageMaker(
+            depType: SassLogger.DeprecationWarning[ 'deprecationType' ] | SassLogger.ParsedDeprecationType,
+            introMessage?: string,
+        ): MessageMaker.BulkMsgs {
+
+            return [
+                [
+                    `[Sass: Deprecated] ${ introMessage ?? depType.id }\n`,
+                    {
+                        bold: true,
+                        clr: 'yellow',
+                    },
+                ],
+            ];
+        }
+
+        /**
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        public outputAllDeprecations() {
+
+            for ( const [ depKey, value ] of this.deprecationWarnings.entries() ) {
+
+                const _warningsArr: SassLogger.DeprecationWarning[] = Array.from( value );
+
+                const depType: SassLogger.ParsedDeprecationType = _warningsArr.map(
+                    warn => warn.deprecationType
+                ).reduce(
+                    (
+                        previous: Partial<SassLogger.DeprecationWarning[ 'deprecationType' ]> | SassLogger.ParsedDeprecationType,
+                        current: SassLogger.DeprecationWarning[ 'deprecationType' ],
+                    ): SassLogger.ParsedDeprecationType => {
+
+                        const deprecatedIn = previous.deprecatedIn instanceof Set
+                            ? previous.deprecatedIn
+                            : previous.deprecatedIn
+                                ? new Set<string>( [ `${ previous.deprecatedIn.major }.${ previous.deprecatedIn.minor }.${ previous.deprecatedIn.patch }` ] )
+                                : new Set<string>();
+
+                        if ( current.deprecatedIn ) {
+                            deprecatedIn.add( `${ current.deprecatedIn.major }.${ current.deprecatedIn.minor }.${ current.deprecatedIn.patch }` );
+                        }
+
+                        const description = previous.description instanceof Set
+                            ? previous.description
+                            : previous.description
+                                ? new Set<string>( [ previous.description ] )
+                                : new Set<string>();
+
+                        if ( current.description ) {
+                            description.add( current.description );
+                        }
+
+                        const obsoleteIn = previous.obsoleteIn instanceof Set
+                            ? previous.obsoleteIn
+                            : previous.obsoleteIn
+                                ? new Set<string>( [ `${ previous.obsoleteIn.major }.${ previous.obsoleteIn.minor }.${ previous.obsoleteIn.patch }` ] )
+                                : new Set<string>();
+
+                        if ( current.obsoleteIn ) {
+                            obsoleteIn.add( `${ current.obsoleteIn.major }.${ current.obsoleteIn.minor }.${ current.obsoleteIn.patch }` );
+                        }
+
+                        const status = previous.status instanceof Set
+                            ? previous.status
+                            : previous.status
+                                ? new Set<sass.DeprecationStatus>( [ previous.status ] )
+                                : new Set<sass.DeprecationStatus>();
+
+                        if ( current.status ) {
+                            status.add( current.status );
+                        }
+
+                        return {
+                            ...previous,
+                            ...current,
+
+                            id: depKey,
+                            description,
+                            status,
+                            deprecatedIn,
+                            obsoleteIn,
+                        };
+                    },
+                    {
+                        id: depKey,
+                    },
+                );
+
+                const parsedInstances: SassLogger.ParsedDeprecationInstance[] = _warningsArr.map(
+                    ( value ): SassLogger.ParsedDeprecationInstance => {
+
+                        const message = value.message.trim();
+
+                        const moreInfoMessage = message.match(
+                            /[\n\s]*(More info: .+?)[\n\s]*$/i
+                        ) as null | [ string, string ];
+
+                        const shortMessage = message.replace(
+                            /[\n\s]*More info: .+$/gi,
+                            ''
+                        ).replace(
+                            /[\n\s]*Suggestion: .+$/gi,
+                            ''
+                        ).trim();
+
+                        return {
+                            message,
+                            shortMessage,
+                            moreInfoMessage: moreInfoMessage ? moreInfoMessage[ 1 ] : moreInfoMessage,
+                            span: this.optionSpanMaker( value ),
+                            stack: value.stack,
+                        };
+                    }
+                );
+
+                const messages = new Set<string>();
+                const shortMessages = new Set<string>();
+                const moreInfoMessages = new Set<string>();
+
+                parsedInstances.forEach( ( inst ) => {
+                    messages.add( inst.message.trim() );
+                    shortMessages.add( inst.shortMessage.trim() );
+
+                    if ( inst.moreInfoMessage ) {
+                        moreInfoMessages.add( inst.moreInfoMessage.trim() );
+                    }
+                } );
+
+                const headerMessage = [ ...shortMessages ][ 0 ];
+                const headerMessageRegex = headerMessage && new RegExp( `^[\\n\\s]*${ escRegExp( headerMessage ) }(?=[\\n\\s]|$)`, 'gi' );
+
+                const theseMsgs: MessageMaker.BulkMsgs = [
+                    ...this.deprecation_headerMessageMaker(
+                        depType,
+                        headerMessage,
+                    ),
+                    [
+                        [ ...moreInfoMessages ],
+                        {
+                            clr: 'yellow',
+                            italic: true,
+                        },
+                    ],
+                    [ '' ],
+                ];
+
+                if ( parsedInstances.length > 10 || this.args.neverDisplayDeprecationDetails ) {
+
+                    // only display the paths to instances
+                    theseMsgs.push( [
+                        [
+                            `There were ${ parsedInstances.length } instances of this warning:`,
+                        ],
+                        {},
+                    ] );
+                    theseMsgs.push( [
+                        arrayUnique(
+                            parsedInstances.map(
+                                _psd => (
+                                    _psd.span?.start
+                                    ?? _psd.span?.end
+                                    ?? _psd.stack?.trim().split( /\n+/ )[ 0 ]
+                                ) || false
+                            ).filter( _psd => _psd !== false ).map( _l => `    ${ _l }` )
+                        ),
+                        {
+                            italic: true,
+                            maxWidth: null,
+                        },
+                    ] );
+                    theseMsgs.push( [ '' ] );
+                } else {
+
+                    // display details about each instance
+                    theseMsgs.push( [
+                        [
+                            `There were ${ parsedInstances.length } instances of this warning.`,
+                            '',
+                        ],
+                        {},
+                    ] );
+
+                    theseMsgs.push(
+                        ...parsedInstances.map(
+                            ( _inst ): MessageMaker.BulkMsgs => {
+
+                                const _location = (
+                                    _inst.span?.start
+                                    ?? _inst.span?.end
+                                    ?? _inst.stack?.trim().split( /\n+/ ).filter( _l => _l )[ 0 ]
+                                )?.trim();
+
+                                let __simpleMsg = _inst.message.replace(
+                                    /[\n\s]*(More info: .+?)[\n\s]*$/i,
+                                    '',
+                                );
+
+                                if ( headerMessageRegex ) {
+
+                                    __simpleMsg = __simpleMsg.replace(
+                                        headerMessageRegex,
+                                        '',
+                                    );
+                                }
+
+                                const _simpleMsg = __simpleMsg.trim();
+
+                                // returns
+                                if ( !_location && !_simpleMsg ) {
+                                    return [ [ 'FALSE - ' + depKey ] ];
+                                }
+
+                                const msgs: MessageMaker.BulkMsgs = [ [ '' ] ];
+
+                                if ( _location ) {
+                                    msgs.push( [ _location, { bold: true } ] );
+                                }
+
+                                if ( _simpleMsg ) {
+
+                                    if ( _location ) {
+                                        msgs.push( [ [
+                                            '',
+                                            _simpleMsg.split( '\n' ).map(
+                                                _l => '    ' + _l
+                                            ).join( '\n' ),
+                                        ] ] );
+                                    } else {
+                                        msgs.push( [ _simpleMsg ] );
+                                    }
+                                }
+
+                                // returns
+                                if ( !msgs.length ) {
+                                    return [ [ 'FALSE - ' + depKey ] ];
+                                }
+
+                                return [
+                                    ...msgs,
+                                    [ '' ],
+                                ];
+                            }
+                        ).flat()
+                    );
+                }
+
+                this.console.warn(
+                    theseMsgs,
+                    this.level,
+                    {
+                        bold: false,
+                        clr: 'yellow',
+                        italic: false,
+                        linesIn: 1,
+                        linesOut: 1,
+                        joiner: '\n',
+                    },
+                    {
+                        bold: true,
+                    },
+                );
+
+                // varDumps[ depKey ] = _warningsArr;
+            }
+
+            // this.console.vi.log( { deprecationWarnings: warnings }, this.level );
+            // this.console.vi.log( { deprecationWarnings: varDumps }, this.level );
+        }
+
+        /**
+         * Outputs a warning (or deprecation) message received from Sass.
+         * 
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        public warn( message: string, options: sass.LoggerWarnOptions ) {
+
+            const msgs: MessageMaker.BulkMsgs = [];
+
+            const span = this.optionSpanMaker( options );
+
+            let deprecationIsDuplicate = false;
+
+            // returns if duplicate
+            if ( options.deprecation ) {
+                const deprecationID = options.deprecationType.id;
+
+                if ( this.deprecationWarnings.has( deprecationID ) ) {
+                    deprecationIsDuplicate = true;
+                } else {
+                    this.deprecationWarnings.set( deprecationID, new Set() );
+                }
+
+                this.deprecationWarnings.get( deprecationID )?.add( {
+                    ...options,
+                    message,
+                } );
+
+                // returns
+                if (
+                    this.args.holdDeprecationsToEnd
+                    || (
+                        deprecationIsDuplicate
+                        && this.args.onlyOneDeprecationWarningPerCompile
+                    )
+                ) {
+                    return;
+                }
+
+                msgs.push( ...this.deprecation_headerMessageMaker( options.deprecationType ) );
+
+            } else {
+
+                msgs.push( [
+                    `[Sass: Warning]`,
+                    {
+                        bold: true,
+                    },
+                ] );
+            }
+
+            span && this.params.verbose && this.console.vi.debug( { span }, this.level );
+
+            msgs.push( [
+                message.trim(),
+                {},
+            ] );
+
+            this.console.warn(
+                msgs.concat( this.messageMaker( options ) ),
+                this.level,
+                {
+                    bold: false,
+                    clr: options.deprecation ? 'yellow' : ( this.params.packaging || this.params.releasing ) ? 'red' : 'orange',
+                    italic: false,
+                    linesIn: 1,
+                    linesOut: 1,
+                    joiner: '\n',
+                },
+                {
+                    bold: true,
+                },
+            );
+
+            // exits
+            if ( this.params.packaging || this.params.releasing ) {
+                this._sassLoggerWarningDuringPackaging = true;
+            }
+        }
+    }
+
+    /**
+     * Utilities for the {@link SassLogger} class.
+     * 
+     * @since 0.3.0-alpha.12
+     */
+    export namespace SassLogger {
+
+        /**
+         * The object value for a deprecation warning from sass.
+         * 
+         * @since 0.3.0-alpha.12
+         */
+        export type DeprecationWarning = Extract<sass.LoggerWarnOptions, { deprecation: true; }> & {
+            message: string;
+        };
+
+        /**
+         * The parsed value for each instance of a single deprecation warning.
+         * 
+         * @since 0.3.0-alpha.12
+         */
+        export type ParsedDeprecationInstance = {
+            message: DeprecationWarning[ 'message' ];
+            shortMessage: string;
+            moreInfoMessage: null | string;
+            span: ReturnType<SassLogger[ 'optionSpanMaker' ]>;
+            stack: DeprecationWarning[ 'stack' ];
+        };
+
+        /**
+         * The parsed value for all instances of a deprecation warning during
+         * compile.
+         *
+         * @since 0.3.0-alpha.12
+         */
+        export type ParsedDeprecationType = Omit<
+            DeprecationWarning[ 'deprecationType' ],
+            "deprecatedIn" | "description" | "obsoleteIn" | "status"
+        > & {
+            deprecatedIn?: Set<string>;
+            description?: Set<string>;
+            status?: Set<DeprecationWarning[ 'deprecationType' ][ 'status' ]>;
+            obsoleteIn?: Set<string>;
+        };
     }
 }

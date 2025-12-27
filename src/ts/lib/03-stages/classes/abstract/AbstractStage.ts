@@ -627,7 +627,7 @@ export abstract class AbstractStage<
                 || this.params.without.includes( subStage )
             )
         );
-        this.console.vi.debug( { exclude }, 1 + level, { italic: true } );
+        this.params.debug && this.console.vi.verbose( { exclude }, 1 + level, { italic: true } );
 
         if ( this.params.debug && this.params.verbose && exclude ) {
 
@@ -640,13 +640,9 @@ export abstract class AbstractStage<
             }, 2 + level, { italic: true } );
         }
 
-        const result = Boolean(
-            include
-            && !exclude
-            && this[ subStage as keyof typeof this ]
-        );
+        const result = Boolean( include && !exclude );
 
-        this.console.vi.debug( { 'isSubStageIncluded() return': result }, 1 + level, { italic: true } );
+        this.console.vi.debug( { 'isSubStageIncluded() return': result }, level + ( this.params.verbose ? 1 : 0 ), { italic: true } );
 
         if ( this.params.debug && this.params.verbose && !result ) {
 
@@ -654,7 +650,7 @@ export abstract class AbstractStage<
                 result: {
                     include,
                     exclude,
-                    'this[ subStage as keyof typeof this ]': Boolean( this[ subStage as keyof typeof this ] ),
+                    'this[ subStage ]': Boolean( this[ subStage as keyof typeof this ] ),
                 }
             }, 2 + level, { italic: true } );
         }

@@ -4,13 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.11
+ * @maddimathon/build-utilities@0.3.0-alpha.12
  * @license MIT
  */
 import { DateTime } from 'luxon';
 import * as postcss_PresetEnv from 'postcss-preset-env';
 import * as sass from 'sass-embedded';
 import type { Json, Objects } from '@maddimathon/utility-typescript/types';
+import { type MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 import type { Stage_Console } from './Stage_Console.js';
@@ -174,18 +175,21 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly fatalDeprecations: undefined;
             readonly functions: undefined;
             readonly futureDeprecations: undefined;
+            readonly holdDeprecationsToEnd: true;
             readonly ignoreWarningsInPackaging: undefined;
             readonly importers: undefined;
             readonly isWatchedUpdate: undefined;
             readonly loadPaths: undefined;
             readonly logger: undefined;
+            readonly neverDisplayDeprecationDetails: undefined;
+            readonly onlyOneDeprecationWarningPerCompile: true;
             readonly pathToSassLoggingRoot: undefined;
             readonly quietDeps: undefined;
             readonly silenceDeprecations: undefined;
             readonly sourceMap: true;
             readonly sourceMapIncludeSources: true;
             readonly style: "expanded";
-            readonly verbose: undefined;
+            readonly verbose: true;
         };
         readonly ts: {};
     };
@@ -248,7 +252,6 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @since 0.3.0-alpha.1
      */
     protected sassCompileAsync(input: string, level: number, opts: Stage.Compiler.Args.Sass): Promise<sass.CompileResult>;
-    protected _sassLoggerWarningDuringPackaging: boolean;
     /**
      * Filters the paths in stack traces from the sass compiler API.
      *
@@ -256,25 +259,24 @@ export declare class Stage_Compiler implements Stage.Compiler {
      */
     sassErrorStackFilter(stack: string, opts: Stage.Compiler.Args.Sass): string[];
     /**
-     * Returns the logger argument for sass API opts.
+     * Runs a bare-bones instance of the sass API to compile. Intended only for
+     * use by {@link Stage_Compiler.scssAPI} and {@link Stage_Compiler.scssBulk}.
      *
-     * Fires {@link Stage_Compiler._sassLoggerWarningDuringPackaging} event if a
-     * warning is encountered during packaging.
-     *
-     * @since 0.3.0-alpha.3
+     * @since 0.3.0-alpha.12
      */
-    protected sassLogger(level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): {
-        warn: (message: string, options: sass.LoggerWarnOptions) => void;
-        debug: (message: string, options: {
-            span: sass.SourceSpan;
-        }) => void;
-    };
+    protected scssAPI_barebones(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, logger: Stage_Compiler.SassLogger, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<{
+        output: string;
+        logger: Stage_Compiler.SassLogger;
+    }>;
     /**
      * Compiles scss via API. This skips compiling options and validating values.
      *
      * @since 0.3.0-alpha.1
      */
-    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<string>;
+    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, logger?: Stage_Compiler.SassLogger, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<{
+        output: string;
+        logger: Stage_Compiler.SassLogger;
+    }>;
     /**
      * Coverts scss args for the CLI.
      *
@@ -286,7 +288,10 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.3.0-alpha.1
      */
-    protected scssCLI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<string>;
+    protected scssCLI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<{
+        output: string;
+        logger: undefined;
+    }>;
     /**
      * Best for CLI or single-file compiles. Otherwise use scssBulk.
      */
@@ -301,5 +306,101 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
      */
     typescript(tsconfig: string, level: number, errorIfNotFound?: boolean): Promise<void>;
+}
+/**
+ * Utilities for the {@link Stage_Compiler} class.
+ *
+ * @since 0.3.0-alpha.12
+ */
+export declare namespace Stage_Compiler {
+    /**
+     * Handles logging for sass compilations.
+     *
+     * @since 0.3.0-alpha.12
+     */
+    class SassLogger implements sass.Logger {
+        protected readonly console: Stage_Compiler['console'];
+        protected readonly fs: Stage_Compiler['fs'];
+        protected readonly params: Stage_Compiler['params'];
+        protected readonly sassErrorStackFilter: Stage_Compiler['sassErrorStackFilter'];
+        protected readonly level: number;
+        protected readonly args: Objects.Classify<Stage.Compiler.Args.Sass>;
+        protected readonly deprecationWarnings: Map<keyof sass.Deprecations, Set<SassLogger.DeprecationWarning>>;
+        protected _sassLoggerWarningDuringPackaging: boolean;
+        get sassLoggerWarningDuringPackaging(): boolean;
+        constructor(console: Stage_Compiler['console'], fs: Stage_Compiler['fs'], params: Stage_Compiler['params'], sassErrorStackFilter: Stage_Compiler['sassErrorStackFilter'], level: number, args: Objects.Classify<Stage.Compiler.Args.Sass>);
+        protected messageMaker(options: sass.LoggerWarnOptions | {
+            span: sass.SourceSpan;
+        }): MessageMaker.BulkMsgs;
+        protected optionSpanMaker(options: sass.LoggerWarnOptions | {
+            span: sass.SourceSpan;
+        }): {
+            start: string | undefined;
+            end: string | undefined;
+        } | null;
+        /**
+         * Outputs a debug message received from Sass.
+         *
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        debug(message: string, options: {
+            span: sass.SourceSpan;
+        }): void;
+        /**
+         * @since 0.3.0-alpha.12
+         */
+        protected deprecation_headerMessageMaker(depType: SassLogger.DeprecationWarning['deprecationType'] | SassLogger.ParsedDeprecationType, introMessage?: string): MessageMaker.BulkMsgs;
+        /**
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        outputAllDeprecations(): void;
+        /**
+         * Outputs a warning (or deprecation) message received from Sass.
+         *
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        warn(message: string, options: sass.LoggerWarnOptions): void;
+    }
+    /**
+     * Utilities for the {@link SassLogger} class.
+     *
+     * @since 0.3.0-alpha.12
+     */
+    namespace SassLogger {
+        /**
+         * The object value for a deprecation warning from sass.
+         *
+         * @since 0.3.0-alpha.12
+         */
+        type DeprecationWarning = Extract<sass.LoggerWarnOptions, {
+            deprecation: true;
+        }> & {
+            message: string;
+        };
+        /**
+         * The parsed value for each instance of a single deprecation warning.
+         *
+         * @since 0.3.0-alpha.12
+         */
+        type ParsedDeprecationInstance = {
+            message: DeprecationWarning['message'];
+            shortMessage: string;
+            moreInfoMessage: null | string;
+            span: ReturnType<SassLogger['optionSpanMaker']>;
+            stack: DeprecationWarning['stack'];
+        };
+        /**
+         * The parsed value for all instances of a deprecation warning during
+         * compile.
+         *
+         * @since 0.3.0-alpha.12
+         */
+        type ParsedDeprecationType = Omit<DeprecationWarning['deprecationType'], "deprecatedIn" | "description" | "obsoleteIn" | "status"> & {
+            deprecatedIn?: Set<string>;
+            description?: Set<string>;
+            status?: Set<DeprecationWarning['deprecationType']['status']>;
+            obsoleteIn?: Set<string>;
+        };
+    }
 }
 //# sourceMappingURL=Stage_Compiler.d.ts.map

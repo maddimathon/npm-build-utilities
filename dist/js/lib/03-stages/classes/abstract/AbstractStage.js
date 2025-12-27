@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.11
+ * @maddimathon/build-utilities@0.3.0-alpha.12
  * @license MIT
  */
 import * as sass from 'sass-embedded';
@@ -487,7 +487,10 @@ export class AbstractStage {
                 && (this.params.without == subStage
                     || this.params.without.includes(subStage)),
         );
-        this.console.vi.debug({ exclude }, 1 + level, { italic: true });
+        this.params.debug
+            && this.console.vi.verbose({ exclude }, 1 + level, {
+                italic: true,
+            });
         if (this.params.debug && this.params.verbose && exclude) {
             this.console.vi.verbose(
                 {
@@ -503,10 +506,10 @@ export class AbstractStage {
                 { italic: true },
             );
         }
-        const result = Boolean(include && !exclude && this[subStage]);
+        const result = Boolean(include && !exclude);
         this.console.vi.debug(
             { 'isSubStageIncluded() return': result },
-            1 + level,
+            level + (this.params.verbose ? 1 : 0),
             { italic: true },
         );
         if (this.params.debug && this.params.verbose && !result) {
@@ -515,9 +518,7 @@ export class AbstractStage {
                     result: {
                         include,
                         exclude,
-                        'this[ subStage as keyof typeof this ]': Boolean(
-                            this[subStage],
-                        ),
+                        'this[ subStage ]': Boolean(this[subStage]),
                     },
                 },
                 2 + level,

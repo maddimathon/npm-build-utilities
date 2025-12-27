@@ -15,7 +15,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.11
+ * @maddimathon/build-utilities@0.3.0-alpha.12
  * @license MIT
  */
 /** @hidden - documented as an entry point module */

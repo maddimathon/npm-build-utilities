@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.11
+ * @maddimathon/build-utilities@0.3.0-alpha.12
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -12,9 +12,12 @@ import postcss from 'postcss';
 import * as postcss_PresetEnv from 'postcss-preset-env';
 import * as sass from 'sass-embedded';
 import {
+    arrayUnique,
+    escRegExp,
     escRegExpReplace,
     mergeArgs,
 } from '@maddimathon/utility-typescript/functions';
+import {} from '@maddimathon/utility-typescript/classes';
 import { StageError } from '../../@internal/index.js';
 import { catchOrReturn, FileSystem } from '../../00-universal/index.js';
 /**
@@ -294,18 +297,21 @@ export class Stage_Compiler {
                 fatalDeprecations: undefined,
                 functions: undefined,
                 futureDeprecations: undefined,
+                holdDeprecationsToEnd: true,
                 ignoreWarningsInPackaging: undefined,
                 importers: undefined,
                 isWatchedUpdate: undefined,
                 loadPaths: undefined,
                 logger: undefined,
+                neverDisplayDeprecationDetails: undefined,
+                onlyOneDeprecationWarningPerCompile: true,
                 pathToSassLoggingRoot: undefined,
                 quietDeps: undefined,
                 silenceDeprecations: undefined,
                 sourceMap: true,
                 sourceMapIncludeSources: true,
                 style: 'expanded',
-                verbose: undefined,
+                verbose: true,
             },
             ts: {},
         };
@@ -563,7 +569,6 @@ export class Stage_Compiler {
             },
         );
     }
-    _sassLoggerWarningDuringPackaging = false;
     /**
      * Filters the paths in stack traces from the sass compiler API.
      *
@@ -609,137 +614,22 @@ export class Stage_Compiler {
         return urlPathsFiltered;
     }
     /**
-     * Returns the logger argument for sass API opts.
+     * Runs a bare-bones instance of the sass API to compile. Intended only for
+     * use by {@link Stage_Compiler.scssAPI} and {@link Stage_Compiler.scssBulk}.
      *
-     * Fires {@link Stage_Compiler._sassLoggerWarningDuringPackaging} event if a
-     * warning is encountered during packaging.
-     *
-     * @since 0.3.0-alpha.3
+     * @since 0.3.0-alpha.12
      */
-    sassLogger(level, sassCompleteOpts) {
-        const optionSpanMaker = (options) => {
-            if (!options.span) {
-                return null;
-            }
-            const url =
-                options.span.url
-                && this.fs.pathRelative(decodeURI(options.span.url.pathname));
-            return {
-                start:
-                    url
-                    && `${url}:${options.span.start.line}:${options.span.start.column}`,
-                end:
-                    url
-                    && `${url}:${options.span.end.line}:${options.span.end.column}`,
-            };
-        };
-        const messageMaker = (options) => {
-            const msgs = [];
-            if ('stack' in options && options.stack) {
-                const stack = this.sassErrorStackFilter(
-                    options.stack,
-                    sassCompleteOpts,
-                );
-                stack.length
-                    && msgs.push([
-                        '\n' + stack.join('\n'),
-                        {
-                            italic: true,
-                            maxWidth: null,
-                        },
-                    ]);
-            }
-            return msgs;
-        };
-        return {
-            warn: (message, options) => {
-                const msgs = [];
-                if (options.deprecation) {
-                    msgs.push([
-                        `[Sass: Deprecated] ${options.deprecationType}`,
-                        {
-                            bold: true,
-                            clr: 'yellow',
-                        },
-                    ]);
-                } else {
-                    msgs.push([
-                        `[Sass: Warning]`,
-                        {
-                            bold: true,
-                        },
-                    ]);
-                }
-                if (options.span) {
-                    const span = optionSpanMaker(options);
-                    this.console.vi.log({ span }, level);
-                }
-                msgs.push([message.trim(), {}]);
-                this.console.warn(msgs.concat(messageMaker(options)), level, {
-                    bold: false,
-                    clr:
-                        options.deprecation ? this.console.clr
-                        : this.params.packaging || this.params.releasing ? 'red'
-                        : 'orange',
-                    italic: false,
-                    linesIn: 1,
-                    linesOut: 1,
-                    joiner: '\n',
-                });
-                // exits
-                if (this.params.packaging || this.params.releasing) {
-                    this._sassLoggerWarningDuringPackaging = true;
-                }
-            },
-            debug: (message, options) => {
-                const msgs = [];
-                if (options.span) {
-                    const span = optionSpanMaker(options);
-                    const spanMsg = span?.start ?? span?.end;
-                    spanMsg
-                        && msgs.push([
-                            spanMsg,
-                            {
-                                clr: 'black',
-                                italic: true,
-                            },
-                        ]);
-                }
-                this.console.log(
-                    [
-                        ...msgs,
-                        [
-                            `[${options.span ? '' : 'Sass: '}Debug] `,
-                            {
-                                bold: true,
-                                clr: 'grey',
-                            },
-                        ],
-                        [message.trim(), { clr: 'black' }],
-                        // ...messageMaker( options ),
-                    ],
-                    level,
-                    {
-                        bold: false,
-                        italic: false,
-                        linesIn: 0,
-                        linesOut: 0,
-                        joiner: ' ',
-                        maxWidth: null,
-                    },
-                );
-            },
-        };
-    }
-    /**
-     * Compiles scss via API. This skips compiling options and validating values.
-     *
-     * @since 0.3.0-alpha.1
-     */
-    async scssAPI(input, output, level, sassCompleteOpts, compileFn) {
+    async scssAPI_barebones(
+        input,
+        output,
+        level,
+        sassCompleteOpts,
+        logger,
+        compileFn,
+    ) {
         const opts = {
             ...sassCompleteOpts,
-            logger: this.sassLogger(level, sassCompleteOpts),
+            logger,
             importers: [
                 ...(sassCompleteOpts.importers ?? []),
                 new sass.NodePackageImporter(),
@@ -756,7 +646,7 @@ export class Stage_Compiler {
                 this.fs.write(output, compiled.css, { force: true });
                 // returns
                 if (!compiled.sourceMap) {
-                    return output;
+                    return { output, logger };
                 }
                 const sourceMap = output.replace(/\.(s?css)$/g, '.$1.map');
                 this.params.debug
@@ -775,9 +665,37 @@ export class Stage_Compiler {
                     ),
                     { force: true },
                 );
-                return output;
+                return { output, logger };
             },
         );
+    }
+    /**
+     * Compiles scss via API. This skips compiling options and validating values.
+     *
+     * @since 0.3.0-alpha.1
+     */
+    async scssAPI(input, output, level, sassCompleteOpts, logger, compileFn) {
+        return this.scssAPI_barebones(
+            input,
+            output,
+            level,
+            sassCompleteOpts,
+            logger
+                ?? new Stage_Compiler.SassLogger(
+                    this.console,
+                    this.fs,
+                    this.params,
+                    this.sassErrorStackFilter,
+                    level,
+                    sassCompleteOpts,
+                ),
+            compileFn,
+        ).then(({ output, logger }) => {
+            if (this.args.sass.holdDeprecationsToEnd) {
+                logger.outputAllDeprecations();
+            }
+            return { output, logger };
+        });
     }
     /**
      * Coverts scss args for the CLI.
@@ -801,6 +719,7 @@ export class Stage_Compiler {
             'load-path': completeSassOpts.loadPaths,
             indented: completeSassOpts.cli?.indented,
             'pkg-importer': 'node',
+            'quiet-deps': completeSassOpts.quietDeps,
             'source-map': completeSassOpts.sourceMap,
             'source-map-urls':
                 completeSassOpts.cli?.['source-map-urls'] ?? 'relative',
@@ -852,7 +771,7 @@ export class Stage_Compiler {
                 DateTime.now(),
             );
         }
-        return output;
+        return { output, logger: undefined };
     }
     /**
      * Best for CLI or single-file compiles. Otherwise use scssBulk.
@@ -871,9 +790,9 @@ export class Stage_Compiler {
                     opts,
                 )
             :   this.scssAPI(input, output, level, opts)).then(
-            async (compiled) => {
+            async ({ output: compiled, logger }) => {
                 // prompts for exit
-                if (this._sassLoggerWarningDuringPackaging) {
+                if (logger?.sassLoggerWarningDuringPackaging) {
                     // exits process
                     if (
                         !(await this.console.prompt.bool(
@@ -925,6 +844,14 @@ export class Stage_Compiler {
             }
             return paths.map((p) => p.output);
         }
+        const logger = new Stage_Compiler.SassLogger(
+            this.console,
+            this.fs,
+            this.params,
+            this.sassErrorStackFilter,
+            level,
+            opts,
+        );
         const compiledPaths = [];
         const compiler = await sass.initAsyncCompiler();
         const compileFn = async (_input, _level, _opts) => {
@@ -983,13 +910,14 @@ export class Stage_Compiler {
             }
             const compiled = await Promise.allSettled(
                 chunk.map(({ input, output }) =>
-                    this.scssAPI(
+                    this.scssAPI_barebones(
                         input,
                         output,
                         (this.params.verbose && opts.benchmarkCompileTime ?
                             2
                         :   0) + level,
                         opts,
+                        logger,
                         compileFn,
                     ),
                 ),
@@ -1001,7 +929,7 @@ export class Stage_Compiler {
                             compileErrors.push(result.reason);
                             return false;
                         }
-                        return result.value;
+                        return result.value.output;
                     })
                     .filter((v) => v !== false),
             );
@@ -1030,8 +958,12 @@ export class Stage_Compiler {
                 throw err;
             });
         }
+        // outputs deprecation warnings
+        if (this.args.sass.holdDeprecationsToEnd) {
+            logger.outputAllDeprecations();
+        }
         // prompts for exit
-        if (this._sassLoggerWarningDuringPackaging) {
+        if (logger.sassLoggerWarningDuringPackaging) {
             // exits process
             if (
                 !(await this.console.prompt.bool(
@@ -1087,4 +1019,430 @@ export class Stage_Compiler {
         }
     }
 }
+/**
+ * Utilities for the {@link Stage_Compiler} class.
+ *
+ * @since 0.3.0-alpha.12
+ */
+(function (Stage_Compiler) {
+    /**
+     * Handles logging for sass compilations.
+     *
+     * @since 0.3.0-alpha.12
+     */
+    class SassLogger {
+        console;
+        fs;
+        params;
+        sassErrorStackFilter;
+        level;
+        args;
+        deprecationWarnings = new Map();
+        _sassLoggerWarningDuringPackaging = false;
+        get sassLoggerWarningDuringPackaging() {
+            return this._sassLoggerWarningDuringPackaging;
+        }
+        constructor(console, fs, params, sassErrorStackFilter, level, args) {
+            this.console = console;
+            this.fs = fs;
+            this.params = params;
+            this.sassErrorStackFilter = sassErrorStackFilter;
+            this.level = level;
+            this.args = args;
+        }
+        messageMaker(options) {
+            const msgs = [];
+            if ('stack' in options && options.stack) {
+                const stack = this.sassErrorStackFilter(
+                    options.stack,
+                    this.args,
+                );
+                stack.length
+                    && msgs.push([
+                        '\n' + stack.join('\n'),
+                        {
+                            italic: true,
+                            maxWidth: null,
+                        },
+                    ]);
+            }
+            return msgs;
+        }
+        optionSpanMaker(options) {
+            if (!options.span) {
+                return null;
+            }
+            const url =
+                options.span.url
+                && this.fs.pathRelative(decodeURI(options.span.url.pathname));
+            return {
+                start:
+                    url
+                    && `${url}:${options.span.start.line}:${options.span.start.column}`,
+                end:
+                    url
+                    && `${url}:${options.span.end.line}:${options.span.end.column}`,
+            };
+        }
+        /**
+         * Outputs a debug message received from Sass.
+         *
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        debug(message, options) {
+            const msgs = [];
+            if (options.span) {
+                const span = this.optionSpanMaker(options);
+                const spanMsg = span?.start ?? span?.end;
+                spanMsg
+                    && msgs.push([
+                        spanMsg,
+                        {
+                            clr: 'black',
+                            italic: true,
+                        },
+                    ]);
+            }
+            this.console.log(
+                [
+                    ...msgs,
+                    [
+                        `[${options.span ? '' : 'Sass: '}Debug] `,
+                        {
+                            bold: true,
+                            clr: 'grey',
+                        },
+                    ],
+                    [message.trim(), { clr: 'black' }],
+                    // ...messageMaker( options ),
+                ],
+                this.level,
+                {
+                    bold: false,
+                    italic: false,
+                    linesIn: 0,
+                    linesOut: 0,
+                    joiner: ' ',
+                    maxWidth: null,
+                },
+            );
+        }
+        /**
+         * @since 0.3.0-alpha.12
+         */
+        deprecation_headerMessageMaker(depType, introMessage) {
+            return [
+                [
+                    `[Sass: Deprecated] ${introMessage ?? depType.id}\n`,
+                    {
+                        bold: true,
+                        clr: 'yellow',
+                    },
+                ],
+            ];
+        }
+        /**
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        outputAllDeprecations() {
+            for (const [depKey, value] of this.deprecationWarnings.entries()) {
+                const _warningsArr = Array.from(value);
+                const depType = _warningsArr
+                    .map((warn) => warn.deprecationType)
+                    .reduce(
+                        (previous, current) => {
+                            const deprecatedIn =
+                                previous.deprecatedIn instanceof Set ?
+                                    previous.deprecatedIn
+                                : previous.deprecatedIn ?
+                                    new Set([
+                                        `${previous.deprecatedIn.major}.${previous.deprecatedIn.minor}.${previous.deprecatedIn.patch}`,
+                                    ])
+                                :   new Set();
+                            if (current.deprecatedIn) {
+                                deprecatedIn.add(
+                                    `${current.deprecatedIn.major}.${current.deprecatedIn.minor}.${current.deprecatedIn.patch}`,
+                                );
+                            }
+                            const description =
+                                previous.description instanceof Set ?
+                                    previous.description
+                                : previous.description ?
+                                    new Set([previous.description])
+                                :   new Set();
+                            if (current.description) {
+                                description.add(current.description);
+                            }
+                            const obsoleteIn =
+                                previous.obsoleteIn instanceof Set ?
+                                    previous.obsoleteIn
+                                : previous.obsoleteIn ?
+                                    new Set([
+                                        `${previous.obsoleteIn.major}.${previous.obsoleteIn.minor}.${previous.obsoleteIn.patch}`,
+                                    ])
+                                :   new Set();
+                            if (current.obsoleteIn) {
+                                obsoleteIn.add(
+                                    `${current.obsoleteIn.major}.${current.obsoleteIn.minor}.${current.obsoleteIn.patch}`,
+                                );
+                            }
+                            const status =
+                                previous.status instanceof Set ? previous.status
+                                : previous.status ? new Set([previous.status])
+                                : new Set();
+                            if (current.status) {
+                                status.add(current.status);
+                            }
+                            return {
+                                ...previous,
+                                ...current,
+                                id: depKey,
+                                description,
+                                status,
+                                deprecatedIn,
+                                obsoleteIn,
+                            };
+                        },
+                        {
+                            id: depKey,
+                        },
+                    );
+                const parsedInstances = _warningsArr.map((value) => {
+                    const message = value.message.trim();
+                    const moreInfoMessage = message.match(
+                        /[\n\s]*(More info: .+?)[\n\s]*$/i,
+                    );
+                    const shortMessage = message
+                        .replace(/[\n\s]*More info: .+$/gi, '')
+                        .replace(/[\n\s]*Suggestion: .+$/gi, '')
+                        .trim();
+                    return {
+                        message,
+                        shortMessage,
+                        moreInfoMessage:
+                            moreInfoMessage ?
+                                moreInfoMessage[1]
+                            :   moreInfoMessage,
+                        span: this.optionSpanMaker(value),
+                        stack: value.stack,
+                    };
+                });
+                const messages = new Set();
+                const shortMessages = new Set();
+                const moreInfoMessages = new Set();
+                parsedInstances.forEach((inst) => {
+                    messages.add(inst.message.trim());
+                    shortMessages.add(inst.shortMessage.trim());
+                    if (inst.moreInfoMessage) {
+                        moreInfoMessages.add(inst.moreInfoMessage.trim());
+                    }
+                });
+                const headerMessage = [...shortMessages][0];
+                const headerMessageRegex =
+                    headerMessage
+                    && new RegExp(
+                        `^[\\n\\s]*${escRegExp(headerMessage)}(?=[\\n\\s]|$)`,
+                        'gi',
+                    );
+                const theseMsgs = [
+                    ...this.deprecation_headerMessageMaker(
+                        depType,
+                        headerMessage,
+                    ),
+                    [
+                        [...moreInfoMessages],
+                        {
+                            clr: 'yellow',
+                            italic: true,
+                        },
+                    ],
+                    [''],
+                ];
+                if (
+                    parsedInstances.length > 10
+                    || this.args.neverDisplayDeprecationDetails
+                ) {
+                    // only display the paths to instances
+                    theseMsgs.push([
+                        [
+                            `There were ${parsedInstances.length} instances of this warning:`,
+                        ],
+                        {},
+                    ]);
+                    theseMsgs.push([
+                        arrayUnique(
+                            parsedInstances
+                                .map(
+                                    (_psd) =>
+                                        (_psd.span?.start
+                                            ?? _psd.span?.end
+                                            ?? _psd.stack
+                                                ?.trim()
+                                                .split(/\n+/)[0])
+                                        || false,
+                                )
+                                .filter((_psd) => _psd !== false)
+                                .map((_l) => `    ${_l}`),
+                        ),
+                        {
+                            italic: true,
+                            maxWidth: null,
+                        },
+                    ]);
+                    theseMsgs.push(['']);
+                } else {
+                    // display details about each instance
+                    theseMsgs.push([
+                        [
+                            `There were ${parsedInstances.length} instances of this warning.`,
+                            '',
+                        ],
+                        {},
+                    ]);
+                    theseMsgs.push(
+                        ...parsedInstances
+                            .map((_inst) => {
+                                const _location = (
+                                    _inst.span?.start
+                                    ?? _inst.span?.end
+                                    ?? _inst.stack
+                                        ?.trim()
+                                        .split(/\n+/)
+                                        .filter((_l) => _l)[0]
+                                )?.trim();
+                                let __simpleMsg = _inst.message.replace(
+                                    /[\n\s]*(More info: .+?)[\n\s]*$/i,
+                                    '',
+                                );
+                                if (headerMessageRegex) {
+                                    __simpleMsg = __simpleMsg.replace(
+                                        headerMessageRegex,
+                                        '',
+                                    );
+                                }
+                                const _simpleMsg = __simpleMsg.trim();
+                                // returns
+                                if (!_location && !_simpleMsg) {
+                                    return [['FALSE - ' + depKey]];
+                                }
+                                const msgs = [['']];
+                                if (_location) {
+                                    msgs.push([_location, { bold: true }]);
+                                }
+                                if (_simpleMsg) {
+                                    if (_location) {
+                                        msgs.push([
+                                            [
+                                                '',
+                                                _simpleMsg
+                                                    .split('\n')
+                                                    .map((_l) => '    ' + _l)
+                                                    .join('\n'),
+                                            ],
+                                        ]);
+                                    } else {
+                                        msgs.push([_simpleMsg]);
+                                    }
+                                }
+                                // returns
+                                if (!msgs.length) {
+                                    return [['FALSE - ' + depKey]];
+                                }
+                                return [...msgs, ['']];
+                            })
+                            .flat(),
+                    );
+                }
+                this.console.warn(
+                    theseMsgs,
+                    this.level,
+                    {
+                        bold: false,
+                        clr: 'yellow',
+                        italic: false,
+                        linesIn: 1,
+                        linesOut: 1,
+                        joiner: '\n',
+                    },
+                    {
+                        bold: true,
+                    },
+                );
+                // varDumps[ depKey ] = _warningsArr;
+            }
+            // this.console.vi.log( { deprecationWarnings: warnings }, this.level );
+            // this.console.vi.log( { deprecationWarnings: varDumps }, this.level );
+        }
+        /**
+         * Outputs a warning (or deprecation) message received from Sass.
+         *
+         * @since 0.3.0-alpha.12 — Moved to own class.
+         */
+        warn(message, options) {
+            const msgs = [];
+            const span = this.optionSpanMaker(options);
+            let deprecationIsDuplicate = false;
+            // returns if duplicate
+            if (options.deprecation) {
+                const deprecationID = options.deprecationType.id;
+                if (this.deprecationWarnings.has(deprecationID)) {
+                    deprecationIsDuplicate = true;
+                } else {
+                    this.deprecationWarnings.set(deprecationID, new Set());
+                }
+                this.deprecationWarnings.get(deprecationID)?.add({
+                    ...options,
+                    message,
+                });
+                // returns
+                if (
+                    this.args.holdDeprecationsToEnd
+                    || (deprecationIsDuplicate
+                        && this.args.onlyOneDeprecationWarningPerCompile)
+                ) {
+                    return;
+                }
+                msgs.push(
+                    ...this.deprecation_headerMessageMaker(
+                        options.deprecationType,
+                    ),
+                );
+            } else {
+                msgs.push([
+                    `[Sass: Warning]`,
+                    {
+                        bold: true,
+                    },
+                ]);
+            }
+            span
+                && this.params.verbose
+                && this.console.vi.debug({ span }, this.level);
+            msgs.push([message.trim(), {}]);
+            this.console.warn(
+                msgs.concat(this.messageMaker(options)),
+                this.level,
+                {
+                    bold: false,
+                    clr:
+                        options.deprecation ? 'yellow'
+                        : this.params.packaging || this.params.releasing ? 'red'
+                        : 'orange',
+                    italic: false,
+                    linesIn: 1,
+                    linesOut: 1,
+                    joiner: '\n',
+                },
+                {
+                    bold: true,
+                },
+            );
+            // exits
+            if (this.params.packaging || this.params.releasing) {
+                this._sassLoggerWarningDuringPackaging = true;
+            }
+        }
+    }
+    Stage_Compiler.SassLogger = SassLogger;
+})(Stage_Compiler || (Stage_Compiler = {}));
 //# sourceMappingURL=Stage_Compiler.js.map

@@ -19,6 +19,19 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.12** — 2025-12-27
+
+Improved deprecation error handling in sass compilers.
+
+### Changed
+- Converted sass API logger to a class instance (for better deprecation handling)
+
+### Fixed
+- In AbstractStage.isSubStageIncluded() - args.checkIfSubStageIsMethod set to
+  false was not properly being respected
+- Sass error handler deprecated output fixed
+
+
 ## **0.3.0-alpha.11** — 2025-12-26
 
 ### Added
