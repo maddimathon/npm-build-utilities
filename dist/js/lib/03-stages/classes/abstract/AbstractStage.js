@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.10
+ * @maddimathon/build-utilities@0.3.0-alpha.11
  * @license MIT
  */
 import * as sass from 'sass-embedded';
@@ -416,21 +416,29 @@ export class AbstractStage {
      * {@inheritDoc Stage.isSubStageIncluded}
      *
      * @category Config
+     *
+     * @since 0.3.0-alpha.11 — Added args param.
      */
-    isSubStageIncluded(subStage, level) {
+    isSubStageIncluded(subStage, level, args = {}) {
         this.params.debug
             && this.console.verbose(
                 `isSubStageIncluded( '${subStage}' )`,
                 level,
                 { italic: true },
             );
-        // returns
-        if (!(subStage in this) || typeof this[subStage] !== 'function') {
-            return false;
+        // returns conditionally
+        if (args.checkIfSubStageIsMethod ?? true) {
+            // returns
+            if (!(subStage in this) || typeof this[subStage] !== 'function') {
+                return false;
+            }
         }
-        // returns
-        if (!this.subStages.includes(subStage)) {
-            return false;
+        // returns conditionally
+        if (args.checkIfSubStageIsDefaultIncluded ?? true) {
+            // returns
+            if (!this.subStages.includes(subStage)) {
+                return false;
+            }
         }
         this.params.debug
             && this.console.vi.verbose(

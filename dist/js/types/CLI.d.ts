@@ -13,7 +13,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.10
+ * @maddimathon/build-utilities@0.3.0-alpha.11
  * @license MIT
  */
 import type { Stage } from './Stage.js';

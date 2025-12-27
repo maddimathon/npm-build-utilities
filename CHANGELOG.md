@@ -19,6 +19,12 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.11** — 2025-12-26
+
+### Added
+- New args param to AbstractStage.isSubStageIncluded()
+
+
 ## **0.3.0-alpha.10** — 2025-12-26
 
 ### Added

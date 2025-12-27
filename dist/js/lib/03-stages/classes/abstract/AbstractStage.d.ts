@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.10
+ * @maddimathon/build-utilities@0.3.0-alpha.11
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -207,8 +207,13 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * {@inheritDoc Stage.isSubStageIncluded}
      *
      * @category Config
+     *
+     * @since 0.3.0-alpha.11 — Added args param.
      */
-    isSubStageIncluded(subStage: T_SubStage, level: number): boolean;
+    isSubStageIncluded(subStage: T_SubStage, level: number, args?: {
+        checkIfSubStageIsMethod?: boolean;
+        checkIfSubStageIsDefaultIncluded?: boolean;
+    }): boolean;
     /**
      * {@inheritDoc Stage.getDistDir}
      *

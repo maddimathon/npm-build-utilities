@@ -555,25 +555,39 @@ export abstract class AbstractStage<
 
     /* CONFIG & ARGS ===================================== */
 
-    /** 
+    /**
      * {@inheritDoc Stage.isSubStageIncluded}
      * 
      * @category Config
+     * 
+     * @since 0.3.0-alpha.11 — Added args param.
      */
     public isSubStageIncluded(
         subStage: T_SubStage,
         level: number,
+        args: {
+            checkIfSubStageIsMethod?: boolean,
+            checkIfSubStageIsDefaultIncluded?: boolean,
+        } = {},
     ): boolean {
         this.params.debug && this.console.verbose( `isSubStageIncluded( '${ subStage }' )`, level, { italic: true } );
 
-        // returns
-        if ( !( subStage in this ) || typeof this[ subStage as keyof this ] !== 'function' ) {
-            return false;
+        // returns conditionally
+        if ( args.checkIfSubStageIsMethod ?? true ) {
+
+            // returns
+            if ( !( subStage in this ) || typeof this[ subStage as keyof this ] !== 'function' ) {
+                return false;
+            }
         }
 
-        // returns
-        if ( !this.subStages.includes( subStage ) ) {
-            return false;
+        // returns conditionally
+        if ( args.checkIfSubStageIsDefaultIncluded ?? true ) {
+
+            // returns
+            if ( !this.subStages.includes( subStage ) ) {
+                return false;
+            }
         }
 
         this.params.debug && this.console.vi.verbose( { 'this.params.only': this.params.only }, 1 + level, { italic: true } );
