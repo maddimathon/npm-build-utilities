@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.13
+ * @maddimathon/build-utilities@0.3.0-alpha.14
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -754,7 +754,7 @@ export declare namespace Stage {
     /**
      * Type utilities for {@link Compiler} classes.
      *
-     * @see {@link Stage.compiler}
+     * @see {@link Stage.Compiler}
      *
      * @since 0.1.0-alpha
      */

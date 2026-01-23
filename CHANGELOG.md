@@ -19,6 +19,16 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.14** — 2026-01-23
+
+### Changed
+- Now only outputing ts source maps in compile if params.packaging and
+  params.releasing are both falsey
+
+### Fixed
+- Changes to sass config param pathToSassLoggingRoot default/fallback
+
+
 ## **0.3.0-alpha.13** — 2025-12-27
 
 Super-quick fix to deprecation warning location output.

@@ -962,7 +962,7 @@ export namespace Stage {
     /**
      * Type utilities for {@link Compiler} classes.
      * 
-     * @see {@link Stage.compiler}
+     * @see {@link Stage.Compiler}
      * 
      * @since 0.1.0-alpha
      */

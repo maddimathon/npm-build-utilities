@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.13
+ * @maddimathon/build-utilities@0.3.0-alpha.14
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -385,6 +385,13 @@ export class Stage_Compiler {
         const config_obj = JSON.parse(this.fs.readFile(tsconfig));
         // returns
         if (typeof config_obj === 'object') {
+            if (!config_obj.compilerOptions) {
+                config_obj.compilerOptions = {};
+            }
+            config_obj.compilerOptions.sourceMap =
+                (config_obj.compilerOptions?.sourceMap ?? false)
+                && !this.params.packaging
+                && !this.params.releasing;
             return config_obj;
         }
         return {};
@@ -578,8 +585,8 @@ export class Stage_Compiler {
         const sassStackRegex = /^(\s*)([^\s]+)\s+(\d+:\d+)(?=\s|$)/i;
         const pathToSassLoggingRoot =
             opts.pathToSassLoggingRoot
-            ?? this.args.sass.pathToSassLoggingRoot
-            ?? './node_modules/@maddimathon/build-utilities/node_modules';
+            ?? this.args.sass?.pathToSassLoggingRoot
+            ?? '.';
         const splitStack = stack.split('\n').filter((l) => l);
         const sassPathsFiltered = splitStack.map((line) => {
             const match = line.match(sassStackRegex);

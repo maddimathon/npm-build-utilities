@@ -483,6 +483,15 @@ export class Stage_Compiler implements Stage.Compiler {
 
         // returns
         if ( typeof config_obj === 'object' ) {
+
+            if ( !config_obj.compilerOptions ) {
+                config_obj.compilerOptions = {};
+            }
+
+            config_obj.compilerOptions.sourceMap = (
+                config_obj.compilerOptions?.sourceMap ?? false
+            ) && !this.params.packaging && !this.params.releasing;
+
             return config_obj;
         }
 
@@ -727,8 +736,8 @@ export class Stage_Compiler implements Stage.Compiler {
         const sassStackRegex = /^(\s*)([^\s]+)\s+(\d+:\d+)(?=\s|$)/i;
 
         const pathToSassLoggingRoot = opts.pathToSassLoggingRoot
-            ?? this.args.sass.pathToSassLoggingRoot
-            ?? './node_modules/@maddimathon/build-utilities/node_modules';
+            ?? this.args.sass?.pathToSassLoggingRoot
+            ?? '.';
 
         const splitStack = stack.split( '\n' ).filter( l => l );
 
