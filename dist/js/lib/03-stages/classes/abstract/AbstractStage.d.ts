@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.14
+ * @maddimathon/build-utilities@0.3.0-alpha.15
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -455,6 +455,17 @@ export declare namespace AbstractStage {
          * @since 0.2.0-alpha.2
          */
         interface Opts {
+            /**
+             * Whether to delete the entire output directory before compiling.
+             *
+             * Complete deletes the directory. Targeted deleted files that match
+             * *.css or *.css.map globs. False does neither.
+             *
+             * @default "targeted"
+             *
+             * @since 0.3.0-alpha.15
+             */
+            clearOutputDir: "complete" | "targeted" | false;
             /**
              * Globs used to find scss files to compile. Relative to subpath param.
              *

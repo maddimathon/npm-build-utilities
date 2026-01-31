@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.14
+ * @maddimathon/build-utilities@0.3.0-alpha.15
  * @license MIT
  */
 import * as prettier from "prettier";
@@ -214,8 +214,12 @@ export declare class FileSystem extends node.NodeFiles {
      * @param dryRun  If true, files that would be deleted are printed to the
      *                console and not deleted.
      * @param args    Optional glob configuration.
+     *
+     * @return  The globbed paths sent to be deleted.
+     *
+     * @since 0.3.0-alpha.15 — Added return value.
      */
-    delete(globs: string | string[], level: number, dryRun?: boolean, args?: Partial<FileSystemType.Glob.Args>): void;
+    delete(globs: string | string[], level: number, dryRun?: boolean, args?: Partial<FileSystemType.Glob.Args>): string[];
     /**
      * {@inheritDoc internal.FileSystemType.glob}
      *

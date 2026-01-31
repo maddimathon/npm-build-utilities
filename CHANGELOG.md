@@ -19,6 +19,13 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.15** — 2026-01-31
+
+### Added
+- New prop - AbstractStage.runCustomScssDirSubStage.Opts.clearOutputDir
+- FileSystem.delete now returns the paths sent to be deleted
+
+
 ## **0.3.0-alpha.14** — 2026-01-23
 
 ### Changed

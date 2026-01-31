@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.14
+ * @maddimathon/build-utilities@0.3.0-alpha.15
  * @license MIT
  */
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';

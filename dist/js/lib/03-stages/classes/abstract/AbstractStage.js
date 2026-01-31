@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.14
+ * @maddimathon/build-utilities@0.3.0-alpha.15
  * @license MIT
  */
 import * as sass from 'sass-embedded';
@@ -1052,7 +1052,8 @@ export class AbstractStage {
         );
         // if the output dir exists, we should delete the old contents
         if (
-            !this.isWatchedUpdate
+            opts.clearOutputDir
+            && !this.isWatchedUpdate
             && distSubpaths.filter(this.fs.exists).length
         ) {
             this.console.verbose(
@@ -1060,7 +1061,9 @@ export class AbstractStage {
                 1 + logLevelBase,
             );
             this.fs.delete(
-                distDir,
+                opts.clearOutputDir === 'complete' ?
+                    distDir
+                :   [`${distDir}/**/*.css`, `${distDir}/**/*.css.map`],
                 (this.params.verbose ? 2 : 1) + logLevelBase,
             );
         }
@@ -1208,6 +1211,7 @@ export class AbstractStage {
          * @source
          */
         runCustomScssDirSubStage.DEFAULT_OPTS = {
+            clearOutputDir: 'targeted',
             globs: ['**/*.scss', '**/*.sass', '**/*.css'],
             ignoreGlobs: ['**/_*'],
             maxConcurrent: undefined,

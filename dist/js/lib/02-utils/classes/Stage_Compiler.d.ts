@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.14
+ * @maddimathon/build-utilities@0.3.0-alpha.15
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -252,6 +252,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @since 0.3.0-alpha.1
      */
     protected sassCompileAsync(input: string, level: number, opts: Stage.Compiler.Args.Sass): Promise<sass.CompileResult>;
+    protected static DEFAULT_PATHTOSASSLOGGINGROOT: string;
     /**
      * Filters the paths in stack traces from the sass compiler API.
      *

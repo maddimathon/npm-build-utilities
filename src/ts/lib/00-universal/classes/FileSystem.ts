@@ -456,15 +456,22 @@ export class FileSystem extends node.NodeFiles {
      * @param dryRun  If true, files that would be deleted are printed to the 
      *                console and not deleted.
      * @param args    Optional glob configuration.
+     * 
+     * @return  The globbed paths sent to be deleted.
+     * 
+     * @since 0.3.0-alpha.15 — Added return value.
      */
     public override delete(
         globs: string | string[],
         level: number,
         dryRun?: boolean,
         args?: Partial<FileSystemType.Glob.Args>,
-    ) {
+    ): string[] {
+
+        const pathsToDelete = this.glob( globs, args );
+
         try {
-            return super.delete( this.glob( globs, args ), level, dryRun );
+            super.delete( this.glob( globs, args ), level, dryRun );
         } catch ( error ) {
 
             if (
@@ -488,6 +495,8 @@ export class FileSystem extends node.NodeFiles {
                 throw error;
             }
         }
+
+        return pathsToDelete;
     }
 
     /** 

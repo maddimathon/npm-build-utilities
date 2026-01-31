@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.14
+ * @maddimathon/build-utilities@0.3.0-alpha.15
  * @license MIT
  */
 import { globSync } from 'glob';
@@ -323,10 +323,15 @@ export class FileSystem extends node.NodeFiles {
      * @param dryRun  If true, files that would be deleted are printed to the
      *                console and not deleted.
      * @param args    Optional glob configuration.
+     *
+     * @return  The globbed paths sent to be deleted.
+     *
+     * @since 0.3.0-alpha.15 — Added return value.
      */
     delete(globs, level, dryRun, args) {
+        const pathsToDelete = this.glob(globs, args);
         try {
-            return super.delete(this.glob(globs, args), level, dryRun);
+            super.delete(this.glob(globs, args), level, dryRun);
         } catch (error) {
             if (
                 error
@@ -347,6 +352,7 @@ export class FileSystem extends node.NodeFiles {
                 throw error;
             }
         }
+        return pathsToDelete;
     }
     /**
      * {@inheritDoc internal.FileSystemType.glob}

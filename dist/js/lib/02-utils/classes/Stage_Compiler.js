@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.14
+ * @maddimathon/build-utilities@0.3.0-alpha.15
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -576,6 +576,8 @@ export class Stage_Compiler {
             },
         );
     }
+    static DEFAULT_PATHTOSASSLOGGINGROOT =
+        'node_modules/@maddimathon/build-utilities/node_modules';
     /**
      * Filters the paths in stack traces from the sass compiler API.
      *
@@ -586,7 +588,7 @@ export class Stage_Compiler {
         const pathToSassLoggingRoot =
             opts.pathToSassLoggingRoot
             ?? this.args.sass?.pathToSassLoggingRoot
-            ?? '.';
+            ?? Stage_Compiler.DEFAULT_PATHTOSASSLOGGINGROOT;
         const splitStack = stack.split('\n').filter((l) => l);
         const sassPathsFiltered = splitStack.map((line) => {
             const match = line.match(sassStackRegex);

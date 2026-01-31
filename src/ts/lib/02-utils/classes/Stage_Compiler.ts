@@ -723,6 +723,8 @@ export class Stage_Compiler implements Stage.Compiler {
         );
     }
 
+    protected static DEFAULT_PATHTOSASSLOGGINGROOT = 'node_modules/@maddimathon/build-utilities/node_modules';
+
     /**
      * Filters the paths in stack traces from the sass compiler API.
      * 
@@ -737,7 +739,7 @@ export class Stage_Compiler implements Stage.Compiler {
 
         const pathToSassLoggingRoot = opts.pathToSassLoggingRoot
             ?? this.args.sass?.pathToSassLoggingRoot
-            ?? '.';
+            ?? Stage_Compiler.DEFAULT_PATHTOSASSLOGGINGROOT;
 
         const splitStack = stack.split( '\n' ).filter( l => l );
 

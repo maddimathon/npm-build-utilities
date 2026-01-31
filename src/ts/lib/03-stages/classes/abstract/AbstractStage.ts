@@ -1432,9 +1432,16 @@ export abstract class AbstractStage<
         );
 
         // if the output dir exists, we should delete the old contents
-        if ( !this.isWatchedUpdate && distSubpaths.filter( this.fs.exists ).length ) {
+        if ( opts.clearOutputDir && !this.isWatchedUpdate && distSubpaths.filter( this.fs.exists ).length ) {
             this.console.verbose( 'deleting existing dist files...', 1 + logLevelBase );
-            this.fs.delete( distDir, ( this.params.verbose ? 2 : 1 ) + logLevelBase );
+
+            this.fs.delete(
+                opts.clearOutputDir === 'complete' ? distDir : [
+                    `${ distDir }/**/*.css`,
+                    `${ distDir }/**/*.css.map`,
+                ],
+                ( this.params.verbose ? 2 : 1 ) + logLevelBase,
+            );
         }
 
         // returns
@@ -1581,6 +1588,8 @@ export namespace AbstractStage {
          */
         export const DEFAULT_OPTS: AbstractStage.runCustomScssDirSubStage.Opts = {
 
+            clearOutputDir: 'targeted',
+
             globs: [
                 '**/*.scss',
                 '**/*.sass',
@@ -1603,6 +1612,18 @@ export namespace AbstractStage {
          * @since 0.2.0-alpha.2
          */
         export interface Opts {
+
+            /**
+             * Whether to delete the entire output directory before compiling.
+             *
+             * Complete deletes the directory. Targeted deleted files that match
+             * *.css or *.css.map globs. False does neither.
+             * 
+             * @default "targeted"
+             * 
+             * @since 0.3.0-alpha.15
+             */
+            clearOutputDir: "complete" | "targeted" | false;
 
             /**
              * Globs used to find scss files to compile. Relative to subpath param.
