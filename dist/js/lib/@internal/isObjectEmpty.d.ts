@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 /**
@@ -19,4 +19,3 @@
  * @UPGRADE - replace with version from utility-typescript when it updates
  */
 export declare function isObjectEmpty(obj: unknown): boolean;
-//# sourceMappingURL=isObjectEmpty.d.ts.map

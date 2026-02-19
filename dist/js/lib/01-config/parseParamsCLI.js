@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 /**
@@ -88,4 +88,3 @@ export function parseParamsCLI(input) {
     }
     parseParamsCLI.DEFAULT = DEFAULT;
 })(parseParamsCLI || (parseParamsCLI = {}));
-//# sourceMappingURL=parseParamsCLI.js.map

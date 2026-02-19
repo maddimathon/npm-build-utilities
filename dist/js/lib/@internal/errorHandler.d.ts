@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { FileSystemType } from '../../types/FileSystemType.js';
@@ -28,4 +28,3 @@ import { type AbstractError } from './classes/index.js';
  * @internal
  */
 export declare function errorHandler(error: AbstractError.Input, level: number, console: Logger, fs: FileSystemType, args?: Partial<AbstractError.Handler.Args>): void;
-//# sourceMappingURL=errorHandler.d.ts.map

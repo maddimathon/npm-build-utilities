@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import {
@@ -66,4 +66,3 @@ export function writeLog(msg, filename, t_args) {
         { force: false, rename: true },
     );
 }
-//# sourceMappingURL=writeLog.js.map

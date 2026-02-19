@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { slugify, timestamp } from '@maddimathon/utility-typescript/functions';
@@ -173,4 +173,3 @@ export class SnapshotStage extends AbstractStage {
         ]);
     }
 }
-//# sourceMappingURL=SnapshotStage.js.map

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import node_SemVer from 'semver';
@@ -283,4 +283,3 @@ export class SemVer {
         Error.INVALID_VERSION = '1';
     })((Error = SemVer.Error || (SemVer.Error = {})));
 })(SemVer || (SemVer = {}));
-//# sourceMappingURL=SemVer.js.map

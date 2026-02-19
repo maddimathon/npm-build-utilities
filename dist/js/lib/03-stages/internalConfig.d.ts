@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Config } from '../../types/index.js';
@@ -25,4 +25,3 @@ import type { Logger } from '../../types/Logger.js';
  * @internal
  */
 export declare function internalConfig(inputConfig: Config | Config.Internal | Config & Partial<Config.Internal>, console?: Logger): Config.Internal;
-//# sourceMappingURL=internalConfig.d.ts.map

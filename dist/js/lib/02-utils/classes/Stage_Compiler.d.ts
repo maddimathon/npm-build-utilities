@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -44,6 +44,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @since 0.2.0-alpha
      */
     static getTsConfigPaths(stage: Stage, level: number, writeIfNotFound?: boolean): Promise<string[]>;
+    parseArgs(defaultArgs: Stage.Compiler['args'], inputArgs: Config.Class['compiler']): Stage.Compiler['args'];
     /**
      * Default configuration for working with PostCSS.
      *
@@ -404,4 +405,3 @@ export declare namespace Stage_Compiler {
         };
     }
 }
-//# sourceMappingURL=Stage_Compiler.d.ts.map

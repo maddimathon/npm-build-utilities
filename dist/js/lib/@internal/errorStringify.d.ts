@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -143,4 +143,3 @@ export declare namespace errorStringify {
      */
     function dump(error: ReturnType<typeof getErrorInfo>[0], info: errorStringify.Info, level: number, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>): MessageMaker.BulkMsgs;
 }
-//# sourceMappingURL=errorStringify.d.ts.map

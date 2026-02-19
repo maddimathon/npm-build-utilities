@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { parseParamsCLI, Project } from '../lib/index.js';
@@ -23,4 +23,3 @@ export default async function (_params, level = 0, console) {
     );
     console.vi.debug({ params }, level, { bold: false, linesOut: 2 });
 }
-//# sourceMappingURL=help.js.map

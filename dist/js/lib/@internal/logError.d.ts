@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -78,4 +78,3 @@ export declare namespace logError {
         outputWarning?: boolean;
     }
 }
-//# sourceMappingURL=logError.d.ts.map

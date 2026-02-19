@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -376,4 +376,3 @@ export declare namespace Config {
         [S in Stage.Name]: boolean | Partial<Stage.Args.All[S]> | Stage.Class | [Stage.Class, undefined | Partial<Stage.Args.All[S]>];
     };
 }
-//# sourceMappingURL=Config.d.ts.map

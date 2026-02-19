@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -67,4 +67,3 @@ export declare class SnapshotStage extends AbstractStage<Stage.Args.Snapshot, St
      */
     protected _zip(): Promise<void>;
 }
-//# sourceMappingURL=SnapshotStage.d.ts.map

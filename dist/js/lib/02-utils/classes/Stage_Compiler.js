@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -169,6 +169,24 @@ export class Stage_Compiler {
         }
         return [tsConfigFile];
     }
+    parseArgs(defaultArgs, inputArgs) {
+        const sass =
+            typeof inputArgs?.sass === 'function' ?
+                inputArgs.sass({
+                    config: this.config,
+                    console: this.console,
+                    params: this.params,
+                })
+            :   inputArgs?.sass;
+        return mergeArgs(
+            defaultArgs,
+            {
+                ...inputArgs,
+                sass,
+            },
+            true,
+        );
+    }
     /**
      * Default configuration for working with PostCSS.
      *
@@ -330,7 +348,7 @@ export class Stage_Compiler {
         this.params = params;
         this.console = console;
         this.fs = fs;
-        this.args = mergeArgs(this.ARGS_DEFAULT, config.compiler, true);
+        this.args = this.parseArgs(this.ARGS_DEFAULT, config.compiler);
         this.getTsConfig = this.getTsConfig.bind(this);
         this.getTsConfigOutDir = this.getTsConfigOutDir.bind(this);
         this.postCSS = this.postCSS.bind(this);
@@ -1454,4 +1472,3 @@ export class Stage_Compiler {
     }
     Stage_Compiler.SassLogger = SassLogger;
 })(Stage_Compiler || (Stage_Compiler = {}));
-//# sourceMappingURL=Stage_Compiler.js.map

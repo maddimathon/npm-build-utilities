@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import {
@@ -165,4 +165,3 @@ class _DummyConsole_VarDump {
         this.log(variable, level, msgArgs, timeArgs);
     }
 }
-//# sourceMappingURL=DummyConsole.js.map

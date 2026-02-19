@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { CLI } from '../../types/index.js';
@@ -27,4 +27,3 @@ import { ProjectConfig } from '../../lib/index.js';
  * @internal
  */
 export declare function getConfig(params: CLI.Params, console?: Logger | null, level?: number): Promise<ProjectConfig>;
-//# sourceMappingURL=getConfig.d.ts.map

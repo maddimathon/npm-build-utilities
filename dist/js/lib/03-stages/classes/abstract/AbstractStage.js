@@ -4,20 +4,16 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
-import * as sass from 'sass-embedded';
 import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
     toTitleCase,
 } from '@maddimathon/utility-typescript/functions';
-import {
-    MessageMaker,
-    VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+import { VariableInspector } from '@maddimathon/utility-typescript/classes';
 import {
     errorHandler,
     writeLog,
@@ -29,8 +25,6 @@ import {
 } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
 import { getPackageJson } from '../../../00-universal/getPackageJson.js';
-// import {
-// } from '../../../01-config/index.js';
 import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
 import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
 /**
@@ -833,20 +827,27 @@ export class AbstractStage {
             return msg;
         };
         const watchFileNameMsg = watcherVersion && watchFileName();
+        const watchChangeNoticeSlug = `watch-change-${which}${this.params.watchedWatcher ? `: #{this.params.watchedWatcher}` : ''}`;
         const messages =
             watcherVersion ?
                 {
                     default: [
                         ['👀 ', { flag: false }],
-                        [`[watch-change-${which}] ${watchFileNameMsg || ''}`],
+                        [
+                            `[${watchChangeNoticeSlug}] ${watchFileNameMsg || ''}`,
+                        ],
                     ],
                     start: [
                         ['🚨 ', { flag: false }],
-                        [`[watch-change-${which}] ${watchFileNameMsg || ''}`],
+                        [
+                            `[${watchChangeNoticeSlug}] ${watchFileNameMsg || ''}`,
+                        ],
                     ],
                     end: [
                         ['✅ ', { flag: false }],
-                        [`[watch-change-${which}] ${watchFileNameMsg || ''}`],
+                        [
+                            `[${watchChangeNoticeSlug}] ${watchFileNameMsg || ''}`,
+                        ],
                     ],
                 }
             :   {
@@ -1223,4 +1224,3 @@ export class AbstractStage {
             || (AbstractStage.runCustomScssDirSubStage = {})),
     );
 })(AbstractStage || (AbstractStage = {}));
-//# sourceMappingURL=AbstractStage.js.map

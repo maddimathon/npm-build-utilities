@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -13,10 +13,8 @@ import {
     escRegExpReplace,
     mergeArgs,
 } from '@maddimathon/utility-typescript/functions';
-import { SemVer, StageError } from '../../@internal/index.js';
+import { StageError } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
-// import {
-// } from '../../01-config/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
  * Default package stage.
@@ -456,6 +454,9 @@ export class DocumentStage extends AbstractStage {
     }
     /* LOCAL METHODS
      * ====================================================================== */
+    startEndNotice(which) {
+        return super.startEndNotice(which, !this.params.building);
+    }
     /* RUNNING METHODS
      * ====================================================================== */
     async runSubStage(subStage) {
@@ -587,4 +588,3 @@ export class DocumentStage extends AbstractStage {
         }
     }
 }
-//# sourceMappingURL=DocumentStage.js.map

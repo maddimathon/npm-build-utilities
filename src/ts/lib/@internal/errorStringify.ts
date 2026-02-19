@@ -18,9 +18,6 @@ import {
     VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
 
-// import type {
-// } from '../../types/index.js';
-
 import type { FileSystemType } from '../../types/FileSystemType.js';
 import type { Logger } from '../../types/Logger.js';
 
@@ -415,18 +412,20 @@ export namespace errorStringify {
         _maxLines: number = 80,
     ): MessageMaker.BulkMsgs {
 
-        const joined = typeof msg === 'string' ? _msgMaker.msg( msg ) : _msgMaker.msgs( msg );
+        const fullMessage = typeof msg === 'string' ? _msgMaker.msg( msg ) : _msgMaker.msgs( msg );
 
-        const abridgedOutput = joined.split( '\n' ).length > _maxLines
-            || joined.length > ( _maxLines * 120 );
+        const abridgedOutput = fullMessage.split( '\n' ).length > _maxLines
+            || fullMessage.length > ( _maxLines * 120 );
 
         // returns
         if ( !abridgedOutput ) {
             return msg;
         }
 
+        const trimmedMsg = fullMessage.replace( /\u001B\[[\d;]*m/g, '' ).trim();
+
         const fileWriteResult = writeLog(
-            joined.trim(),
+            trimmedMsg,
             slugify( info.name ),
             {
                 config: console.config,

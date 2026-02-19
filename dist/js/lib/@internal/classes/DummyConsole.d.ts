@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { node, MessageMaker } from '@maddimathon/utility-typescript/classes';
@@ -67,4 +67,3 @@ export declare class DummyConsole implements Logger {
         }[];
     }>(message: string, level: number, opts: Omit<T_Config, 'message' | 'theme'>): Promise<T_Return | undefined>;
 }
-//# sourceMappingURL=DummyConsole.d.ts.map

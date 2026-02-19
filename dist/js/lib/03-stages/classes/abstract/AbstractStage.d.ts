@@ -4,11 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
-import { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import { type MessageMaker } from '@maddimathon/utility-typescript/classes';
 import type { CLI, Config, Stage } from '../../../../types/index.js';
 import { type AbstractError, SemVer } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
@@ -505,4 +505,3 @@ export declare namespace AbstractStage {
         }
     }
 }
-//# sourceMappingURL=AbstractStage.d.ts.map

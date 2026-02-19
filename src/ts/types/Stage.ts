@@ -873,7 +873,7 @@ export namespace Stage {
         /**
          * A completed args object.
          */
-        readonly args: Stage.Compiler.Args & {
+        readonly args: Omit<Stage.Compiler.ParsedArgs, "sass"> & {
             sass: Objects.Classify<Compiler.Args.Sass>;
         };
 
@@ -983,7 +983,7 @@ export namespace Stage {
             postCSS: Args.PostCSS;
 
             /** {@inheritDoc Compiler.Args.Sass} */
-            sass: Args.Sass;
+            sass: Args.Sass | ( ( p: { config: Config.Class; console: Logger; params: CLI.Params; } ) => Args.Sass );
 
             /**
              * Optional default configuration to use when compiling typescript.
@@ -1002,6 +1002,15 @@ export namespace Stage {
                 tidyGlobs?: string | string[];
             },
         };
+
+        /**
+         * The parsed args saved to the {@link Compiler} property, rather than
+         * the allowed input ({@link Stage.Complier.Args}).
+         */
+        export interface ParsedArgs extends Omit<Compiler.Args, "sass"> {
+            /** {@inheritDoc Compiler.Args.Sass} */
+            sass: Args.Sass;
+        }
 
         /**
          * Types for the {@link Compiler.Args} interface.

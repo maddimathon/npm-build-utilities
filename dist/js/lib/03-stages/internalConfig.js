@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { defaultConfig } from './defaultConfig.js';
@@ -185,4 +185,3 @@ export function internalConfig(inputConfig, console) {
         },
     };
 }
-//# sourceMappingURL=internalConfig.js.map

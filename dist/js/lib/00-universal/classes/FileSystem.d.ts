@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import * as prettier from "prettier";
@@ -430,4 +430,3 @@ export declare namespace FileSystem {
         };
     }
 }
-//# sourceMappingURL=FileSystem.d.ts.map

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Logger } from '../../../types/Logger.js';
@@ -156,4 +156,3 @@ export declare namespace SemVer {
         const INVALID_VERSION = "1";
     }
 }
-//# sourceMappingURL=SemVer.d.ts.map

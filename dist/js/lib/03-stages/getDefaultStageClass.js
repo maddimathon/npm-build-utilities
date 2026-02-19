@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import {
@@ -49,4 +49,3 @@ export function getDefaultStageClass(stage) {
             return TestStage;
     }
 }
-//# sourceMappingURL=getDefaultStageClass.js.map

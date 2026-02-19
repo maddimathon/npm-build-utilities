@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 export * from './abstract/index.js';
@@ -15,4 +15,3 @@ export * from './PackageStage.js';
 export * from './ReleaseStage.js';
 export * from './SnapshotStage.js';
 export * from './TestStage.js';
-//# sourceMappingURL=index.js.map

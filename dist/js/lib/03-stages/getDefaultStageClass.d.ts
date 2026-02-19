@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Stage } from '../../types/index.js';
@@ -16,4 +16,3 @@ export declare function getDefaultStageClass(stage: "release"): Stage.Class.Rele
 export declare function getDefaultStageClass(stage: "snapshot"): Stage.Class.Snapshot;
 export declare function getDefaultStageClass(stage: "test"): Stage.Class.Test;
 export declare function getDefaultStageClass(stage: Stage.Name): Stage.Class;
-//# sourceMappingURL=getDefaultStageClass.d.ts.map

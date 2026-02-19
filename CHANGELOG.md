@@ -19,6 +19,16 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.16** — 2026-02-19
+
+### Added
+- Stage start/end notices triggered during a watch now display the watcher name, if applicable
+- Now allowing sass compiler args to be set via callback function
+
+### Fixed
+- Now removing ASCII escape strings before printing long errors messages to files instead of console
+
+
 ## **0.3.0-alpha.15** — 2026-01-31
 
 ### Added

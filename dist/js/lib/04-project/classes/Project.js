@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { DummyConsole, errorHandler } from '../../@internal/index.js';
@@ -131,4 +131,3 @@ export class Project {
         process.removeListener('uncaughtException', inst.uncaughtErrorListener);
     }
 }
-//# sourceMappingURL=Project.js.map

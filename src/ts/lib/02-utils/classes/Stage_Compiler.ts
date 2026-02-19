@@ -208,6 +208,29 @@ export class Stage_Compiler implements Stage.Compiler {
         return [ tsConfigFile ];
     }
 
+    public parseArgs(
+        defaultArgs: Stage.Compiler[ 'args' ],
+        inputArgs: Config.Class[ 'compiler' ],
+    ): Stage.Compiler[ 'args' ] {
+
+        const sass = typeof inputArgs?.sass === 'function'
+            ? inputArgs.sass( {
+                config: this.config,
+                console: this.console,
+                params: this.params,
+            } )
+            : inputArgs?.sass;
+
+        return mergeArgs(
+            defaultArgs,
+            {
+                ...inputArgs,
+                sass,
+            },
+            true
+        );
+    }
+
     /**
      * Default configuration for working with PostCSS.
      * 
@@ -405,12 +428,11 @@ export class Stage_Compiler implements Stage.Compiler {
         protected readonly console: Stage_Console,
         protected readonly fs: FileSystem,
     ) {
-        this.args = mergeArgs(
+        this.args = this.parseArgs(
             this.ARGS_DEFAULT as Stage.Compiler.Args & {
                 sass: Objects.Classify<Stage.Compiler.Args.Sass>;
             },
             config.compiler,
-            true
         );
 
         this.getTsConfig = this.getTsConfig.bind( this );

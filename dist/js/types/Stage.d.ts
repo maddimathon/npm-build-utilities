@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -689,7 +689,7 @@ export declare namespace Stage {
         /**
          * A completed args object.
          */
-        readonly args: Stage.Compiler.Args & {
+        readonly args: Omit<Stage.Compiler.ParsedArgs, "sass"> & {
             sass: Objects.Classify<Compiler.Args.Sass>;
         };
         /**
@@ -772,7 +772,11 @@ export declare namespace Stage {
              */
             postCSS: Args.PostCSS;
             /** {@inheritDoc Compiler.Args.Sass} */
-            sass: Args.Sass;
+            sass: Args.Sass | ((p: {
+                config: Config.Class;
+                console: Logger;
+                params: CLI.Params;
+            }) => Args.Sass);
             /**
              * Optional default configuration to use when compiling typescript.
              *
@@ -788,6 +792,14 @@ export declare namespace Stage {
                  */
                 tidyGlobs?: string | string[];
             };
+        }
+        /**
+         * The parsed args saved to the {@link Compiler} property, rather than
+         * the allowed input ({@link Stage.Complier.Args}).
+         */
+        interface ParsedArgs extends Omit<Compiler.Args, "sass"> {
+            /** {@inheritDoc Compiler.Args.Sass} */
+            sass: Args.Sass;
         }
         /**
          * Types for the {@link Compiler.Args} interface.
@@ -1016,4 +1028,3 @@ export declare namespace Stage {
         type Test = "scss" | "js";
     }
 }
-//# sourceMappingURL=Stage.d.ts.map

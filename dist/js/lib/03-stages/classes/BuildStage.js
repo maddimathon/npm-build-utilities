@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { mergeArgs } from '@maddimathon/utility-typescript/functions';
@@ -368,4 +368,3 @@ export class BuildStage extends AbstractStage {
         return this.runStage('test', 1);
     }
 }
-//# sourceMappingURL=BuildStage.js.map

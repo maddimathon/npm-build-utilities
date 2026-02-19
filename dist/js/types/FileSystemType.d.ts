@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { GlobOptions } from 'glob';
@@ -292,4 +292,3 @@ export declare namespace FileSystemType {
         type Format = "css" | "html" | "js" | "json" | "md" | "mdx" | "scss" | "ts" | "yaml";
     }
 }
-//# sourceMappingURL=FileSystemType.d.ts.map

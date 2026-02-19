@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Config } from '../../types/index.js';
@@ -24,4 +24,3 @@ import type { Config } from '../../types/index.js';
  * @internal
  */
 export declare function isConfigValid(test: Config | Partial<Config>): false | Config;
-//# sourceMappingURL=isConfigValid.d.ts.map

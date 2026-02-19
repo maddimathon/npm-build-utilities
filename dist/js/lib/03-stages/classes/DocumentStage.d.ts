@@ -4,13 +4,13 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import * as typeDoc from "typedoc";
 import type { Json } from '@maddimathon/utility-typescript/types';
 import type { CLI, Config, Stage } from '../../../types/index.js';
-import { SemVer } from '../../@internal/index.js';
+import { type SemVer } from '../../@internal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
 /**
  * Default package stage.
@@ -360,6 +360,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
      * @param version  Version object for the project’s version.
      */
     constructor(config: Config.Class, params: CLI.Params, args: Partial<Stage.Args.Document>, pkg?: Json.PackageJson, version?: SemVer);
+    startEndNotice(which: "start" | "end" | null): void | Promise<void>;
     protected runSubStage(subStage: Stage.SubStage.Document): Promise<void>;
     /**
      * Replaces placeholders in the built files and directories.
@@ -374,4 +375,3 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
      */
     protected typeDoc(): Promise<void>;
 }
-//# sourceMappingURL=DocumentStage.d.ts.map

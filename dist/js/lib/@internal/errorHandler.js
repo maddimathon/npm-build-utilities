@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import {} from './classes/index.js';
@@ -45,4 +45,3 @@ export function errorHandler(error, level, console, fs, args) {
     console.error(bulkMsgs, level, args);
     process.exit(process.exitCode ?? 0);
 }
-//# sourceMappingURL=errorHandler.js.map

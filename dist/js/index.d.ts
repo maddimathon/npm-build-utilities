@@ -15,7 +15,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 export type * from './types/index.js';
@@ -24,4 +24,3 @@ export * as bin from './bin/lib/index.js';
 /** @hidden - documented as an entry point module */
 export * as internal from './lib/@internal.js';
 export * from './lib/index.js';
-//# sourceMappingURL=index.d.ts.map

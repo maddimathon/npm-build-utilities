@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { CLI, Config, Stage } from '../../../types/index.js';
@@ -57,4 +57,3 @@ export declare class Project {
      */
     run(stage: "debug" | Stage.Name): Promise<void>;
 }
-//# sourceMappingURL=Project.d.ts.map

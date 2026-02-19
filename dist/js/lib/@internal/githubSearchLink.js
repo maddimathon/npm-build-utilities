@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 /**
@@ -62,4 +62,3 @@ export function githubSearchLink(params) {
     return url.toString();
 }
 (function (githubSearchLink) {})(githubSearchLink || (githubSearchLink = {}));
-//# sourceMappingURL=githubSearchLink.js.map

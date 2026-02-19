@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { ProjectError } from '../@internal/index.js';
@@ -50,4 +50,3 @@ export function getPackageJson(args) {
     }
     return JSON.parse(fs.readFile('package.json'));
 }
-//# sourceMappingURL=getPackageJson.js.map

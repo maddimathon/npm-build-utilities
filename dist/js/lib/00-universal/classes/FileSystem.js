@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { globSync } from 'glob';
@@ -798,4 +798,3 @@ export class FileSystem extends node.NodeFiles {
         };
     })((prettier = FileSystem.prettier || (FileSystem.prettier = {})));
 })(FileSystem || (FileSystem = {}));
-//# sourceMappingURL=FileSystem.js.map

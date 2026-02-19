@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -36,4 +36,3 @@ export declare function getPackageJson(args: FileSystem | {
     console: Logger;
     fs?: undefined | FileSystemType.Args;
 }): Partial<Json.PackageJson>;
-//# sourceMappingURL=getPackageJson.d.ts.map

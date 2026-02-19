@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { FileSystemType } from '../../types/FileSystemType.js';
@@ -31,4 +31,3 @@ export declare function catchOrReturn<T_Params extends never[], T_Return extends
  * If the `tryer` function *has* params, then they are required.
  */
 export declare function catchOrReturn<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return, level: number, console: Logger, fs: FileSystemType, params: NoInfer<T_Params>, callback?: (AbstractError.Handler | [AbstractError.Handler, Partial<AbstractError.Handler.Args>])): T_Return;
-//# sourceMappingURL=catchOrReturn.d.ts.map

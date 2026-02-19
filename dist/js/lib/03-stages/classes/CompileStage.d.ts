@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Json } from '@maddimathon/utility-typescript/types';
@@ -68,4 +68,3 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
      */
     protected files(): Promise<((string | false)[] | undefined)[] | undefined>;
 }
-//# sourceMappingURL=CompileStage.d.ts.map

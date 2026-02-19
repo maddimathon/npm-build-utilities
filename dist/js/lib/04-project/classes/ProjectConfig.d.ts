@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Config, Stage } from '../../../types/index.js';
@@ -62,4 +62,3 @@ export declare class ProjectConfig implements Config.Class {
     toJSON(): Config.Internal;
     toString(): string;
 }
-//# sourceMappingURL=ProjectConfig.d.ts.map

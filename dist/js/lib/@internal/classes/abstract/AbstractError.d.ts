@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -199,4 +199,3 @@ export declare namespace AbstractError {
         [key: string]: any;
     }
 }
-//# sourceMappingURL=AbstractError.d.ts.map

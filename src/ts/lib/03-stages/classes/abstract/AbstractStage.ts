@@ -8,7 +8,7 @@
  * @license MIT
  */
 
-import * as sass from 'sass-embedded';
+import type * as sass from 'sass-embedded';
 
 import type {
     Json,
@@ -22,7 +22,7 @@ import {
 } from '@maddimathon/utility-typescript/functions';
 
 import {
-    MessageMaker,
+    type MessageMaker,
     VariableInspector,
 } from '@maddimathon/utility-typescript/classes';
 
@@ -50,9 +50,6 @@ import {
 } from '../../../00-universal/index.js';
 
 import { getPackageJson } from '../../../00-universal/getPackageJson.js';
-
-// import {
-// } from '../../../01-config/index.js';
 
 import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
 import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
@@ -1147,15 +1144,17 @@ export abstract class AbstractStage<
 
         const watchFileNameMsg = watcherVersion && watchFileName();
 
+        const watchChangeNoticeSlug = `watch-change-${ which }${ this.params.watchedWatcher ? `: #{this.params.watchedWatcher}` : '' }`;
+
         const messages: {
             default: MessageMaker.BulkMsgs,
             start: MessageMaker.BulkMsgs,
             end: MessageMaker.BulkMsgs,
         } = watcherVersion
                 ? {
-                    default: [ [ '👀 ', { flag: false } ], [ `[watch-change-${ which }] ${ watchFileNameMsg || '' }` ] ],
-                    start: [ [ '🚨 ', { flag: false } ], [ `[watch-change-${ which }] ${ watchFileNameMsg || '' }` ] ],
-                    end: [ [ '✅ ', { flag: false } ], [ `[watch-change-${ which }] ${ watchFileNameMsg || '' }` ] ],
+                    default: [ [ '👀 ', { flag: false } ], [ `[${ watchChangeNoticeSlug }] ${ watchFileNameMsg || '' }` ] ],
+                    start: [ [ '🚨 ', { flag: false } ], [ `[${ watchChangeNoticeSlug }] ${ watchFileNameMsg || '' }` ] ],
+                    end: [ [ '✅ ', { flag: false } ], [ `[${ watchChangeNoticeSlug }] ${ watchFileNameMsg || '' }` ] ],
                 }
                 : {
                     default: [ [ `${ uppercase.which }ING ${ uppercase.name }` ] ],

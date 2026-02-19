@@ -4,9 +4,8 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 export * from './classes/index.js';
 export * from './defaultConfig.js';
-//# sourceMappingURL=index.d.ts.map

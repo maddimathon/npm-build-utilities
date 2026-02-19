@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { slugify, typeOf } from '@maddimathon/utility-typescript/functions';
@@ -299,16 +299,17 @@ export function errorStringify(_error, level, console, fs, args) {
      * @since 0.2.0-alpha.4
      */
     function validateMsgsLength(info, console, fs, args, msg, _maxLines = 80) {
-        const joined =
+        const fullMessage =
             typeof msg === 'string' ? _msgMaker.msg(msg) : _msgMaker.msgs(msg);
         const abridgedOutput =
-            joined.split('\n').length > _maxLines
-            || joined.length > _maxLines * 120;
+            fullMessage.split('\n').length > _maxLines
+            || fullMessage.length > _maxLines * 120;
         // returns
         if (!abridgedOutput) {
             return msg;
         }
-        const fileWriteResult = writeLog(joined.trim(), slugify(info.name), {
+        const trimmedMsg = fullMessage.replace(/\u001B\[[\d;]*m/g, '').trim();
+        const fileWriteResult = writeLog(trimmedMsg, slugify(info.name), {
             config: console.config,
             fs,
         });
@@ -520,4 +521,3 @@ export function errorStringify(_error, level, console, fs, args) {
     }
     errorStringify.dump = dump;
 })(errorStringify || (errorStringify = {}));
-//# sourceMappingURL=errorStringify.js.map

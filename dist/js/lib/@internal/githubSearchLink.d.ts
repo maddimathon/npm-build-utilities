@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 /**
@@ -82,4 +82,3 @@ export declare namespace githubSearchLink {
         }
     }
 }
-//# sourceMappingURL=githubSearchLink.d.ts.map

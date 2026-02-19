@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { node, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
@@ -147,4 +147,3 @@ export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     /** {@inheritDoc Logger.VarInspect.verbose} */
     verbose(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
 }
-//# sourceMappingURL=Stage_Console.d.ts.map

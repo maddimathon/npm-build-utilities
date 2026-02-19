@@ -17,7 +17,7 @@
  * @internal
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 export type * from '../types/FileSystemType.js';
@@ -38,4 +38,3 @@ export * from './02-utils/classes/Stage_Compiler.js';
 export * from './02-utils/classes/Stage_Console.js';
 export * from './03-stages/getDefaultStageClass.js';
 export * from './03-stages/internalConfig.js';
-//# sourceMappingURL=@internal.d.ts.map

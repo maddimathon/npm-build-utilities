@@ -4,10 +4,9 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 export type * as CLI from './CLI.js';
 export type * from './Config.js';
 export type { Stage } from './Stage.js';
-//# sourceMappingURL=index.d.ts.map

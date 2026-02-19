@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type { Objects } from '@maddimathon/utility-typescript/types';
@@ -206,4 +206,3 @@ export declare namespace Logger {
         verbose(variable: Parameters<VarInspect['log']>[0], level: Parameters<VarInspect['log']>[1], msgArgs?: Parameters<VarInspect['log']>[2], timeArgs?: Parameters<VarInspect['log']>[3]): void;
     }
 }
-//# sourceMappingURL=Logger.d.ts.map

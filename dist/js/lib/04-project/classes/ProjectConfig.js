@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 var _a;
@@ -347,4 +347,3 @@ export class ProjectConfig {
     }
 }
 _a = ProjectConfig;
-//# sourceMappingURL=ProjectConfig.js.map

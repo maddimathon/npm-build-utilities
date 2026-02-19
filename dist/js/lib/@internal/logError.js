@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import { slugify } from '@maddimathon/utility-typescript/functions';
@@ -85,4 +85,3 @@ export function logError(logMsg, error, level, args) {
  * @internal
  */
 (function (logError) {})(logError || (logError = {}));
-//# sourceMappingURL=logError.js.map

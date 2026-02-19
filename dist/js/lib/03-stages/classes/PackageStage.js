@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */ import {
     arrayUnique,
@@ -267,4 +267,3 @@ export class PackageStage extends AbstractStage {
         this.try(this.console.nc.cmd, this.params.verbose ? 3 : 2, [zipCMD]);
     }
 }
-//# sourceMappingURL=PackageStage.js.map

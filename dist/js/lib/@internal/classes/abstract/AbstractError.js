@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import {
@@ -144,4 +144,3 @@ export class AbstractError extends Error {
         (Handler = AbstractError.Handler || (AbstractError.Handler = {})),
     );
 })(AbstractError || (AbstractError = {}));
-//# sourceMappingURL=AbstractError.js.map

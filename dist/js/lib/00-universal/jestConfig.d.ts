@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 import type jest from 'jest';
@@ -43,4 +43,3 @@ export declare namespace jestConfig {
         readonly transform: {};
     };
 }
-//# sourceMappingURL=jestConfig.d.ts.map

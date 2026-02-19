@@ -28,17 +28,14 @@ import type {
 
 import {
     type AbstractError,
+    type SemVer,
 
-    SemVer,
     StageError,
 } from '../../@internal/index.js';
 
 import {
     FileSystem,
 } from '../../00-universal/index.js';
-
-// import {
-// } from '../../01-config/index.js';
 
 import { AbstractStage } from './abstract/AbstractStage.js';
 
@@ -525,6 +522,10 @@ export class DocumentStage extends AbstractStage<
 
     /* LOCAL METHODS
      * ====================================================================== */
+
+    public override startEndNotice( which: "start" | "end" | null ) {
+        return super.startEndNotice( which, !this.params.building );
+    }
 
 
 

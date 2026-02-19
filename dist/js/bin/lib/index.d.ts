@@ -16,8 +16,7 @@
  * @internal
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.15
+ * @maddimathon/build-utilities@0.3.0-alpha.16
  * @license MIT
  */
 export * from './getConfig.js';
-//# sourceMappingURL=index.d.ts.map
