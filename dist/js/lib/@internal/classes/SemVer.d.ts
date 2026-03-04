@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.17.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.17
  * @license MIT
  */
 import type { Logger } from '../../../types/Logger.js';

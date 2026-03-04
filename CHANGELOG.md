@@ -19,6 +19,15 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.17** — 2026-03-04
+
+### Removed
+- Removed isObjectEmpty (it is now in utility-typescript instead)
+
+### Fixed
+- Updated to utility-typescript 2.0.0-beta.2
+
+
 ## **0.3.0-alpha.16** — 2026-02-19
 
 ### Added

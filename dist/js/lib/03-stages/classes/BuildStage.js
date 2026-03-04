@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.17.draft
+ * @maddimathon/build-utilities@0.3.0-alpha.17
  * @license MIT
  */
 import { mergeArgs } from '@maddimathon/utility-typescript';
