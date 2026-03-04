@@ -4,15 +4,15 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import {
     mergeArgs,
     slugify,
     timestamp,
-} from '@maddimathon/utility-typescript/functions';
-import { MessageMaker } from '@maddimathon/utility-typescript/classes';
+    MessageMaker,
+} from '@maddimathon/utility-typescript';
 let _writeLog_msgMaker = new MessageMaker({ painter: null });
 /**
  * Writes a log file to the {@link Config.Paths.scripts}.logs directory.

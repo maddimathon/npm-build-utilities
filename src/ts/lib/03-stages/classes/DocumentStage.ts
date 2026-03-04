@@ -11,14 +11,14 @@
 import * as typeDoc from "typedoc";
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
+} from '@maddimathon/utility-typescript';
 
 import type {
     CLI,
@@ -512,7 +512,7 @@ export class DocumentStage extends AbstractStage<
         config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Document>,
-        pkg?: Json.PackageJson,
+        pkg?: PackageJson,
         version?: SemVer,
     ) {
         super( 'document', 'turquoise', config, params, args, pkg, version );

@@ -4,11 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import { slugify, timestamp } from '@maddimathon/utility-typescript/functions';
-import { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import {
+    slugify,
+    timestamp,
+    MessageMaker,
+} from '@maddimathon/utility-typescript';
 import { SemVer } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 // import {

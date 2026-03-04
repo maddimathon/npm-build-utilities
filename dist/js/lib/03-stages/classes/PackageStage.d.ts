@@ -1,4 +1,4 @@
-import type { Json } from '@maddimathon/utility-typescript/types';
+import type { PackageJson } from '@maddimathon/utility-typescript/types';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import { SemVer } from '../../@internal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
@@ -30,7 +30,7 @@ export declare class PackageStage extends AbstractStage<Stage.Args.Package, Stag
      * @param pkg      Parsed contents of the project’s package.json file.
      * @param version  Version object for the project’s version.
      */
-    constructor(config: Config.Class, params: CLI.Params, args: Partial<Stage.Args.Package>, pkg?: Json.PackageJson, version?: SemVer);
+    constructor(config: Config.Class, params: CLI.Params, args: Partial<Stage.Args.Package>, pkg?: PackageJson, version?: SemVer);
     /**
      * Runs the prompters to confirm before starting the substages.
      *

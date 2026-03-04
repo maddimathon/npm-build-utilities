@@ -9,7 +9,7 @@
  */
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 import {
@@ -18,13 +18,12 @@ import {
     escRegExpReplace,
     softWrapText,
     timestamp,
-} from '@maddimathon/utility-typescript/functions';
+    MessageMaker,
+} from '@maddimathon/utility-typescript';
 
 import type {
-    node,
-
-    MessageMaker,
-} from '@maddimathon/utility-typescript/classes';
+    NodeConsole_Prompt,
+} from '@maddimathon/utility-typescript/node';
 
 import type {
     CLI,
@@ -191,7 +190,7 @@ export class ReleaseStage extends AbstractStage<
         config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Release>,
-        pkg?: Json.PackageJson,
+        pkg?: PackageJson,
         version?: SemVer,
     ) {
         super( 'release', 'purple', config, params, args, pkg, version );
@@ -209,7 +208,7 @@ export class ReleaseStage extends AbstractStage<
      */
     protected async startPrompters() {
 
-        const promptArgs: Omit<node.NodeConsole_Prompt.Config, "message"> = {
+        const promptArgs: Omit<NodeConsole_Prompt.Config, "message"> = {
 
             default: false,
 
@@ -335,7 +334,7 @@ export class ReleaseStage extends AbstractStage<
     protected async changelog() {
         this.console.progress( 'updating changelog...', 1 );
 
-        const promptArgs: Omit<node.NodeConsole_Prompt.SelectConfig<any>, "choices" | "message"> = {
+        const promptArgs: Omit<NodeConsole_Prompt.SelectConfig<any>, "choices" | "message"> = {
 
             msgArgs: {
                 bold: false,

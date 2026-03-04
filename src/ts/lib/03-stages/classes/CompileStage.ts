@@ -9,14 +9,14 @@
  */
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
+} from '@maddimathon/utility-typescript';
 
 import type {
     CLI,
@@ -108,7 +108,7 @@ export class CompileStage extends AbstractStage<
         config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Compile>,
-        pkg?: Json.PackageJson,
+        pkg?: PackageJson,
         version?: SemVer,
     ) {
         super( 'compile', 'green', config, params, args, pkg, version );

@@ -17,13 +17,14 @@ import type * as sass from 'sass-embedded';
 import type * as typeDoc from "typedoc";
 
 import type {
-    Json,
-    Objects,
+    Classify,
+    PackageJson,
+    TsConfig,
 } from '@maddimathon/utility-typescript/types';
 
 import type {
     MessageMaker,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
 
 import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
@@ -139,7 +140,7 @@ export interface Stage<
      * 
      * @category Project
      */
-    readonly pkg: Json.PackageJson;
+    readonly pkg: PackageJson;
 
     /**
      * All sub-stages to run in this stage (in order).
@@ -768,7 +769,7 @@ export namespace Stage {
             config: Config.Class,
             params: CLI.Params,
             args: Partial<Args>,
-            pkg?: Json.PackageJson,
+            pkg?: PackageJson,
             version?: SemVer,
         ): Stage;
     };
@@ -787,7 +788,7 @@ export namespace Stage {
             config: Config.Class,
             params: CLI.Params,
             args: Partial<T_Args>,
-            pkg?: Json.PackageJson,
+            pkg?: PackageJson,
             version?: SemVer,
         ): T_Instance;
     };
@@ -874,7 +875,7 @@ export namespace Stage {
          * A completed args object.
          */
         readonly args: Omit<Stage.Compiler.ParsedArgs, "sass"> & {
-            sass: Objects.Classify<Compiler.Args.Sass>;
+            sass: Classify<Compiler.Args.Sass>;
         };
 
         /**
@@ -885,7 +886,7 @@ export namespace Stage {
         /**
          * Default TS config file.
          */
-        readonly tsConfig: Json.TsConfig;
+        readonly tsConfig: TsConfig;
 
         /**
          * Process css with the 

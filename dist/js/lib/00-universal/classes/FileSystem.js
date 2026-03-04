@@ -4,23 +4,19 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import { globSync } from 'glob';
-// import { minify } from 'minify';
 import * as prettier from 'prettier';
 import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
-import { node } from '@maddimathon/utility-typescript/classes';
-import {
-    AbstractError,
     isObjectEmpty,
-    logError,
-} from '../../@internal/index.js';
+} from '@maddimathon/utility-typescript';
+import { NodeFiles } from '@maddimathon/utility-typescript/node';
+import { AbstractError, logError } from '../../@internal/index.js';
 /**
  * Extends the {@link node.NodeFiles} class with some custom logic useful to this package.
  *
@@ -28,7 +24,7 @@ import {
  *
  * @since 0.1.0-alpha
  */
-export class FileSystem extends node.NodeFiles {
+export class FileSystem extends NodeFiles {
     /* STATIC
      * ====================================================================== */
     /**
@@ -178,8 +174,7 @@ export class FileSystem extends node.NodeFiles {
             yaml: FileSystem.prettierConfig.overrides.yaml,
         };
         return {
-            ...node.NodeFiles.prototype.ARGS_DEFAULT,
-            argsRecursive: true,
+            ...NodeFiles.prototype.ARGS_DEFAULT,
             copy,
             glob,
             minify: FileSystem.minify.ARGS_DEFAULT,

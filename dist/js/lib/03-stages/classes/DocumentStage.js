@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -12,7 +12,7 @@ import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
+} from '@maddimathon/utility-typescript';
 import { StageError } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';

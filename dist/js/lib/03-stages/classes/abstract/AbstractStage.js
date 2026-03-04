@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import {
@@ -12,8 +12,8 @@ import {
     escRegExpReplace,
     mergeArgs,
     toTitleCase,
-} from '@maddimathon/utility-typescript/functions';
-import { VariableInspector } from '@maddimathon/utility-typescript/classes';
+    VariableInspector,
+} from '@maddimathon/utility-typescript';
 import {
     errorHandler,
     writeLog,
@@ -578,7 +578,7 @@ export class AbstractStage {
         });
     }
     /**
-     * Handles uncaught errors in node.
+     * Handles uncaught errors in
      *
      * @param error  To handle.
      *
@@ -827,7 +827,7 @@ export class AbstractStage {
             return msg;
         };
         const watchFileNameMsg = watcherVersion && watchFileName();
-        const watchChangeNoticeSlug = `watch-change-${which}${this.params.watchedWatcher ? `: #{this.params.watchedWatcher}` : ''}`;
+        const watchChangeNoticeSlug = `watch-change-${which}${this.params.watchedWatcher ? `: ${this.params.watchedWatcher}` : ''}`;
         const messages =
             watcherVersion ?
                 {

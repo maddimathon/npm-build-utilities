@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import type { Json } from '@maddimathon/utility-typescript/types';
+import type { PackageJson } from '@maddimathon/utility-typescript/types';
 import type { Stage } from '../../types/index.js';
 import type { Logger } from '../../types/Logger.js';
 /**
@@ -23,7 +23,7 @@ import type { Logger } from '../../types/Logger.js';
  * @since 0.1.0-alpha
  */
 export declare function defaultConfig(args?: {
-    pkg: Json.PackageJson;
+    pkg: PackageJson;
 } | Logger): {
     readonly title: string;
     readonly clr: "black";

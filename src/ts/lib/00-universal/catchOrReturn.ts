@@ -8,9 +8,6 @@
  * @license MIT
  */
 
-// import type {
-// } from '../../types/index.js';
-;
 import type { FileSystemType } from '../../types/FileSystemType.js';
 import type { Logger } from '../../types/Logger.js';
 

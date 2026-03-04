@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import {
@@ -13,7 +13,8 @@ import {
     escRegExpReplace,
     softWrapText,
     timestamp,
-} from '@maddimathon/utility-typescript/functions';
+    MessageMaker,
+} from '@maddimathon/utility-typescript';
 import { SemVer } from '../../@internal/index.js';
 // import {
 // } from '../../01-config/index.js';

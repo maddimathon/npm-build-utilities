@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import { MessageMaker } from '@maddimathon/utility-typescript';
 import type { FileSystemType } from '../../types/FileSystemType.js';
 import type { Logger } from '../../types/Logger.js';
 /**

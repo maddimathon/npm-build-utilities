@@ -4,14 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
+} from '@maddimathon/utility-typescript';
 import { SemVer } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 // import {

@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
+import { mergeArgs } from '@maddimathon/utility-typescript';
 /**
  * Returns a default jest config object with optional overrides.
  *

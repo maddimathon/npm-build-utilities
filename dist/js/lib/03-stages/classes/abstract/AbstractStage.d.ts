@@ -4,11 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import type { Json } from '@maddimathon/utility-typescript/types';
-import { type MessageMaker } from '@maddimathon/utility-typescript/classes';
+import type { PackageJson } from '@maddimathon/utility-typescript/types';
+import { type MessageMaker } from '@maddimathon/utility-typescript';
 import type { CLI, Config, Stage } from '../../../../types/index.js';
 import { type AbstractError, SemVer } from '../../../@internal/index.js';
 import { FileSystem } from '../../../00-universal/index.js';
@@ -159,7 +159,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @param pkg      Parsed contents of the project’s package.json file.
      * @param version  Version object for the project’s version.
      */
-    constructor(name: string, clr: MessageMaker.Colour, config: Config.Class, params: CLI.Params, args: Partial<T_Args>, pkg: Json.PackageJson | undefined, version: SemVer | undefined);
+    constructor(name: string, clr: MessageMaker.Colour, config: Config.Class, params: CLI.Params, args: Partial<T_Args>, pkg: PackageJson | undefined, version: SemVer | undefined);
     /** {@inheritDoc Stage.isDraftVersion} */
     get isDraftVersion(): boolean;
     /**
@@ -251,7 +251,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      */
     logError(logMsg: string, error: unknown, level: number, errMsg?: string, date?: Date): MessageMaker.BulkMsgs;
     /**
-     * Handles uncaught errors in node.
+     * Handles uncaught errors in
      *
      * @param error  To handle.
      *

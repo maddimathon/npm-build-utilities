@@ -4,14 +4,15 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import { slugify, typeOf } from '@maddimathon/utility-typescript/functions';
 import {
+    slugify,
+    typeOf,
     MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
 import { AbstractError, UnknownCaughtError } from './classes/index.js';
 import { writeLog } from './writeLog.js';
 const _msgMaker = new MessageMaker({ paintFormat: null });

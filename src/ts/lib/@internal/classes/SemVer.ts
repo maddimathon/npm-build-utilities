@@ -12,7 +12,7 @@ import node_SemVer from 'semver';
 
 import {
     toTitleCase,
-} from '@maddimathon/utility-typescript/functions';
+} from '@maddimathon/utility-typescript';
 
 import type { Logger } from '../../../types/Logger.js';
 

@@ -4,11 +4,9 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-// import type {
-// } from '../../types/index.js';
 import { errorHandler } from '../@internal/index.js';
 /**
  * Runs a function, with parameters as applicable, and catches (& handles)

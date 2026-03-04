@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import type { Json } from '@maddimathon/utility-typescript/types';
+import type { PackageJson } from '@maddimathon/utility-typescript/types';
 import type { FileSystemType } from '../../types/FileSystemType.js';
 import type { Logger } from '../../types/Logger.js';
 import { FileSystem } from './classes/index.js';
@@ -35,4 +35,4 @@ export declare function getPackageJson(args: FileSystem | {
 } | {
     console: Logger;
     fs?: undefined | FileSystemType.Args;
-}): Partial<Json.PackageJson>;
+}): Partial<PackageJson>;

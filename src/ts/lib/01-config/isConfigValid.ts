@@ -9,7 +9,7 @@
  */
 
 import type {
-    Objects,
+    KeysRequired,
 } from '@maddimathon/utility-typescript/types';
 
 import type {
@@ -40,7 +40,7 @@ export function isConfigValid( test: Config | Partial<Config> ): false | Config 
      * Required keys with the type(s) to verify, if any.
      */
     const requiredKeys: {
-        [ K in Objects.KeysRequired<Config> ]: ValueType | ValueType[];
+        [ K in KeysRequired<Config> ]: ValueType | ValueType[];
     } = {
         title: 'string',
         launchYear: 'string',

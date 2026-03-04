@@ -9,20 +9,14 @@
  */
 
 import type {
-    Objects,
+    Classify,
 } from '@maddimathon/utility-typescript/types';
 
 import {
     MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
-
-import {
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
-
-// import type {
-// } from '../../../../types/index.js';
+} from '@maddimathon/utility-typescript';
 
 import type { FileSystemType } from '../../../../types/FileSystemType.js';
 import type { Logger } from '../../../../types/Logger.js';
@@ -302,7 +296,7 @@ export namespace AbstractError {
      */
     export interface JSON<
         T_Context extends object = AbstractError.Context,
-    > extends Objects.Classify<Omit<
+    > extends Classify<Omit<
         AbstractError<never, T_Context>,
         "args" | "getOutput" | "toJSON" | "toString" | "valueOf"
     >> {

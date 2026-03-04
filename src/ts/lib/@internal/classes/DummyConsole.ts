@@ -9,11 +9,14 @@
  */
 
 import {
-    node,
-
     MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
+
+import {
+    NodeConsole,
+    NodeConsole_Prompt,
+} from '@maddimathon/utility-typescript/node';
 
 import type {
     CLI,
@@ -34,7 +37,7 @@ export class DummyConsole implements Logger {
     public readonly vi: Logger.VarInspect = new _DummyConsole_VarDump();
 
     public constructor (
-        public readonly nc: node.NodeConsole = new node.NodeConsole(),
+        public readonly nc: NodeConsole = new NodeConsole(),
         public readonly config: Partial<Config | Config.Internal> = {},
         public readonly params: Partial<CLI.Params> = {},
     ) {
@@ -128,7 +131,7 @@ export class DummyConsole implements Logger {
         } as const;
     }
 
-    protected prompt_prepareOpts<T_Config extends node.NodeConsole_Prompt.Config>(
+    protected prompt_prepareOpts<T_Config extends NodeConsole_Prompt.Config>(
         level: number,
         opts?: Omit<T_Config, 'message'>,
     ): Pick<T_Config, 'msgArgs' | 'styleClrs'> {
@@ -181,7 +184,7 @@ export class DummyConsole implements Logger {
 
     protected async prompt_select<
         T_Return extends string,
-        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: T_Return[];
         },
     >(
@@ -191,8 +194,8 @@ export class DummyConsole implements Logger {
     ): Promise<T_Return | undefined>;
 
     protected async prompt_select<
-        T_Return extends node.NodeConsole_Prompt.SelectValue,
-        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        T_Return extends NodeConsole_Prompt.SelectValue,
+        T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: {
                 value: T_Return;
 
@@ -209,8 +212,8 @@ export class DummyConsole implements Logger {
     ): Promise<T_Return | undefined>;
 
     protected async prompt_select<
-        T_Return extends node.NodeConsole_Prompt.SelectValue,
-        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        T_Return extends NodeConsole_Prompt.SelectValue,
+        T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: [ string ] & string[] | {
                 value: T_Return;
 
@@ -227,7 +230,7 @@ export class DummyConsole implements Logger {
     ) {
         const { msgArgs, styleClrs } = this.prompt_prepareOpts(
             level,
-            opts as Omit<node.NodeConsole_Prompt.Config<'select'>, 'message'>,
+            opts as Omit<NodeConsole_Prompt.Config<'select'>, 'message'>,
         );
 
         const choices: {
@@ -252,7 +255,7 @@ export class DummyConsole implements Logger {
 class _DummyConsole_VarDump implements Logger.VarInspect {
 
     public constructor (
-        public readonly nc: node.NodeConsole = new node.NodeConsole(),
+        public readonly nc: NodeConsole = new NodeConsole(),
         protected readonly params: Partial<CLI.Params> = {},
     ) {
     }

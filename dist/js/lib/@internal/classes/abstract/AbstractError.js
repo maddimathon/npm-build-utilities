@@ -4,14 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import {
     MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
+    mergeArgs,
+} from '@maddimathon/utility-typescript';
 /**
  * An extension of the utilities error for use within the library.
  *

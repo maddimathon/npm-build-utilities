@@ -10,14 +10,14 @@
 
 import {
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
-
-import {
-    node,
-
     MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
+
+import {
+    NodeConsole,
+    NodeConsole_Prompt,
+} from '@maddimathon/utility-typescript/node';
 
 import type {
     CLI,
@@ -55,7 +55,7 @@ export class Stage_Console implements Logger {
      * ====================================================================== */
 
     /** {@inheritDoc Logger.nc} */
-    public readonly nc: node.NodeConsole;
+    public readonly nc: NodeConsole;
 
     /** {@inheritDoc Logger.vi} */
     public readonly vi: _Stage_Console_VarInspect;
@@ -75,7 +75,7 @@ export class Stage_Console implements Logger {
         public readonly config: Config.Class,
         public readonly params: CLI.Params,
     ) {
-        this.nc = new node.NodeConsole( mergeArgs(
+        this.nc = new NodeConsole( mergeArgs(
             this.config.console?.nc ?? {},
             {
                 msgMaker: {
@@ -172,7 +172,7 @@ export class Stage_Console implements Logger {
 
     /** {@inheritDoc Logger.debug} */
     public debug(
-        msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
+        msg: Parameters<NodeConsole[ 'timestampLog' ]>[ 0 ],
         level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
         msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
         timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
@@ -193,7 +193,7 @@ export class Stage_Console implements Logger {
 
     /** {@inheritDoc Logger.log} */
     public log(
-        msg: Parameters<node.NodeConsole[ 'timestampLog' ]>[ 0 ],
+        msg: Parameters<NodeConsole[ 'timestampLog' ]>[ 0 ],
         level: number,
         msgArgs?: Partial<MessageMaker.BulkMsgArgs>,
         timeArgs?: Partial<MessageMaker.BulkMsgArgs>,
@@ -332,7 +332,7 @@ export class Stage_Console implements Logger {
         } as const;
     }
 
-    protected prompt_prepareOpts<T_Config extends node.NodeConsole_Prompt.Config>(
+    protected prompt_prepareOpts<T_Config extends NodeConsole_Prompt.Config>(
         level: number,
         opts?: Omit<T_Config, 'message'>,
     ): Pick<T_Config, 'msgArgs' | 'styleClrs'> {
@@ -383,7 +383,7 @@ export class Stage_Console implements Logger {
 
     protected async prompt_select<
         T_Return extends string,
-        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: T_Return[];
         },
     >(
@@ -393,8 +393,8 @@ export class Stage_Console implements Logger {
     ): Promise<T_Return | undefined>;
 
     protected async prompt_select<
-        T_Return extends node.NodeConsole_Prompt.SelectValue,
-        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        T_Return extends NodeConsole_Prompt.SelectValue,
+        T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: {
                 value: T_Return;
 
@@ -411,8 +411,8 @@ export class Stage_Console implements Logger {
     ): Promise<T_Return | undefined>;
 
     protected async prompt_select<
-        T_Return extends node.NodeConsole_Prompt.SelectValue,
-        T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        T_Return extends NodeConsole_Prompt.SelectValue,
+        T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: [ string ] & string[] | {
                 value: T_Return;
 
@@ -429,7 +429,7 @@ export class Stage_Console implements Logger {
     ) {
         const { msgArgs, styleClrs } = this.prompt_prepareOpts(
             level,
-            opts as Omit<node.NodeConsole_Prompt.Config<'select'>, 'message'>,
+            opts as Omit<NodeConsole_Prompt.Config<'select'>, 'message'>,
         );
 
         const choices: {
@@ -481,7 +481,7 @@ export class _Stage_Console_VarInspect implements Logger.VarInspect {
         public readonly config: Config.Class,
         public readonly params: CLI.Params,
         public readonly _msgArgs: Stage_Console[ 'msgArgs' ],
-        protected readonly nc: node.NodeConsole,
+        protected readonly nc: NodeConsole,
     ) {
     }
 

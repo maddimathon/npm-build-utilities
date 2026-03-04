@@ -9,18 +9,18 @@
  */;
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 import {
     arrayUnique,
     escRegExp,
     timestamp,
-} from '@maddimathon/utility-typescript/functions';
+} from '@maddimathon/utility-typescript';
 
 import {
-    node,
-} from '@maddimathon/utility-typescript/classes';
+    NodeConsole_Prompt,
+} from '@maddimathon/utility-typescript/node';
 
 import type {
     CLI,
@@ -103,7 +103,7 @@ export class PackageStage extends AbstractStage<
         config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Package>,
-        pkg?: Json.PackageJson,
+        pkg?: PackageJson,
         version?: SemVer,
     ) {
         super( 'package', params.releasing ? 'orange' : 'purple', config, params, args, pkg, version );
@@ -121,7 +121,7 @@ export class PackageStage extends AbstractStage<
      */
     protected async startPrompters() {
 
-        const promptArgs: Omit<node.NodeConsole_Prompt.Config, "message"> = {
+        const promptArgs: Omit<NodeConsole_Prompt.Config, "message"> = {
 
             default: false,
 

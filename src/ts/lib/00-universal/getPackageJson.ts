@@ -9,7 +9,7 @@
  */
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 // import type {
@@ -53,7 +53,7 @@ export function getPackageJson(
         console: Logger,
         fs?: undefined | FileSystemType.Args,
     },
-): Partial<Json.PackageJson> {
+): Partial<PackageJson> {
 
     let fs: FileSystem | undefined;
 
@@ -80,5 +80,5 @@ export function getPackageJson(
         );
     }
 
-    return JSON.parse( fs.readFile( 'package.json' ) ) as Json.PackageJson;
+    return JSON.parse( fs.readFile( 'package.json' ) ) as PackageJson;
 }

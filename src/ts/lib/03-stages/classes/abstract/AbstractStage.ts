@@ -11,7 +11,7 @@
 import type * as sass from 'sass-embedded';
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 import {
@@ -19,12 +19,9 @@ import {
     escRegExpReplace,
     mergeArgs,
     toTitleCase,
-} from '@maddimathon/utility-typescript/functions';
-
-import {
     type MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
 
 
 import type {
@@ -146,7 +143,7 @@ export abstract class AbstractStage<
     public readonly params;
 
     /** @hidden */
-    #pkg: Json.PackageJson | undefined;
+    #pkg: PackageJson | undefined;
 
     /** 
      * {@inheritDoc Stage.pkg}
@@ -160,7 +157,7 @@ export abstract class AbstractStage<
                 getPackageJson,
                 1,
                 [ this.fs ]
-            ) as Json.PackageJson;
+            ) as PackageJson;
         }
 
         const repository = typeof this.#pkg?.repository === 'string'
@@ -187,7 +184,7 @@ export abstract class AbstractStage<
             bin: this.#pkg?.bin,
             bugs: this.#pkg?.bugs,
 
-        } as const satisfies Json.PackageJson;
+        } as const satisfies PackageJson;
     }
 
     /** @hidden */
@@ -350,7 +347,7 @@ export abstract class AbstractStage<
         config: Config.Class,
         params: CLI.Params,
         args: Partial<T_Args>,
-        pkg: Json.PackageJson | undefined,
+        pkg: PackageJson | undefined,
         version: SemVer | undefined,
     ) {
         this.#pkg = pkg;
@@ -760,7 +757,7 @@ export abstract class AbstractStage<
     }
 
     /**
-     * Handles uncaught errors in node.
+     * Handles uncaught errors in 
      * 
      * @param error  To handle.
      * 
@@ -1144,7 +1141,7 @@ export abstract class AbstractStage<
 
         const watchFileNameMsg = watcherVersion && watchFileName();
 
-        const watchChangeNoticeSlug = `watch-change-${ which }${ this.params.watchedWatcher ? `: #{this.params.watchedWatcher}` : '' }`;
+        const watchChangeNoticeSlug = `watch-change-${ which }${ this.params.watchedWatcher ? `: ${ this.params.watchedWatcher }` : '' }`;
 
         const messages: {
             default: MessageMaker.BulkMsgs,

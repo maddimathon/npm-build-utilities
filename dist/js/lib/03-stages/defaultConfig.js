@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import { timestamp } from '@maddimathon/utility-typescript/functions';
+import { timestamp } from '@maddimathon/utility-typescript';
 import { DummyConsole } from '../@internal/index.js';
 import { getPackageJson } from '../00-universal/getPackageJson.js';
 import { catchOrReturn, FileSystem } from '../00-universal/index.js';

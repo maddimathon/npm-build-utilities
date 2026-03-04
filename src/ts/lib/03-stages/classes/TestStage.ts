@@ -9,7 +9,7 @@
  */;
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 import type {
@@ -135,7 +135,7 @@ export class TestStage extends AbstractStage<
         config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Test>,
-        pkg?: Json.PackageJson,
+        pkg?: PackageJson,
         version?: SemVer,
     ) {
         super( 'tests', 'red', config, params, args, pkg, version );

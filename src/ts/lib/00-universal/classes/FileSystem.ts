@@ -9,11 +9,12 @@
  */
 
 import { globSync } from 'glob';
-// import { minify } from 'minify';
+
 import * as prettier from "prettier";
 
 import type {
-    Objects,
+    Classify,
+    RecursivePartial,
     Test,
 } from '@maddimathon/utility-typescript/types';
 
@@ -21,11 +22,12 @@ import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
+    isObjectEmpty,
+} from '@maddimathon/utility-typescript';
 
 import {
-    node,
-} from '@maddimathon/utility-typescript/classes';
+    NodeFiles,
+} from '@maddimathon/utility-typescript/node';
 
 import type {
     Stage,
@@ -37,7 +39,6 @@ import type { Logger } from '../../../types/Logger.js';
 import {
     AbstractError,
 
-    isObjectEmpty,
 
     logError,
 } from '../../@internal/index.js';
@@ -49,7 +50,7 @@ import {
  * 
  * @since 0.1.0-alpha
  */
-export class FileSystem extends node.NodeFiles {
+export class FileSystem extends NodeFiles {
 
 
 
@@ -263,11 +264,10 @@ export class FileSystem extends node.NodeFiles {
             ts: FileSystem.prettierConfig.overrides.ts,
             yaml: FileSystem.prettierConfig.overrides.yaml,
 
-        } as const satisfies Objects.Classify<FileSystemType.Prettier.Args.MultiFormat>;
+        } as const satisfies Classify<FileSystemType.Prettier.Args.MultiFormat>;
 
         return {
-            ...node.NodeFiles.prototype.ARGS_DEFAULT,
-            argsRecursive: true,
+            ...NodeFiles.prototype.ARGS_DEFAULT,
 
             copy,
             glob,
@@ -277,7 +277,7 @@ export class FileSystem extends node.NodeFiles {
         } as const satisfies FileSystemType.Args;
     }
 
-    public override buildArgs( args?: Partial<FileSystemType.Args> | Objects.RecursivePartial<FileSystemType.Args> ): FileSystem.Args {
+    public buildArgs( args?: Partial<FileSystemType.Args> | RecursivePartial<FileSystemType.Args> ): FileSystem.Args {
 
         const merged = mergeArgs(
             this.ARGS_DEFAULT as FileSystemType.Args,

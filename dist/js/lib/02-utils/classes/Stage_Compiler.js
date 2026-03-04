@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -16,8 +16,7 @@ import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
-import {} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
 import { StageError } from '../../@internal/index.js';
 import { catchOrReturn, FileSystem } from '../../00-universal/index.js';
 /**

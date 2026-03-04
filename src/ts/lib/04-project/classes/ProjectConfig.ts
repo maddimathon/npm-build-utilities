@@ -9,12 +9,13 @@
  */
 
 import type {
-    Objects,
+    Classify,
 } from '@maddimathon/utility-typescript/types';
 
 import {
+    isObjectEmpty,
     typeOf,
-} from '@maddimathon/utility-typescript/functions';
+} from '@maddimathon/utility-typescript';
 
 import type {
     Config,
@@ -25,7 +26,6 @@ import type { Logger } from '../../../types/Logger.js';
 
 import {
     DummyConsole,
-    isObjectEmpty,
 } from '../../@internal/index.js';
 
 import {
@@ -274,7 +274,7 @@ export class ProjectConfig implements Config.Class {
 
         const defaults = ProjectConfig.default;
 
-        const exportObj: Objects.Classify<Config.Default> = {
+        const exportObj: Classify<Config.Default> = {
             title: this.title,
             launchYear: this.launchYear,
 

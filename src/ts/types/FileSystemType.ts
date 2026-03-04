@@ -9,12 +9,12 @@
  */
 
 import type { GlobOptions } from 'glob';
-// import type { Options as MinifyOptions } from 'minify';
+
 import type * as prettier from "prettier";
 
 import type {
-    node,
-} from '@maddimathon/utility-typescript/classes';
+    NodeFiles,
+} from '@maddimathon/utility-typescript/node';
 
 import type { Logger } from './Logger.js';
 
@@ -30,7 +30,7 @@ import type { Logger } from './Logger.js';
  *
  * @internal
  */
-export interface FileSystemType extends node.NodeFiles {
+export interface FileSystemType extends NodeFiles {
 
 
     /**
@@ -83,7 +83,7 @@ export interface FileSystemType extends node.NodeFiles {
         level: number,
         dryRun?: boolean,
         args?: Partial<FileSystemType.Glob.Args>,
-    ): ReturnType<node.NodeFiles[ 'delete' ]>;
+    ): ReturnType<NodeFiles[ 'delete' ]>;
 
     /**
      * Gets the valid paths matched against the input globs.
@@ -180,7 +180,7 @@ export namespace FileSystemType {
      * 
      * @since 0.1.0-alpha
      */
-    export interface Args extends node.NodeFiles.Args {
+    export interface Args extends NodeFiles.Args {
 
         /**
          * Defaults for the {@link FileSystemType.copy} method.
@@ -221,7 +221,7 @@ export namespace FileSystemType {
          * 
          * @since 0.1.0-alpha
          */
-        export interface Args extends node.NodeFiles.CopyFileArgs {
+        export interface Args extends NodeFiles.CopyFileArgs {
 
             /**
              * Optional argument overrides passed to {@link FileSystemType.glob}

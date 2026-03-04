@@ -6,15 +6,15 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import type postcss from 'postcss';
 import type * as postcss_PresetEnv from 'postcss-preset-env';
 import type * as sass from 'sass-embedded';
 import type * as typeDoc from "typedoc";
-import type { Json, Objects } from '@maddimathon/utility-typescript/types';
-import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import type { Classify, PackageJson, TsConfig } from '@maddimathon/utility-typescript/types';
+import type { MessageMaker } from '@maddimathon/utility-typescript';
 import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
 import type { SemVer } from '../lib/@internal/classes/index.js';
@@ -102,7 +102,7 @@ export interface Stage<T_Args extends Stage.Args = Stage.Args, T_SubStage extend
      *
      * @category Project
      */
-    readonly pkg: Json.PackageJson;
+    readonly pkg: PackageJson;
     /**
      * All sub-stages to run in this stage (in order).
      *
@@ -609,7 +609,7 @@ export declare namespace Stage {
      * @since 0.1.0-alpha
      */
     interface Class {
-        new (config: Config.Class, params: CLI.Params, args: Partial<Args>, pkg?: Json.PackageJson, version?: SemVer): Stage;
+        new (config: Config.Class, params: CLI.Params, args: Partial<Args>, pkg?: PackageJson, version?: SemVer): Stage;
     }
     /**
      * Any stage class compatible with this package.
@@ -617,7 +617,7 @@ export declare namespace Stage {
      * @since 0.1.0-alpha
      */
     interface ClassTypeGeneric<T_Instance extends Stage<T_Args, T_SubStage>, T_Args extends Args = Args, T_SubStage extends string = string> {
-        new (config: Config.Class, params: CLI.Params, args: Partial<T_Args>, pkg?: Json.PackageJson, version?: SemVer): T_Instance;
+        new (config: Config.Class, params: CLI.Params, args: Partial<T_Args>, pkg?: PackageJson, version?: SemVer): T_Instance;
     }
     /**
      * Type utilities for stage class types.
@@ -690,7 +690,7 @@ export declare namespace Stage {
          * A completed args object.
          */
         readonly args: Omit<Stage.Compiler.ParsedArgs, "sass"> & {
-            sass: Objects.Classify<Compiler.Args.Sass>;
+            sass: Classify<Compiler.Args.Sass>;
         };
         /**
          * Default values for the args property.
@@ -699,7 +699,7 @@ export declare namespace Stage {
         /**
          * Default TS config file.
          */
-        readonly tsConfig: Json.TsConfig;
+        readonly tsConfig: TsConfig;
         /**
          * Process css with the
          * {@link https://www.npmjs.com/package/postCSS | PostCSS npm package}.

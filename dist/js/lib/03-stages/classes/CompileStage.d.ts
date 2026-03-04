@@ -4,10 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import type { Json } from '@maddimathon/utility-typescript/types';
+import type { PackageJson } from '@maddimathon/utility-typescript/types';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import { SemVer } from '../../@internal/index.js';
 import { AbstractStage } from './abstract/AbstractStage.js';
@@ -44,7 +44,7 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
      * @param pkg      Parsed contents of the project’s package.json file.
      * @param version  Version object for the project’s version.
      */
-    constructor(config: Config.Class, params: CLI.Params, args: Partial<Stage.Args.Compile>, pkg?: Json.PackageJson, version?: SemVer);
+    constructor(config: Config.Class, params: CLI.Params, args: Partial<Stage.Args.Compile>, pkg?: PackageJson, version?: SemVer);
     startEndNotice(which: "start" | "end" | null): void | Promise<void>;
     protected runSubStage(subStage: Stage.SubStage.Compile): Promise<void>;
     /**

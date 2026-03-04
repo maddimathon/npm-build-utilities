@@ -4,12 +4,12 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import type { GlobOptions } from 'glob';
 import type * as prettier from "prettier";
-import type { node } from '@maddimathon/utility-typescript/classes';
+import type { NodeFiles } from '@maddimathon/utility-typescript/node';
 import type { Logger } from './Logger.js';
 /**
  * Shape of the file/path utility class.
@@ -23,7 +23,7 @@ import type { Logger } from './Logger.js';
  *
  * @internal
  */
-export interface FileSystemType extends node.NodeFiles {
+export interface FileSystemType extends NodeFiles {
     /**
      * Used to output messages within the class.
      *
@@ -61,7 +61,7 @@ export interface FileSystemType extends node.NodeFiles {
      *                console and not deleted.
      * @param args    Optional glob configuration.
      */
-    delete(globs: string | string[], level: number, dryRun?: boolean, args?: Partial<FileSystemType.Glob.Args>): ReturnType<node.NodeFiles['delete']>;
+    delete(globs: string | string[], level: number, dryRun?: boolean, args?: Partial<FileSystemType.Glob.Args>): ReturnType<NodeFiles['delete']>;
     /**
      * Gets the valid paths matched against the input globs.
      *
@@ -134,7 +134,7 @@ export declare namespace FileSystemType {
      *
      * @since 0.1.0-alpha
      */
-    interface Args extends node.NodeFiles.Args {
+    interface Args extends NodeFiles.Args {
         /**
          * Defaults for the {@link FileSystemType.copy} method.
          */
@@ -165,7 +165,7 @@ export declare namespace FileSystemType {
          *
          * @since 0.1.0-alpha
          */
-        interface Args extends node.NodeFiles.CopyFileArgs {
+        interface Args extends NodeFiles.CopyFileArgs {
             /**
              * Optional argument overrides passed to {@link FileSystemType.glob}
              * while matching paths to copy.

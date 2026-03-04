@@ -12,11 +12,8 @@ import {
     mergeArgs,
     slugify,
     timestamp,
-} from '@maddimathon/utility-typescript/functions';
-
-import {
     MessageMaker,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
 
 import type {
     Config,

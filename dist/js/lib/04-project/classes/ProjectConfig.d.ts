@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import type { Config, Stage } from '../../../types/index.js';
@@ -29,7 +29,7 @@ export declare class ProjectConfig implements Config.Class {
      */
     protected static get default(): Config.Internal;
     /** {@inheritDoc Config.clr} */
-    readonly clr: import("@maddimathon/utility-typescript/classes").MessageMaker.Colour;
+    readonly clr: import("@maddimathon/utility-typescript").MessageMaker.Colour;
     /** {@inheritDoc Config.compiler} */
     readonly compiler: Partial<Stage.Compiler.Args> | undefined;
     /** {@inheritDoc Config.console} */

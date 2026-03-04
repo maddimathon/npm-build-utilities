@@ -4,11 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import type { Objects } from '@maddimathon/utility-typescript/types';
-import { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import type { Classify } from '@maddimathon/utility-typescript/types';
+import { MessageMaker } from '@maddimathon/utility-typescript';
 import type { FileSystemType } from '../../../../types/FileSystemType.js';
 import type { Logger } from '../../../../types/Logger.js';
 /**
@@ -174,7 +174,7 @@ export declare namespace AbstractError {
      *
      * @since 0.1.0-alpha
      */
-    interface JSON<T_Context extends object = AbstractError.Context> extends Objects.Classify<Omit<AbstractError<never, T_Context>, "args" | "getOutput" | "toJSON" | "toString" | "valueOf">> {
+    interface JSON<T_Context extends object = AbstractError.Context> extends Classify<Omit<AbstractError<never, T_Context>, "args" | "getOutput" | "toJSON" | "toString" | "valueOf">> {
         /**
          * Result of this.toString().
          */

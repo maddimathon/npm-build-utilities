@@ -9,12 +9,12 @@
  */
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 import {
     timestamp,
-} from '@maddimathon/utility-typescript/functions';
+} from '@maddimathon/utility-typescript';
 
 import type {
     Config,
@@ -53,7 +53,7 @@ const _dummyConsole = new DummyConsole();
  * @since 0.1.0-alpha
  */
 export function defaultConfig(
-    args?: { pkg: Json.PackageJson; } | Logger,
+    args?: { pkg: PackageJson; } | Logger,
 ) {
     const fs = new FileSystem( ( args && !( 'pkg' in args ) ) ? args : _dummyConsole );
 

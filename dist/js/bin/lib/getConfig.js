@@ -4,11 +4,10 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import { timestamp } from '@maddimathon/utility-typescript/functions';
-import { VariableInspector } from '@maddimathon/utility-typescript/classes';
+import { timestamp, VariableInspector } from '@maddimathon/utility-typescript';
 import { getPackageJson } from '../../lib/00-universal/getPackageJson.js';
 import { FileSystem, Project, ProjectConfig } from '../../lib/index.js';
 import {

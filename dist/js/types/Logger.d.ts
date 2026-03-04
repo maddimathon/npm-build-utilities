@@ -4,11 +4,12 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import type { Objects } from '@maddimathon/utility-typescript/types';
-import type { MessageMaker, node, VariableInspector } from '@maddimathon/utility-typescript/classes';
+import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
+import type { MessageMaker, VariableInspector } from '@maddimathon/utility-typescript';
+import type { NodeConsole, NodeConsole_Prompt } from '@maddimathon/utility-typescript/node';
 import type * as CLI from './CLI.js';
 import type { Config } from './Config.js';
 /**
@@ -29,7 +30,7 @@ export interface Logger {
     /**
      * Instance to use within/out the class.
      */
-    readonly nc: node.NodeConsole;
+    readonly nc: NodeConsole;
     /**
      * Current CLI params.
      */
@@ -123,13 +124,13 @@ export declare namespace Logger {
         /**
          * Arguments passed to the {@link node.NodeConsole} constructor.
          */
-        nc: Objects.RecursivePartial<node.NodeConsole.Args>;
+        nc: RecursivePartial<NodeConsole.Args>;
     }
     interface Prompt_SelectMethod {
-        <T_Return extends string, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        <T_Return extends string, T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: T_Return[];
         }>(message: string, level: number, opts: Omit<T_Config, 'message' | 'theme'>): Promise<T_Return | undefined>;
-        <T_Return extends node.NodeConsole_Prompt.SelectValue, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+        <T_Return extends NodeConsole_Prompt.SelectValue, T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: {
                 value: T_Return;
                 name?: string;
@@ -145,8 +146,8 @@ export declare namespace Logger {
      * @since 0.3.0-alpha.9
      */
     interface Prompt {
-        readonly bool: (message: string, level: number, opts?: Omit<Parameters<node.NodeConsole['prompt']['bool']>[0], 'message'>) => Promise<boolean | undefined>;
-        readonly input: (message: string, level: number, opts?: Omit<Parameters<node.NodeConsole['prompt']['input']>[0], 'message'>) => Promise<string | undefined>;
+        readonly bool: (message: string, level: number, opts?: Omit<Parameters<NodeConsole['prompt']['bool']>[0], 'message'>) => Promise<boolean | undefined>;
+        readonly input: (message: string, level: number, opts?: Omit<Parameters<NodeConsole['prompt']['input']>[0], 'message'>) => Promise<string | undefined>;
         readonly select: Prompt_SelectMethod;
     }
     /**

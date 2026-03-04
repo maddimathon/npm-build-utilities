@@ -4,12 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 export * from './classes/index.js';
 export * from './errorHandler.js';
 export * from './errorStringify.js';
-export * from './isObjectEmpty.js';
 export * from './logError.js';
 export * from './writeLog.js';

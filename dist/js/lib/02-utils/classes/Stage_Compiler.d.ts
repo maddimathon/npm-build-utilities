@@ -4,14 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import { DateTime } from 'luxon';
 import * as postcss_PresetEnv from 'postcss-preset-env';
 import * as sass from 'sass-embedded';
-import type { Json, Objects } from '@maddimathon/utility-typescript/types';
-import { type MessageMaker } from '@maddimathon/utility-typescript/classes';
+import type { Classify, TsConfig } from '@maddimathon/utility-typescript/types';
+import { type MessageMaker } from '@maddimathon/utility-typescript';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 import type { Stage_Console } from './Stage_Console.js';
@@ -195,7 +195,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
         readonly ts: {};
     };
     readonly args: Stage.Compiler.Args & {
-        sass: Objects.Classify<Stage.Compiler.Args.Sass>;
+        sass: Classify<Stage.Compiler.Args.Sass>;
     };
     /**
      * @param config   Current project config.
@@ -215,7 +215,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.2.0-alpha
      */
-    getTsConfig(tsconfig: string, level: number, errorIfNotFound?: boolean): Partial<Json.TsConfig>;
+    getTsConfig(tsconfig: string, level: number, errorIfNotFound?: boolean): Partial<TsConfig>;
     /**
      * Gets the value of the given tsconfig file.
      *
@@ -227,7 +227,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.2.0-alpha
      */
-    getTsConfigOutDir(tsconfig: string | Partial<Json.TsConfig> & {
+    getTsConfigOutDir(tsconfig: string | Partial<TsConfig> & {
         path: string;
     }, level: number, errorIfNotFound?: boolean): string | false;
     postCSS(paths: {
@@ -266,7 +266,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.3.0-alpha.12
      */
-    protected scssAPI_barebones(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, logger: Stage_Compiler.SassLogger, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<{
+    protected scssAPI_barebones(input: string, output: string, level: number, sassCompleteOpts: Classify<Stage.Compiler.Args.Sass>, logger: Stage_Compiler.SassLogger, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<{
         output: string;
         logger: Stage_Compiler.SassLogger;
     }>;
@@ -275,7 +275,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.3.0-alpha.1
      */
-    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>, logger?: Stage_Compiler.SassLogger, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<{
+    protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Classify<Stage.Compiler.Args.Sass>, logger?: Stage_Compiler.SassLogger, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<{
         output: string;
         logger: Stage_Compiler.SassLogger;
     }>;
@@ -290,7 +290,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.3.0-alpha.1
      */
-    protected scssCLI(input: string, output: string, level: number, sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>): Promise<{
+    protected scssCLI(input: string, output: string, level: number, sassCompleteOpts: Classify<Stage.Compiler.Args.Sass>): Promise<{
         output: string;
         logger: undefined;
     }>;
@@ -326,11 +326,11 @@ export declare namespace Stage_Compiler {
         protected readonly params: Stage_Compiler['params'];
         protected readonly sassErrorStackFilter: Stage_Compiler['sassErrorStackFilter'];
         protected readonly level: number;
-        protected readonly args: Objects.Classify<Stage.Compiler.Args.Sass>;
+        protected readonly args: Classify<Stage.Compiler.Args.Sass>;
         protected readonly deprecationWarnings: Map<keyof sass.Deprecations, Set<SassLogger.DeprecationWarning>>;
         protected _sassLoggerWarningDuringPackaging: boolean;
         get sassLoggerWarningDuringPackaging(): boolean;
-        constructor(console: Stage_Compiler['console'], fs: Stage_Compiler['fs'], params: Stage_Compiler['params'], sassErrorStackFilter: Stage_Compiler['sassErrorStackFilter'], level: number, args: Objects.Classify<Stage.Compiler.Args.Sass>);
+        constructor(console: Stage_Compiler['console'], fs: Stage_Compiler['fs'], params: Stage_Compiler['params'], sassErrorStackFilter: Stage_Compiler['sassErrorStackFilter'], level: number, args: Classify<Stage.Compiler.Args.Sass>);
         protected messageMaker(options: sass.LoggerWarnOptions | {
             span: sass.SourceSpan;
         }): MessageMaker.BulkMsgs;

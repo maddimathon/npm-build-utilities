@@ -8,9 +8,9 @@
  * @license MIT
  */
 
-
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import type jest from 'jest';
+
+import { mergeArgs } from '@maddimathon/utility-typescript';
 
 /**
  * Returns a default jest config object with optional overrides.

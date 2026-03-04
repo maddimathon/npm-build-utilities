@@ -4,15 +4,18 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import { mergeArgs } from '@maddimathon/utility-typescript/functions';
 import {
-    node,
+    mergeArgs,
     MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
+import {
+    NodeConsole,
+    NodeConsole_Prompt,
+} from '@maddimathon/utility-typescript/node';
 // import {
 // } from '../../@internal/index.js';
 // import {
@@ -51,7 +54,7 @@ export class Stage_Console {
         this.clr = clr;
         this.config = config;
         this.params = params;
-        this.nc = new node.NodeConsole(
+        this.nc = new NodeConsole(
             mergeArgs(
                 this.config.console?.nc ?? {},
                 {

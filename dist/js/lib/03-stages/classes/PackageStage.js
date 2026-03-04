@@ -4,14 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */ import {
     arrayUnique,
     escRegExp,
     timestamp,
-} from '@maddimathon/utility-typescript/functions';
-import { node } from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
+import { NodeConsole_Prompt } from '@maddimathon/utility-typescript/node';
 import { SemVer, StageError } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 // import {

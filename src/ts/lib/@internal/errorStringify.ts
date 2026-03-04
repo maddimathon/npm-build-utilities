@@ -11,12 +11,9 @@
 import {
     slugify,
     typeOf,
-} from '@maddimathon/utility-typescript/functions';
-
-import {
     MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
 
 import type { FileSystemType } from '../../types/FileSystemType.js';
 import type { Logger } from '../../types/Logger.js';

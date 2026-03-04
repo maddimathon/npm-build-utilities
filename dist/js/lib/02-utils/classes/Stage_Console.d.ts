@@ -4,10 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
-import { node, MessageMaker, VariableInspector } from '@maddimathon/utility-typescript/classes';
+import { MessageMaker, VariableInspector } from '@maddimathon/utility-typescript';
+import { NodeConsole, NodeConsole_Prompt } from '@maddimathon/utility-typescript/node';
 import type { CLI, Config } from '../../../types/index.js';
 import type { Logger } from '../../../types/Logger.js';
 /**
@@ -26,7 +27,7 @@ export declare class Stage_Console implements Logger {
     readonly config: Config.Class;
     readonly params: CLI.Params;
     /** {@inheritDoc Logger.nc} */
-    readonly nc: node.NodeConsole;
+    readonly nc: NodeConsole;
     /** {@inheritDoc Logger.vi} */
     readonly vi: _Stage_Console_VarInspect;
     /**
@@ -52,11 +53,11 @@ export declare class Stage_Console implements Logger {
         time: Partial<MessageMaker.BulkMsgArgs>;
     };
     /** {@inheritDoc Logger.debug} */
-    debug(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    debug(msg: Parameters<NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /** {@inheritDoc Logger.error} */
     error(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     /** {@inheritDoc Logger.log} */
-    log(msg: Parameters<node.NodeConsole['timestampLog']>[0], level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
+    log(msg: Parameters<NodeConsole['timestampLog']>[0], level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
     /** {@inheritDoc Logger.progress} */
     progress(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
     /**
@@ -81,10 +82,10 @@ export declare class Stage_Console implements Logger {
         readonly bool: (message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.bool>[0], "message">) => Promise<boolean | undefined>;
         readonly input: (message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.input>[0], "message">) => Promise<string | undefined>;
         readonly select: {
-            <T_Return extends string, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+            <T_Return extends string, T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
                 choices: T_Return[];
             }>(message: string, level: number, opts: Omit<T_Config, "message" | "theme">): Promise<T_Return | undefined>;
-            <T_Return extends node.NodeConsole_Prompt.SelectValue, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+            <T_Return extends NodeConsole_Prompt.SelectValue, T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
                 choices: {
                     value: T_Return;
                     name?: string;
@@ -95,13 +96,13 @@ export declare class Stage_Console implements Logger {
             }>(message: string, level: number, opts: Omit<T_Config, "message" | "theme">): Promise<T_Return | undefined>;
         };
     };
-    protected prompt_prepareOpts<T_Config extends node.NodeConsole_Prompt.Config>(level: number, opts?: Omit<T_Config, 'message'>): Pick<T_Config, 'msgArgs' | 'styleClrs'>;
+    protected prompt_prepareOpts<T_Config extends NodeConsole_Prompt.Config>(level: number, opts?: Omit<T_Config, 'message'>): Pick<T_Config, 'msgArgs' | 'styleClrs'>;
     protected prompt_bool(message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.bool>[0], 'message'>): Promise<boolean | undefined>;
     protected prompt_input(message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.input>[0], 'message'>): Promise<string | undefined>;
-    protected prompt_select<T_Return extends string, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+    protected prompt_select<T_Return extends string, T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
         choices: T_Return[];
     }>(message: string, level: number, opts: Omit<T_Config, 'message' | 'theme'>): Promise<T_Return | undefined>;
-    protected prompt_select<T_Return extends node.NodeConsole_Prompt.SelectValue, T_Config extends Omit<node.NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
+    protected prompt_select<T_Return extends NodeConsole_Prompt.SelectValue, T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
         choices: {
             value: T_Return;
             name?: string;
@@ -127,14 +128,14 @@ export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     readonly config: Config.Class;
     readonly params: CLI.Params;
     readonly _msgArgs: Stage_Console['msgArgs'];
-    protected readonly nc: node.NodeConsole;
+    protected readonly nc: NodeConsole;
     /**
      * @param config    Current project config.
      * @param params    Current CLI params.
      * @param _msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
      * @param nc        Instance to use within the class.
      */
-    constructor(config: Config.Class, params: CLI.Params, _msgArgs: Stage_Console['msgArgs'], nc: node.NodeConsole);
+    constructor(config: Config.Class, params: CLI.Params, _msgArgs: Stage_Console['msgArgs'], nc: NodeConsole);
     private msgArgs;
     /** {@inheritDoc Logger.VarInspect.debug} */
     debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;

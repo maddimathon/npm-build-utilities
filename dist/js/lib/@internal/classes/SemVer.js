@@ -4,11 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import node_SemVer from 'semver';
-import { toTitleCase } from '@maddimathon/utility-typescript/functions';
+import { toTitleCase } from '@maddimathon/utility-typescript';
 import { AbstractError } from './abstract/index.js';
 /**
  * For parsing and validating semantic version strings.

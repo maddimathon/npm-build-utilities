@@ -4,12 +4,12 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import * as prettier from "prettier";
-import type { Objects } from '@maddimathon/utility-typescript/types';
-import { node } from '@maddimathon/utility-typescript/classes';
+import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
+import { NodeFiles } from '@maddimathon/utility-typescript/node';
 import type { Stage } from '../../../types/index.js';
 import type { FileSystemType } from '../../../types/FileSystemType.js';
 import type { Logger } from '../../../types/Logger.js';
@@ -21,7 +21,7 @@ import { AbstractError } from '../../@internal/index.js';
  *
  * @since 0.1.0-alpha
  */
-export declare class FileSystem extends node.NodeFiles {
+export declare class FileSystem extends NodeFiles {
     /**
      * Default {@link prettier} configuration object.
      *
@@ -82,7 +82,6 @@ export declare class FileSystem extends node.NodeFiles {
     readonly console: Logger;
     readonly args: FileSystem.Args;
     get ARGS_DEFAULT(): {
-        readonly argsRecursive: true;
         readonly copy: {
             readonly force: true;
             readonly recursive: true;
@@ -185,7 +184,7 @@ export declare class FileSystem extends node.NodeFiles {
             rename: boolean;
         };
     };
-    buildArgs(args?: Partial<FileSystemType.Args> | Objects.RecursivePartial<FileSystemType.Args>): FileSystem.Args;
+    buildArgs(args?: Partial<FileSystemType.Args> | RecursivePartial<FileSystemType.Args>): FileSystem.Args;
     /**
      * @category Constructor
      *

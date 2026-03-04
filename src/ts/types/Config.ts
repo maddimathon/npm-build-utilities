@@ -8,7 +8,7 @@
  * @license MIT
  */
 
-import type { MessageMaker } from '@maddimathon/utility-typescript/classes';
+import type { MessageMaker } from '@maddimathon/utility-typescript';
 
 import type { FileSystemType } from './FileSystemType.js';
 import type { Logger } from './Logger.js';

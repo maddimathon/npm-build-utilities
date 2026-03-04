@@ -16,8 +16,8 @@ import * as postcss_PresetEnv from 'postcss-preset-env';
 import * as sass from 'sass-embedded';
 
 import type {
-    Json,
-    Objects,
+    Classify,
+    TsConfig,
 } from '@maddimathon/utility-typescript/types';
 
 import {
@@ -25,12 +25,8 @@ import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
-} from '@maddimathon/utility-typescript/functions';
-
-import {
     type MessageMaker,
-    // VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
 
 import type {
     CLI,
@@ -356,7 +352,7 @@ export class Stage_Compiler implements Stage.Compiler {
                 outDir,
                 baseUrl,
             },
-        } as const satisfies Json.TsConfig;
+        } as const satisfies TsConfig;
     }
 
 
@@ -403,12 +399,12 @@ export class Stage_Compiler implements Stage.Compiler {
             ts: {},
 
         } as const satisfies Stage.Compiler.Args & {
-            sass: Objects.Classify<Stage.Compiler.Args.Sass>;
+            sass: Classify<Stage.Compiler.Args.Sass>;
         };
     }
 
     public readonly args: Stage.Compiler.Args & {
-        sass: Objects.Classify<Stage.Compiler.Args.Sass>;
+        sass: Classify<Stage.Compiler.Args.Sass>;
     };
 
 
@@ -430,7 +426,7 @@ export class Stage_Compiler implements Stage.Compiler {
     ) {
         this.args = this.parseArgs(
             this.ARGS_DEFAULT as Stage.Compiler.Args & {
-                sass: Objects.Classify<Stage.Compiler.Args.Sass>;
+                sass: Classify<Stage.Compiler.Args.Sass>;
             },
             config.compiler,
         );
@@ -466,7 +462,7 @@ export class Stage_Compiler implements Stage.Compiler {
         tsconfig: string,
         level: number,
         errorIfNotFound: boolean = true,
-    ): Partial<Json.TsConfig> {
+    ): Partial<TsConfig> {
         this.console.verbose( 'getting tsconfig value...', level );
 
         // throws or returns
@@ -501,7 +497,7 @@ export class Stage_Compiler implements Stage.Compiler {
             return {};
         }
 
-        const config_obj = JSON.parse( this.fs.readFile( tsconfig ) ) as Partial<Json.TsConfig> | string;
+        const config_obj = JSON.parse( this.fs.readFile( tsconfig ) ) as Partial<TsConfig> | string;
 
         // returns
         if ( typeof config_obj === 'object' ) {
@@ -532,7 +528,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * @since 0.2.0-alpha
      */
     public getTsConfigOutDir(
-        tsconfig: string | Partial<Json.TsConfig> & { path: string; },
+        tsconfig: string | Partial<TsConfig> & { path: string; },
         level: number,
         errorIfNotFound: boolean = true,
     ) {
@@ -819,7 +815,7 @@ export class Stage_Compiler implements Stage.Compiler {
         input: string,
         output: string,
         level: number,
-        sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
+        sassCompleteOpts: Classify<Stage.Compiler.Args.Sass>,
         logger: Stage_Compiler.SassLogger,
         compileFn?: (
             input: string,
@@ -891,7 +887,7 @@ export class Stage_Compiler implements Stage.Compiler {
         input: string,
         output: string,
         level: number,
-        sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
+        sassCompleteOpts: Classify<Stage.Compiler.Args.Sass>,
         logger?: Stage_Compiler.SassLogger,
         compileFn?: (
             input: string,
@@ -933,7 +929,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * @since 0.3.0-alpha.1
      */
     protected scssCLI_args( completeSassOpts: Stage.Compiler.Args.Sass ) {
-        const opts: Objects.Classify<Stage.Compiler.Args.SassCLI> = {
+        const opts: Classify<Stage.Compiler.Args.SassCLI> = {
             charset: completeSassOpts.charset,
             'embed-sources': completeSassOpts.cli?.[ 'embed-sources' ] ?? completeSassOpts.sourceMapIncludeSources ?? true,
             'embed-source-map': completeSassOpts.cli?.[ 'embed-source-map' ] ?? completeSassOpts.sourceMap ?? true,
@@ -991,7 +987,7 @@ export class Stage_Compiler implements Stage.Compiler {
         input: string,
         output: string,
         level: number,
-        sassCompleteOpts: Objects.Classify<Stage.Compiler.Args.Sass>,
+        sassCompleteOpts: Classify<Stage.Compiler.Args.Sass>,
     ): Promise<{
         output: string;
         logger: undefined;
@@ -1341,7 +1337,7 @@ export namespace Stage_Compiler {
             protected readonly params: Stage_Compiler[ 'params' ],
             protected readonly sassErrorStackFilter: Stage_Compiler[ 'sassErrorStackFilter' ],
             protected readonly level: number,
-            protected readonly args: Objects.Classify<Stage.Compiler.Args.Sass>,
+            protected readonly args: Classify<Stage.Compiler.Args.Sass>,
         ) { }
 
 

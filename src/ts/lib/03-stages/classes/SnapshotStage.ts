@@ -9,17 +9,14 @@
  */
 
 import type {
-    Json,
+    PackageJson,
 } from '@maddimathon/utility-typescript/types';
 
 import {
     slugify,
     timestamp,
-} from '@maddimathon/utility-typescript/functions';
-
-import {
     MessageMaker,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
 
 import type {
     CLI,
@@ -112,7 +109,7 @@ export class SnapshotStage extends AbstractStage<
         config: Config.Class,
         params: CLI.Params,
         args: Partial<Stage.Args.Snapshot>,
-        pkg?: Json.PackageJson,
+        pkg?: PackageJson,
         version?: SemVer,
     ) {
         super( 'snapshot', 'pink', config, params, args, pkg, version );

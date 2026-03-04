@@ -4,14 +4,17 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.16
+ * @maddimathon/build-utilities@0.3.0-alpha.17.draft
  * @license MIT
  */
 import {
-    node,
     MessageMaker,
     VariableInspector,
-} from '@maddimathon/utility-typescript/classes';
+} from '@maddimathon/utility-typescript';
+import {
+    NodeConsole,
+    NodeConsole_Prompt,
+} from '@maddimathon/utility-typescript/node';
 /**
  * A basic console class used as a back-up before {@link Stage_Console} is
  * defined.
@@ -23,7 +26,7 @@ export class DummyConsole {
     config;
     params;
     vi = new _DummyConsole_VarDump();
-    constructor(nc = new node.NodeConsole(), config = {}, params = {}) {
+    constructor(nc = new NodeConsole(), config = {}, params = {}) {
         this.nc = nc;
         this.config = config;
         this.params = params;
@@ -138,7 +141,7 @@ export class DummyConsole {
 class _DummyConsole_VarDump {
     nc;
     params;
-    constructor(nc = new node.NodeConsole(), params = {}) {
+    constructor(nc = new NodeConsole(), params = {}) {
         this.nc = nc;
         this.params = params;
     }
