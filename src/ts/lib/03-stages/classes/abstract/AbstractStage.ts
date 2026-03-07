@@ -910,7 +910,7 @@ export abstract class AbstractStage<
      * @return  The `tryer` function’s return, or 'FAILED' if an error is caught
      *          and the process isn’t exited.
      */
-    protected try<
+    public try<
         T_Params extends never[],
         T_Return extends unknown,
     >(
@@ -925,7 +925,7 @@ export abstract class AbstractStage<
      * 
      * If the handler must exit, then 'FAILED' is not possible.
      */
-    protected try<
+    public try<
         T_Params extends unknown[],
         T_Return extends unknown,
     >(
@@ -940,7 +940,7 @@ export abstract class AbstractStage<
      * 
      * If the handler won't exit, then 'FAILED' is possible.
      */
-    protected try<
+    public try<
         T_Params extends never[],
         T_Return extends unknown,
     >(
@@ -953,7 +953,7 @@ export abstract class AbstractStage<
     /**
      * If the `tryer` function *has* params, then they are required.
      */
-    protected try<
+    public try<
         T_Params extends unknown[],
         T_Return extends unknown,
     >(
@@ -975,7 +975,7 @@ export abstract class AbstractStage<
      *
      * @experimental
      */
-    protected try<
+    public try<
         T_Params extends unknown[] | never[],
         T_Return extends unknown,
     >(
@@ -1014,7 +1014,7 @@ export abstract class AbstractStage<
      * @return  The `tryer` function’s return, or 'FAILED' if an error is caught
      *          and the process isn’t exited.
      */
-    protected async atry<
+    public async atry<
         T_Params extends never[],
         T_Return extends unknown,
     >(
@@ -1029,7 +1029,7 @@ export abstract class AbstractStage<
      * 
      * If the handler must exit, then 'FAILED' is not possible.
      */
-    protected async atry<
+    public async atry<
         T_Params extends unknown[],
         T_Return extends unknown,
     >(
@@ -1044,7 +1044,7 @@ export abstract class AbstractStage<
      * 
      * If the handler won't exit, then 'FAILED' is possible.
      */
-    protected async atry<
+    public async atry<
         T_Params extends never[],
         T_Return extends unknown,
     >(
@@ -1057,7 +1057,7 @@ export abstract class AbstractStage<
     /**
      * If the `tryer` function *has* params, then they are required.
      */
-    protected async atry<
+    public async atry<
         T_Params extends unknown[],
         T_Return extends unknown,
     >(
@@ -1079,7 +1079,7 @@ export abstract class AbstractStage<
      *
      * @experimental
      */
-    protected async atry<
+    public async atry<
         T_Params extends unknown[] | never[],
         T_Return extends unknown,
     >(

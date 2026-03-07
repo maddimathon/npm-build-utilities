@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-alpha.18** — 2026-03-07
+
+Made methods AbstractStage.atry() and AbstractStage.try() public.
+
+
 ## **0.3.0-alpha.17** — 2026-03-04
 
 ### Removed

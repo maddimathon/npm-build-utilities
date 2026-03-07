@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.17
+ * @maddimathon/build-utilities@0.3.0-alpha.18
  * @license MIT
  */
 export {};

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.17
+ * @maddimathon/build-utilities@0.3.0-alpha.18
  * @license MIT
  */
 import type { PackageJson } from '@maddimathon/utility-typescript/types';
@@ -276,7 +276,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @return  The `tryer` function’s return, or 'FAILED' if an error is caught
      *          and the process isn’t exited.
      */
-    protected try<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return, level: number, params?: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
+    try<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return, level: number, params?: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
         exitProcess?: false;
     }): T_Return;
     /**
@@ -284,7 +284,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * If the handler must exit, then 'FAILED' is not possible.
      */
-    protected try<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return, level: number, params: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
+    try<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return, level: number, params: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
         exitProcess?: false;
     }): T_Return;
     /**
@@ -292,13 +292,13 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * If the handler won't exit, then 'FAILED' is possible.
      */
-    protected try<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return, level: number, params: NoInfer<T_Params> | undefined, handlerArgs: Partial<AbstractError.Handler.Args> & {
+    try<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return, level: number, params: NoInfer<T_Params> | undefined, handlerArgs: Partial<AbstractError.Handler.Args> & {
         exitProcess: true | boolean;
     }): T_Return | "FAILED";
     /**
      * If the `tryer` function *has* params, then they are required.
      */
-    protected try<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return, level: number, params: NoInfer<T_Params>, handlerArgs: Partial<AbstractError.Handler.Args> & {
+    try<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return, level: number, params: NoInfer<T_Params>, handlerArgs: Partial<AbstractError.Handler.Args> & {
         exitProcess: true | boolean;
     }): T_Return | "FAILED";
     /**
@@ -313,7 +313,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @return  The `tryer` function’s return, or 'FAILED' if an error is caught
      *          and the process isn’t exited.
      */
-    protected atry<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return | Promise<T_Return>, level: number, params?: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
+    atry<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return | Promise<T_Return>, level: number, params?: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
         exitProcess?: false;
     }): Promise<T_Return>;
     /**
@@ -321,7 +321,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * If the handler must exit, then 'FAILED' is not possible.
      */
-    protected atry<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return | Promise<T_Return>, level: number, params: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
+    atry<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return | Promise<T_Return>, level: number, params: NoInfer<T_Params>, handlerArgs?: Partial<AbstractError.Handler.Args> & {
         exitProcess?: false;
     }): Promise<T_Return>;
     /**
@@ -329,13 +329,13 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * If the handler won't exit, then 'FAILED' is possible.
      */
-    protected atry<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return | Promise<T_Return>, level: number, params: NoInfer<T_Params> | undefined, handlerArgs: Partial<AbstractError.Handler.Args> & {
+    atry<T_Params extends never[], T_Return extends unknown>(tryer: () => T_Return | Promise<T_Return>, level: number, params: NoInfer<T_Params> | undefined, handlerArgs: Partial<AbstractError.Handler.Args> & {
         exitProcess: true | boolean;
     }): Promise<T_Return | "FAILED">;
     /**
      * If the `tryer` function *has* params, then they are required.
      */
-    protected atry<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return | Promise<T_Return>, level: number, params: NoInfer<T_Params>, handlerArgs: Partial<AbstractError.Handler.Args> & {
+    atry<T_Params extends unknown[], T_Return extends unknown>(tryer: (...params: T_Params) => T_Return | Promise<T_Return>, level: number, params: NoInfer<T_Params>, handlerArgs: Partial<AbstractError.Handler.Args> & {
         exitProcess: true | boolean;
     }): Promise<T_Return | "FAILED">;
     /**
