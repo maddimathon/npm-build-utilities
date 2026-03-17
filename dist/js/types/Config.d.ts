@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
 import type { MessageMaker } from '@maddimathon/utility-typescript';
@@ -260,6 +260,15 @@ export declare namespace Config {
         dist: string | ((subDir?: Paths.DistDirectory) => string) | {
             [D in "_" | Paths.DistDirectory]?: string;
         };
+        /**
+         * This is the location of your node_modules directory. Used to resolve
+         * dependencies. Relative to configured root directory.
+         *
+         * @default 'node_modules'
+         *
+         * @since 0.3.0-alpha.19.draft
+         */
+        modules: string;
         /**
          * Relative path to notes files used during development.
          */

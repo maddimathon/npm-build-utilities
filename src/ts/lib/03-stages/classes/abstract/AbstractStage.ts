@@ -12,7 +12,10 @@ import type * as sass from 'sass-embedded';
 
 import type {
     PackageJson,
+    TsConfig,
 } from '@maddimathon/utility-typescript/types';
+
+import type { NodeFiles } from '@maddimathon/utility-typescript/node';
 
 import {
     escRegExp,
@@ -546,6 +549,36 @@ export abstract class AbstractStage<
         );
     }
 
+    /**
+     * Takes an input tsconfig object and attempts to resolve and
+     * include the values from any configs in its "extends".
+     * 
+     * @since ___PKG_VERSION___
+     */
+    public writeTsConfig(
+        outputPath: string,
+        level: number,
+        tsconfig: Partial<TsConfig>,
+        args: Partial<NodeFiles.WriteFileArgs & { errorIfNotFound?: boolean; }> = {},
+    ) {
+        const resolvedConfig: TsConfig & { path?: string; } = this.compiler.resolveTsConfig(
+            {
+                ...tsconfig,
+                path: outputPath,
+            },
+            level,
+            args.errorIfNotFound ?? true,
+        );
+
+        delete resolvedConfig.path;
+
+        return this.try(
+            this.fs.write,
+            1 + level,
+            [ outputPath, JSON.stringify( resolvedConfig, null, 4 ), args ],
+        );
+    }
+
 
     /* CONFIG & ARGS ===================================== */
 
@@ -677,14 +710,14 @@ export abstract class AbstractStage<
     }
 
     public getSrcDir(
-        subDir: Config.Paths.SourceDirectory,
-        ...subpaths: string[]
-    ): string[];
-
-    public getSrcDir(
         subDir?: undefined,
         ...subpaths: string[]
     ): string;
+
+    public getSrcDir(
+        subDir: Config.Paths.SourceDirectory,
+        ...subpaths: string[]
+    ): string[];
 
     /** 
      * {@inheritDoc Stage.getSrcDir}

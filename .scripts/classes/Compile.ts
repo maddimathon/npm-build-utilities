@@ -59,4 +59,103 @@ export class Compile extends CompileStage {
             }
         );
     }
+
+    /**
+     * Write tsconfig files and compiles ts files to be included in the package.
+     */
+    protected override async ts() {
+        this.console.progress( 'writing tsconfig files...', 1 );
+
+        const writeArgs = { force: true, rename: false };
+
+        const baseConfigPath = this.writeTsConfig(
+            'tsconfig.base.json',
+            2,
+            {
+                extends: '@tsconfig/node20/tsconfig.json',
+                exclude: [
+                    '**/node_modules/**/*'
+                ],
+                compilerOptions: {
+                    allowJs: true,
+                    checkJs: true,
+                    declaration: true,
+                    declarationMap: false,
+                    esModuleInterop: true,
+                    exactOptionalPropertyTypes: true,
+                    forceConsistentCasingInFileNames: true,
+                    isolatedDeclarations: false,
+                    isolatedModules: true,
+                    module: 'Node18',
+                    moduleResolution: 'Node16',
+                    noFallthroughCasesInSwitch: true,
+                    noImplicitAny: true,
+                    noImplicitOverride: true,
+                    noImplicitReturns: true,
+                    noImplicitThis: true,
+                    noPropertyAccessFromIndexSignature: true,
+                    noUncheckedIndexedAccess: true,
+                    noUnusedLocals: true,
+                    pretty: true,
+                    removeComments: false,
+                    resolveJsonModule: true,
+                    skipLibCheck: true,
+                    sourceMap: false,
+                    strict: true,
+                    strictBindCallApply: true,
+                    target: 'es2022',
+                    verbatimModuleSyntax: true
+                },
+            },
+            writeArgs,
+        );
+
+        this.writeTsConfig(
+            'src/ts/tsconfig.json',
+            2,
+            {
+                extends: baseConfigPath ? baseConfigPath : '../../tsconfig.base.json',
+                include: [
+                    "../../src/ts/**/*",
+                    "./src/ts/**/*"
+                ],
+                exclude: [
+                    "../../node_modules/**/*",
+                    "./node_modules/**/*",
+                    "node_modules/**/*",
+                    "node_modules/@skikijs"
+                ],
+
+                compilerOptions: {
+                    "baseUrl": "../../",
+                    "exactOptionalPropertyTypes": false,
+                    "outDir": "../../dist/js/"
+                },
+            },
+            writeArgs,
+        );
+
+        this.writeTsConfig(
+            'src/docs/tsconfig.json',
+            2,
+            {
+                extends: "../../tsconfig.base.json",
+
+                include: [
+                    "../../src/docs/**/*.js",
+                    "../../src/docs/**/*.ts",
+                    "src/docs/**/*.js",
+                    "src/docs/**/*.ts"
+                ],
+
+                compilerOptions: {
+                    "baseUrl": "../../",
+                    "noEmit": true
+                }
+            },
+            writeArgs,
+        );
+
+        return super.ts();
+    }
 }

@@ -240,6 +240,7 @@ export class ProjectConfig implements Config.Class {
 
             // can only be a string, so should be gone already
             case 'changelog':
+            case 'modules':
             case 'readme':
             case 'release':
             case 'snapshot':

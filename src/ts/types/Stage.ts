@@ -602,8 +602,10 @@ export namespace Stage {
 
             /**
              * Whether to include this sub-stage.
+             * 
+             * @since ___PKG_VERSION___ — Added option to include an array of strings that are paths to tsconfig files.
              */
-            ts: boolean;
+            ts: boolean | string[];
         };
 
         /**
@@ -993,6 +995,15 @@ export namespace Stage {
              * @since 0.1.3 — Added it back.
              */
             ts: {
+
+                /**
+                 * Whether to merge arrays when combining extended ts configs.
+                 * 
+                 * @default true
+                 * 
+                 * @since ___PKG_VERSION___
+                 */
+                mergeArraysInTsConfig?: boolean;
 
                 /**
                  * This is an array of globs, resolved relative to the tsconfig

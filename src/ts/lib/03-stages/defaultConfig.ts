@@ -80,6 +80,8 @@ export function defaultConfig(
             scss: 'dist/css',
         },
 
+        modules: 'node_modules',
+
         notes: {
             release: '.releasenotes.md',
         },

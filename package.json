@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.3.0-alpha.18",
+    "version": "0.3.0-alpha.19",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
     "description": "Opinionated utilities for easy build systems in npm projects.",
@@ -99,6 +99,9 @@
     },
 
     "scripts": {
+        "unlink-ts": "rm -rf node_modules/@maddimathon/utility-sass || echo ''",
+        "link-ts": "npm run unlink-ts && mkdir -p node_modules/@maddimathon/utility-typescript && cp -R -H -f -p ../utility-typescript/package.json ../utility-typescript/dist node_modules/@maddimathon/utility-typescript",
+
         "test-utils": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts --config .scripts/build.config.ts",
 
         "rm": "rm -r dist docs || echo ''",
@@ -146,8 +149,8 @@
         "jest": "^30.2.0",
         "luxon": "^3.7.2",
         "minimist": "~1.2.8",
-        "postcss-preset-env": "^10.4.0",
         "postcss": "^8.5.6",
+        "postcss-preset-env": "^10.4.0",
         "prettier": "^3.6.2",
         "sass-embedded": "^1.93.3",
         "semver": "~7.7.3",

@@ -333,7 +333,7 @@ export class CompileStage extends AbstractStage<
         this.console.progress( 'compiling typescript...', 1 );
 
         this.console.verbose( 'getting tsconfig paths...', 2 );
-        const tsPaths = await Stage_Compiler.getTsConfigPaths( this, this.params.verbose ? 3 : 2 );
+        const tsPaths = Array.isArray( this.args.ts ) ? this.args.ts : await Stage_Compiler.getTsConfigPaths( this, this.params.verbose ? 3 : 2 );
 
         this.console.vi.debug( { tsPaths }, ( this.params.verbose ? 3 : 2 ) );
 

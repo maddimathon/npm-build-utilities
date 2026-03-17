@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -467,8 +467,10 @@ export declare namespace Stage {
             };
             /**
              * Whether to include this sub-stage.
+             *
+             * @since 0.3.0-alpha.19.draft — Added option to include an array of strings that are paths to tsconfig files.
              */
-            ts: boolean;
+            ts: boolean | string[];
         }
         /**
          * The required shape for a document stage.
@@ -784,6 +786,12 @@ export declare namespace Stage {
              * @since 0.1.3 — Added it back.
              */
             ts: {
+                /**
+                 * Whether to merge arrays when combining extended ts configs.
+                 *
+                 * @since 0.3.0-alpha.19.draft
+                 */
+                mergeArraysInTsConfig?: boolean;
                 /**
                  * This is an array of globs, resolved relative to the tsconfig
                  * outDir, to be removed after compilation.

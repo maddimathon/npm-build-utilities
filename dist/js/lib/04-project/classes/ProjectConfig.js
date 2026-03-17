@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
 var _a;
@@ -173,6 +173,7 @@ export class ProjectConfig {
                 return _src;
             // can only be a string, so should be gone already
             case 'changelog':
+            case 'modules':
             case 'readme':
             case 'release':
             case 'snapshot':

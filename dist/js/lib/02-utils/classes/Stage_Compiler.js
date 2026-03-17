@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -16,6 +16,7 @@ import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
+    objectKeySort,
 } from '@maddimathon/utility-typescript';
 import { StageError } from '../../@internal/index.js';
 import { catchOrReturn, FileSystem } from '../../00-universal/index.js';
@@ -330,7 +331,10 @@ export class Stage_Compiler {
                 style: 'expanded',
                 verbose: true,
             },
-            ts: {},
+            ts: {
+                mergeArraysInTsConfig: true,
+                tidyGlobs: undefined,
+            },
         };
     }
     args;
@@ -360,6 +364,99 @@ export class Stage_Compiler {
     }
     /* LOCAL METHODS
      * ====================================================================== */
+    /**
+     * Logs the message for the benchmark end notice.
+     *
+     * @since 0.3.0-alpha.1
+     */
+    benchmarkEndTimeLog(msg, level, start, end) {
+        const timePassed = Interval.fromDateTimes(start, end);
+        const durationInSeconds = timePassed.toDuration().toMillis() / 1000;
+        this.console.log(
+            this.params.verbose ?
+                `${msg} @ ${end.toFormat('H:mm:ss.SSS')} (${durationInSeconds.toString()}s)`
+            :   `${msg} (${durationInSeconds.toString()}s)`,
+            level,
+            {
+                clr: 'grey',
+                italic: true,
+                linesIn: 0,
+                linesOut: 0,
+            },
+        );
+    }
+    /**
+     * Logs the message for the benchmark start notice.
+     *
+     * @since 0.3.0-alpha.1
+     */
+    benchmarkStartTimeLog(msg, level, start) {
+        this.console.verbose(
+            `${msg} @ ${start.toFormat('H:mm:ss.SSS')}`,
+            level,
+            {
+                clr: 'grey',
+                italic: true,
+                linesIn: 0,
+                linesOut: 0,
+            },
+        );
+    }
+    /**
+     * Takes an input tsconfig path (or object) and attempts to resolve and
+     * include the values from any configs in its "extends".
+     *
+     * @since 0.3.0-alpha.19.draft
+     */
+    resolveTsConfig(tsconfig, level, errorIfNotFound = true) {
+        const _tsconfig_obj =
+            typeof tsconfig === 'string' ?
+                {
+                    ...this.getTsConfig(tsconfig, level, errorIfNotFound),
+                    path: tsconfig,
+                }
+            :   tsconfig;
+        let resolvedObj = {
+            ..._tsconfig_obj,
+            compilerOptions: _tsconfig_obj.compilerOptions ?? {},
+        };
+        if (!('extends' in resolvedObj) || !resolvedObj.extends) {
+            return resolvedObj;
+        }
+        const extendsPaths =
+            Array.isArray(resolvedObj.extends ?? []) ?
+                (resolvedObj.extends ?? [])
+            :   [resolvedObj.extends];
+        const localBasePath = this.fs.dirname(resolvedObj.path);
+        for (const path of extendsPaths) {
+            const path_resolved =
+                path.match(/^\.*\//gi) ?
+                    this.fs.pathResolve(localBasePath, path)
+                :   this.fs.pathResolve(this.config.paths.modules, path);
+            // continues
+            if (!this.fs.exists(path_resolved)) {
+                this.console.debug(
+                    `a path (${path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be found`,
+                    level,
+                );
+                continue;
+            }
+            const extendeeContents = this.resolveTsConfig(
+                {
+                    ...JSON.parse(this.fs.readFile(path_resolved)),
+                    path: path_resolved,
+                },
+                (this.params.verbose ? 1 : 0) + level,
+                errorIfNotFound,
+            );
+            resolvedObj = {
+                ...this.mergeTsConfigs(extendeeContents, resolvedObj),
+                path: resolvedObj.path,
+            };
+        }
+        delete resolvedObj.extends;
+        return objectKeySort(resolvedObj, true);
+    }
     /**
      * Gets the value of the given tsconfig file.
      *
@@ -425,24 +522,49 @@ export class Stage_Compiler {
      * @since 0.2.0-alpha
      */
     getTsConfigOutDir(tsconfig, level, errorIfNotFound = true) {
-        const config_obj =
-            typeof tsconfig === 'string' ?
-                {
-                    ...this.getTsConfig(tsconfig, level, errorIfNotFound),
-                    path: tsconfig,
-                }
-            :   tsconfig;
-        return (
-            (config_obj.compilerOptions?.noEmit !== true
-                && config_obj.compilerOptions?.outDir
-                && this.fs
-                    .pathResolve(
-                        this.fs.dirname(config_obj.path),
-                        config_obj.compilerOptions.outDir,
-                    )
-                    .replace(/\/+$/gi, ''))
-            || false
+        const resolvedConfig = this.resolveTsConfig(
+            tsconfig,
+            level,
+            errorIfNotFound,
         );
+        // returns
+        if (
+            resolvedConfig.compilerOptions.noEmit
+            || !resolvedConfig.compilerOptions.outDir
+        ) {
+            return false;
+        }
+        return this.fs
+            .pathResolve(
+                this.fs.dirname(resolvedConfig.path),
+                resolvedConfig.compilerOptions.outDir,
+            )
+            .replace(/\/+$/gi, '');
+    }
+    /**
+     * Combines two ts config objects, overriding and merging as applicable.
+     *
+     * @since 0.3.0-alpha.19.draft
+     */
+    mergeTsConfigs(extendee, current) {
+        const compilerOptions = mergeArgs(
+            extendee.compilerOptions ?? {},
+            current.compilerOptions,
+            true,
+            this.args.ts.mergeArraysInTsConfig,
+        );
+        // @ts-expect-error
+        delete extendee['_version'];
+        delete extendee.include;
+        delete extendee.exclude;
+        delete extendee.files;
+        const merged = {
+            $schema: 'https://json.schemastore.org/tsconfig',
+            ...extendee,
+            ...current,
+            compilerOptions,
+        };
+        return merged;
     }
     async postCSS(paths, level, _postCssOpts = {}) {
         const postCssOpts = mergeArgs(this.args.postCSS, _postCssOpts, true);
@@ -508,44 +630,6 @@ export class Stage_Compiler {
                         }
                     });
             }),
-        );
-    }
-    /**
-     * Logs the message for the benchmark end notice.
-     *
-     * @since 0.3.0-alpha.1
-     */
-    benchmarkEndTimeLog(msg, level, start, end) {
-        const timePassed = Interval.fromDateTimes(start, end);
-        const durationInSeconds = timePassed.toDuration().toMillis() / 1000;
-        this.console.log(
-            this.params.verbose ?
-                `${msg} @ ${end.toFormat('H:mm:ss.SSS')} (${durationInSeconds.toString()}s)`
-            :   `${msg} (${durationInSeconds.toString()}s)`,
-            level,
-            {
-                clr: 'grey',
-                italic: true,
-                linesIn: 0,
-                linesOut: 0,
-            },
-        );
-    }
-    /**
-     * Logs the message for the benchmark start notice.
-     *
-     * @since 0.3.0-alpha.1
-     */
-    benchmarkStartTimeLog(msg, level, start) {
-        this.console.verbose(
-            `${msg} @ ${start.toFormat('H:mm:ss.SSS')}`,
-            level,
-            {
-                clr: 'grey',
-                italic: true,
-                linesIn: 0,
-                linesOut: 0,
-            },
         );
     }
     /**
@@ -1018,7 +1102,7 @@ export class Stage_Compiler {
         this.console.verbose('running tsc...', level);
         const outDir = this.getTsConfigOutDir(
             tsconfig,
-            1 + level,
+            (this.params.verbose ? 1 : 0) + level,
             errorIfNotFound,
         );
         catchOrReturn(this.console.nc.cmd, 1 + level, this.console, this.fs, [
@@ -1396,8 +1480,6 @@ export class Stage_Compiler {
                 );
                 // varDumps[ depKey ] = _warningsArr;
             }
-            // this.console.vi.log( { deprecationWarnings: warnings }, this.level );
-            // this.console.vi.log( { deprecationWarnings: varDumps }, this.level );
         }
         /**
          * Outputs a warning (or deprecation) message received from Sass.

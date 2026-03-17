@@ -17,6 +17,7 @@ import * as sass from 'sass-embedded';
 
 import type {
     Classify,
+    PartialExcept,
     TsConfig,
 } from '@maddimathon/utility-typescript/types';
 
@@ -25,6 +26,7 @@ import {
     escRegExp,
     escRegExpReplace,
     mergeArgs,
+    objectKeySort,
     type MessageMaker,
 } from '@maddimathon/utility-typescript';
 
@@ -396,10 +398,14 @@ export class Stage_Compiler implements Stage.Compiler {
                 verbose: true,
             },
 
-            ts: {},
+            ts: {
+                mergeArraysInTsConfig: true,
+                tidyGlobs: undefined,
+            },
 
         } as const satisfies Stage.Compiler.Args & {
             sass: Classify<Stage.Compiler.Args.Sass>;
+            ts: Classify<Stage.Compiler.Args[ 'ts' ]>;
         };
     }
 
@@ -446,6 +452,123 @@ export class Stage_Compiler implements Stage.Compiler {
 
     /* LOCAL METHODS
      * ====================================================================== */
+
+    /**
+     * Logs the message for the benchmark end notice.
+     * 
+     * @since 0.3.0-alpha.1
+     */
+    protected benchmarkEndTimeLog(
+        msg: string,
+        level: number,
+        start: DateTime,
+        end: DateTime,
+    ) {
+        const timePassed = Interval.fromDateTimes( start, end );
+
+        const durationInSeconds = timePassed.toDuration().toMillis() / 1000;
+
+        this.console.log(
+            (
+                this.params.verbose
+                    ? `${ msg } @ ${ end.toFormat( 'H:mm:ss.SSS' ) } (${ durationInSeconds.toString() }s)`
+                    : `${ msg } (${ durationInSeconds.toString() }s)`
+            ),
+            level,
+            {
+                clr: 'grey',
+                italic: true,
+                linesIn: 0,
+                linesOut: 0,
+            },
+        );
+    }
+
+    /**
+     * Logs the message for the benchmark start notice.
+     * 
+     * @since 0.3.0-alpha.1
+     */
+    protected benchmarkStartTimeLog(
+        msg: string,
+        level: number,
+        start: DateTime,
+    ) {
+
+        this.console.verbose(
+            `${ msg } @ ${ start.toFormat( 'H:mm:ss.SSS' ) }`,
+            level,
+            {
+                clr: 'grey',
+                italic: true,
+                linesIn: 0,
+                linesOut: 0,
+            },
+        );
+    }
+
+    /**
+     * Takes an input tsconfig path (or object) and attempts to resolve and
+     * include the values from any configs in its "extends".
+     * 
+     * @since ___PKG_VERSION___
+     */
+    public resolveTsConfig(
+        tsconfig: string | Partial<TsConfig> & { path: string; },
+        level: number,
+        errorIfNotFound: boolean = true,
+    ): PartialExcept<TsConfig, "compilerOptions"> & { path: string; } {
+
+        const _tsconfig_obj = typeof tsconfig === 'string'
+            ? {
+                ...this.getTsConfig( tsconfig, level, errorIfNotFound ),
+                path: tsconfig,
+            }
+            : tsconfig;
+
+        let resolvedObj = {
+            ..._tsconfig_obj,
+            compilerOptions: _tsconfig_obj.compilerOptions ?? {},
+        };
+
+        if ( !( 'extends' in resolvedObj ) || !resolvedObj.extends ) {
+            return resolvedObj;
+        }
+
+        const extendsPaths = Array.isArray( resolvedObj.extends ?? [] )
+            ? ( ( resolvedObj.extends as undefined | string[] ) ?? [] )
+            : [ resolvedObj.extends as string ];
+
+        const localBasePath = this.fs.dirname( resolvedObj.path );
+
+        for ( const path of extendsPaths ) {
+
+            const path_resolved = path.match( /^\.*\//gi )
+                ? this.fs.pathResolve( localBasePath, path )
+                : this.fs.pathResolve( this.config.paths.modules, path );
+
+            // continues
+            if ( !this.fs.exists( path_resolved ) ) {
+                this.console.debug( `a path (${ path }) extended by the ts config at ${ this.fs.pathRelative( resolvedObj.path ) } could not be found`, level );
+                continue;
+            }
+
+            const extendeeContents = this.resolveTsConfig(
+                { ...JSON.parse( this.fs.readFile( path_resolved ) ), path: path_resolved },
+                ( this.params.verbose ? 1 : 0 ) + level,
+                errorIfNotFound,
+            );
+
+            resolvedObj = {
+                ...this.mergeTsConfigs( extendeeContents, resolvedObj ),
+                path: resolvedObj.path,
+            };
+        }
+
+        delete resolvedObj.extends;
+
+        return objectKeySort( resolvedObj, true );
+    }
 
     /**
      * Gets the value of the given tsconfig file.
@@ -532,22 +655,62 @@ export class Stage_Compiler implements Stage.Compiler {
         level: number,
         errorIfNotFound: boolean = true,
     ) {
-        const config_obj = typeof tsconfig === 'string'
-            ? {
-                ...this.getTsConfig( tsconfig, level, errorIfNotFound ),
-                path: tsconfig,
-            }
-            : tsconfig;
+        const resolvedConfig = this.resolveTsConfig( tsconfig, level, errorIfNotFound );
 
-        return (
-            config_obj.compilerOptions?.noEmit !== true
-            && config_obj.compilerOptions?.outDir
-            && this.fs.pathResolve(
-                this.fs.dirname( config_obj.path ),
-                config_obj.compilerOptions.outDir,
-            ).replace( /\/+$/gi, '' )
-            || false
+        // returns
+        if ( resolvedConfig.compilerOptions.noEmit || !resolvedConfig.compilerOptions.outDir ) {
+            return false;
+        }
+
+        return this.fs.pathResolve(
+            this.fs.dirname( resolvedConfig.path ),
+            resolvedConfig.compilerOptions.outDir,
+        ).replace( /\/+$/gi, '' );
+    }
+
+    /**
+     * Combines two ts config objects, overriding and merging as applicable.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    protected mergeTsConfigs<
+        T_Extendee extends Partial<TsConfig>,
+        T_Current extends Partial<TsConfig>,
+    >( extendee: T_Extendee, current: T_Current ) {
+
+        const compilerOptions = mergeArgs<
+            NonNullable<T_Extendee[ 'compilerOptions' ]>,
+            NonNullable<T_Current[ 'compilerOptions' ]>
+        >(
+            extendee.compilerOptions ?? {},
+            current.compilerOptions,
+            true,
+            this.args.ts.mergeArraysInTsConfig,
         );
+
+        delete current.compilerOptions;
+
+        // @ts-expect-error
+        delete extendee[ '_version' ];
+
+        delete extendee.compilerOptions;
+        delete extendee.include;
+        delete extendee.exclude;
+        delete extendee.files;
+
+        const merged = {
+            '$schema': 'https://json.schemastore.org/tsconfig',
+
+            ...extendee,
+            ...current,
+
+            compilerOptions,
+
+        } satisfies Partial<TsConfig> & {
+            '$schema': string;
+        };
+
+        return merged;
     }
 
     public async postCSS(
@@ -627,62 +790,6 @@ export class Stage_Compiler implements Stage.Compiler {
             }
         ) );
     }
-
-    /**
-     * Logs the message for the benchmark end notice.
-     * 
-     * @since 0.3.0-alpha.1
-     */
-    protected benchmarkEndTimeLog(
-        msg: string,
-        level: number,
-        start: DateTime,
-        end: DateTime,
-    ) {
-        const timePassed = Interval.fromDateTimes( start, end );
-
-        const durationInSeconds = timePassed.toDuration().toMillis() / 1000;
-
-        this.console.log(
-            (
-                this.params.verbose
-                    ? `${ msg } @ ${ end.toFormat( 'H:mm:ss.SSS' ) } (${ durationInSeconds.toString() }s)`
-                    : `${ msg } (${ durationInSeconds.toString() }s)`
-            ),
-            level,
-            {
-                clr: 'grey',
-                italic: true,
-                linesIn: 0,
-                linesOut: 0,
-            },
-        );
-    }
-
-    /**
-     * Logs the message for the benchmark start notice.
-     * 
-     * @since 0.3.0-alpha.1
-     */
-    protected benchmarkStartTimeLog(
-        msg: string,
-        level: number,
-        start: DateTime,
-    ) {
-
-        this.console.verbose(
-            `${ msg } @ ${ start.toFormat( 'H:mm:ss.SSS' ) }`,
-            level,
-            {
-                clr: 'grey',
-                italic: true,
-                linesIn: 0,
-                linesOut: 0,
-            },
-        );
-    }
-
-
 
     /**
      * Runs the compileAsync from the sass package and returns with an ending
@@ -1271,7 +1378,11 @@ export class Stage_Compiler implements Stage.Compiler {
     ): Promise<void> {
         this.console.verbose( 'running tsc...', level );
 
-        const outDir = this.getTsConfigOutDir( tsconfig, 1 + level, errorIfNotFound );
+        const outDir = this.getTsConfigOutDir(
+            tsconfig,
+            ( this.params.verbose ? 1 : 0 ) + level,
+            errorIfNotFound,
+        );
 
         catchOrReturn(
             this.console.nc.cmd,
@@ -1692,9 +1803,6 @@ export namespace Stage_Compiler {
 
                 // varDumps[ depKey ] = _warningsArr;
             }
-
-            // this.console.vi.log( { deprecationWarnings: warnings }, this.level );
-            // this.console.vi.log( { deprecationWarnings: varDumps }, this.level );
         }
 
         /**

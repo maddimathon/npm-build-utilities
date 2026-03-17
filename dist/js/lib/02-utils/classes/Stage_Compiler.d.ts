@@ -4,13 +4,13 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
 import { DateTime } from 'luxon';
 import * as postcss_PresetEnv from 'postcss-preset-env';
 import * as sass from 'sass-embedded';
-import type { Classify, TsConfig } from '@maddimathon/utility-typescript/types';
+import type { Classify, PartialExcept, TsConfig } from '@maddimathon/utility-typescript/types';
 import { type MessageMaker } from '@maddimathon/utility-typescript';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import { FileSystem } from '../../00-universal/index.js';
@@ -192,7 +192,10 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly style: "expanded";
             readonly verbose: true;
         };
-        readonly ts: {};
+        readonly ts: {
+            readonly mergeArraysInTsConfig: true;
+            readonly tidyGlobs: undefined;
+        };
     };
     readonly args: Stage.Compiler.Args & {
         sass: Classify<Stage.Compiler.Args.Sass>;
@@ -204,6 +207,29 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @param fs       Instance used to work with paths and files.
      */
     constructor(config: Config.Class, params: CLI.Params, console: Stage_Console, fs: FileSystem);
+    /**
+     * Logs the message for the benchmark end notice.
+     *
+     * @since 0.3.0-alpha.1
+     */
+    protected benchmarkEndTimeLog(msg: string, level: number, start: DateTime, end: DateTime): void;
+    /**
+     * Logs the message for the benchmark start notice.
+     *
+     * @since 0.3.0-alpha.1
+     */
+    protected benchmarkStartTimeLog(msg: string, level: number, start: DateTime): void;
+    /**
+     * Takes an input tsconfig path (or object) and attempts to resolve and
+     * include the values from any configs in its "extends".
+     *
+     * @since 0.3.0-alpha.19.draft
+     */
+    resolveTsConfig(tsconfig: string | Partial<TsConfig> & {
+        path: string;
+    }, level: number, errorIfNotFound?: boolean): PartialExcept<TsConfig, "compilerOptions"> & {
+        path: string;
+    };
     /**
      * Gets the value of the given tsconfig file.
      *
@@ -230,22 +256,20 @@ export declare class Stage_Compiler implements Stage.Compiler {
     getTsConfigOutDir(tsconfig: string | Partial<TsConfig> & {
         path: string;
     }, level: number, errorIfNotFound?: boolean): string | false;
+    /**
+     * Combines two ts config objects, overriding and merging as applicable.
+     *
+     * @since 0.3.0-alpha.19.draft
+     */
+    protected mergeTsConfigs<T_Extendee extends Partial<TsConfig>, T_Current extends Partial<TsConfig>>(extendee: T_Extendee, current: T_Current): {
+        $schema: string;
+    } & T_Extendee & T_Current & {
+        compilerOptions: TsConfig.CompilerOpts;
+    };
     postCSS(paths: {
         from: string;
         to?: string;
     }[], level: number, _postCssOpts?: Stage.Compiler.Args.PostCSS): Promise<void>;
-    /**
-     * Logs the message for the benchmark end notice.
-     *
-     * @since 0.3.0-alpha.1
-     */
-    protected benchmarkEndTimeLog(msg: string, level: number, start: DateTime, end: DateTime): void;
-    /**
-     * Logs the message for the benchmark start notice.
-     *
-     * @since 0.3.0-alpha.1
-     */
-    protected benchmarkStartTimeLog(msg: string, level: number, start: DateTime): void;
     /**
      * Runs the compileAsync from the sass package and returns with an ending
      * timestamp.

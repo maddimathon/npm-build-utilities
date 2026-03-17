@@ -347,6 +347,16 @@ export namespace Config {
         };
 
         /**
+         * This is the location of your node_modules directory. Used to resolve
+         * dependencies. Relative to configured root directory.
+         *
+         * @default 'node_modules'
+         * 
+         * @since ___PKG_VERSION___
+         */
+        modules: string;
+
+        /**
          * Relative path to notes files used during development.
          */
         notes: {

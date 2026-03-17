@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
 import type { PackageJson } from '@maddimathon/utility-typescript/types';
@@ -41,6 +41,7 @@ export declare function defaultConfig(args?: {
             readonly docs: "docs";
             readonly scss: "dist/css";
         };
+        readonly modules: "node_modules";
         readonly notes: {
             readonly release: ".releasenotes.md";
         };

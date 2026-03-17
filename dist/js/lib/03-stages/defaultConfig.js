@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
 import { timestamp } from '@maddimathon/utility-typescript';
@@ -41,6 +41,7 @@ export function defaultConfig(args) {
             docs: 'docs',
             scss: 'dist/css',
         },
+        modules: 'node_modules',
         notes: {
             release: '.releasenotes.md',
         },

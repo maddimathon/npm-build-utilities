@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
 import {
@@ -404,6 +404,28 @@ export class AbstractStage {
             fs: this.fs,
             subDir,
         });
+    }
+    /**
+     * Takes an input tsconfig object and attempts to resolve and
+     * include the values from any configs in its "extends".
+     *
+     * @since 0.3.0-alpha.19.draft
+     */
+    writeTsConfig(outputPath, level, tsconfig, args = {}) {
+        const resolvedConfig = this.compiler.resolveTsConfig(
+            {
+                ...tsconfig,
+                path: outputPath,
+            },
+            level,
+            args.errorIfNotFound ?? true,
+        );
+        delete resolvedConfig.path;
+        return this.try(this.fs.write, 1 + level, [
+            outputPath,
+            JSON.stringify(resolvedConfig, null, 4),
+            args,
+        ]);
     }
     /* CONFIG & ARGS ===================================== */
     /**

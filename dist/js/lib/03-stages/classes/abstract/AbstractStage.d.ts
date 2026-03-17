@@ -4,10 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.18
+ * @maddimathon/build-utilities@0.3.0-alpha.19.draft
  * @license MIT
  */
-import type { PackageJson } from '@maddimathon/utility-typescript/types';
+import type { PackageJson, TsConfig } from '@maddimathon/utility-typescript/types';
+import type { NodeFiles } from '@maddimathon/utility-typescript/node';
 import { type MessageMaker } from '@maddimathon/utility-typescript';
 import type { CLI, Config, Stage } from '../../../../types/index.js';
 import { type AbstractError, SemVer } from '../../../@internal/index.js';
@@ -204,6 +205,15 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      */
     writeLog(msg: string | string[] | MessageMaker.BulkMsgs, filename: string, subDir?: string[], date?: null | Date): string | false;
     /**
+     * Takes an input tsconfig object and attempts to resolve and
+     * include the values from any configs in its "extends".
+     *
+     * @since 0.3.0-alpha.19.draft
+     */
+    writeTsConfig(outputPath: string, level: number, tsconfig: Partial<TsConfig>, args?: Partial<NodeFiles.WriteFileArgs & {
+        errorIfNotFound?: boolean;
+    }>): string | false;
+    /**
      * {@inheritDoc Stage.isSubStageIncluded}
      *
      * @category Config
@@ -226,8 +236,8 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @category Config
      */
     getScriptsPath(subDir?: "logs", ...subpaths: string[]): string;
-    getSrcDir(subDir: Config.Paths.SourceDirectory, ...subpaths: string[]): string[];
     getSrcDir(subDir?: undefined, ...subpaths: string[]): string;
+    getSrcDir(subDir: Config.Paths.SourceDirectory, ...subpaths: string[]): string[];
     /**
      * Alias for {@link errorHandler}.
      *
