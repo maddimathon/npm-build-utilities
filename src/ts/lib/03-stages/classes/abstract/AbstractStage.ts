@@ -1174,7 +1174,9 @@ export abstract class AbstractStage<
 
         const watchFileNameMsg = watcherVersion && watchFileName();
 
-        const watchChangeNoticeSlug = `watch-change-${ which }${ this.params.watchedWatcher ? `: ${ this.params.watchedWatcher }` : '' }`;
+        const watchChangeNoticeSlug = this.params.watchedWatcher
+            ? `${ this.params.watchedWatcher } - ${ which }`
+            : `watch-change-${ which }`;
 
         const messages: {
             default: MessageMaker.BulkMsgs,

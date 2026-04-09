@@ -553,8 +553,10 @@ export class Stage_Compiler {
             true,
             this.args.ts.mergeArraysInTsConfig,
         );
+        delete current.compilerOptions;
         // @ts-expect-error
         delete extendee['_version'];
+        delete extendee.compilerOptions;
         delete extendee.include;
         delete extendee.exclude;
         delete extendee.files;

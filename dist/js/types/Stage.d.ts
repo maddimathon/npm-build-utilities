@@ -789,6 +789,8 @@ export declare namespace Stage {
                 /**
                  * Whether to merge arrays when combining extended ts configs.
                  *
+                 * @default true
+                 *
                  * @since 0.3.0-alpha.19.draft
                  */
                 mergeArraysInTsConfig?: boolean;
