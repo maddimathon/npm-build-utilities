@@ -1,18 +1,14 @@
 {
-    "$schema": "https://www.schemastore.org/tsconfig",
+    "$schema": "https://json.schemastore.org/tsconfig",
     "compilerOptions": {
-        "allowJs": true,
-        "checkJs": true,
-        "declaration": true,
-        "declarationMap": false,
+        "allowUnusedLabels": false,
+        "alwaysStrict": true,
+        "composite": true,
         "esModuleInterop": true,
         "exactOptionalPropertyTypes": true,
         "forceConsistentCasingInFileNames": true,
-        "isolatedDeclarations": false,
+        "isolatedDeclarations": true,
         "isolatedModules": true,
-        "lib": [
-            "es2023"
-        ],
         "module": "Node18",
         "moduleResolution": "Node16",
         "noFallthroughCasesInSwitch": true,
@@ -23,17 +19,22 @@
         "noPropertyAccessFromIndexSignature": true,
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "preserveSymlinks": true,
         "pretty": true,
         "removeComments": false,
         "resolveJsonModule": true,
+        "resolvePackageJsonExports": true,
         "skipLibCheck": true,
         "sourceMap": false,
         "strict": true,
         "strictBindCallApply": true,
-        "target": "es2022",
+        "strictBuiltinIteratorReturn": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "target": "ES2022",
+        "useUnknownInCatchVariables": true,
         "verbatimModuleSyntax": true
-    },
-    "exclude": [
-        "**/node_modules/**/*"
-    ]
+    }
 }

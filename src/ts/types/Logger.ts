@@ -71,13 +71,11 @@ export interface Logger {
      * @param msg       The message(s) to print to the console.
      * @param level     Depth level for output to the console.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     debug(
-        msg: Parameters<Logger[ 'log' ]>[ 0 ],
-        level: Parameters<Logger[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Logger[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Logger[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        msgArgs?: RecursivePartial<Logger.MsgArgs>,
     ): void;
 
     /**
@@ -86,13 +84,11 @@ export interface Logger {
      * @param msg       Error message(s).
      * @param level     Depth level for output to the console.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     error(
         msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs?: Partial<MessageMaker.BulkMsgArgs>,
-        timeArgs?: Partial<MessageMaker.BulkMsgArgs>,
+        msgArgs?: RecursivePartial<Logger.MsgArgs>,
     ): void;
 
     /**
@@ -101,13 +97,11 @@ export interface Logger {
      * @param msg       The message(s) to print to the console.
      * @param level     Depth level for output to the console.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     log(
         msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs?: Partial<MessageMaker.BulkMsgArgs>,
-        timeArgs?: Partial<MessageMaker.BulkMsgArgs>,
+        msgArgs?: RecursivePartial<Logger.MsgArgs>,
     ): void;
 
     /**
@@ -117,13 +111,11 @@ export interface Logger {
      * @param msg       The message(s) to print to the console.
      * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     progress(
-        msg: Parameters<Logger[ 'log' ]>[ 0 ],
-        level: Parameters<Logger[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Logger[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Logger[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        msgArgs?: RecursivePartial<Logger.MsgArgs>,
     ): void;
 
     /**
@@ -132,13 +124,11 @@ export interface Logger {
      * @param msg       Warning message(s).
      * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     warn(
         msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs?: Partial<MessageMaker.BulkMsgArgs>,
-        timeArgs?: Partial<MessageMaker.BulkMsgArgs>,
+        msgArgs?: RecursivePartial<Logger.MsgArgs>,
     ): void;
 
     /**
@@ -148,13 +138,11 @@ export interface Logger {
      * @param msg       The message(s) to print to the console.
      * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
     verbose(
-        msg: Parameters<Logger[ 'log' ]>[ 0 ],
-        level: Parameters<Logger[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Logger[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Logger[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        msgArgs?: RecursivePartial<Logger.MsgArgs>,
     ): void;
 }
 
@@ -186,6 +174,14 @@ export namespace Logger {
         nc: RecursivePartial<NodeConsole.Args>;
     };
 
+    /**
+     * @since ___PKG_VERSION___
+     */
+    export interface MsgArgs extends Omit<NodeConsole.MsgArgs & MessageMaker.TimestampedArgs, 'depth'> { }
+
+    /**
+     * @since 0.3.0-alpha.9
+     */
     export interface Prompt_SelectMethod {
 
         <
@@ -256,14 +252,14 @@ export namespace Logger {
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param level     Depth level for this message.
-         * @param msgArgs   Argument overrides for the message.
-         * @param timeArgs  Argument overrides for the message's timestamp.
+         * @param args      Argument overrides for the variable's inspection, including msg options.
+         * 
+         * @since ___PKG_VERSION___ — Reconfigured args parameters to one object of inspection args.
          */
         debug(
-            variable: Parameters<VarInspect[ 'log' ]>[ 0 ],
-            level: Parameters<VarInspect[ 'log' ]>[ 1 ],
-            msgArgs?: Parameters<VarInspect[ 'log' ]>[ 2 ],
-            timeArgs?: Parameters<VarInspect[ 'log' ]>[ 3 ],
+            variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+            level: number,
+            args?: RecursivePartial<VarInspect.Args>,
         ): void;
 
         /**
@@ -271,14 +267,14 @@ export namespace Logger {
          * 
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param level     Depth level for this message.
-         * @param msgArgs   Argument overrides for the message.
-         * @param timeArgs  Argument overrides for the message's timestamp.
+         * @param args      Argument overrides for the variable's inspection, including msg options.
+         * 
+         * @since ___PKG_VERSION___ — Reconfigured args parameters to one object of inspection args.
          */
         log(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
             level: number,
-            msgArgs?: Partial<MessageMaker.BulkMsgArgs>,
-            timeArgs?: Partial<MessageMaker.BulkMsgArgs>,
+            args?: RecursivePartial<VarInspect.Args>,
         ): void;
 
         /**
@@ -287,14 +283,14 @@ export namespace Logger {
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param level     Depth level for this message.
-         * @param msgArgs   Argument overrides for the message.
-         * @param timeArgs  Argument overrides for the message's timestamp.
+         * @param args      Argument overrides for the variable's inspection, including msg options.
+         * 
+         * @since ___PKG_VERSION___ — Reconfigured args parameters to one object of inspection args.
          */
         progress(
-            variable: Parameters<VarInspect[ 'log' ]>[ 0 ],
-            level: Parameters<VarInspect[ 'log' ]>[ 1 ],
-            msgArgs?: Parameters<VarInspect[ 'log' ]>[ 2 ],
-            timeArgs?: Parameters<VarInspect[ 'log' ]>[ 3 ],
+            variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+            level: number,
+            args?: RecursivePartial<VarInspect.Args>,
         ): void;
 
         /**
@@ -305,7 +301,7 @@ export namespace Logger {
          */
         stringify(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-            args?: ConstructorParameters<typeof VariableInspector>[ 1 ],
+            args?: RecursivePartial<VarInspect.Args>,
         ): string;
 
         /**
@@ -314,14 +310,27 @@ export namespace Logger {
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param level     Depth level for this message.
-         * @param msgArgs   Argument overrides for the message.
-         * @param timeArgs  Argument overrides for the message's timestamp.
+         * @param args      Argument overrides for the variable's inspection, including msg options.
+         * 
+         * @since ___PKG_VERSION___ — Reconfigured args parameters to one object of inspection args.
          */
         verbose(
-            variable: Parameters<VarInspect[ 'log' ]>[ 0 ],
-            level: Parameters<VarInspect[ 'log' ]>[ 1 ],
-            msgArgs?: Parameters<VarInspect[ 'log' ]>[ 2 ],
-            timeArgs?: Parameters<VarInspect[ 'log' ]>[ 3 ],
+            variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+            level: number,
+            args?: RecursivePartial<VarInspect.Args>,
         ): void;
     };
+
+    /**
+     * @since ___PKG_VERSION___
+     */
+    export namespace VarInspect {
+
+        /**
+         * @since ___PKG_VERSION___
+         */
+        export interface Args extends NonNullable<ConstructorParameters<typeof VariableInspector>[ 1 ]> {
+            msg: Omit<NodeConsole.MsgArgs & MessageMaker.BulkMsgArgs, 'depth'>;
+        }
+    }
 };

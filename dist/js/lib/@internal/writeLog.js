@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import {
@@ -55,8 +55,8 @@ export function writeLog(msg, filename, t_args) {
     const filepath = fs.pathResolve(logDirPath, ...subDir, filename);
     return fs.write(
         filepath,
-        _writeLog_msgMaker.msgs(
-            [[datetime], [_writeLog_msgMaker.msgs(bulkMsgs)]],
+        _writeLog_msgMaker.bulk(
+            [[datetime], [_writeLog_msgMaker.bulk(bulkMsgs)]],
             {
                 hangingIndent: ' '.repeat(datetime.length),
                 joiner: '',

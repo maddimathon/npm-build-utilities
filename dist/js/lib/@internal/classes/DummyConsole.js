@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import {
@@ -31,57 +31,49 @@ export class DummyConsole {
         this.config = config;
         this.params = params;
     }
-    debug(msg, level, msgArgs, timeArgs) {
-        if (!this.params.debug && typeof this.params.debug !== 'undefined') {
+    debug(msg, level, args = {}) {
+        if (!this.params.debug) {
             return;
         }
-        this.log(msg, level, msgArgs, timeArgs);
+        this.nc.timestamp.debug(msg, {
+            ...args,
+            depth: level,
+        });
     }
-    error(msg, level, msgArgs = {}, timeArgs = {}) {
-        this.nc.timestampLog(
-            msg,
-            {
-                ...msgArgs,
-                depth: level,
-            },
-            timeArgs,
-        );
+    error(msg, level, args = {}) {
+        this.nc.timestamp.log(msg, {
+            ...args,
+            depth: level,
+            via: 'error',
+        });
     }
-    log(msg, level, msgArgs = {}, timeArgs = {}) {
-        this.nc.timestampLog(
-            msg,
-            {
-                ...msgArgs,
-                depth: level,
-            },
-            timeArgs,
-        );
+    log(msg, level, args = {}) {
+        this.nc.timestamp.log(msg, {
+            ...args,
+            depth: level,
+        });
     }
-    progress(msg, level, msgArgs, timeArgs) {
-        if (
-            !this.params.progress
-            && typeof this.params.progress !== 'undefined'
-        ) {
+    progress(msg, level, args = {}) {
+        if (!this.params.progress) {
             return;
         }
-        this.log(msg, level, msgArgs, timeArgs);
+        this.log(msg, level, args);
     }
-    /**
-     * Doesn't currently actually warn.
-     *
-     * @UPGRADE - make it warn
-     */
-    warn(msg, level, msgArgs, timeArgs) {
-        this.log(msg, level, msgArgs, timeArgs);
+    warn(msg, level, args = {}) {
+        this.nc.timestamp.warn(msg, {
+            ...args,
+            depth: level,
+        });
     }
-    verbose(msg, level, msgArgs, timeArgs) {
-        if (
-            !this.params.verbose
-            && typeof this.params.verbose !== 'undefined'
-        ) {
+    verbose(msg, level, args = {}) {
+        if (!this.params.verbose) {
             return;
         }
-        this.log(msg, level, msgArgs, timeArgs);
+        this.nc.timestamp.log(msg, {
+            ...args,
+            depth: level,
+            via: 'info',
+        });
     }
     /* PROMPTING ===================================== */
     get prompt() {
@@ -145,26 +137,38 @@ class _DummyConsole_VarDump {
         this.nc = nc;
         this.params = params;
     }
-    debug(variable, level, msgArgs, timeArgs) {
-        this.log(variable, level, msgArgs, timeArgs);
+    debug(variable, level, { msg, ...args } = {}) {
+        if (!this.params.debug) {
+            return;
+        }
+        this.nc.timestamp.debug(this.stringify(variable, args), {
+            ...msg,
+            depth: level,
+        });
     }
-    log(variable, level, msgArgs = {}, timeArgs = {}) {
-        this.nc.timestampLog(
-            this.stringify(variable),
-            {
-                ...msgArgs,
-                depth: level,
-            },
-            timeArgs,
-        );
+    log(variable, level, { msg, ...args } = {}) {
+        this.nc.timestamp.log(this.stringify(variable, args), {
+            ...msg,
+            depth: level,
+        });
     }
-    progress(variable, level, msgArgs, timeArgs) {
-        this.log(variable, level, msgArgs, timeArgs);
+    progress(variable, level, { msg, ...args } = {}) {
+        if (!this.params.progress) {
+            return;
+        }
+        this.log(variable, level, args);
     }
     stringify(variable, args) {
         return VariableInspector.stringify(variable, args);
     }
-    verbose(variable, level, msgArgs, timeArgs) {
-        this.log(variable, level, msgArgs, timeArgs);
+    verbose(variable, level, { msg, ...args } = {}) {
+        if (!this.params.verbose) {
+            return;
+        }
+        this.nc.timestamp.log(this.stringify(variable, args), {
+            ...msg,
+            depth: level,
+            via: 'info',
+        });
     }
 }

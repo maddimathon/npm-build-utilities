@@ -375,6 +375,7 @@ export class DocumentStage extends AbstractStage<
 
             out: 'docs',
             plugin: [
+                'typedoc-plugin-mdn-links',
                 'typedoc-plugin-inline-sources',
             ],
 
@@ -389,14 +390,14 @@ export class DocumentStage extends AbstractStage<
             searchInDocuments: true,
 
             sourceLinkExternal: true,
-            sourceLinkTemplate: `${ repository }/blob/main/${ stage.params.packaging ? encodeURI( stage.pkg.version ) + '/' : '' }{path}#L{line}`,
+            sourceLinkTemplate: `${ repository }/blob/main/${ ( stage.params.packaging && !stage.params.dryrun ) ? encodeURI( stage.pkg.version ) + '/' : '' }{path}#L{line}`,
 
             sort: [
                 'documents-first',
                 'static-first',
                 'required-first',
-                'kind',
                 'visibility',
+                'kind',
                 'alphabetical',
             ],
 

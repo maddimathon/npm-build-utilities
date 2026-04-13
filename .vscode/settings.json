@@ -10,6 +10,7 @@
         "src/docs/tsconfig.json": true,
         "src/ts/tsconfig.json": true,
         "tsconfig.base.json": true,
+        "tsconfig.scripts.json": true,
     },
     "scss.scannerExclude": [
         "**/.git",

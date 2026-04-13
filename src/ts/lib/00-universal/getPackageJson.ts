@@ -71,6 +71,8 @@ export function getPackageJson(
     // throws
     if ( !fs ) {
 
+        console.log( { args } );
+
         throw new ProjectError(
             'No appropriate FileSystem instance found or constructable.',
             {

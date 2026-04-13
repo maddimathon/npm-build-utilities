@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */ import { SemVer } from '../../@internal/index.js';
 // import {
@@ -41,30 +41,39 @@ export class TestStage extends AbstractStage {
      * @since 0.2.0-alpha
      */
     async tsConfigTidyPaths(level) {
-        const tsconfigPaths = await Stage_Compiler.getTsConfigPaths(
-            this,
-            level,
-            false,
+        return Stage_Compiler.getTsConfigPaths(this, level, false).then(
+            async (tsconfigPaths) =>
+                (
+                    await Promise.all(
+                        tsconfigPaths.map(async (_tsconfig) =>
+                            this.compiler
+                                .getTsConfigOutDir(_tsconfig, level, false)
+                                .then((_outDir) =>
+                                    _outDir ?
+                                        [
+                                            this.fs.pathResolve(
+                                                _outDir,
+                                                '**/*.test.d.ts',
+                                            ),
+                                            this.fs.pathResolve(
+                                                _outDir,
+                                                '**/*.test.d.ts.map',
+                                            ),
+                                            this.fs.pathResolve(
+                                                _outDir,
+                                                '**/*.test.js',
+                                            ),
+                                            this.fs.pathResolve(
+                                                _outDir,
+                                                '**/*.test.js.map',
+                                            ),
+                                        ]
+                                    :   [],
+                                ),
+                        ),
+                    )
+                ).flat(),
         );
-        return tsconfigPaths
-            .map((_tsconfig) => {
-                const _outDir = this.compiler.getTsConfigOutDir(
-                    _tsconfig,
-                    level,
-                    false,
-                );
-                // returns
-                if (!_outDir) {
-                    return [];
-                }
-                return [
-                    this.fs.pathResolve(_outDir, '**/*.test.d.ts'),
-                    this.fs.pathResolve(_outDir, '**/*.test.d.ts.map'),
-                    this.fs.pathResolve(_outDir, '**/*.test.js'),
-                    this.fs.pathResolve(_outDir, '**/*.test.js.map'),
-                ];
-            })
-            .flat();
     }
     get ARGS_DEFAULT() {
         return {

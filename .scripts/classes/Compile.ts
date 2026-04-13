@@ -68,78 +68,85 @@ export class Compile extends CompileStage {
 
         const writeArgs = { force: true, rename: false };
 
-        const baseConfigPath = this.writeTsConfig(
+        const baseConfigPath = await this.writeTsConfig(
             'tsconfig.base.json',
             2,
             {
-                extends: '@tsconfig/node20/tsconfig.json',
-                exclude: [
-                    '**/node_modules/**/*'
+                extends: [
+                    '@maddimathon/utility-typescript/tsconfig',
                 ],
+
                 compilerOptions: {
-                    allowJs: true,
-                    checkJs: true,
-                    declaration: true,
-                    declarationMap: false,
-                    esModuleInterop: true,
-                    exactOptionalPropertyTypes: true,
-                    forceConsistentCasingInFileNames: true,
-                    isolatedDeclarations: false,
-                    isolatedModules: true,
-                    module: 'Node18',
-                    moduleResolution: 'Node16',
-                    noFallthroughCasesInSwitch: true,
-                    noImplicitAny: true,
-                    noImplicitOverride: true,
-                    noImplicitReturns: true,
-                    noImplicitThis: true,
-                    noPropertyAccessFromIndexSignature: true,
-                    noUncheckedIndexedAccess: true,
-                    noUnusedLocals: true,
-                    pretty: true,
-                    removeComments: false,
-                    resolveJsonModule: true,
-                    skipLibCheck: true,
+                    // lib: [
+                    //     'DOM',
+                    //     'ESNext',
+                    // ],
                     sourceMap: false,
-                    strict: true,
-                    strictBindCallApply: true,
-                    target: 'es2022',
-                    verbatimModuleSyntax: true
                 },
             },
             writeArgs,
         );
 
-        this.writeTsConfig(
+        const basePath_relative = baseConfigPath ? this.fs.pathRelative( baseConfigPath ) : baseConfigPath;
+
+        const scriptsConfigPath = await this.writeTsConfig(
+            'tsconfig.scripts.json',
+            2,
+            {
+                extends: [
+                    basePath_relative ? basePath_relative : './tsconfig.base.json',
+                ],
+
+                compilerOptions: {
+                    allowJs: true,
+                    checkJs: true,
+                    composite: false,
+                    exactOptionalPropertyTypes: false,
+                    isolatedDeclarations: false,
+                    isolatedModules: false,
+                    module: 'NodeNext',
+                    moduleResolution: 'NodeNext',
+                    noEmit: true,
+                    target: 'ES2022',
+                },
+            },
+            writeArgs,
+        );
+
+        const scriptsPath_relative = scriptsConfigPath ? this.fs.pathRelative( scriptsConfigPath ) : scriptsConfigPath;
+
+        await this.writeTsConfig(
             'src/ts/tsconfig.json',
             2,
             {
-                extends: baseConfigPath ? baseConfigPath : '../../tsconfig.base.json',
+                extends: scriptsPath_relative ? scriptsPath_relative : '../../tsconfig.base.json',
+
                 include: [
                     "../../src/ts/**/*",
                     "./src/ts/**/*"
                 ],
+
                 exclude: [
-                    "../../node_modules/**/*",
-                    "./node_modules/**/*",
-                    "node_modules/**/*",
-                    "node_modules/@skikijs"
+                    "**/node_modules/**/*",
                 ],
 
                 compilerOptions: {
-                    "baseUrl": "../../",
-                    "exactOptionalPropertyTypes": false,
-                    "outDir": "../../dist/js/"
+                    composite: true,
+                    module: 'Node18',
+                    moduleResolution: 'Node16',
+                    noEmit: undefined,
+                    outDir: '../../dist/js/',
+                    target: 'ES2022',
                 },
             },
             writeArgs,
         );
 
-        this.writeTsConfig(
+        await this.writeTsConfig(
             'src/docs/tsconfig.json',
             2,
             {
-                extends: "../../tsconfig.base.json",
+                extends: basePath_relative ? basePath_relative : "../../tsconfig.base.json",
 
                 include: [
                     "../../src/docs/**/*.js",
@@ -149,8 +156,8 @@ export class Compile extends CompileStage {
                 ],
 
                 compilerOptions: {
-                    "baseUrl": "../../",
-                    "noEmit": true
+                    // rootDir: '../../',
+                    noEmit: true,
                 }
             },
             writeArgs,

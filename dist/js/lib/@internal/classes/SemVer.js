@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import node_SemVer from 'semver';
@@ -26,7 +26,6 @@ import { AbstractError } from './abstract/index.js';
  * @since 0.1.0-alpha
  *
  * @experimental
- * @internal
  */
 export class SemVer {
     input;
@@ -112,7 +111,7 @@ export class SemVer {
         if (matches === null) {
             throw new SemVer.Error(
                 'Version string is invalid: ' + input,
-                SemVer.Error.INVALID_INPUT,
+                SemVer.Error.Code.INVALID_INPUT,
                 {
                     class: 'SemVer',
                     method: 'constructor',
@@ -128,7 +127,7 @@ export class SemVer {
                 throw new SemVer.Error(
                     `${toTitleCase(prop)} version is not a number: `
                         + this[prop],
-                    SemVer.Error.INVALID_VERSION,
+                    SemVer.Error.Code.INVALID_VERSION,
                     {
                         class: 'SemVer',
                         method: 'constructor',
@@ -177,8 +176,11 @@ export class SemVer {
                 ],
             ],
             0,
-            { bold: false, italic: false },
-            { bold: true },
+            {
+                bold: false,
+                italic: false,
+                time: { bold: true },
+            },
         );
     }
     /**
@@ -234,8 +236,6 @@ export class SemVer {
     /**
      * An extension of the utilities error used by the {@link SemVer} class.
      *
-     * @category Errors
-     *
      * @since 0.1.0-alpha
      */
     class Error extends AbstractError {
@@ -250,36 +250,47 @@ export class SemVer {
     /**
      * Used only for {@link SemVer.Error}.
      *
-     * @category Errors
-     *
      * @since 0.1.0-alpha
      */
     (function (Error) {
         /**
-         * Error code for input version strings that cannot be coerced into a
-         * valid version.
+         * All allowed error code strings.
          *
          * @since 0.1.0-alpha
+         * @since 0.3.0-beta.draft — Switched from union of strings to enum.
          */
-        Error.INVALID_INPUT = '4';
-        /**
-         * Error code for invalid build meta strings.
-         *
-         * @since 0.1.0-alpha
-         */
-        Error.INVALID_META = '3';
-        /**
-         * Error code for invalid prerelease strings.
-         *
-         * @since 0.1.0-alpha
-         */
-        Error.INVALID_PRERELEASE = '2';
-        /**
-         * Error code for invalid, missing, or non-matching major, minor, or
-         * patch versions.
-         *
-         * @since 0.1.0-alpha
-         */
-        Error.INVALID_VERSION = '1';
+        let Code;
+        (function (Code) {
+            /**
+             * Error code for input version strings that cannot be coerced into a
+             * valid version.
+             *
+             * @since 0.1.0-alpha
+             * @since 0.3.0-beta.draft — Switched to enum member.
+             */
+            Code['INVALID_INPUT'] = '4';
+            /**
+             * Error code for invalid build meta strings.
+             *
+             * @since 0.1.0-alpha
+             * @since 0.3.0-beta.draft — Switched to enum member.
+             */
+            Code['INVALID_META'] = '3';
+            /**
+             * Error code for invalid prerelease strings.
+             *
+             * @since 0.1.0-alpha
+             * @since 0.3.0-beta.draft — Switched to enum member.
+             */
+            Code['INVALID_PRERELEASE'] = '2';
+            /**
+             * Error code for invalid, missing, or non-matching major, minor, or
+             * patch versions.
+             *
+             * @since 0.1.0-alpha
+             * @since 0.3.0-beta.draft — Switched to enum member.
+             */
+            Code['INVALID_VERSION'] = '1';
+        })((Code = Error.Code || (Error.Code = {})));
     })((Error = SemVer.Error || (SemVer.Error = {})));
 })(SemVer || (SemVer = {}));

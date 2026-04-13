@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import type { Logger } from '../../../types/Logger.js';
@@ -25,7 +25,6 @@ import { AbstractError } from './abstract/index.js';
  * @since 0.1.0-alpha
  *
  * @experimental
- * @internal
  */
 export declare class SemVer {
     #private;
@@ -105,8 +104,6 @@ export declare namespace SemVer {
     /**
      * An extension of the utilities error used by the {@link SemVer} class.
      *
-     * @category Errors
-     *
      * @since 0.1.0-alpha
      */
     class Error extends AbstractError {
@@ -117,8 +114,6 @@ export declare namespace SemVer {
     /**
      * Used only for {@link SemVer.Error}.
      *
-     * @category Errors
-     *
      * @since 0.1.0-alpha
      */
     namespace Error {
@@ -126,33 +121,39 @@ export declare namespace SemVer {
          * All allowed error code strings.
          *
          * @since 0.1.0-alpha
+         * @since 0.3.0-beta.draft — Switched from union of strings to enum.
          */
-        type Code = typeof INVALID_INPUT | typeof INVALID_META | typeof INVALID_PRERELEASE | typeof INVALID_VERSION;
-        /**
-         * Error code for input version strings that cannot be coerced into a
-         * valid version.
-         *
-         * @since 0.1.0-alpha
-         */
-        const INVALID_INPUT = "4";
-        /**
-         * Error code for invalid build meta strings.
-         *
-         * @since 0.1.0-alpha
-         */
-        const INVALID_META = "3";
-        /**
-         * Error code for invalid prerelease strings.
-         *
-         * @since 0.1.0-alpha
-         */
-        const INVALID_PRERELEASE = "2";
-        /**
-         * Error code for invalid, missing, or non-matching major, minor, or
-         * patch versions.
-         *
-         * @since 0.1.0-alpha
-         */
-        const INVALID_VERSION = "1";
+        enum Code {
+            /**
+             * Error code for input version strings that cannot be coerced into a
+             * valid version.
+             *
+             * @since 0.1.0-alpha
+             * @since 0.3.0-beta.draft — Switched to enum member.
+             */
+            INVALID_INPUT = "4",
+            /**
+             * Error code for invalid build meta strings.
+             *
+             * @since 0.1.0-alpha
+             * @since 0.3.0-beta.draft — Switched to enum member.
+             */
+            INVALID_META = "3",
+            /**
+             * Error code for invalid prerelease strings.
+             *
+             * @since 0.1.0-alpha
+             * @since 0.3.0-beta.draft — Switched to enum member.
+             */
+            INVALID_PRERELEASE = "2",
+            /**
+             * Error code for invalid, missing, or non-matching major, minor, or
+             * patch versions.
+             *
+             * @since 0.1.0-alpha
+             * @since 0.3.0-beta.draft — Switched to enum member.
+             */
+            INVALID_VERSION = "1"
+        }
     }
 }

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import * as prettier from "prettier";
@@ -82,30 +82,30 @@ export declare class FileSystem extends NodeFiles {
     readonly console: Logger;
     readonly args: FileSystem.Args;
     get ARGS_DEFAULT(): {
-        readonly copy: {
-            readonly force: true;
-            readonly recursive: true;
-            readonly rename: true;
-            readonly glob: {
-                readonly absolute: false;
-                readonly dot: true;
-                readonly filesOnly: false;
+        copy: {
+            force: boolean;
+            recursive: boolean;
+            rename: boolean;
+            glob: {
+                absolute: boolean;
+                dot: boolean;
+                filesOnly: boolean;
             };
         };
-        readonly glob: {
-            readonly absolute: true;
-            readonly dot: true;
-            readonly ignore: ["._*", "._*/**", "**/._*", "**/._*/**", "**/.DS_Store", "**/.smbdelete**"];
+        glob: {
+            absolute: boolean;
+            dot: boolean;
+            ignore: ("._*" | "._*/**" | "**/._*" | "**/._*/**" | "**/.DS_Store" | "**/.smbdelete**")[];
         };
-        readonly minify: {
+        minify: {
             readonly css: {};
             readonly html: {};
             readonly js: {};
             readonly json: {};
             readonly glob: {};
         };
-        readonly prettier: {
-            readonly _: {
+        prettier: {
+            _: {
                 bracketSameLine: false;
                 bracketSpacing: true;
                 experimentalOperatorPosition: "start";
@@ -150,39 +150,30 @@ export declare class FileSystem extends NodeFiles {
                     }[];
                 };
             };
-            readonly css: {
+            css: {
                 singleQuote: false;
             };
-            readonly html: {
+            html: {
                 printWidth: number;
                 singleQuote: false;
             };
-            readonly js: undefined;
-            readonly json: undefined;
-            readonly md: {
+            js: undefined;
+            json: undefined;
+            md: {
                 printWidth: number;
             };
-            readonly mdx: {
+            mdx: {
                 printWidth: number;
             };
-            readonly scss: undefined;
-            readonly ts: undefined;
-            readonly yaml: undefined;
+            scss: undefined;
+            ts: undefined;
+            yaml: undefined;
         };
-        readonly copyFile: {
-            readonly force: true;
-            readonly rename: true;
-            readonly recursive: false;
-        };
-        readonly root: "./";
-        readonly readDir: {
-            readonly recursive: false;
-        };
-        readonly readFile: {};
-        readonly write: {
-            force: boolean;
-            rename: boolean;
-        };
+        copyFile: NodeFiles.CopyFileArgs;
+        readDir: NodeFiles.ReadDirArgs;
+        readFile: NodeFiles.ReadFileArgs;
+        root: string;
+        write: NodeFiles.WriteFileArgs;
     };
     buildArgs(args?: Partial<FileSystemType.Args> | RecursivePartial<FileSystemType.Args>): FileSystem.Args;
     /**

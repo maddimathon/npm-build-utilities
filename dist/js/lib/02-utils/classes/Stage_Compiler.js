@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -18,7 +18,7 @@ import {
     mergeArgs,
     objectKeySort,
 } from '@maddimathon/utility-typescript';
-import { StageError } from '../../@internal/index.js';
+import { AbstractError, StageError } from '../../@internal/index.js';
 import { catchOrReturn, FileSystem } from '../../00-universal/index.js';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
@@ -33,10 +33,12 @@ import { catchOrReturn, FileSystem } from '../../00-universal/index.js';
  * @internal
  */
 export class Stage_Compiler {
+    stage;
     config;
     params;
     console;
     fs;
+    errorHandler;
     /* STATIC
      * ====================================================================== */
     /**
@@ -278,10 +280,10 @@ export class Stage_Compiler {
      * ====================================================================== */
     get tsConfig() {
         const tsSrcDir = this.config.getSrcDir(this.fs, 'ts')[0];
-        const baseUrl = tsSrcDir?.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
+        const rootDir = tsSrcDir?.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
         const outDir = this.fs.pathRelative(
             this.fs.pathResolve(
-                baseUrl ?? '.',
+                rootDir ?? '.',
                 this.config.getDistDir(this.fs),
                 'ts',
             ),
@@ -290,9 +292,8 @@ export class Stage_Compiler {
             extends: '@maddimathon/build-utilities/tsconfig',
             exclude: ['**/node_modules/**/*'],
             compilerOptions: {
-                exactOptionalPropertyTypes: false,
                 outDir,
-                baseUrl,
+                rootDir,
             },
         };
     }
@@ -340,17 +341,42 @@ export class Stage_Compiler {
     args;
     /* CONSTRUCTOR
      * ====================================================================== */
-    /**
-     * @param config   Current project config.
-     * @param params   Current CLI params.
-     * @param console  Instance used to log messages and debugging info.
-     * @param fs       Instance used to work with paths and files.
-     */
-    constructor(config, params, console, fs) {
+    constructor(
+        /**
+         * The name of the stage using this compiler instance.
+         *
+         * @since 0.3.0-beta.draft
+         */
+        stage,
+        /**
+         * Current project config.
+         */
+        config,
+        /**
+         * Current CLI params.
+         */
+        params,
+        /**
+         * Instance used to log messages and debugging info.
+         */
+        console,
+        /**
+         * Instance used to work with paths and files.
+         */
+        fs,
+        /**
+         * An error handler for caught errors.
+         *
+         * @since 0.3.0-beta.draft
+         */
+        errorHandler,
+    ) {
+        this.stage = stage;
         this.config = config;
         this.params = params;
         this.console = console;
         this.fs = fs;
+        this.errorHandler = errorHandler;
         this.args = this.parseArgs(this.ARGS_DEFAULT, config.compiler);
         this.getTsConfig = this.getTsConfig.bind(this);
         this.getTsConfigOutDir = this.getTsConfigOutDir.bind(this);
@@ -406,9 +432,9 @@ export class Stage_Compiler {
      * Takes an input tsconfig path (or object) and attempts to resolve and
      * include the values from any configs in its "extends".
      *
-     * @since 0.3.0-alpha.19.draft
+     * @since 0.3.0-beta.draft
      */
-    resolveTsConfig(tsconfig, level, errorIfNotFound = true) {
+    async resolveTsConfig(tsconfig, level, errorIfNotFound = true) {
         const _tsconfig_obj =
             typeof tsconfig === 'string' ?
                 {
@@ -416,45 +442,134 @@ export class Stage_Compiler {
                     path: tsconfig,
                 }
             :   tsconfig;
+        const path = _tsconfig_obj.path;
         let resolvedObj = {
             ..._tsconfig_obj,
             compilerOptions: _tsconfig_obj.compilerOptions ?? {},
         };
-        if (!('extends' in resolvedObj) || !resolvedObj.extends) {
-            return resolvedObj;
+        const extendsValue =
+            typeof resolvedObj.extends === 'string' ?
+                [resolvedObj.extends]
+            :   resolvedObj.extends;
+        // returns
+        if (!extendsValue) {
+            return { ...resolvedObj, path };
         }
-        const extendsPaths =
-            Array.isArray(resolvedObj.extends ?? []) ?
-                (resolvedObj.extends ?? [])
-            :   [resolvedObj.extends];
-        const localBasePath = this.fs.dirname(resolvedObj.path);
-        for (const path of extendsPaths) {
-            const path_resolved =
-                path.match(/^\.*\//gi) ?
-                    this.fs.pathResolve(localBasePath, path)
-                :   this.fs.pathResolve(this.config.paths.modules, path);
+        delete resolvedObj.extends;
+        const extendsPaths = new Set(extendsValue);
+        const localBasePath =
+            resolvedObj.path ?
+                [this.fs.pathRelative(this.fs.dirname(resolvedObj.path))]
+            :   [];
+        const _errCatcher = (err) => {
+            if (
+                typeof err !== 'object'
+                || err?.code !== 'ERR_MODULE_NOT_FOUND'
+            ) {
+                const compileError = new Stage_Compiler.Error(
+                    `An error was thrown while trying to resolve a path (${path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)}`,
+                    Stage_Compiler.Error.Code.Caught,
+                    {
+                        stage: this.stage,
+                        method: 'resolveTsConfig',
+                    },
+                    err,
+                );
+                if (errorIfNotFound) {
+                    throw compileError;
+                } else {
+                    this.errorHandler(compileError, level, {
+                        exitProcess: false,
+                    });
+                }
+            }
+        };
+        /**
+         * The complete resolved value of the ts configs being extended.
+         */
+        let extendsObject = {};
+        for (const _path of extendsValue) {
+            const _isRelative = _path.match(/^\.*\//gi) !== null;
+            /**
+             * The object from the extended json file.
+             */
+            let _filepath;
+            // tries as a package module
+            if (!_isRelative) {
+                let _modulePath;
+                try {
+                    _modulePath = import.meta.resolve(_path);
+                } catch (err) {
+                    _errCatcher(err);
+                }
+                if (_modulePath) {
+                    _filepath = decodeURI(_modulePath).replace(
+                        /^file:\/\//gi,
+                        '',
+                    );
+                }
+            }
+            if (!_filepath) {
+                _filepath = this.fs.pathResolve(...localBasePath, _path);
+                // tries some other options
+                if (!this.fs.exists(_filepath)) {
+                    _filepath = this.fs.pathResolve(_path);
+                    // tries some other options
+                    if (!_isRelative && !this.fs.exists(_filepath)) {
+                        _filepath = this.fs.pathResolve(
+                            this.config.paths.modules,
+                            ...localBasePath,
+                            _path,
+                        );
+                        // tries some other options
+                        if (!this.fs.exists(_filepath)) {
+                            _filepath = this.fs.pathResolve(
+                                this.config.paths.modules,
+                                _path,
+                            );
+                        }
+                    }
+                }
+            }
             // continues
-            if (!this.fs.exists(path_resolved)) {
+            if (!_filepath || !this.fs.exists(_filepath)) {
                 this.console.debug(
-                    `a path (${path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be found`,
+                    `a _path (${_path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be found`,
                     level,
                 );
                 continue;
             }
-            const extendeeContents = this.resolveTsConfig(
-                {
-                    ...JSON.parse(this.fs.readFile(path_resolved)),
-                    path: path_resolved,
-                },
+            const _pathResolvedValue = await this.resolveTsConfig(
+                _filepath,
                 (this.params.verbose ? 1 : 0) + level,
                 errorIfNotFound,
+            ).catch((err) => _errCatcher(err));
+            // continues
+            if (!_pathResolvedValue) {
+                // TODO - remove, this is just for testing
+                this.console.warn(
+                    `a _path (${_path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be resolved`,
+                    level,
+                );
+                this.console.debug(
+                    `a _path (${_path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be resolved`,
+                    level,
+                );
+                continue;
+            }
+            extendsObject = this.mergeTsConfigs(
+                extendsObject,
+                _pathResolvedValue,
             );
-            resolvedObj = {
-                ...this.mergeTsConfigs(extendeeContents, resolvedObj),
-                path: resolvedObj.path,
-            };
+            extendsPaths.delete(_path);
         }
-        delete resolvedObj.extends;
+        resolvedObj = {
+            ...this.mergeTsConfigs(extendsObject, resolvedObj),
+            path: resolvedObj.path,
+        };
+        if (extendsPaths.size) {
+            resolvedObj.extends = Array.from(extendsPaths.values());
+        }
         return objectKeySort(resolvedObj, true);
     }
     /**
@@ -470,8 +585,9 @@ export class Stage_Compiler {
      */
     getTsConfig(tsconfig, level, errorIfNotFound = true) {
         this.console.verbose('getting tsconfig value...', level);
+        const resolvedPath = this.fs.pathResolve(tsconfig);
         // throws or returns
-        if (!this.fs.exists(tsconfig)) {
+        if (!this.fs.exists(resolvedPath)) {
             if (errorIfNotFound) {
                 throw new StageError(
                     'tsconfig path does not exist: ' + tsconfig,
@@ -484,7 +600,7 @@ export class Stage_Compiler {
             return {};
         }
         // throws or returns
-        if (!this.fs.isFile(tsconfig)) {
+        if (!this.fs.isFile(resolvedPath)) {
             if (errorIfNotFound) {
                 throw new StageError(
                     'tsconfig path was not a file: ' + tsconfig,
@@ -496,7 +612,9 @@ export class Stage_Compiler {
             }
             return {};
         }
-        const config_obj = JSON.parse(this.fs.readFile(tsconfig));
+        const config_obj = JSON.parse(
+            this.fs.readFile(resolvedPath).replace(/^\s*\/\/[^\n]*$/gim, ''),
+        );
         // returns
         if (typeof config_obj === 'object') {
             if (!config_obj.compilerOptions) {
@@ -521,8 +639,8 @@ export class Stage_Compiler {
      *
      * @since 0.2.0-alpha
      */
-    getTsConfigOutDir(tsconfig, level, errorIfNotFound = true) {
-        const resolvedConfig = this.resolveTsConfig(
+    async getTsConfigOutDir(tsconfig, level, errorIfNotFound = true) {
+        const resolvedConfig = await this.resolveTsConfig(
             tsconfig,
             level,
             errorIfNotFound,
@@ -544,29 +662,45 @@ export class Stage_Compiler {
     /**
      * Combines two ts config objects, overriding and merging as applicable.
      *
-     * @since 0.3.0-alpha.19.draft
+     * @since 0.3.0-beta.draft
      */
-    mergeTsConfigs(extendee, current) {
+    mergeTsConfigs(fallbacks, overrides) {
         const compilerOptions = mergeArgs(
-            extendee.compilerOptions ?? {},
-            current.compilerOptions,
+            fallbacks.compilerOptions ?? {},
+            overrides.compilerOptions,
             true,
             this.args.ts.mergeArraysInTsConfig,
         );
-        delete current.compilerOptions;
-        // @ts-expect-error
-        delete extendee['_version'];
-        delete extendee.compilerOptions;
-        delete extendee.include;
-        delete extendee.exclude;
-        delete extendee.files;
-        const merged = {
-            $schema: 'https://json.schemastore.org/tsconfig',
-            ...extendee,
-            ...current,
+        // const fallbacks_exclude = ( typeof fallbacks.exclude !== 'undefined' && !Array.isArray( fallbacks.exclude ) ) ? [ fallbacks.exclude ] : fallbacks.exclude ?? []
+        // const fallbacks_include = ( typeof fallbacks.include !== 'undefined' && !Array.isArray( fallbacks.include ) ) ? [ fallbacks.include ] : fallbacks.include ?? [];
+        // const overrides_exclude = ( typeof overrides.exclude !== 'undefined' && !Array.isArray( overrides.exclude ) ) ? [ overrides.exclude ] : overrides.exclude ?? [];
+        // const overrides_include = ( typeof overrides.include !== 'undefined' && !Array.isArray( overrides.include ) ) ? [ overrides.include ] : overrides.include ?? []
+        // const exclude = ( fallbacks_exclude ).concat( overrides_exclude );
+        // const include = ( fallbacks_include ).concat( overrides_include );
+        const extendsArr = (
+            (
+                typeof fallbacks.extends !== 'undefined'
+                && !Array.isArray(fallbacks.extends)
+            ) ?
+                [fallbacks.extends]
+            :   (fallbacks.extends ?? [])).concat(
+            (
+                typeof overrides.extends !== 'undefined'
+                    && !Array.isArray(overrides.extends)
+            ) ?
+                [overrides.extends]
+            :   (overrides.extends ?? []),
+        );
+        return {
+            ...fallbacks,
+            exclude: undefined,
+            include: undefined,
+            files: undefined,
+            ...overrides,
+            extends: extendsArr.length ? extendsArr : undefined,
             compilerOptions,
+            $schema: 'https://json.schemastore.org/tsconfig',
         };
-        return merged;
     }
     async postCSS(paths, level, _postCssOpts = {}) {
         const postCssOpts = mergeArgs(this.args.postCSS, _postCssOpts, true);
@@ -1102,7 +1236,7 @@ export class Stage_Compiler {
      */
     async typescript(tsconfig, level, errorIfNotFound) {
         this.console.verbose('running tsc...', level);
-        const outDir = this.getTsConfigOutDir(
+        const outDir = await this.getTsConfigOutDir(
             tsconfig,
             (this.params.verbose ? 1 : 0) + level,
             errorIfNotFound,
@@ -1134,9 +1268,50 @@ export class Stage_Compiler {
 /**
  * Utilities for the {@link Stage_Compiler} class.
  *
+ * @category Stages
+ *
  * @since 0.3.0-alpha.12
+ *
+ * @internal
  */
 (function (Stage_Compiler) {
+    /**
+     * An extension of the utilities error used by the {@link Stage_Compiler} class.
+     *
+     * @since 0.3.0-beta.draft
+     *
+     * @internal
+     */
+    class Error extends AbstractError {
+        code;
+        name = 'Stage_Compiler Error';
+        constructor(message, code, context, cause) {
+            super(message, { class: 'Stage_Compiler', ...context }, cause);
+            this.code = code;
+        }
+    }
+    Stage_Compiler.Error = Error;
+    /**
+     * Used only for {@link Stage_Compiler.Error}.
+     *
+     * @since 0.3.0-beta.draft
+     *
+     * @internal
+     */
+    (function (Error) {
+        /**
+         * All allowed error codes.
+         *
+         * @since 0.3.0-beta.draft
+         */
+        let Code;
+        (function (Code) {
+            /**
+             * Re-throwing a caught error with context and a new trace.
+             */
+            Code[(Code['Caught'] = 0)] = 'Caught';
+        })((Code = Error.Code || (Error.Code = {})));
+    })((Error = Stage_Compiler.Error || (Stage_Compiler.Error = {})));
     /**
      * Handles logging for sass compilations.
      *
@@ -1465,21 +1640,17 @@ export class Stage_Compiler {
                             .flat(),
                     );
                 }
-                this.console.warn(
-                    theseMsgs,
-                    this.level,
-                    {
-                        bold: false,
-                        clr: 'yellow',
-                        italic: false,
-                        linesIn: 1,
-                        linesOut: 1,
-                        joiner: '\n',
-                    },
-                    {
+                this.console.warn(theseMsgs, this.level, {
+                    bold: false,
+                    clr: 'yellow',
+                    italic: false,
+                    linesIn: 1,
+                    linesOut: 1,
+                    joiner: '\n',
+                    time: {
                         bold: true,
                     },
-                );
+                });
                 // varDumps[ depKey ] = _warningsArr;
             }
         }
@@ -1542,9 +1713,9 @@ export class Stage_Compiler {
                     linesIn: 1,
                     linesOut: 1,
                     joiner: '\n',
-                },
-                {
-                    bold: true,
+                    time: {
+                        bold: true,
+                    },
                 },
             );
             // exits

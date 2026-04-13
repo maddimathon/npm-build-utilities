@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import type { PackageJson, TsConfig } from '@maddimathon/utility-typescript/types';
@@ -208,11 +208,11 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * Takes an input tsconfig object and attempts to resolve and
      * include the values from any configs in its "extends".
      *
-     * @since 0.3.0-alpha.19.draft
+     * @since 0.3.0-beta.draft
      */
-    writeTsConfig(outputPath: string, level: number, tsconfig: Partial<TsConfig>, args?: Partial<NodeFiles.WriteFileArgs & {
+    writeTsConfig(outputPath: string, level: number, tsconfig: Partial<TsConfig>, { errorIfNotFound, ...args }?: Partial<NodeFiles.WriteFileArgs & {
         errorIfNotFound?: boolean;
-    }>): string | false;
+    }>): Promise<string | false>;
     /**
      * {@inheritDoc Stage.isSubStageIncluded}
      *
@@ -371,8 +371,8 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * **This method should probably not be overwritten.**
      *
-     * @param stage  Stage to run as a substage.
-     * @param level  Depth level for output to the console.
+     * @param stageInput  Stage to run as a substage.
+     * @param level       Depth level for output to the console.
      *
      * @category Running
      *

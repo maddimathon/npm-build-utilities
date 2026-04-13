@@ -1,19 +1,16 @@
 {
-    "$schema": "https://www.schemastore.org/tsconfig",
+    "$schema": "https://json.schemastore.org/tsconfig",
     "compilerOptions": {
         "allowJs": true,
-        "baseUrl": "../../",
+        "allowUnusedLabels": false,
+        "alwaysStrict": true,
         "checkJs": true,
-        "declaration": true,
-        "declarationMap": false,
+        "composite": true,
         "esModuleInterop": true,
         "exactOptionalPropertyTypes": false,
         "forceConsistentCasingInFileNames": true,
         "isolatedDeclarations": false,
-        "isolatedModules": true,
-        "lib": [
-            "es2023"
-        ],
+        "isolatedModules": false,
         "module": "Node18",
         "moduleResolution": "Node16",
         "noFallthroughCasesInSwitch": true,
@@ -24,22 +21,27 @@
         "noPropertyAccessFromIndexSignature": true,
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
+        "noUnusedParameters": true,
         "outDir": "../../dist/js/",
+        "preserveSymlinks": true,
         "pretty": true,
         "removeComments": false,
         "resolveJsonModule": true,
+        "resolvePackageJsonExports": true,
         "skipLibCheck": true,
         "sourceMap": false,
         "strict": true,
         "strictBindCallApply": true,
-        "target": "es2022",
+        "strictBuiltinIteratorReturn": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "target": "ES2022",
+        "useUnknownInCatchVariables": true,
         "verbatimModuleSyntax": true
     },
     "exclude": [
-        "../../node_modules/**/*",
-        "./node_modules/**/*",
-        "node_modules/**/*",
-        "node_modules/@skikijs"
+        "**/node_modules/**/*"
     ],
     "include": [
         "../../src/ts/**/*",

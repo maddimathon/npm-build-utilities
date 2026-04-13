@@ -13,7 +13,6 @@ import { globSync } from 'glob';
 import * as prettier from "prettier";
 
 import type {
-    Classify,
     RecursivePartial,
     Test,
 } from '@maddimathon/utility-typescript/types';
@@ -228,54 +227,48 @@ export class FileSystem extends NodeFiles {
 
     public override get ARGS_DEFAULT() {
 
-        const copy = {
-
-            force: true,
-            recursive: true,
-            rename: true,
-
-            glob: {
-                absolute: false,
-                dot: true,
-                filesOnly: false,
-            },
-
-        } as const satisfies FileSystemType.Copy.Args;
-
-        const glob = {
-            absolute: true,
-            dot: true,
-            ignore: [
-                ...FileSystem.globs.SYSTEM,
-            ],
-        } as const satisfies Partial<FileSystemType.Glob.Args>;
-
-        const prettier = {
-
-            _: FileSystem.prettierConfig,
-
-            css: FileSystem.prettierConfig.overrides.css,
-            html: FileSystem.prettierConfig.overrides.html,
-            js: FileSystem.prettierConfig.overrides.js,
-            json: FileSystem.prettierConfig.overrides.json,
-            md: FileSystem.prettierConfig.overrides.md,
-            mdx: FileSystem.prettierConfig.overrides.mdx,
-            scss: FileSystem.prettierConfig.overrides.scss,
-            ts: FileSystem.prettierConfig.overrides.ts,
-            yaml: FileSystem.prettierConfig.overrides.yaml,
-
-        } as const satisfies Classify<FileSystemType.Prettier.Args.MultiFormat>;
-
         return {
             ...NodeFiles.prototype.ARGS_DEFAULT,
 
-            copy,
-            glob,
-            minify: FileSystem.minify.ARGS_DEFAULT,
-            prettier,
+            copy: {
 
-        } as const satisfies FileSystemType.Args;
-    }
+                force: true,
+                recursive: true,
+                rename: true,
+
+                glob: {
+                    absolute: false,
+                    dot: true,
+                    filesOnly: false,
+                },
+            },
+
+            glob: {
+                absolute: true,
+                dot: true,
+                ignore: [
+                    ...FileSystem.globs.SYSTEM,
+                ],
+            },
+
+            minify: FileSystem.minify.ARGS_DEFAULT,
+
+            prettier: {
+
+                _: FileSystem.prettierConfig,
+
+                css: FileSystem.prettierConfig.overrides.css,
+                html: FileSystem.prettierConfig.overrides.html,
+                js: FileSystem.prettierConfig.overrides.js,
+                json: FileSystem.prettierConfig.overrides.json,
+                md: FileSystem.prettierConfig.overrides.md,
+                mdx: FileSystem.prettierConfig.overrides.mdx,
+                scss: FileSystem.prettierConfig.overrides.scss,
+                ts: FileSystem.prettierConfig.overrides.ts,
+                yaml: FileSystem.prettierConfig.overrides.yaml,
+            },
+        };
+    };
 
     public buildArgs( args?: Partial<FileSystemType.Args> | RecursivePartial<FileSystemType.Args> ): FileSystem.Args {
 

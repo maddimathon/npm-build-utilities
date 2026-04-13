@@ -488,7 +488,7 @@ export class ReleaseStage extends AbstractStage<
                 this.fs.write( changelogPath, currentChangelog, { force: true } );
             }
 
-            this.console.vi.debug( { newChangeLogEntry: '\n' + newChangeLogEntry }, 2, { maxWidth: null } );
+            this.console.vi.debug( { newChangeLogEntry: '\n' + newChangeLogEntry }, 2 );
             this.console.verbose( 'skipping changelog update during dryrun...', 2 );
             return;
         }
@@ -560,12 +560,12 @@ export class ReleaseStage extends AbstractStage<
         // returns
         if ( this.params.dryrun ) {
             this.console.verbose( 'skipping git commit during dryrun...', 2 );
-            this.console.vi.verbose( { gitCmd }, 3, { maxWidth: null } );
-            this.console.vi.debug( { gitCmd }, ( this.params.verbose ? 3 : 2 ), { maxWidth: null } );
+            this.console.vi.verbose( { gitCmd }, 3 );
+            this.console.vi.debug( { gitCmd }, ( this.params.verbose ? 3 : 2 ) );
             return;
         }
 
-        this.console.vi.debug( { gitCmd }, 2, { maxWidth: null } );
+        this.console.vi.debug( { gitCmd }, 2 );
 
         // commit, tag, and push tags
         for ( const _cmd of [
@@ -607,7 +607,7 @@ export class ReleaseStage extends AbstractStage<
 
         if ( this.params.dryrun ) {
             this.console.verbose( 'skipping repo updates during dryrun...', 3 );
-            this.console.vi.debug( { repoUpdateCmd }, ( this.params.verbose ? 4 : 2 ), { maxWidth: null } );
+            this.console.vi.debug( { repoUpdateCmd }, ( this.params.verbose ? 4 : 2 ) );
         } else {
 
             this.try(
@@ -628,7 +628,7 @@ export class ReleaseStage extends AbstractStage<
             title: `${ version } — ${ timestamp( null, { date: true, time: false } ) }`,
         }, false, false ) }`;
 
-        this.console.vi.debug( { releaseCmd }, ( this.params.verbose ? 3 : 2 ), { maxWidth: null } );
+        this.console.vi.debug( { releaseCmd }, this.params.verbose ? 3 : 2 );
 
         if ( this.params.dryrun ) {
             this.console.verbose( 'skipping github release during dryrun...', 3 );

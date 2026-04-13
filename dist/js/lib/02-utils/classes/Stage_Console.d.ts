@@ -4,13 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import { MessageMaker, VariableInspector } from '@maddimathon/utility-typescript';
 import { NodeConsole, NodeConsole_Prompt } from '@maddimathon/utility-typescript/node';
 import type { CLI, Config } from '../../../types/index.js';
 import type { Logger } from '../../../types/Logger.js';
+import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
 /**
  * To be used by {@link AbstractStage} and those that inherit from it.
  *
@@ -42,24 +43,20 @@ export declare class Stage_Console implements Logger {
      *
      * @see {@link Stage_Console.clr}  Default colour for the message.
      *
-     * @param level     Depth level for this message.
-     * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
+     * @param level  Depth level for this message.
+     * @param args   Argument overrides for the message.
      *
      * @return  An object with arguments separated by message (`msg`) and time.
      */
-    protected msgArgs(level?: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): {
-        msg: Partial<MessageMaker.BulkMsgArgs>;
-        time: Partial<MessageMaker.BulkMsgArgs>;
-    };
+    protected msgArgs(level?: number, args?: RecursivePartial<Logger.MsgArgs>): RecursivePartial<Logger.MsgArgs>;
     /** {@inheritDoc Logger.debug} */
-    debug(msg: Parameters<NodeConsole['timestampLog']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    debug(msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>): void;
     /** {@inheritDoc Logger.error} */
-    error(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
+    error(msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>): void;
     /** {@inheritDoc Logger.log} */
-    log(msg: Parameters<NodeConsole['timestampLog']>[0], level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
+    log(msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>): void;
     /** {@inheritDoc Logger.progress} */
-    progress(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    progress(msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>): void;
     /**
      * Prints a message to the console signalling the start or end of this build
      * stage.  Uses {@link Stage_Consolelog}.
@@ -75,9 +72,9 @@ export declare class Stage_Console implements Logger {
      * @UPGRADE
      * **Doesn't currently actually warn.**
      */
-    warn(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    warn(msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>): void;
     /** {@inheritDoc Logger.verbose} */
-    verbose(msg: Parameters<Stage_Console['log']>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    verbose(msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>): void;
     get prompt(): {
         readonly bool: (message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.bool>[0], "message">) => Promise<boolean | undefined>;
         readonly input: (message: string, level: number, opts?: Omit<Parameters<typeof this.nc.prompt.input>[0], "message">) => Promise<string | undefined>;
@@ -125,26 +122,44 @@ export declare class Stage_Console implements Logger {
  * @private
  */
 export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
-    readonly config: Config.Class;
-    readonly params: CLI.Params;
-    readonly _msgArgs: Stage_Console['msgArgs'];
-    protected readonly nc: NodeConsole;
     /**
-     * @param config    Current project config.
-     * @param params    Current CLI params.
-     * @param _msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
-     * @param nc        Instance to use within the class.
+     * Functions to use for outputting messages.
+     *
+     * @since 0.3.0-beta.draft
      */
-    constructor(config: Config.Class, params: CLI.Params, _msgArgs: Stage_Console['msgArgs'], nc: NodeConsole);
+    protected readonly console: {
+        [K in "debug" | "error" | "log" | "progress" | "warn" | "verbose"]: (msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>) => void;
+    };
+    /**
+     * @since 0.3.0-beta.draft — Removed `_msgArgs`, `config`, `nc`, `params` params.
+     */
+    constructor(
+    /**
+     * Functions to use for outputting messages.
+     *
+     * @since 0.3.0-beta.draft
+     */
+    console: {
+        [K in "debug" | "error" | "log" | "progress" | "warn" | "verbose"]: (msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>) => void;
+    });
+    /** {@inheritDoc Stage_Console.msgArgs} */
     private msgArgs;
     /** {@inheritDoc Logger.VarInspect.debug} */
-    debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
+    debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
+    /**
+     * @since 0.3.0-beta.draft
+     */
+    error(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
     /** {@inheritDoc Logger.VarInspect.log} */
-    log(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<Stage_Console['log']>[1], msgArgs?: Parameters<Stage_Console['log']>[2], timeArgs?: Parameters<Stage_Console['log']>[3]): void;
+    log(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
     /** {@inheritDoc Logger.VarInspect.progress} */
-    progress(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
+    progress(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
     /** {@inheritDoc Logger.VarInspect.stringify} */
-    stringify(variable: ConstructorParameters<typeof VariableInspector>[0], args?: ConstructorParameters<typeof VariableInspector>[1]): string;
+    stringify(variable: ConstructorParameters<typeof VariableInspector>[0], args?: RecursivePartial<Logger.VarInspect.Args>): string;
+    /**
+     * @since 0.3.0-beta.draft
+     */
+    warn(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
     /** {@inheritDoc Logger.VarInspect.verbose} */
-    verbose(variable: ConstructorParameters<typeof VariableInspector>[0], level: Parameters<_Stage_Console_VarInspect['log']>[1], msgArgs?: Parameters<_Stage_Console_VarInspect['log']>[2], timeArgs?: Parameters<_Stage_Console_VarInspect['log']>[3]): void;
+    verbose(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
 }

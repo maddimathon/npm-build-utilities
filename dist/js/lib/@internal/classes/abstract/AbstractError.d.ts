@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import type { Classify } from '@maddimathon/utility-typescript/types';
@@ -29,11 +29,11 @@ export declare abstract class AbstractError<T_Args extends object | never = neve
      *
      * @see {@link Error.cause}
      */
-    readonly cause?: unknown;
+    readonly cause?: unknown | undefined;
     /**
      * Represents the name for the type of error.
      *
-     * @see {@link !Error.name | Error.name}
+     * @see {@link !Error.name}
      */
     abstract readonly name: string;
     /**
@@ -46,7 +46,16 @@ export declare abstract class AbstractError<T_Args extends object | never = neve
     protected readonly ARGS_DEFAULT?: T_Args;
     /** @hidden */
     private buildArgs;
-    constructor(message: string, context: null | T_Context, cause?: AbstractError.Input, args?: Partial<T_Args>);
+    constructor(message: string, 
+    /** {@inheritDoc internal.AbstractError.Context} */
+    context: null | T_Context, 
+    /**
+     * Represents the cause of the error (e.g., a different exception that was
+     * caught).
+     *
+     * @see {@link Error.cause}
+     */
+    cause?: unknown | undefined, args?: Partial<T_Args>);
     /**
      * Gets a detailed output message for error handlers.
      */
@@ -99,8 +108,15 @@ export declare namespace AbstractError {
          * Basic context information for a thrown error.
          *
          * @since 0.1.0-alpha
+         * @since 0.3.0-beta.draft — Added optional stage prop.
          */
         interface Basic {
+            /**
+             * Current build stage during which error is caught.
+             *
+             * @since 0.3.0-beta.draft
+             */
+            stage?: string;
             file: string;
             line?: string;
             module?: string;
@@ -109,8 +125,15 @@ export declare namespace AbstractError {
          * Context information for an error thrown in a class.
          *
          * @since 0.1.0-alpha
+         * @since 0.3.0-beta.draft — Added optional stage prop.
          */
         interface Class extends Partial<Basic> {
+            /**
+             * Current build stage during which error is caught.
+             *
+             * @since 0.3.0-beta.draft
+             */
+            stage?: string;
             class: string;
             method: string;
         }

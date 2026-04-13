@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -357,20 +357,23 @@ export class DocumentStage extends AbstractStage {
                 '@UPGRADE',
             ],
             out: 'docs',
-            plugin: ['typedoc-plugin-inline-sources'],
+            plugin: [
+                'typedoc-plugin-mdn-links',
+                'typedoc-plugin-inline-sources',
+            ],
             projectDocuments: ['README.md'],
             readme: 'none',
             router: 'structure',
             searchInComments: true,
             searchInDocuments: true,
             sourceLinkExternal: true,
-            sourceLinkTemplate: `${repository}/blob/main/${stage.params.packaging ? encodeURI(stage.pkg.version) + '/' : ''}{path}#L{line}`,
+            sourceLinkTemplate: `${repository}/blob/main/${stage.params.packaging && !stage.params.dryrun ? encodeURI(stage.pkg.version) + '/' : ''}{path}#L{line}`,
             sort: [
                 'documents-first',
                 'static-first',
                 'required-first',
-                'kind',
                 'visibility',
+                'kind',
                 'alphabetical',
             ],
             tsconfig: stage.fs.pathRelative(

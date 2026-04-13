@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import * as typeDoc from "typedoc";
@@ -305,7 +305,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
         };
         readonly notRenderedTags: [...`@${string}`[], "@TODO", "@UPGRADE"];
         readonly out: "docs";
-        readonly plugin: ["typedoc-plugin-inline-sources"];
+        readonly plugin: ["typedoc-plugin-mdn-links", "typedoc-plugin-inline-sources"];
         readonly projectDocuments: ["README.md"];
         readonly readme: "none";
         readonly router: "structure";
@@ -313,7 +313,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
         readonly searchInDocuments: true;
         readonly sourceLinkExternal: true;
         readonly sourceLinkTemplate: `undefined/blob/main/${string}{path}#L{line}` | `${string}/blob/main/${string}{path}#L{line}`;
-        readonly sort: ["documents-first", "static-first", "required-first", "kind", "visibility", "alphabetical"];
+        readonly sort: ["documents-first", "static-first", "required-first", "visibility", "kind", "alphabetical"];
         readonly tsconfig: string;
         readonly useFirstParagraphOfCommentAsSummary: true;
         readonly visibilityFilters: {

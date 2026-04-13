@@ -12,7 +12,7 @@ import { AbstractError } from './abstract/AbstractError.js';
 
 
 /**
- * An extension of the utilities error for use while running a {@link Project}.
+ * An extension of the utilities error for use while running a {@link AbstractStage}.
  * 
  * @category Errors
  * 
@@ -20,5 +20,5 @@ import { AbstractError } from './abstract/AbstractError.js';
  */
 export class StageError extends AbstractError {
 
-    public override readonly name: string = 'Project Error';
+    public override readonly name: string = 'Stage Error';
 }

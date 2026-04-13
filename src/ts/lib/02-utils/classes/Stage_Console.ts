@@ -9,6 +9,7 @@
  */
 
 import {
+    deleteUndefinedProps,
     mergeArgs,
     MessageMaker,
     VariableInspector,
@@ -25,6 +26,7 @@ import type {
 } from '../../../types/index.js';
 
 import type { Logger } from '../../../types/Logger.js';
+import type { RecursivePartial, RecursivePartialExcept } from '@maddimathon/utility-typescript/types';
 
 // import {
 // } from '../../@internal/index.js';
@@ -89,12 +91,22 @@ export class Stage_Console implements Logger {
 
         this.msgArgs = this.msgArgs.bind( this );
 
+        this.debug = this.debug.bind( this );
+        this.error = this.error.bind( this );
+        this.log = this.log.bind( this );
+        this.progress = this.progress.bind( this );
+        this.warn = this.warn.bind( this );
+        this.verbose = this.verbose.bind( this );
+
         this.vi = new _Stage_Console_VarInspect(
-            // this.name,
-            this.config,
-            this.params,
-            this.msgArgs,
-            this.nc,
+            {
+                debug: this.debug,
+                error: this.error,
+                log: this.log,
+                progress: this.progress,
+                warn: this.warn,
+                verbose: this.verbose,
+            },
         );
 
         this.prompt_prepareOpts = this.prompt_prepareOpts.bind( this );
@@ -114,23 +126,18 @@ export class Stage_Console implements Logger {
      * 
      * @see {@link Stage_Console.clr}  Default colour for the message.
      * 
-     * @param level     Depth level for this message.
-     * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
+     * @param level  Depth level for this message.
+     * @param args   Argument overrides for the message.
      * 
      * @return  An object with arguments separated by message (`msg`) and time.
      */
     protected msgArgs(
         level: number = 0,
-        msgArgs: Partial<MessageMaker.BulkMsgArgs> = {},
-        timeArgs: Partial<MessageMaker.BulkMsgArgs> = {},
-    ): {
-        msg: Partial<MessageMaker.BulkMsgArgs>;
-        time: Partial<MessageMaker.BulkMsgArgs>;
-    } {
+        args: RecursivePartial<Logger.MsgArgs> = {},
+    ): RecursivePartial<Logger.MsgArgs> {
         const depth = level + Number( this.params[ 'log-base-level' ] );
 
-        const msg: Partial<MessageMaker.BulkMsgArgs> = {
+        const msg: RecursivePartialExcept<Logger.MsgArgs, 'time'> & { depth: number; } = {
 
             bold: depth == 0 || level <= 1,
             clr: this.clr,
@@ -140,77 +147,83 @@ export class Stage_Console implements Logger {
             linesIn: 0,
             linesOut: 0,
 
-            ...msgArgs,
-        };
+            ...args,
 
-        const time: typeof timeArgs = {
-            ...timeArgs,
+            time: args.time ? deleteUndefinedProps( args.time ) : {},
         };
 
         if ( level <= 0 ) {
-            msg.linesIn = msgArgs.linesIn ?? 2;
+            msg.linesIn = args.linesIn ?? 2;
         }
 
         if ( level > 0 ) {
-            msg.linesIn = msgArgs.linesIn ?? 1;
+            msg.linesIn = args.linesIn ?? 1;
         }
 
         // if ( level > 1 ) {
         // }
 
         if ( level > 2 ) {
-            msg.italic = msgArgs.italic ?? true;
-            msg.linesIn = msgArgs.linesIn ?? 0;
+            msg.italic = args.italic ?? true;
+            msg.linesIn = args.linesIn ?? 0;
         }
 
         if ( level > 3 ) {
-            msg.clr = msgArgs.clr ?? 'grey';
+            msg.clr = args.clr ?? 'grey';
         }
 
-        return { msg, time };
+        return msg;
     }
 
     /** {@inheritDoc Logger.debug} */
     public debug(
-        msg: Parameters<NodeConsole[ 'timestampLog' ]>[ 0 ],
-        level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ): void {
         if ( !this.params.debug ) { return; }
-        this.log( msg, level, msgArgs, timeArgs );
+
+        this.nc.timestamp.debug( msg, this.msgArgs( level, {
+            clr: 'grey',
+            ...args,
+        } ) );
     }
 
     /** {@inheritDoc Logger.error} */
     public error(
         msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs: Partial<MessageMaker.BulkMsgArgs> = {},
-        timeArgs: Partial<MessageMaker.BulkMsgArgs> = {},
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        this.log( msg, level, msgArgs, timeArgs );
+        this.nc.timestamp.log(
+            msg,
+            {
+                ...this.msgArgs( level, {
+                    clr: 'red',
+                    ...args,
+                } ),
+                via: 'error',
+            },
+        );
     }
 
     /** {@inheritDoc Logger.log} */
     public log(
-        msg: Parameters<NodeConsole[ 'timestampLog' ]>[ 0 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs?: Partial<MessageMaker.BulkMsgArgs>,
-        timeArgs?: Partial<MessageMaker.BulkMsgArgs>,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ): void {
-        const args = this.msgArgs( level, msgArgs, timeArgs );
-        this.nc.timestampLog( msg, args.msg, args.time );
+        this.nc.timestamp.log( msg, this.msgArgs( level, args ) );
     }
 
     /** {@inheritDoc Logger.progress} */
     public progress(
-        msg: Parameters<Stage_Console[ 'log' ]>[ 0 ],
-        level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ): void {
         if ( !this.params.progress ) { return; }
-        this.log( msg, level, msgArgs, timeArgs );
+        this.nc.timestamp.log( msg, this.msgArgs( level, args ) );
     }
 
     /**
@@ -298,26 +311,31 @@ export class Stage_Console implements Logger {
      * **Doesn't currently actually warn.**
      */
     public warn(
-        msg: Parameters<Stage_Console[ 'log' ]>[ 0 ],
-        level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ): void {
-        this.log( msg, level, msgArgs, timeArgs );
+        this.nc.timestamp.warn( msg, this.msgArgs( level, {
+            clr: 'orange',
+            ...args,
+        } ) );
     }
 
     /** {@inheritDoc Logger.verbose} */
     public verbose(
-        msg: Parameters<Stage_Console[ 'log' ]>[ 0 ],
-        level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ): void {
         if ( !this.params.verbose ) { return; }
-        this.log( msg, level, {
-            bold: false,
-            ...msgArgs,
-        }, timeArgs );
+
+        this.nc.timestamp.log(
+            msg,
+            {
+                ...this.msgArgs( level, args ),
+                via: 'info',
+            },
+        );
     }
 
 
@@ -467,21 +485,26 @@ export class Stage_Console implements Logger {
 export class _Stage_Console_VarInspect implements Logger.VarInspect {
 
 
-
     /* CONSTRUCTOR
      * ====================================================================== */
 
     /**
-     * @param config    Current project config.
-     * @param params    Current CLI params.
-     * @param _msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
-     * @param nc        Instance to use within the class.
+     * @since ___PKG_VERSION___ — Removed `_msgArgs`, `config`, `nc`, `params` params.
      */
     constructor (
-        public readonly config: Config.Class,
-        public readonly params: CLI.Params,
-        public readonly _msgArgs: Stage_Console[ 'msgArgs' ],
-        protected readonly nc: NodeConsole,
+
+        /**
+         * Functions to use for outputting messages.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        protected readonly console: {
+            [ K in "debug" | "error" | "log" | "progress" | "warn" | "verbose" ]: (
+                msg: string | string[] | MessageMaker.BulkMsgs,
+                level: number,
+                args?: RecursivePartial<Logger.MsgArgs>,
+            ) => void;
+        },
     ) {
     }
 
@@ -490,75 +513,113 @@ export class _Stage_Console_VarInspect implements Logger.VarInspect {
     /* LOCAL METHODS
      * ====================================================================== */
 
+    /** {@inheritDoc Stage_Console.msgArgs} */
     private msgArgs(
-        level: number = 0,
-        msgArgs: Partial<MessageMaker.BulkMsgArgs> = {},
-        timeArgs: Partial<MessageMaker.BulkMsgArgs> = {},
-    ): {
-        msg: Partial<MessageMaker.BulkMsgArgs>;
-        time: Partial<MessageMaker.BulkMsgArgs>;
-    } {
-        return this._msgArgs( level, {
+        args: RecursivePartial<Logger.VarInspect.Args[ 'msg' ]> | undefined,
+    ): RecursivePartial<Logger.VarInspect.Args[ 'msg' ]> {
+        return {
             bold: false,
             flag: false,
             italic: false,
-            ...msgArgs,
+            linesIn: 1,
+            ...args,
             maxWidth: null,
-        }, timeArgs );
+        };
     }
 
     /** {@inheritDoc Logger.VarInspect.debug} */
     public debug(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-        level: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 3 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
     ): void {
-        if ( !this.params.debug ) { return; }
-        this.log( variable, level, msgArgs, timeArgs );
+
+        this.console.debug(
+            this.stringify( variable, args ),
+            level,
+            this.msgArgs( msg ),
+        );
+    }
+
+    /**
+     * @since ___PKG_VERSION___
+     */
+    public error(
+        variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
+    ): void {
+
+        this.console.error(
+            this.stringify( variable, args ),
+            level,
+            this.msgArgs( msg ),
+        );
     }
 
     /** {@inheritDoc Logger.VarInspect.log} */
     public log(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-        level: Parameters<Stage_Console[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<Stage_Console[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<Stage_Console[ 'log' ]>[ 3 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
     ): void {
-        const args = this.msgArgs( level, msgArgs, timeArgs );
-        this.nc.timestampLog( this.stringify( variable ), args.msg, args.time );
+
+        this.console.log(
+            this.stringify( variable, args ),
+            level,
+            this.msgArgs( msg ),
+        );
     }
 
     /** {@inheritDoc Logger.VarInspect.progress} */
     public progress(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-        level: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 3 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
     ): void {
-        if ( !this.params.progress ) { return; }
-        this.log( variable, level, msgArgs, timeArgs );
+
+        this.console.log(
+            this.stringify( variable, args ),
+            level,
+            this.msgArgs( msg ),
+        );
     }
 
     /** {@inheritDoc Logger.VarInspect.stringify} */
     public stringify(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-        args?: ConstructorParameters<typeof VariableInspector>[ 1 ],
+        args: RecursivePartial<Logger.VarInspect.Args> = {},
     ): string {
         return VariableInspector.stringify( variable, args ).replace( /\n\s*\n/gi, '\n' );
+    }
+
+    /**
+     * @since ___PKG_VERSION___
+     */
+    public warn(
+        variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
+    ): void {
+
+        this.console.warn(
+            this.stringify( variable, args ),
+            level,
+            this.msgArgs( msg ),
+        );
     }
 
     /** {@inheritDoc Logger.VarInspect.verbose} */
     public verbose(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-        level: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<_Stage_Console_VarInspect[ 'log' ]>[ 3 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
     ): void {
-        if ( !this.params.verbose ) { return; }
-        this.log( variable, level, {
-            bold: false,
-            ...msgArgs,
-        }, timeArgs );
+
+        this.console.verbose(
+            this.stringify( variable, args ),
+            level,
+            this.msgArgs( msg ),
+        );
     }
 }

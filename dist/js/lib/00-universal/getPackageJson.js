@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import { ProjectError } from '../@internal/index.js';
@@ -40,6 +40,7 @@ export function getPackageJson(args) {
     }
     // throws
     if (!fs) {
+        console.log({ args });
         throw new ProjectError(
             'No appropriate FileSystem instance found or constructable.',
             {

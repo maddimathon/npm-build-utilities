@@ -24,6 +24,7 @@ import type {
 } from '../../../types/index.js';
 
 import type { Logger } from '../../../types/Logger.js';
+import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
 
 
 /**
@@ -44,79 +45,87 @@ export class DummyConsole implements Logger {
     }
 
     public debug(
-        msg: Parameters<DummyConsole[ 'log' ]>[ 0 ],
-        level: Parameters<DummyConsole[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<DummyConsole[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<DummyConsole[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        if ( !this.params.debug && typeof this.params.debug !== 'undefined' ) { return; }
-        this.log( msg, level, msgArgs, timeArgs );
+        if ( !this.params.debug ) { return; }
+
+        this.nc.timestamp.debug(
+            msg,
+            {
+                ...args,
+                depth: level,
+            },
+        );
     }
 
     public error(
         msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs: Partial<MessageMaker.BulkMsgArgs> = {},
-        timeArgs: Partial<MessageMaker.BulkMsgArgs> = {},
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        this.nc.timestampLog(
+        this.nc.timestamp.log(
             msg,
             {
-                ...msgArgs,
+                ...args,
                 depth: level,
+                via: 'error',
             },
-            timeArgs
         );
     }
 
     public log(
         msg: string | string[] | MessageMaker.BulkMsgs,
         level: number,
-        msgArgs: Partial<MessageMaker.BulkMsgArgs> = {},
-        timeArgs: Partial<MessageMaker.BulkMsgArgs> = {},
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        this.nc.timestampLog(
+        this.nc.timestamp.log(
             msg,
             {
-                ...msgArgs,
+                ...args,
                 depth: level,
             },
-            timeArgs
         );
     }
 
     public progress(
-        msg: Parameters<DummyConsole[ 'log' ]>[ 0 ],
-        level: Parameters<DummyConsole[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<DummyConsole[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<DummyConsole[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        if ( !this.params.progress && typeof this.params.progress !== 'undefined' ) { return; }
-        this.log( msg, level, msgArgs, timeArgs );
+        if ( !this.params.progress ) { return; }
+        this.log( msg, level, args );
     }
 
-    /** 
-     * Doesn't currently actually warn.
-     * 
-     * @UPGRADE - make it warn
-     */
     public warn(
-        msg: Parameters<DummyConsole[ 'log' ]>[ 0 ],
-        level: Parameters<DummyConsole[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<DummyConsole[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<DummyConsole[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        this.log( msg, level, msgArgs, timeArgs );
+        this.nc.timestamp.warn(
+            msg,
+            {
+                ...args,
+                depth: level,
+            },
+        );
     }
 
     public verbose(
-        msg: Parameters<DummyConsole[ 'log' ]>[ 0 ],
-        level: Parameters<DummyConsole[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<DummyConsole[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<DummyConsole[ 'log' ]>[ 3 ],
+        msg: string | string[] | MessageMaker.BulkMsgs,
+        level: number,
+        args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        if ( !this.params.verbose && typeof this.params.verbose !== 'undefined' ) { return; }
-        this.log( msg, level, msgArgs, timeArgs );
+        if ( !this.params.verbose ) { return; }
+        this.nc.timestamp.log(
+            msg,
+            {
+                ...args,
+                depth: level,
+                via: 'info',
+            },
+        );
     }
 
 
@@ -261,52 +270,65 @@ class _DummyConsole_VarDump implements Logger.VarInspect {
     }
 
     public debug(
-        variable: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 0 ],
-        level: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 3 ],
+        variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
     ) {
-        this.log( variable, level, msgArgs, timeArgs );
+        if ( !this.params.debug ) { return; }
+
+        this.nc.timestamp.debug(
+            this.stringify( variable, args ),
+            {
+                ...msg,
+                depth: level,
+            },
+        );
     }
 
     public log(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
         level: number,
-        msgArgs = {},
-        timeArgs = {},
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
     ) {
-        this.nc.timestampLog(
-            this.stringify( variable ),
+        this.nc.timestamp.log(
+            this.stringify( variable, args ),
             {
-                ...msgArgs,
+                ...msg,
                 depth: level,
             },
-            timeArgs
         );
     }
 
     public progress(
-        variable: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 0 ],
-        level: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 3 ],
+        variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
     ) {
-        this.log( variable, level, msgArgs, timeArgs );
+        if ( !this.params.progress ) { return; }
+        this.log( variable, level, args );
     }
 
     public stringify(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
-        args?: ConstructorParameters<typeof VariableInspector>[ 1 ],
+        args: RecursivePartial<Logger.VarInspect.Args>,
     ): string {
         return VariableInspector.stringify( variable, args );
     }
 
     public verbose(
-        variable: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 0 ],
-        level: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 1 ],
-        msgArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 2 ],
-        timeArgs?: Parameters<_DummyConsole_VarDump[ 'log' ]>[ 3 ],
+        variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
+        level: number,
+        { msg, ...args }: RecursivePartial<Logger.VarInspect.Args> = {},
     ) {
-        this.log( variable, level, msgArgs, timeArgs );
+        if ( !this.params.verbose ) { return; }
+
+        this.nc.timestamp.log(
+            this.stringify( variable, args ),
+            {
+                ...msg,
+                depth: level,
+                via: 'info',
+            },
+        );
     }
 }

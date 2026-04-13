@@ -338,6 +338,7 @@ export class CompileStage extends AbstractStage<
         this.console.vi.debug( { tsPaths }, ( this.params.verbose ? 3 : 2 ) );
 
         this.console.verbose( 'running typescript...', 2 );
+
         for ( const _path of tsPaths ) {
             this.console.verbose( 'compiling project: ' + _path, 3 );
 
@@ -347,7 +348,7 @@ export class CompileStage extends AbstractStage<
                 [
                     _path,
                     this.params.verbose ? 4 : 2,
-                    this.params.packaging
+                    this.params.packaging,
                 ]
             );
         }

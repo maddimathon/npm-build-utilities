@@ -78,10 +78,10 @@ export function writeLog(
 
         filepath,
 
-        _writeLog_msgMaker.msgs(
+        _writeLog_msgMaker.bulk(
             [
                 [ datetime ],
-                [ _writeLog_msgMaker.msgs( bulkMsgs ) ],
+                [ _writeLog_msgMaker.bulk( bulkMsgs ) ],
             ],
             {
                 hangingIndent: ' '.repeat( datetime.length ),

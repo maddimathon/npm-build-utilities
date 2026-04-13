@@ -36,7 +36,6 @@ import {
  * @since 0.1.0-alpha
  * 
  * @experimental
- * @internal
  */
 export class SemVer {
 
@@ -140,7 +139,7 @@ export class SemVer {
 
             throw new SemVer.Error(
                 'Version string is invalid: ' + input,
-                SemVer.Error.INVALID_INPUT,
+                SemVer.Error.Code.INVALID_INPUT,
                 {
                     class: 'SemVer',
                     method: 'constructor',
@@ -159,7 +158,7 @@ export class SemVer {
 
                 throw new SemVer.Error(
                     `${ toTitleCase( prop ) } version is not a number: ` + this[ prop ],
-                    SemVer.Error.INVALID_VERSION,
+                    SemVer.Error.Code.INVALID_VERSION,
                     {
                         class: 'SemVer',
                         method: 'constructor',
@@ -199,7 +198,11 @@ export class SemVer {
             } ) ],
             [ this.console.vi.stringify( { 'this.toString()': this.toString() } ) ],
             [ this.console.vi.stringify( { 'this.toString( false )': this.toString( false ) } ) ],
-        ], 0, { bold: false, italic: false }, { bold: true } );
+        ], 0, {
+            bold: false,
+            italic: false,
+            time: { bold: true },
+        } );
     }
 
     /**
@@ -264,8 +267,6 @@ export namespace SemVer {
     /**
      * An extension of the utilities error used by the {@link SemVer} class.
      * 
-     * @category Errors
-     * 
      * @since 0.1.0-alpha
      */
     export class Error extends AbstractError {
@@ -288,8 +289,6 @@ export namespace SemVer {
     /**
      * Used only for {@link SemVer.Error}.
      * 
-     * @category Errors
-     * 
      * @since 0.1.0-alpha
      */
     export namespace Error {
@@ -298,41 +297,43 @@ export namespace SemVer {
          * All allowed error code strings.
          * 
          * @since 0.1.0-alpha
+         * @since ___PKG_VERSION___ — Switched from union of strings to enum.
          */
-        export type Code =
-            | typeof INVALID_INPUT
-            | typeof INVALID_META
-            | typeof INVALID_PRERELEASE
-            | typeof INVALID_VERSION;
+        export enum Code {
 
-        /**
-         * Error code for input version strings that cannot be coerced into a
-         * valid version.
-         * 
-         * @since 0.1.0-alpha
-         */
-        export const INVALID_INPUT = '4';
+            /**
+             * Error code for input version strings that cannot be coerced into a
+             * valid version.
+             * 
+             * @since 0.1.0-alpha
+             * @since ___PKG_VERSION___ — Switched to enum member.
+             */
+            INVALID_INPUT = '4',
 
-        /**
-         * Error code for invalid build meta strings.
-         * 
-         * @since 0.1.0-alpha
-         */
-        export const INVALID_META = '3';
+            /**
+             * Error code for invalid build meta strings.
+             * 
+             * @since 0.1.0-alpha
+             * @since ___PKG_VERSION___ — Switched to enum member.
+             */
+            INVALID_META = '3',
 
-        /**
-         * Error code for invalid prerelease strings.
-         * 
-         * @since 0.1.0-alpha
-         */
-        export const INVALID_PRERELEASE = '2';
+            /**
+             * Error code for invalid prerelease strings.
+             * 
+             * @since 0.1.0-alpha
+             * @since ___PKG_VERSION___ — Switched to enum member.
+             */
+            INVALID_PRERELEASE = '2',
 
-        /**
-         * Error code for invalid, missing, or non-matching major, minor, or
-         * patch versions.
-         * 
-         * @since 0.1.0-alpha
-         */
-        export const INVALID_VERSION = '1';
+            /**
+             * Error code for invalid, missing, or non-matching major, minor, or
+             * patch versions.
+             * 
+             * @since 0.1.0-alpha
+             * @since ___PKG_VERSION___ — Switched to enum member.
+             */
+            INVALID_VERSION = '1',
+        };
     }
 }

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -13,6 +13,7 @@ import * as sass from 'sass-embedded';
 import type { Classify, PartialExcept, TsConfig } from '@maddimathon/utility-typescript/types';
 import { type MessageMaker } from '@maddimathon/utility-typescript';
 import type { CLI, Config, Stage } from '../../../types/index.js';
+import { AbstractError } from '../../@internal/index.js';
 import { FileSystem } from '../../00-universal/index.js';
 import type { Stage_Console } from './Stage_Console.js';
 /**
@@ -28,10 +29,34 @@ import type { Stage_Console } from './Stage_Console.js';
  * @internal
  */
 export declare class Stage_Compiler implements Stage.Compiler {
+    /**
+     * The name of the stage using this compiler instance.
+     *
+     * @since 0.3.0-beta.draft
+     */
+    protected readonly stage: string;
+    /**
+     * Current project config.
+     */
     protected readonly config: Config.Class;
+    /**
+     * Current CLI params.
+     */
     protected readonly params: CLI.Params;
+    /**
+     * Instance used to log messages and debugging info.
+     */
     protected readonly console: Stage_Console;
+    /**
+     * Instance used to work with paths and files.
+     */
     protected readonly fs: FileSystem;
+    /**
+     * An error handler for caught errors.
+     *
+     * @since 0.3.0-beta.draft
+     */
+    protected readonly errorHandler: (error: any, level: number, args?: Partial<AbstractError.Handler.Args>) => void;
     /**
      * Gets paths to tsconfig files according to the project configuration.
      *
@@ -154,9 +179,8 @@ export declare class Stage_Compiler implements Stage.Compiler {
         readonly extends: "@maddimathon/build-utilities/tsconfig";
         readonly exclude: ["**/node_modules/**/*"];
         readonly compilerOptions: {
-            readonly exactOptionalPropertyTypes: false;
             readonly outDir: string;
-            readonly baseUrl: string | undefined;
+            readonly rootDir: string | undefined;
         };
     };
     get ARGS_DEFAULT(): {
@@ -200,13 +224,35 @@ export declare class Stage_Compiler implements Stage.Compiler {
     readonly args: Stage.Compiler.Args & {
         sass: Classify<Stage.Compiler.Args.Sass>;
     };
+    constructor(
     /**
-     * @param config   Current project config.
-     * @param params   Current CLI params.
-     * @param console  Instance used to log messages and debugging info.
-     * @param fs       Instance used to work with paths and files.
+     * The name of the stage using this compiler instance.
+     *
+     * @since 0.3.0-beta.draft
      */
-    constructor(config: Config.Class, params: CLI.Params, console: Stage_Console, fs: FileSystem);
+    stage: string, 
+    /**
+     * Current project config.
+     */
+    config: Config.Class, 
+    /**
+     * Current CLI params.
+     */
+    params: CLI.Params, 
+    /**
+     * Instance used to log messages and debugging info.
+     */
+    console: Stage_Console, 
+    /**
+     * Instance used to work with paths and files.
+     */
+    fs: FileSystem, 
+    /**
+     * An error handler for caught errors.
+     *
+     * @since 0.3.0-beta.draft
+     */
+    errorHandler: (error: any, level: number, args?: Partial<AbstractError.Handler.Args>) => void);
     /**
      * Logs the message for the benchmark end notice.
      *
@@ -223,13 +269,13 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * Takes an input tsconfig path (or object) and attempts to resolve and
      * include the values from any configs in its "extends".
      *
-     * @since 0.3.0-alpha.19.draft
+     * @since 0.3.0-beta.draft
      */
     resolveTsConfig(tsconfig: string | Partial<TsConfig> & {
         path: string;
-    }, level: number, errorIfNotFound?: boolean): PartialExcept<TsConfig, "compilerOptions"> & {
+    }, level: number, errorIfNotFound?: boolean): Promise<PartialExcept<TsConfig, "compilerOptions"> & {
         path: string;
-    };
+    }>;
     /**
      * Gets the value of the given tsconfig file.
      *
@@ -255,16 +301,20 @@ export declare class Stage_Compiler implements Stage.Compiler {
      */
     getTsConfigOutDir(tsconfig: string | Partial<TsConfig> & {
         path: string;
-    }, level: number, errorIfNotFound?: boolean): string | false;
+    }, level: number, errorIfNotFound?: boolean): Promise<string | false>;
     /**
      * Combines two ts config objects, overriding and merging as applicable.
      *
-     * @since 0.3.0-alpha.19.draft
+     * @since 0.3.0-beta.draft
      */
-    protected mergeTsConfigs<T_Extendee extends Partial<TsConfig>, T_Current extends Partial<TsConfig>>(extendee: T_Extendee, current: T_Current): {
-        $schema: string;
-    } & T_Extendee & T_Current & {
-        compilerOptions: TsConfig.CompilerOpts;
+    protected mergeTsConfigs<T_Fallbacks extends Partial<TsConfig>, T_Overrides extends Partial<TsConfig>>(fallbacks: T_Fallbacks, overrides: T_Overrides): T_Fallbacks & {
+        readonly exclude: undefined;
+        readonly include: undefined;
+        readonly files: undefined;
+    } & T_Overrides & {
+        readonly extends: string[] | undefined;
+        readonly compilerOptions: TsConfig.CompilerOpts;
+        readonly $schema: "https://json.schemastore.org/tsconfig";
     };
     postCSS(paths: {
         from: string;
@@ -336,9 +386,48 @@ export declare class Stage_Compiler implements Stage.Compiler {
 /**
  * Utilities for the {@link Stage_Compiler} class.
  *
+ * @category Stages
+ *
  * @since 0.3.0-alpha.12
+ *
+ * @internal
  */
 export declare namespace Stage_Compiler {
+    /**
+     * An extension of the utilities error used by the {@link Stage_Compiler} class.
+     *
+     * @since 0.3.0-beta.draft
+     *
+     * @internal
+     */
+    class Error extends AbstractError {
+        readonly code: Error.Code;
+        readonly name: string;
+        constructor(message: string, code: Error.Code, context: {
+            stage: string;
+            method: string;
+        }, cause?: AbstractError.Input);
+    }
+    /**
+     * Used only for {@link Stage_Compiler.Error}.
+     *
+     * @since 0.3.0-beta.draft
+     *
+     * @internal
+     */
+    namespace Error {
+        /**
+         * All allowed error codes.
+         *
+         * @since 0.3.0-beta.draft
+        */
+        enum Code {
+            /**
+             * Re-throwing a caught error with context and a new trace.
+             */
+            Caught = 0
+        }
+    }
     /**
      * Handles logging for sass compilations.
      *

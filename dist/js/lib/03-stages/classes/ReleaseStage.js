@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import {
@@ -402,7 +402,6 @@ export class ReleaseStage extends AbstractStage {
             this.console.vi.debug(
                 { newChangeLogEntry: '\n' + newChangeLogEntry },
                 2,
-                { maxWidth: null },
             );
             this.console.verbose(
                 'skipping changelog update during dryrun...',
@@ -468,13 +467,11 @@ export class ReleaseStage extends AbstractStage {
         // returns
         if (this.params.dryrun) {
             this.console.verbose('skipping git commit during dryrun...', 2);
-            this.console.vi.verbose({ gitCmd }, 3, { maxWidth: null });
-            this.console.vi.debug({ gitCmd }, this.params.verbose ? 3 : 2, {
-                maxWidth: null,
-            });
+            this.console.vi.verbose({ gitCmd }, 3);
+            this.console.vi.debug({ gitCmd }, this.params.verbose ? 3 : 2);
             return;
         }
-        this.console.vi.debug({ gitCmd }, 2, { maxWidth: null });
+        this.console.vi.debug({ gitCmd }, 2);
         // commit, tag, and push tags
         for (const _cmd of [
             gitCmd,
@@ -508,7 +505,6 @@ export class ReleaseStage extends AbstractStage {
             this.console.vi.debug(
                 { repoUpdateCmd },
                 this.params.verbose ? 4 : 2,
-                { maxWidth: null },
             );
         } else {
             this.try(this.console.nc.cmd, 2, [repoUpdateCmd]);
@@ -524,9 +520,7 @@ export class ReleaseStage extends AbstractStage {
             false,
             false,
         )}`;
-        this.console.vi.debug({ releaseCmd }, this.params.verbose ? 3 : 2, {
-            maxWidth: null,
-        });
+        this.console.vi.debug({ releaseCmd }, this.params.verbose ? 3 : 2);
         if (this.params.dryrun) {
             this.console.verbose('skipping github release during dryrun...', 3);
         } else {

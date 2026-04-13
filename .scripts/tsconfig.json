@@ -1,12 +1,7 @@
 {
-    "extends": "../tsconfig.base.json",
+    "extends": "../tsconfig.scripts.json",
     "include": [
         "../.scripts/**/*",
         ".scripts/**/*"
     ],
-    "compilerOptions": {
-        "baseUrl": "../",
-        "exactOptionalPropertyTypes": false,
-        "noEmit": true
-    }
 }

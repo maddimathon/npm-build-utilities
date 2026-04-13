@@ -21,7 +21,7 @@ and this project adheres to
 
 ## **0.3.0-alpha.18** — 2026-03-07
 
-Made methods AbstractStage.atry() and AbstractStage.try() public.
+Made methods {@link AbstractStage.atry} and {@link AbstractStage.try} public.
 
 
 ## **0.3.0-alpha.17** — 2026-03-04
@@ -46,8 +46,8 @@ Made methods AbstractStage.atry() and AbstractStage.try() public.
 ## **0.3.0-alpha.15** — 2026-01-31
 
 ### Added
-- New prop - AbstractStage.runCustomScssDirSubStage.Opts.clearOutputDir
-- FileSystem.delete now returns the paths sent to be deleted
+- New prop - {@link AbstractStage.runCustomScssDirSubStage.Opts.clearOutputDir}
+- {@link FileSystem.delete} now returns the paths sent to be deleted
 
 
 ## **0.3.0-alpha.14** — 2026-01-23

@@ -29,7 +29,10 @@ const config: Config = {
 
     compiler: {
         ts: {
-            tidyGlobs: 'types/**/*.js',
+            tidyGlobs: [
+                '**/tsconfig.tsbuildinfo',
+                'types/**/*.js',
+            ],
         },
     },
 

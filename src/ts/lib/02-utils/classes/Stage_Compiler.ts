@@ -37,6 +37,7 @@ import type {
 } from '../../../types/index.js';
 
 import {
+    AbstractError,
     StageError,
 } from '../../@internal/index.js';
 
@@ -138,7 +139,6 @@ export class Stage_Compiler implements Stage.Compiler {
             'No tsconfig.json files found, do you want to create one?',
             level,
             {
-
                 default: true,
                 msgArgs: {
                     linesIn: 1,
@@ -333,16 +333,15 @@ export class Stage_Compiler implements Stage.Compiler {
 
         const tsSrcDir = this.config.getSrcDir( this.fs, 'ts' )[ 0 ];
 
-        const baseUrl = tsSrcDir?.replace( /(?<=^|\/)[^\/]+(\/|$)/g, '..\/' );
+        const rootDir = tsSrcDir?.replace( /(?<=^|\/)[^\/]+(\/|$)/g, '..\/' );
 
         const outDir = this.fs.pathRelative( this.fs.pathResolve(
-            baseUrl ?? '.',
+            rootDir ?? '.',
             this.config.getDistDir( this.fs ),
             'ts',
         ) );
 
         return {
-
             extends: '@maddimathon/build-utilities/tsconfig',
 
             exclude: [
@@ -350,9 +349,8 @@ export class Stage_Compiler implements Stage.Compiler {
             ],
 
             compilerOptions: {
-                exactOptionalPropertyTypes: false,
                 outDir,
-                baseUrl,
+                rootDir,
             },
         } as const satisfies TsConfig;
     }
@@ -418,17 +416,44 @@ export class Stage_Compiler implements Stage.Compiler {
     /* CONSTRUCTOR
      * ====================================================================== */
 
-    /**
-     * @param config   Current project config.
-     * @param params   Current CLI params.
-     * @param console  Instance used to log messages and debugging info.
-     * @param fs       Instance used to work with paths and files.
-     */
     constructor (
+        /**
+         * The name of the stage using this compiler instance.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        protected readonly stage: string,
+
+        /**
+         * Current project config.
+         */
         protected readonly config: Config.Class,
+
+        /**
+         * Current CLI params.
+         */
         protected readonly params: CLI.Params,
+
+        /**
+         * Instance used to log messages and debugging info.
+         */
         protected readonly console: Stage_Console,
+
+        /**
+         * Instance used to work with paths and files.
+         */
         protected readonly fs: FileSystem,
+
+        /**
+         * An error handler for caught errors.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        protected readonly errorHandler: (
+            error: any,
+            level: number,
+            args?: Partial<AbstractError.Handler.Args>,
+        ) => void,
     ) {
         this.args = this.parseArgs(
             this.ARGS_DEFAULT as Stage.Compiler.Args & {
@@ -513,11 +538,11 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @since ___PKG_VERSION___
      */
-    public resolveTsConfig(
+    public async resolveTsConfig(
         tsconfig: string | Partial<TsConfig> & { path: string; },
         level: number,
         errorIfNotFound: boolean = true,
-    ): PartialExcept<TsConfig, "compilerOptions"> & { path: string; } {
+    ): Promise<PartialExcept<TsConfig, "compilerOptions"> & { path: string; }> {
 
         const _tsconfig_obj = typeof tsconfig === 'string'
             ? {
@@ -526,46 +551,141 @@ export class Stage_Compiler implements Stage.Compiler {
             }
             : tsconfig;
 
-        let resolvedObj = {
+        const path = _tsconfig_obj.path;
+
+        let resolvedObj: PartialExcept<TsConfig, "compilerOptions"> & { path: string; } = {
             ..._tsconfig_obj,
             compilerOptions: _tsconfig_obj.compilerOptions ?? {},
         };
 
-        if ( !( 'extends' in resolvedObj ) || !resolvedObj.extends ) {
-            return resolvedObj;
-        }
+        const extendsValue = typeof resolvedObj.extends === 'string' ? [ resolvedObj.extends ] : resolvedObj.extends;
 
-        const extendsPaths = Array.isArray( resolvedObj.extends ?? [] )
-            ? ( ( resolvedObj.extends as undefined | string[] ) ?? [] )
-            : [ resolvedObj.extends as string ];
-
-        const localBasePath = this.fs.dirname( resolvedObj.path );
-
-        for ( const path of extendsPaths ) {
-
-            const path_resolved = path.match( /^\.*\//gi )
-                ? this.fs.pathResolve( localBasePath, path )
-                : this.fs.pathResolve( this.config.paths.modules, path );
-
-            // continues
-            if ( !this.fs.exists( path_resolved ) ) {
-                this.console.debug( `a path (${ path }) extended by the ts config at ${ this.fs.pathRelative( resolvedObj.path ) } could not be found`, level );
-                continue;
-            }
-
-            const extendeeContents = this.resolveTsConfig(
-                { ...JSON.parse( this.fs.readFile( path_resolved ) ), path: path_resolved },
-                ( this.params.verbose ? 1 : 0 ) + level,
-                errorIfNotFound,
-            );
-
-            resolvedObj = {
-                ...this.mergeTsConfigs( extendeeContents, resolvedObj ),
-                path: resolvedObj.path,
-            };
+        // returns
+        if ( !extendsValue ) {
+            return { ...resolvedObj, path };
         }
 
         delete resolvedObj.extends;
+
+        const extendsPaths = new Set( extendsValue );
+
+        const localBasePath = resolvedObj.path ? [ this.fs.pathRelative( this.fs.dirname( resolvedObj.path ) ) ] : [];
+
+        const _errCatcher = ( err: unknown ) => {
+
+            if (
+                typeof err !== 'object'
+                || ( err as null | AbstractError.NodeCliError )?.code !== 'ERR_MODULE_NOT_FOUND'
+            ) {
+                const compileError = new Stage_Compiler.Error(
+                    `An error was thrown while trying to resolve a path (${ path }) extended by the ts config at ${ this.fs.pathRelative( resolvedObj.path ) }`,
+                    Stage_Compiler.Error.Code.Caught,
+                    {
+                        stage: this.stage,
+                        method: 'resolveTsConfig',
+                    },
+                    err as AbstractError.Input,
+                );
+
+                if ( errorIfNotFound ) {
+                    throw compileError;
+                } else {
+
+                    this.errorHandler(
+                        compileError,
+                        level,
+                        {
+                            exitProcess: false,
+                        },
+                    );
+                }
+            }
+        };
+
+        /**
+         * The complete resolved value of the ts configs being extended.
+         */
+        let extendsObject: Partial<TsConfig> = {};
+
+        for ( const _path of extendsValue ) {
+
+            const _isRelative = _path.match( /^\.*\//gi ) !== null;
+
+            /**
+             * The object from the extended json file.
+             */
+            let _filepath: string | undefined;
+
+            // tries as a package module
+            if ( !_isRelative ) {
+
+                let _modulePath: string | undefined;
+
+                try {
+                    _modulePath = import.meta.resolve( _path );
+                } catch ( err ) {
+                    _errCatcher( err );
+                }
+
+                if ( _modulePath ) {
+                    _filepath = decodeURI( _modulePath ).replace( /^file:\/\//gi, '' );
+                }
+            }
+
+            if ( !_filepath ) {
+                _filepath = this.fs.pathResolve( ...localBasePath, _path );
+
+                // tries some other options
+                if ( !this.fs.exists( _filepath ) ) {
+                    _filepath = this.fs.pathResolve( _path );
+
+                    // tries some other options
+                    if ( !_isRelative && !this.fs.exists( _filepath ) ) {
+                        _filepath = this.fs.pathResolve( this.config.paths.modules, ...localBasePath, _path );
+
+                        // tries some other options
+                        if ( !this.fs.exists( _filepath ) ) {
+                            _filepath = this.fs.pathResolve( this.config.paths.modules, _path );
+                        }
+                    }
+                }
+            }
+
+            // continues
+            if ( !_filepath || !this.fs.exists( _filepath ) ) {
+                this.console.debug( `a _path (${ _path }) extended by the ts config at ${ this.fs.pathRelative( resolvedObj.path ) } could not be found`, level );
+                continue;
+            }
+
+            const _pathResolvedValue = await this.resolveTsConfig(
+                _filepath,
+                ( this.params.verbose ? 1 : 0 ) + level,
+                errorIfNotFound,
+            ).catch(
+                err => _errCatcher( err )
+            );
+
+            // continues
+            if ( !_pathResolvedValue ) {
+                // TODO - remove, this is just for testing
+                this.console.warn( `a _path (${ _path }) extended by the ts config at ${ this.fs.pathRelative( resolvedObj.path ) } could not be resolved`, level );
+                this.console.debug( `a _path (${ _path }) extended by the ts config at ${ this.fs.pathRelative( resolvedObj.path ) } could not be resolved`, level );
+                continue;
+            }
+
+            extendsObject = this.mergeTsConfigs( extendsObject, _pathResolvedValue );
+
+            extendsPaths.delete( _path );
+        }
+
+        resolvedObj = {
+            ...this.mergeTsConfigs( extendsObject, resolvedObj ),
+            path: resolvedObj.path,
+        };
+
+        if ( extendsPaths.size ) {
+            resolvedObj.extends = Array.from( extendsPaths.values() );
+        }
 
         return objectKeySort( resolvedObj, true );
     }
@@ -588,8 +708,10 @@ export class Stage_Compiler implements Stage.Compiler {
     ): Partial<TsConfig> {
         this.console.verbose( 'getting tsconfig value...', level );
 
+        const resolvedPath = this.fs.pathResolve( tsconfig );
+
         // throws or returns
-        if ( !this.fs.exists( tsconfig ) ) {
+        if ( !this.fs.exists( resolvedPath ) ) {
 
             if ( errorIfNotFound ) {
                 throw new StageError(
@@ -605,7 +727,7 @@ export class Stage_Compiler implements Stage.Compiler {
         }
 
         // throws or returns
-        if ( !this.fs.isFile( tsconfig ) ) {
+        if ( !this.fs.isFile( resolvedPath ) ) {
 
             if ( errorIfNotFound ) {
                 throw new StageError(
@@ -620,7 +742,7 @@ export class Stage_Compiler implements Stage.Compiler {
             return {};
         }
 
-        const config_obj = JSON.parse( this.fs.readFile( tsconfig ) ) as Partial<TsConfig> | string;
+        const config_obj = JSON.parse( this.fs.readFile( resolvedPath ).replace( /^\s*\/\/[^\n]*$/gim, '' ) ) as Partial<TsConfig> | string;
 
         // returns
         if ( typeof config_obj === 'object' ) {
@@ -650,12 +772,12 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @since 0.2.0-alpha
      */
-    public getTsConfigOutDir(
+    public async getTsConfigOutDir(
         tsconfig: string | Partial<TsConfig> & { path: string; },
         level: number,
         errorIfNotFound: boolean = true,
-    ) {
-        const resolvedConfig = this.resolveTsConfig( tsconfig, level, errorIfNotFound );
+    ): Promise<string | false> {
+        const resolvedConfig = await this.resolveTsConfig( tsconfig, level, errorIfNotFound );
 
         // returns
         if ( resolvedConfig.compilerOptions.noEmit || !resolvedConfig.compilerOptions.outDir ) {
@@ -674,43 +796,55 @@ export class Stage_Compiler implements Stage.Compiler {
      * @since ___PKG_VERSION___
      */
     protected mergeTsConfigs<
-        T_Extendee extends Partial<TsConfig>,
-        T_Current extends Partial<TsConfig>,
-    >( extendee: T_Extendee, current: T_Current ) {
+        T_Fallbacks extends Partial<TsConfig>,
+        T_Overrides extends Partial<TsConfig>,
+    >( fallbacks: T_Fallbacks, overrides: T_Overrides ) {
 
         const compilerOptions = mergeArgs<
-            NonNullable<T_Extendee[ 'compilerOptions' ]>,
-            NonNullable<T_Current[ 'compilerOptions' ]>
+            NonNullable<T_Fallbacks[ 'compilerOptions' ]>,
+            NonNullable<T_Overrides[ 'compilerOptions' ]>
         >(
-            extendee.compilerOptions ?? {},
-            current.compilerOptions,
+            fallbacks.compilerOptions ?? {},
+            overrides.compilerOptions,
             true,
             this.args.ts.mergeArraysInTsConfig,
         );
 
-        delete current.compilerOptions;
+        // const fallbacks_exclude = ( typeof fallbacks.exclude !== 'undefined' && !Array.isArray( fallbacks.exclude ) ) ? [ fallbacks.exclude ] : fallbacks.exclude ?? []
+        // const fallbacks_include = ( typeof fallbacks.include !== 'undefined' && !Array.isArray( fallbacks.include ) ) ? [ fallbacks.include ] : fallbacks.include ?? [];
 
-        // @ts-expect-error
-        delete extendee[ '_version' ];
+        // const overrides_exclude = ( typeof overrides.exclude !== 'undefined' && !Array.isArray( overrides.exclude ) ) ? [ overrides.exclude ] : overrides.exclude ?? [];
+        // const overrides_include = ( typeof overrides.include !== 'undefined' && !Array.isArray( overrides.include ) ) ? [ overrides.include ] : overrides.include ?? []
 
-        delete extendee.compilerOptions;
-        delete extendee.include;
-        delete extendee.exclude;
-        delete extendee.files;
+        // const exclude = ( fallbacks_exclude ).concat( overrides_exclude );
 
-        const merged = {
-            '$schema': 'https://json.schemastore.org/tsconfig',
+        // const include = ( fallbacks_include ).concat( overrides_include );
 
-            ...extendee,
-            ...current,
+        const extendsArr = (
+            ( typeof fallbacks.extends !== 'undefined' && !Array.isArray( fallbacks.extends ) ) ? [ fallbacks.extends ] : fallbacks.extends ?? []
+        ).concat(
+            ( typeof overrides.extends !== 'undefined' && !Array.isArray( overrides.extends ) ) ? [ overrides.extends ] : overrides.extends ?? []
+        );
+
+        return {
+
+            ...fallbacks,
+
+            exclude: undefined,
+            include: undefined,
+            files: undefined,
+
+            ...overrides,
+
+            extends: extendsArr.length ? extendsArr : undefined,
 
             compilerOptions,
 
-        } satisfies Partial<TsConfig> & {
+            '$schema': 'https://json.schemastore.org/tsconfig',
+
+        } as const satisfies Partial<TsConfig> & {
             '$schema': string;
         };
-
-        return merged;
     }
 
     public async postCSS(
@@ -1378,7 +1512,7 @@ export class Stage_Compiler implements Stage.Compiler {
     ): Promise<void> {
         this.console.verbose( 'running tsc...', level );
 
-        const outDir = this.getTsConfigOutDir(
+        const outDir = await this.getTsConfigOutDir(
             tsconfig,
             ( this.params.verbose ? 1 : 0 ) + level,
             errorIfNotFound,
@@ -1418,10 +1552,60 @@ export class Stage_Compiler implements Stage.Compiler {
 
 /**
  * Utilities for the {@link Stage_Compiler} class.
+ *
+ * @category Stages
  * 
  * @since 0.3.0-alpha.12
+ *
+ * @internal
  */
 export namespace Stage_Compiler {
+
+    /**
+     * An extension of the utilities error used by the {@link Stage_Compiler} class.
+     * 
+     * @since ___PKG_VERSION___
+     *
+     * @internal
+     */
+    export class Error extends AbstractError {
+
+        public override readonly name: string = 'Stage_Compiler Error';
+
+        public constructor (
+            message: string,
+            public readonly code: Error.Code,
+            context: {
+                stage: string;
+                method: string;
+            },
+            cause?: AbstractError.Input,
+        ) {
+            super( message, { class: 'Stage_Compiler', ...context }, cause );
+        }
+    }
+
+    /**
+     * Used only for {@link Stage_Compiler.Error}.
+     * 
+     * @since ___PKG_VERSION___
+     *
+     * @internal
+     */
+    export namespace Error {
+
+        /**
+         * All allowed error codes.
+         * 
+         * @since ___PKG_VERSION___
+        */
+        export enum Code {
+            /**
+             * Re-throwing a caught error with context and a new trace.
+             */
+            Caught,
+        };
+    }
 
     /**
      * Handles logging for sass compilations.
@@ -1795,9 +1979,10 @@ export namespace Stage_Compiler {
                         linesIn: 1,
                         linesOut: 1,
                         joiner: '\n',
-                    },
-                    {
-                        bold: true,
+
+                        time: {
+                            bold: true,
+                        },
                     },
                 );
 
@@ -1873,9 +2058,10 @@ export namespace Stage_Compiler {
                     linesIn: 1,
                     linesOut: 1,
                     joiner: '\n',
-                },
-                {
-                    bold: true,
+
+                    time: {
+                        bold: true,
+                    },
                 },
             );
 

@@ -4,12 +4,12 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import { AbstractError } from './abstract/AbstractError.js';
 /**
- * An extension of the utilities error for use while running a {@link Project}.
+ * An extension of the utilities error for use while running a {@link AbstractStage}.
  *
  * @category Errors
  *

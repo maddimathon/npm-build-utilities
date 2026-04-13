@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.3.0-alpha.19",
+    "version": "0.3.0-beta",
 
     "author": "Maddi Mathon (www.maddimathon.com)",
     "description": "Opinionated utilities for easy build systems in npm projects.",
@@ -39,7 +39,8 @@
         "./package-lock.json",
         "./package.json",
         "./README.md",
-        "./tsconfig.base.json"
+        "./tsconfig.base.json",
+        "./tsconfig.scripts.json"
     ],
 
     "main": "./dist/js/index.js",
@@ -72,6 +73,9 @@
         "./tsconfig": "./tsconfig.base.json",
         "./tsconfig.json": "./tsconfig.base.json",
 
+        "./tsconfig.scripts": "./tsconfig.scripts.json",
+        "./tsconfig.scripts.json": "./tsconfig.scripts.json",
+
         "./types": "./dist/js/types/index.d.ts",
         "./types/*": [
             "./dist/js/types/*.d.ts",
@@ -100,7 +104,8 @@
 
     "scripts": {
         "unlink-ts": "rm -rf node_modules/@maddimathon/utility-sass || echo ''",
-        "link-ts": "npm run unlink-ts && mkdir -p node_modules/@maddimathon/utility-typescript && cp -R -H -f -p ../utility-typescript/package.json ../utility-typescript/dist node_modules/@maddimathon/utility-typescript",
+
+        "link-ts": "npm run unlink-ts && mkdir -p node_modules/@maddimathon/utility-typescript && cp -R -H -f -p ../utility-typescript/package.json ../utility-typescript/tsconfig.json ../utility-typescript/dist node_modules/@maddimathon/utility-typescript",
 
         "test-utils": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts --config .scripts/build.config.ts",
 
@@ -156,6 +161,7 @@
         "semver": "~7.7.3",
         "typedoc": "^0.28.14",
         "typedoc-plugin-inline-sources": "^1.3.0",
+        "typedoc-plugin-mdn-links": "~5.1.1",
         "typescript": "^5.9.3"
     },
     "devDependencies": {

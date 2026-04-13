@@ -4,10 +4,11 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import {
+    deleteUndefinedProps,
     mergeArgs,
     MessageMaker,
     VariableInspector,
@@ -68,13 +69,20 @@ export class Stage_Console {
             ),
         );
         this.msgArgs = this.msgArgs.bind(this);
-        this.vi = new _Stage_Console_VarInspect(
-            // this.name,
-            this.config,
-            this.params,
-            this.msgArgs,
-            this.nc,
-        );
+        this.debug = this.debug.bind(this);
+        this.error = this.error.bind(this);
+        this.log = this.log.bind(this);
+        this.progress = this.progress.bind(this);
+        this.warn = this.warn.bind(this);
+        this.verbose = this.verbose.bind(this);
+        this.vi = new _Stage_Console_VarInspect({
+            debug: this.debug,
+            error: this.error,
+            log: this.log,
+            progress: this.progress,
+            warn: this.warn,
+            verbose: this.verbose,
+        });
         this.prompt_prepareOpts = this.prompt_prepareOpts.bind(this);
         this.prompt_bool = this.prompt_bool.bind(this);
         this.prompt_input = this.prompt_input.bind(this);
@@ -88,13 +96,12 @@ export class Stage_Console {
      *
      * @see {@link Stage_Console.clr}  Default colour for the message.
      *
-     * @param level     Depth level for this message.
-     * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
+     * @param level  Depth level for this message.
+     * @param args   Argument overrides for the message.
      *
      * @return  An object with arguments separated by message (`msg`) and time.
      */
-    msgArgs(level = 0, msgArgs = {}, timeArgs = {}) {
+    msgArgs(level = 0, args = {}) {
         const depth = level + Number(this.params['log-base-level']);
         const msg = {
             bold: depth == 0 || level <= 1,
@@ -102,50 +109,59 @@ export class Stage_Console {
             depth,
             linesIn: 0,
             linesOut: 0,
-            ...msgArgs,
-        };
-        const time = {
-            ...timeArgs,
+            ...args,
+            time: args.time ? deleteUndefinedProps(args.time) : {},
         };
         if (level <= 0) {
-            msg.linesIn = msgArgs.linesIn ?? 2;
+            msg.linesIn = args.linesIn ?? 2;
         }
         if (level > 0) {
-            msg.linesIn = msgArgs.linesIn ?? 1;
+            msg.linesIn = args.linesIn ?? 1;
         }
         // if ( level > 1 ) {
         // }
         if (level > 2) {
-            msg.italic = msgArgs.italic ?? true;
-            msg.linesIn = msgArgs.linesIn ?? 0;
+            msg.italic = args.italic ?? true;
+            msg.linesIn = args.linesIn ?? 0;
         }
         if (level > 3) {
-            msg.clr = msgArgs.clr ?? 'grey';
+            msg.clr = args.clr ?? 'grey';
         }
-        return { msg, time };
+        return msg;
     }
     /** {@inheritDoc Logger.debug} */
-    debug(msg, level, msgArgs, timeArgs) {
+    debug(msg, level, args = {}) {
         if (!this.params.debug) {
             return;
         }
-        this.log(msg, level, msgArgs, timeArgs);
+        this.nc.timestamp.debug(
+            msg,
+            this.msgArgs(level, {
+                clr: 'grey',
+                ...args,
+            }),
+        );
     }
     /** {@inheritDoc Logger.error} */
-    error(msg, level, msgArgs = {}, timeArgs = {}) {
-        this.log(msg, level, msgArgs, timeArgs);
+    error(msg, level, args = {}) {
+        this.nc.timestamp.log(msg, {
+            ...this.msgArgs(level, {
+                clr: 'red',
+                ...args,
+            }),
+            via: 'error',
+        });
     }
     /** {@inheritDoc Logger.log} */
-    log(msg, level, msgArgs, timeArgs) {
-        const args = this.msgArgs(level, msgArgs, timeArgs);
-        this.nc.timestampLog(msg, args.msg, args.time);
+    log(msg, level, args = {}) {
+        this.nc.timestamp.log(msg, this.msgArgs(level, args));
     }
     /** {@inheritDoc Logger.progress} */
-    progress(msg, level, msgArgs, timeArgs) {
+    progress(msg, level, args = {}) {
         if (!this.params.progress) {
             return;
         }
-        this.log(msg, level, msgArgs, timeArgs);
+        this.nc.timestamp.log(msg, this.msgArgs(level, args));
     }
     /**
      * Prints a message to the console signalling the start or end of this build
@@ -207,23 +223,24 @@ export class Stage_Console {
      * @UPGRADE
      * **Doesn't currently actually warn.**
      */
-    warn(msg, level, msgArgs, timeArgs) {
-        this.log(msg, level, msgArgs, timeArgs);
+    warn(msg, level, args = {}) {
+        this.nc.timestamp.warn(
+            msg,
+            this.msgArgs(level, {
+                clr: 'orange',
+                ...args,
+            }),
+        );
     }
     /** {@inheritDoc Logger.verbose} */
-    verbose(msg, level, msgArgs, timeArgs) {
+    verbose(msg, level, args = {}) {
         if (!this.params.verbose) {
             return;
         }
-        this.log(
-            msg,
-            level,
-            {
-                bold: false,
-                ...msgArgs,
-            },
-            timeArgs,
-        );
+        this.nc.timestamp.log(msg, {
+            ...this.msgArgs(level, args),
+            via: 'info',
+        });
     }
     /* PROMPTING ===================================== */
     get prompt() {
@@ -291,78 +308,92 @@ export class Stage_Console {
  * @private
  */
 export class _Stage_Console_VarInspect {
-    config;
-    params;
-    _msgArgs;
-    nc;
+    console;
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @param config    Current project config.
-     * @param params    Current CLI params.
-     * @param _msgArgs  Function to construct a {@link MessageMaker.BulkMsgArgs} object.
-     * @param nc        Instance to use within the class.
+     * @since 0.3.0-beta.draft — Removed `_msgArgs`, `config`, `nc`, `params` params.
      */
-    constructor(config, params, _msgArgs, nc) {
-        this.config = config;
-        this.params = params;
-        this._msgArgs = _msgArgs;
-        this.nc = nc;
+    constructor(
+        /**
+         * Functions to use for outputting messages.
+         *
+         * @since 0.3.0-beta.draft
+         */
+        console,
+    ) {
+        this.console = console;
     }
     /* LOCAL METHODS
      * ====================================================================== */
-    msgArgs(level = 0, msgArgs = {}, timeArgs = {}) {
-        return this._msgArgs(
-            level,
-            {
-                bold: false,
-                flag: false,
-                italic: false,
-                ...msgArgs,
-                maxWidth: null,
-            },
-            timeArgs,
-        );
+    /** {@inheritDoc Stage_Console.msgArgs} */
+    msgArgs(args) {
+        return {
+            bold: false,
+            flag: false,
+            italic: false,
+            linesIn: 1,
+            ...args,
+            maxWidth: null,
+        };
     }
     /** {@inheritDoc Logger.VarInspect.debug} */
-    debug(variable, level, msgArgs, timeArgs) {
-        if (!this.params.debug) {
-            return;
-        }
-        this.log(variable, level, msgArgs, timeArgs);
+    debug(variable, level, { msg, ...args } = {}) {
+        this.console.debug(
+            this.stringify(variable, args),
+            level,
+            this.msgArgs(msg),
+        );
+    }
+    /**
+     * @since 0.3.0-beta.draft
+     */
+    error(variable, level, { msg, ...args } = {}) {
+        this.console.error(
+            this.stringify(variable, args),
+            level,
+            this.msgArgs(msg),
+        );
     }
     /** {@inheritDoc Logger.VarInspect.log} */
-    log(variable, level, msgArgs, timeArgs) {
-        const args = this.msgArgs(level, msgArgs, timeArgs);
-        this.nc.timestampLog(this.stringify(variable), args.msg, args.time);
+    log(variable, level, { msg, ...args } = {}) {
+        this.console.log(
+            this.stringify(variable, args),
+            level,
+            this.msgArgs(msg),
+        );
     }
     /** {@inheritDoc Logger.VarInspect.progress} */
-    progress(variable, level, msgArgs, timeArgs) {
-        if (!this.params.progress) {
-            return;
-        }
-        this.log(variable, level, msgArgs, timeArgs);
+    progress(variable, level, { msg, ...args } = {}) {
+        this.console.log(
+            this.stringify(variable, args),
+            level,
+            this.msgArgs(msg),
+        );
     }
     /** {@inheritDoc Logger.VarInspect.stringify} */
-    stringify(variable, args) {
+    stringify(variable, args = {}) {
         return VariableInspector.stringify(variable, args).replace(
             /\n\s*\n/gi,
             '\n',
         );
     }
-    /** {@inheritDoc Logger.VarInspect.verbose} */
-    verbose(variable, level, msgArgs, timeArgs) {
-        if (!this.params.verbose) {
-            return;
-        }
-        this.log(
-            variable,
+    /**
+     * @since 0.3.0-beta.draft
+     */
+    warn(variable, level, { msg, ...args } = {}) {
+        this.console.warn(
+            this.stringify(variable, args),
             level,
-            {
-                bold: false,
-                ...msgArgs,
-            },
-            timeArgs,
+            this.msgArgs(msg),
+        );
+    }
+    /** {@inheritDoc Logger.VarInspect.verbose} */
+    verbose(variable, level, { msg, ...args } = {}) {
+        this.console.verbose(
+            this.stringify(variable, args),
+            level,
+            this.msgArgs(msg),
         );
     }
 }

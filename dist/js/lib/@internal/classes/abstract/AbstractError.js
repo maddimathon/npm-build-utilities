@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import {
@@ -22,17 +22,7 @@ import {
  * @since 0.1.0-alpha
  */
 export class AbstractError extends Error {
-    /* LOCAL PROPERTIES
-     * ====================================================================== */
-    /** {@inheritDoc internal.AbstractError.Context} */
     context;
-    /* Args ===================================== */
-    /**
-     * Represents the cause of the error (e.g., a different exception that was
-     * caught).
-     *
-     * @see {@link Error.cause}
-     */
     cause;
     /**
      * Additional arguments for this instance, if any.
@@ -48,11 +38,23 @@ export class AbstractError extends Error {
     }
     /* CONSTRUCTOR
      * ====================================================================== */
-    constructor(message, context, cause, args) {
+    constructor(
+        message,
+        /** {@inheritDoc internal.AbstractError.Context} */
+        context,
+        /**
+         * Represents the cause of the error (e.g., a different exception that was
+         * caught).
+         *
+         * @see {@link Error.cause}
+         */
+        cause,
+        args,
+    ) {
         super(message);
-        this.args = this.buildArgs(args);
-        this.cause = cause;
         this.context = context;
+        this.cause = cause;
+        this.args = this.buildArgs(args);
     }
     /* LOCAL METHODS
      * ====================================================================== */

@@ -37,28 +37,13 @@ export abstract class AbstractError<
 > extends Error {
 
 
-
     /* LOCAL PROPERTIES
      * ====================================================================== */
-
-    /** {@inheritDoc internal.AbstractError.Context} */
-    public readonly context: null | T_Context;
-
-
-    /* Args ===================================== */
-
-    /**
-     * Represents the cause of the error (e.g., a different exception that was
-     * caught).
-     *
-     * @see {@link Error.cause}
-     */
-    public override readonly cause?: unknown;
 
     /**
      * Represents the name for the type of error.
      * 
-     * @see {@link !Error.name | Error.name}
+     * @see {@link !Error.name}
      */
     public abstract override readonly name: string;
 
@@ -84,15 +69,23 @@ export abstract class AbstractError<
 
     public constructor (
         message: string,
-        context: null | T_Context,
-        cause?: AbstractError.Input,
+
+        /** {@inheritDoc internal.AbstractError.Context} */
+        public readonly context: null | T_Context,
+
+        /**
+         * Represents the cause of the error (e.g., a different exception that was
+         * caught).
+         *
+         * @see {@link Error.cause}
+         */
+        public override readonly cause?: unknown,
+
         args?: Partial<T_Args>,
     ) {
         super( message );
 
         this.args = this.buildArgs( args );
-        this.cause = cause;
-        this.context = context;
     }
 
 
@@ -166,7 +159,9 @@ export abstract class AbstractError<
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf | Object.prototype.valueOf()}
      */
-    public override valueOf() { return this.toJSON(); }
+    public override valueOf(): AbstractError.JSON<T_Context> {
+        return this.toJSON();
+    }
 }
 
 /**
@@ -201,8 +196,16 @@ export namespace AbstractError {
          * Basic context information for a thrown error.
          * 
          * @since 0.1.0-alpha
+         * @since ___PKG_VERSION___ — Added optional stage prop.
          */
         export interface Basic {
+            /**
+             * Current build stage during which error is caught.
+             * 
+             * @since ___PKG_VERSION___
+             */
+            stage?: string;
+
             file: string;
             line?: string;
             module?: string;
@@ -212,8 +215,16 @@ export namespace AbstractError {
          * Context information for an error thrown in a class.
          * 
          * @since 0.1.0-alpha
+         * @since ___PKG_VERSION___ — Added optional stage prop.
          */
         export interface Class extends Partial<Basic> {
+            /**
+             * Current build stage during which error is caught.
+             * 
+             * @since ___PKG_VERSION___
+             */
+            stage?: string;
+
             class: string;
             method: string;
         };

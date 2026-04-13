@@ -75,24 +75,20 @@ export class TestStage extends AbstractStage<
      */
     protected async tsConfigTidyPaths( level: number ): Promise<string[]> {
 
-        const tsconfigPaths = await Stage_Compiler.getTsConfigPaths( this, level, false );
-
-        return tsconfigPaths.map( ( _tsconfig ) => {
-
-            const _outDir = this.compiler.getTsConfigOutDir( _tsconfig, level, false );
-
-            // returns
-            if ( !_outDir ) {
-                return [];
-            }
-
-            return [
-                this.fs.pathResolve( _outDir, '**/*.test.d.ts' ),
-                this.fs.pathResolve( _outDir, '**/*.test.d.ts.map' ),
-                this.fs.pathResolve( _outDir, '**/*.test.js' ),
-                this.fs.pathResolve( _outDir, '**/*.test.js.map' ),
-            ];
-        } ).flat();
+        return Stage_Compiler.getTsConfigPaths( this, level, false ).then(
+            async ( tsconfigPaths ) => ( await Promise.all(
+                tsconfigPaths.map(
+                    async ( _tsconfig ) => this.compiler.getTsConfigOutDir( _tsconfig, level, false ).then(
+                        _outDir => _outDir ? [
+                            this.fs.pathResolve( _outDir, '**/*.test.d.ts' ),
+                            this.fs.pathResolve( _outDir, '**/*.test.d.ts.map' ),
+                            this.fs.pathResolve( _outDir, '**/*.test.js' ),
+                            this.fs.pathResolve( _outDir, '**/*.test.js.map' ),
+                        ] : []
+                    )
+                )
+            ) ).flat()
+        );
     }
 
     public get ARGS_DEFAULT() {

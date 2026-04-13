@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -468,7 +468,7 @@ export declare namespace Stage {
             /**
              * Whether to include this sub-stage.
              *
-             * @since 0.3.0-alpha.19.draft — Added option to include an array of strings that are paths to tsconfig files.
+             * @since 0.3.0-beta.draft — Added option to include an array of strings that are paths to tsconfig files.
              */
             ts: boolean | string[];
         }
@@ -729,11 +729,9 @@ export declare namespace Stage {
         /**
          * Compile multiple scss files at once.
          *
-         * @param paths.input   Scss input path.
-         * @param paths.output  Scss output path.
-         *
-         * @param level         Depth level for this message.
-         * @param sassOpts      Overrides for the configured sass options in {@link Stage.Compiler.args}.
+         * @param paths     Scss input & output paths.
+         * @param level     Depth level for this message.
+         * @param sassOpts  Overrides for the configured sass options in {@link Stage.Compiler.args}.
          *
          * @since 0.3.0-alpha.1
          */
@@ -791,7 +789,7 @@ export declare namespace Stage {
                  *
                  * @default true
                  *
-                 * @since 0.3.0-alpha.19.draft
+                 * @since 0.3.0-beta.draft
                  */
                 mergeArraysInTsConfig?: boolean;
                 /**

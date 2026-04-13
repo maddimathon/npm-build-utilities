@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import {
@@ -20,10 +20,11 @@ const _msgMaker = new MessageMaker({ paintFormat: null });
  * Gets some basic, standardized info for any input error.
  *
  * @since 0.2.0-alpha.4
+ * @since 0.3.0-beta.draft — Removed unused level param.
  *
  * @internal
  */
-export function getErrorInfo(error, level, console, fs, args) {
+export function getErrorInfo(error, console, fs, args) {
     /**
      * Categorized information for the error message.
      */
@@ -34,51 +35,38 @@ export function getErrorInfo(error, level, console, fs, args) {
             // breaks
             // pass to the default object handler
             if (error instanceof AbstractError) {
-                t_errorInfo = getErrorInfo.object(
-                    error,
-                    level,
-                    console,
-                    fs,
-                    args,
-                );
+                t_errorInfo = getErrorInfo.object(error);
                 break;
             }
             // breaks
             // fix the output information, then pass to the default object handler
             if (error instanceof Error) {
                 const _typedError = error;
-                t_errorInfo = getErrorInfo.object(
-                    error,
-                    level,
-                    console,
-                    fs,
-                    args,
-                    {
-                        message: _typedError.message,
-                        output: [
-                            _typedError.output
-                                || _typedError.stderr
-                                || _typedError.stdout
-                                || [],
-                        ]
-                            .flat()
-                            .filter((v) => v !== null)
-                            .map((_str) => getErrorInfo.stringToBulkMsgs(_str))
-                            .flat(1),
-                        details: {
-                            code: _typedError.code,
-                            signal: _typedError.signal,
-                            status: _typedError.status,
-                            path:
-                                typeof _typedError.path === 'string' ?
-                                    fs
-                                        .pathRelative(_typedError.path)
-                                        .replace(' ', '%20')
-                                :   _typedError.path,
-                            pid: _typedError.pid,
-                        },
+                t_errorInfo = getErrorInfo.object(error, {
+                    message: _typedError.message,
+                    output: [
+                        _typedError.output
+                            || _typedError.stderr
+                            || _typedError.stdout
+                            || [],
+                    ]
+                        .flat()
+                        .filter((v) => v !== null)
+                        .map((_str) => getErrorInfo.stringToBulkMsgs(_str))
+                        .flat(1),
+                    details: {
+                        code: _typedError.code,
+                        signal: _typedError.signal,
+                        status: _typedError.status,
+                        path:
+                            typeof _typedError.path === 'string' ?
+                                fs
+                                    .pathRelative(_typedError.path)
+                                    .replace(' ', '%20')
+                            :   _typedError.path,
+                        pid: _typedError.pid,
                     },
-                );
+                });
                 break;
             }
             // breaks
@@ -89,13 +77,7 @@ export function getErrorInfo(error, level, console, fs, args) {
                     `<${errorType}> \n${String(error)}`,
                     error,
                 );
-                t_errorInfo = getErrorInfo.object(
-                    error,
-                    level,
-                    console,
-                    fs,
-                    args,
-                );
+                t_errorInfo = getErrorInfo.object(error);
                 break;
             }
             let _objConstructorName = error.constructor?.name ?? 'object';
@@ -103,7 +85,7 @@ export function getErrorInfo(error, level, console, fs, args) {
                 _objConstructorName = _objConstructorName.toLowerCase();
             }
             // it is weird that this isn't an error object if it's an object
-            t_errorInfo = getErrorInfo.object(error, level, console, fs, args, {
+            t_errorInfo = getErrorInfo.object(error, {
                 message: [
                     `Unknown error object type: <${_objConstructorName}>`,
                     error.message ?? '',
@@ -128,14 +110,14 @@ export function getErrorInfo(error, level, console, fs, args) {
             error = new UnknownCaughtError(`<${errorType}> ${_errorString}`, {
                 cause: error,
             });
-            t_errorInfo = getErrorInfo.object(error, level, console, fs, args);
+            t_errorInfo = getErrorInfo.object(error);
             break;
         default:
             error = new UnknownCaughtError(
                 `Unknown error type: <${errorType}> \n${String(error)}`,
                 { cause: error },
             );
-            t_errorInfo = getErrorInfo.object(error, level, console, fs, args);
+            t_errorInfo = getErrorInfo.object(error);
             break;
     }
     return [
@@ -171,8 +153,9 @@ export function getErrorInfo(error, level, console, fs, args) {
      * Parses an error object in the most basic way.
      *
      * @since 0.2.0-alpha.4
+     * @since 0.3.0-beta.draft — Removed unused level, console, fs, and args params.
      */
-    function object(error, level, console, fs, args, info = {}) {
+    function object(error, info = {}) {
         const default_info = {
             name: error.name ?? 'Error',
             message: error.message ?? '',
@@ -218,21 +201,19 @@ export function getErrorInfo(error, level, console, fs, args) {
  * @internal
  */
 export function errorStringify(_error, level, console, fs, args) {
-    const [error, info] = getErrorInfo(_error, level, console, fs, args);
+    const [error, info] = getErrorInfo(_error, console, fs, args);
     const msgs = [
-        ...errorStringify.message(error, info, level, console, fs, args),
-        ...errorStringify.output(error, info, level, console, fs, args),
-        ...errorStringify.cause(error, info, level, console, fs, args),
-        ...errorStringify.stack(error, info, level, console, fs, args),
-        ...errorStringify.details(error, info, level, console, fs, args),
+        ...errorStringify.message(info),
+        ...errorStringify.output(error, info, console, fs, args),
+        ...errorStringify.cause(info, level, console, fs, args),
+        ...errorStringify.stack(info, console, fs, args),
+        ...errorStringify.details(info, console, fs, args),
     ];
     if (
         (error instanceof UnknownCaughtError && !(error.cause instanceof Error))
         || console.params.debug
     ) {
-        msgs.push(
-            ...errorStringify.dump(error, info, level, console, fs, args),
-        );
+        msgs.push(...errorStringify.dump(error, info, console, fs, args));
     }
     return msgs;
 }
@@ -261,15 +242,15 @@ export function errorStringify(_error, level, console, fs, args) {
         if (typeof _error !== 'object') {
             return [[String(_error), args]];
         }
-        const [error, info] = getErrorInfo(_error, level, console, fs, args);
+        const [error, info] = getErrorInfo(_error, console, fs, args);
         const msgs = [];
         let i = 0;
         for (const [_msg, _args] of [
-            ...errorStringify.message(error, info, level, console, fs, args),
-            ...errorStringify.output(error, info, level, console, fs, args),
-            ...errorStringify.cause(error, info, level, console, fs, args),
-            // ...errorStringify.stack( error, info, level, console, fs, args ),
-            // ...errorStringify.details( error, info, level, console, fs, args ),
+            ...errorStringify.message(info),
+            ...errorStringify.output(error, info, console, fs, args),
+            ...errorStringify.cause(info, level, console, fs, args),
+            // ...errorStringify.stack( info, console, fs, args ),
+            // ...errorStringify.details( info, console, fs, args ),
         ]) {
             msgs.push([
                 _msg,
@@ -301,7 +282,7 @@ export function errorStringify(_error, level, console, fs, args) {
      */
     function validateMsgsLength(info, console, fs, args, msg, _maxLines = 80) {
         const fullMessage =
-            typeof msg === 'string' ? _msgMaker.msg(msg) : _msgMaker.msgs(msg);
+            typeof msg === 'string' ? _msgMaker.msg(msg) : _msgMaker.bulk(msg);
         const abridgedOutput =
             fullMessage.split('\n').length > _maxLines
             || fullMessage.length > _maxLines * 120;
@@ -319,7 +300,7 @@ export function errorStringify(_error, level, console, fs, args) {
                 [
                     'Long output message written to '
                         + fs.pathRelative(fileWriteResult).replace(' ', '%20'),
-                    { bold: false, clr: args.clr, italic: true },
+                    { bold: false, clr: args.clr ?? null, italic: true },
                 ],
             ];
         }
@@ -330,8 +311,9 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo message property.
      *
      * @since 0.2.0-alpha.4
+     * @since 0.3.0-beta.draft — Removed unused error, level, console, fs, args param.
      */
-    function message(error, info, level, console, fs, args) {
+    function message(info) {
         return [[`[${info.name}] ${info.message ?? ''}`]];
     }
     errorStringify.message = message;
@@ -339,8 +321,9 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo output property.
      *
      * @since 0.2.0-alpha.4
+     * @since 0.3.0-beta.draft — Removed unused level param.
      */
-    function output(error, info, level, console, fs, args) {
+    function output(error, info, console, fs, args) {
         // returns
         if (!info.output.length) {
             return console.params.debug ?
@@ -359,7 +342,10 @@ export function errorStringify(_error, level, console, fs, args) {
                 _msg,
                 {
                     bold: false,
-                    clr: error instanceof AbstractError ? args.clr : 'black',
+                    clr:
+                        error instanceof AbstractError ?
+                            (args.clr ?? null)
+                        :   'black',
                     maxWidth: null,
                     ..._opts,
                 },
@@ -376,8 +362,9 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo cause property.
      *
      * @since 0.2.0-alpha.4
+     * @since 0.3.0-beta.draft — Removed unused error param.
      */
-    function cause(error, info, level, console, fs, args) {
+    function cause(info, level, console, fs, args) {
         // returns
         if (typeof info.cause === 'undefined') {
             return console.params.debug ?
@@ -410,8 +397,9 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo stack property.
      *
      * @since 0.2.0-alpha.4
+     * @since 0.3.0-beta.draft — Removed unused error, level param.
      */
-    function stack(error, info, level, console, fs, args) {
+    function stack(info, console, fs, args) {
         // returns
         if (!info.stack?.length) {
             return console.params.debug ?
@@ -426,9 +414,13 @@ export function errorStringify(_error, level, console, fs, args) {
         const _trimmedStack = info.stack.split('\n').map((path) => {
             const _matches = path.match(_stackPathRegex);
             if (_matches && _matches[2]) {
+                const _pathURL =
+                    _matches[2].match(/^\//) == null ?
+                        _matches[2]
+                    :   fs.pathRelative(_matches[2]);
                 path =
                     path.replace(_stackPathRegex, '$1')
-                    + `(${fs.pathRelative(decodeURI(_matches[2])).replace(' ', '%20')})`;
+                    + `(${_pathURL.replace(/\s/g, '%20')})`;
             }
             return path;
         });
@@ -445,8 +437,9 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo details property.
      *
      * @since 0.2.0-alpha.4
+     * @since 0.3.0-beta.draft — Removed unused error, level param.
      */
-    function details(error, info, level, console, fs, args) {
+    function details(info, console, fs, args) {
         const details = [];
         if (typeof info.details == 'string') {
             details.push(info.details);
@@ -486,8 +479,9 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats a var dump of the error itself.
      *
      * @since 0.3.0-alpha.6
+     * @since 0.3.0-beta.draft — Removed unused level param.
      */
-    function dump(error, info, level, console, fs, args) {
+    function dump(error, info, console, fs, args) {
         const dumps = [
             [
                 VariableInspector.stringify({ error }),

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import type { MessageMaker } from '@maddimathon/utility-typescript';
@@ -266,7 +266,7 @@ export declare namespace Config {
          *
          * @default 'node_modules'
          *
-         * @since 0.3.0-alpha.19.draft
+         * @since 0.3.0-beta.draft
          */
         modules: string;
         /**

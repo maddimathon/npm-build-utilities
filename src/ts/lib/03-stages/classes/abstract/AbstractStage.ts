@@ -370,14 +370,17 @@ export abstract class AbstractStage<
 
         this.fs = this.args.utils.fs;
 
+        this.uncaughtErrorListener = this.uncaughtErrorListener.bind( this );
+        this.handleError = this.handleError.bind( this );
+
         this.compiler = this.args.utils.compiler ?? new Stage_Compiler(
+            this.name,
             this.config,
             this.params,
             this.console,
             this.fs,
+            this.handleError,
         );
-
-        this.uncaughtErrorListener = this.uncaughtErrorListener.bind( this );
     }
 
 
@@ -555,27 +558,29 @@ export abstract class AbstractStage<
      * 
      * @since ___PKG_VERSION___
      */
-    public writeTsConfig(
+    public async writeTsConfig(
         outputPath: string,
         level: number,
         tsconfig: Partial<TsConfig>,
-        args: Partial<NodeFiles.WriteFileArgs & { errorIfNotFound?: boolean; }> = {},
+        { errorIfNotFound = true, ...args }: Partial<NodeFiles.WriteFileArgs & { errorIfNotFound?: boolean; }> = {},
     ) {
-        const resolvedConfig: TsConfig & { path?: string; } = this.compiler.resolveTsConfig(
+        const { path, ...resolvedConfig } = await this.compiler.resolveTsConfig(
             {
                 ...tsconfig,
                 path: outputPath,
             },
             level,
-            args.errorIfNotFound ?? true,
+            errorIfNotFound,
         );
-
-        delete resolvedConfig.path;
 
         return this.try(
             this.fs.write,
             1 + level,
-            [ outputPath, JSON.stringify( resolvedConfig, null, 4 ), args ],
+            [ outputPath, JSON.stringify( resolvedConfig, null, 4 ), {
+                force: true,
+                rename: false,
+                ...args,
+            } ],
         );
     }
 
@@ -617,7 +622,7 @@ export abstract class AbstractStage<
             }
         }
 
-        this.params.debug && this.console.vi.verbose( { 'this.params.only': this.params.only }, 1 + level, { italic: true } );
+        this.params.debug && this.console.vi.verbose( { 'this.params.only': this.params.only }, 1 + level, { msg: { italic: true } } );
 
         const only = {
             isUndefined: !this.params.only || !this.params.only.length,
@@ -628,7 +633,7 @@ export abstract class AbstractStage<
             || this.params.only == subStage
             || this.params.only.includes( subStage )
         );
-        this.params.debug && this.console.vi.verbose( { include }, 1 + level, { italic: true } );
+        this.params.debug && this.console.vi.verbose( { include }, 1 + level, { msg: { italic: true } } );
 
         if ( this.params.debug && this.params.verbose && !include ) {
 
@@ -638,10 +643,10 @@ export abstract class AbstractStage<
                     'this.params.only == subStage': this.params.only == subStage,
                     'this.params.only.includes( subStage )': this.params.only.includes( subStage ),
                 }
-            }, 2 + level, { italic: true } );
+            }, 2 + level, { msg: { italic: true } } );
         }
 
-        this.params.debug && this.console.vi.verbose( { 'this.params.without': this.params.without }, 1 + level, { italic: true } );
+        this.params.debug && this.console.vi.verbose( { 'this.params.without': this.params.without }, 1 + level, { msg: { italic: true } } );
 
         const without = {
             isDefined: this.params.without || this.params.without.length,
@@ -654,7 +659,7 @@ export abstract class AbstractStage<
                 || this.params.without.includes( subStage )
             )
         );
-        this.params.debug && this.console.vi.verbose( { exclude }, 1 + level, { italic: true } );
+        this.params.debug && this.console.vi.verbose( { exclude }, 1 + level, { msg: { italic: true } } );
 
         if ( this.params.debug && this.params.verbose && exclude ) {
 
@@ -664,12 +669,12 @@ export abstract class AbstractStage<
                     'this.params.without == subStage': this.params.without == subStage,
                     'this.params.without.includes( subStage )': this.params.without.includes( subStage ),
                 }
-            }, 2 + level, { italic: true } );
+            }, 2 + level, { msg: { italic: true } } );
         }
 
         const result = Boolean( include && !exclude );
 
-        this.console.vi.debug( { 'isSubStageIncluded() return': result }, level + ( this.params.verbose ? 1 : 0 ), { italic: true } );
+        this.console.vi.debug( { 'isSubStageIncluded() return': result }, level + ( this.params.verbose ? 1 : 0 ), { msg: { italic: true } } );
 
         if ( this.params.debug && this.params.verbose && !result ) {
 
@@ -679,7 +684,7 @@ export abstract class AbstractStage<
                     exclude,
                     'this[ subStage ]': Boolean( this[ subStage as keyof typeof this ] ),
                 }
-            }, 2 + level, { italic: true } );
+            }, 2 + level, { msg: { italic: true } } );
         }
 
         return result;
@@ -817,7 +822,7 @@ export abstract class AbstractStage<
         if ( typeof error == 'object' ) {
 
             const errArgs = { exitProcess: false };
-            const [ typedError, errInfo ] = getErrorInfo( error, level, this.console, this.fs, errArgs );
+            const [ typedError, errInfo ] = getErrorInfo( error, this.console, this.fs, errArgs );
 
             const isSassError = 'sassStack' in error || 'sassMessage' in error;
 
@@ -857,8 +862,8 @@ export abstract class AbstractStage<
                 msgs.push(
                     [ `[Sass: Error] ${ shortMessage }`, { bold: true, italic: false } ],
                     [ messageDetails, { bold: false, italic: false } ],
-                    ...errorStringify.cause( error, errInfo, level, this.console, this.fs, errArgs ),
-                    ...errorStringify.output( error, errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.cause( errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.output( error, errInfo, this.console, this.fs, errArgs ),
                 );
 
                 if ( error.stack ) {
@@ -887,19 +892,19 @@ export abstract class AbstractStage<
 
                 if ( this.params.debug ) {
                     msgs.push(
-                        ...errorStringify.details( error, errInfo, level, this.console, this.fs, errArgs ),
-                        ...errorStringify.dump( error, errInfo, level, this.console, this.fs, errArgs ),
+                        ...errorStringify.details( errInfo, this.console, this.fs, errArgs ),
+                        ...errorStringify.dump( error, errInfo, this.console, this.fs, errArgs ),
                     );
                 }
 
             } else if ( error instanceof Error ) {
 
                 msgs.push(
-                    ...errorStringify.message( error, errInfo, level, this.console, this.fs, errArgs ),
-                    ...errorStringify.output( error, errInfo, level, this.console, this.fs, errArgs ),
-                    ...errorStringify.cause( error, errInfo, level, this.console, this.fs, errArgs ),
-                    ...errorStringify.stack( error, errInfo, level, this.console, this.fs, errArgs ),
-                    ...errorStringify.details( error, errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.message( errInfo ),
+                    ...errorStringify.output( error, errInfo, this.console, this.fs, errArgs ),
+                    ...errorStringify.cause( errInfo, level, this.console, this.fs, errArgs ),
+                    ...errorStringify.stack( errInfo, this.console, this.fs, errArgs ),
+                    ...errorStringify.details( errInfo, this.console, this.fs, errArgs ),
                 );
             } else {
                 msgs.push( [ VariableInspector.stringify( { error } ) ] );
@@ -1243,8 +1248,8 @@ export abstract class AbstractStage<
      * 
      * **This method should probably not be overwritten.**
      * 
-     * @param stage  Stage to run as a substage.
-     * @param level  Depth level for output to the console.
+     * @param stageInput  Stage to run as a substage.
+     * @param level       Depth level for output to the console.
      * 
      * @category Running
      * 

@@ -928,11 +928,9 @@ export namespace Stage {
         /**
          * Compile multiple scss files at once.
          * 
-         * @param paths.input   Scss input path.
-         * @param paths.output  Scss output path.
-         * 
-         * @param level         Depth level for this message.
-         * @param sassOpts      Overrides for the configured sass options in {@link Stage.Compiler.args}.
+         * @param paths     Scss input & output paths.
+         * @param level     Depth level for this message.
+         * @param sassOpts  Overrides for the configured sass options in {@link Stage.Compiler.args}.
          * 
          * @since 0.3.0-alpha.1
          */

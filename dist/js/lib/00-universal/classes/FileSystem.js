@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import { globSync } from 'glob';
@@ -146,39 +146,36 @@ export class FileSystem extends NodeFiles {
     /* Args ===================================== */
     args;
     get ARGS_DEFAULT() {
-        const copy = {
-            force: true,
-            recursive: true,
-            rename: true,
-            glob: {
-                absolute: false,
-                dot: true,
-                filesOnly: false,
-            },
-        };
-        const glob = {
-            absolute: true,
-            dot: true,
-            ignore: [...FileSystem.globs.SYSTEM],
-        };
-        const prettier = {
-            _: FileSystem.prettierConfig,
-            css: FileSystem.prettierConfig.overrides.css,
-            html: FileSystem.prettierConfig.overrides.html,
-            js: FileSystem.prettierConfig.overrides.js,
-            json: FileSystem.prettierConfig.overrides.json,
-            md: FileSystem.prettierConfig.overrides.md,
-            mdx: FileSystem.prettierConfig.overrides.mdx,
-            scss: FileSystem.prettierConfig.overrides.scss,
-            ts: FileSystem.prettierConfig.overrides.ts,
-            yaml: FileSystem.prettierConfig.overrides.yaml,
-        };
         return {
             ...NodeFiles.prototype.ARGS_DEFAULT,
-            copy,
-            glob,
+            copy: {
+                force: true,
+                recursive: true,
+                rename: true,
+                glob: {
+                    absolute: false,
+                    dot: true,
+                    filesOnly: false,
+                },
+            },
+            glob: {
+                absolute: true,
+                dot: true,
+                ignore: [...FileSystem.globs.SYSTEM],
+            },
             minify: FileSystem.minify.ARGS_DEFAULT,
-            prettier,
+            prettier: {
+                _: FileSystem.prettierConfig,
+                css: FileSystem.prettierConfig.overrides.css,
+                html: FileSystem.prettierConfig.overrides.html,
+                js: FileSystem.prettierConfig.overrides.js,
+                json: FileSystem.prettierConfig.overrides.json,
+                md: FileSystem.prettierConfig.overrides.md,
+                mdx: FileSystem.prettierConfig.overrides.mdx,
+                scss: FileSystem.prettierConfig.overrides.scss,
+                ts: FileSystem.prettierConfig.overrides.ts,
+                yaml: FileSystem.prettierConfig.overrides.yaml,
+            },
         };
     }
     buildArgs(args) {

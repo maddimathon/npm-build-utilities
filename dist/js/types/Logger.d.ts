@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-alpha.19.draft
+ * @maddimathon/build-utilities@0.3.0-beta.draft
  * @license MIT
  */
 import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
@@ -52,27 +52,24 @@ export interface Logger {
      * @param msg       The message(s) to print to the console.
      * @param level     Depth level for output to the console.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
-    debug(msg: Parameters<Logger['log']>[0], level: Parameters<Logger['log']>[1], msgArgs?: Parameters<Logger['log']>[2], timeArgs?: Parameters<Logger['log']>[3]): void;
+    debug(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: RecursivePartial<Logger.MsgArgs>): void;
     /**
      * Outputs the given error message to the console.
      *
      * @param msg       Error message(s).
      * @param level     Depth level for output to the console.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
-    error(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
+    error(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: RecursivePartial<Logger.MsgArgs>): void;
     /**
      * Prints a timestamped log message to the console.
      *
      * @param msg       The message(s) to print to the console.
      * @param level     Depth level for output to the console.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
-    log(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
+    log(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: RecursivePartial<Logger.MsgArgs>): void;
     /**
      * Prints a timestamped log message to the console. Only if
      * {@link CLI.Params.progress} is truthy.
@@ -80,18 +77,16 @@ export interface Logger {
      * @param msg       The message(s) to print to the console.
      * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
-    progress(msg: Parameters<Logger['log']>[0], level: Parameters<Logger['log']>[1], msgArgs?: Parameters<Logger['log']>[2], timeArgs?: Parameters<Logger['log']>[3]): void;
+    progress(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: RecursivePartial<Logger.MsgArgs>): void;
     /**
      * Outputs the given warning message to the console.
      *
      * @param msg       Warning message(s).
      * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
-    warn(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
+    warn(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: RecursivePartial<Logger.MsgArgs>): void;
     /**
      * Method for printing a log message to the console. Only if
      * {@link CLI.Params.verbose} is truthy.
@@ -99,9 +94,8 @@ export interface Logger {
      * @param msg       The message(s) to print to the console.
      * @param level     Depth level for this message.
      * @param msgArgs   Argument overrides for the message.
-     * @param timeArgs  Argument overrides for the message's timestamp.
      */
-    verbose(msg: Parameters<Logger['log']>[0], level: Parameters<Logger['log']>[1], msgArgs?: Parameters<Logger['log']>[2], timeArgs?: Parameters<Logger['log']>[3]): void;
+    verbose(msg: string | string[] | MessageMaker.BulkMsgs, level: number, msgArgs?: RecursivePartial<Logger.MsgArgs>): void;
 }
 /**
  * Type utilities for {@link Logger} classes.
@@ -126,6 +120,14 @@ export declare namespace Logger {
          */
         nc: RecursivePartial<NodeConsole.Args>;
     }
+    /**
+     * @since 0.3.0-beta.draft
+     */
+    interface MsgArgs extends Omit<NodeConsole.MsgArgs & MessageMaker.TimestampedArgs, 'depth'> {
+    }
+    /**
+     * @since 0.3.0-alpha.9
+     */
     interface Prompt_SelectMethod {
         <T_Return extends string, T_Config extends Omit<NodeConsole_Prompt.SelectConfig<T_Return>, "choices"> & {
             choices: T_Return[];
@@ -165,45 +167,60 @@ export declare namespace Logger {
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param level     Depth level for this message.
-         * @param msgArgs   Argument overrides for the message.
-         * @param timeArgs  Argument overrides for the message's timestamp.
+         * @param args      Argument overrides for the variable's inspection, including msg options.
+         *
+         * @since 0.3.0-beta.draft — Reconfigured args parameters to one object of inspection args.
          */
-        debug(variable: Parameters<VarInspect['log']>[0], level: Parameters<VarInspect['log']>[1], msgArgs?: Parameters<VarInspect['log']>[2], timeArgs?: Parameters<VarInspect['log']>[3]): void;
+        debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, args?: RecursivePartial<VarInspect.Args>): void;
         /**
          * Prints a timestamped log message to the console.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param level     Depth level for this message.
-         * @param msgArgs   Argument overrides for the message.
-         * @param timeArgs  Argument overrides for the message's timestamp.
+         * @param args      Argument overrides for the variable's inspection, including msg options.
+         *
+         * @since 0.3.0-beta.draft — Reconfigured args parameters to one object of inspection args.
          */
-        log(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, msgArgs?: Partial<MessageMaker.BulkMsgArgs>, timeArgs?: Partial<MessageMaker.BulkMsgArgs>): void;
+        log(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, args?: RecursivePartial<VarInspect.Args>): void;
         /**
          * Prints a timestamped log message to the console. Only if
          * {@link CLI.Params.progress} is truthy.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param level     Depth level for this message.
-         * @param msgArgs   Argument overrides for the message.
-         * @param timeArgs  Argument overrides for the message's timestamp.
+         * @param args      Argument overrides for the variable's inspection, including msg options.
+         *
+         * @since 0.3.0-beta.draft — Reconfigured args parameters to one object of inspection args.
          */
-        progress(variable: Parameters<VarInspect['log']>[0], level: Parameters<VarInspect['log']>[1], msgArgs?: Parameters<VarInspect['log']>[2], timeArgs?: Parameters<VarInspect['log']>[3]): void;
+        progress(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, args?: RecursivePartial<VarInspect.Args>): void;
         /**
          * Outputs a default-level message of the variable.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param args      Override arguments for converting the variable.
          */
-        stringify(variable: ConstructorParameters<typeof VariableInspector>[0], args?: ConstructorParameters<typeof VariableInspector>[1]): string;
+        stringify(variable: ConstructorParameters<typeof VariableInspector>[0], args?: RecursivePartial<VarInspect.Args>): string;
         /**
          * Method for printing a log message to the console. Only if
          * {@link CLI.Params.verbose} is truthy.
          *
          * @param variable  Variable to inspect. See {@link VariableInspector}.
          * @param level     Depth level for this message.
-         * @param msgArgs   Argument overrides for the message.
-         * @param timeArgs  Argument overrides for the message's timestamp.
+         * @param args      Argument overrides for the variable's inspection, including msg options.
+         *
+         * @since 0.3.0-beta.draft — Reconfigured args parameters to one object of inspection args.
          */
-        verbose(variable: Parameters<VarInspect['log']>[0], level: Parameters<VarInspect['log']>[1], msgArgs?: Parameters<VarInspect['log']>[2], timeArgs?: Parameters<VarInspect['log']>[3]): void;
+        verbose(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, args?: RecursivePartial<VarInspect.Args>): void;
+    }
+    /**
+     * @since 0.3.0-beta.draft
+     */
+    namespace VarInspect {
+        /**
+         * @since 0.3.0-beta.draft
+         */
+        interface Args extends NonNullable<ConstructorParameters<typeof VariableInspector>[1]> {
+            msg: Omit<NodeConsole.MsgArgs & MessageMaker.BulkMsgArgs, 'depth'>;
+        }
     }
 }
