@@ -142,7 +142,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'nested-calc': {
                     readonly preserve: false;
                 };
-                readonly 'nesting-rules': true;
+                readonly 'nesting-rules': false;
                 readonly 'not-pseudo-class': true;
                 readonly 'oklab-function': {
                     readonly preserve: true;

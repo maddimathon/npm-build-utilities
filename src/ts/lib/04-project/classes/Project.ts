@@ -179,8 +179,7 @@ export class Project {
 
         // returns
         if ( !stageClass ) {
-
-            if ( this.params.debug ) {
+            if ( this.params.debug || this.params.verbose ) {
                 await this.debug( console, stageClass ?? null, stageArgs ?? null, null );
             }
             return;

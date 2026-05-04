@@ -107,7 +107,7 @@ export class Project {
             (await this.config.getStage(stage, console)) ?? [];
         // returns
         if (!stageClass) {
-            if (this.params.debug) {
+            if (this.params.debug || this.params.verbose) {
                 await this.debug(
                     console,
                     stageClass ?? null,

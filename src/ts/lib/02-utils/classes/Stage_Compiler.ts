@@ -283,7 +283,7 @@ export class Stage_Compiler implements Stage.Compiler {
             'media-queries-aspect-ratio-number-values': false,
             'media-query-ranges': true,
             'nested-calc': { preserve: false },
-            'nesting-rules': true,
+            'nesting-rules': false,
             'not-pseudo-class': true,
             'oklab-function': { preserve: true },
             'opacity-percentage': true,
@@ -1448,9 +1448,10 @@ export class Stage_Compiler implements Stage.Compiler {
             compiledPaths.push( ...compiled );
 
             if ( opts.benchmarkCompileTime ) {
+                const _msg = paths.length > maxConcurrent ? ` – ${ compiled } files` : '';
 
                 this.benchmarkEndTimeLog(
-                    `done compiling chunk #${ ( i / maxConcurrent ) + 1 }`,
+                    `done compiling chunk #${ ( i / maxConcurrent ) + 1 }${ _msg }`,
                     1 + level,
                     _chunkStart,
                     DateTime.now(),

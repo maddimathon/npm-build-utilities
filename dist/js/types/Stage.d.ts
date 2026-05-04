@@ -530,6 +530,12 @@ export declare namespace Stage {
          */
         interface Release extends Args {
             /**
+             * Whether to attach the release zip to the github release.
+             *
+             * @since 0.3.0-beta.draft
+             */
+            attachZip?: boolean;
+            /**
              * Files to add to commit after packaging but before release.
              */
             commit: null | (

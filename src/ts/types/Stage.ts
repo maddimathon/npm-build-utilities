@@ -676,6 +676,13 @@ export namespace Stage {
         export interface Release extends Args {
 
             /**
+             * Whether to attach the release zip to the github release.
+             * 
+             * @since ___PKG_VERSION___
+             */
+            attachZip?: boolean;
+
+            /**
              * Files to add to commit after packaging but before release.
              */
             commit: null | (

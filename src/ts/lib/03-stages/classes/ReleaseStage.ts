@@ -622,7 +622,7 @@ export class ReleaseStage extends AbstractStage<
 
         const releaseAttachment = `"${ this.releaseDir.replace( /\/*$/g, '' ) + '.zip' }#${ this.pkg.name }@${ version }"`;
 
-        const releaseCmd = `gh release create ${ version } ${ releaseAttachment } ${ this.console.nc.cmdArgs( {
+        const releaseCmd = `gh release create ${ version } ${ this.args.attachZip ? releaseAttachment : '' } ${ this.console.nc.cmdArgs( {
             draft: true,
             'notes-file': this.config.paths.notes.release,
             title: `${ version } — ${ timestamp( null, { date: true, time: false } ) }`,

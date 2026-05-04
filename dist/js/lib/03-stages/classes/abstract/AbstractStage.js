@@ -959,7 +959,7 @@ export class AbstractStage {
             stageArgs.utils.fs = undefined;
         }
         this.params.debug && this.console.vi.verbose({ _subParams }, level);
-        return new stageClass(
+        await new stageClass(
             this.config,
             _subParams,
             stageArgs,
