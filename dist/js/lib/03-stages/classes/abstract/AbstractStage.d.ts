@@ -166,11 +166,15 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
     /**
      * Whether the current run is the result of a watched change.
      *
+     * @category Config
+     *
      * @since 0.3.0-alpha.1
      */
     get isWatchedUpdate(): boolean;
     /**
      * Default scss options according to config & params.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.1
      */
@@ -207,6 +211,8 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
     /**
      * Takes an input tsconfig object and attempts to resolve and
      * include the values from any configs in its "extends".
+     *
+     * @category Typescript
      *
      * @since 0.3.0-beta.draft
      */
@@ -270,6 +276,8 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
     uncaughtErrorListener(error: unknown): void;
     /**
      * Handles errors thrown during sass compile.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.3
      */

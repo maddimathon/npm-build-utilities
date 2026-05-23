@@ -35,6 +35,8 @@ export class DocumentStage extends AbstractStage {
      */
     static get typeDocConfig_externalSymbolLinkMappings() {
         const sass = {
+            CustomFunction:
+                'https://sass-lang.com/documentation/js-api/types/customfunction/',
             Logger: 'https://sass-lang.com/documentation/js-api/interfaces/logger-1/',
             NodePackageImporter:
                 'https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/',

@@ -46,6 +46,8 @@ export class Stage_Compiler {
      *
      * If none is found, a console prompt asks to write a default file.
      *
+     * @category Typescript
+     *
      * @param stage            Current stage being run.
      * @param level            Depth level for output to the console.
      * @param writeIfNotFound  Whether to prompt (via console) to write a new tsconfig file if none are found.
@@ -171,6 +173,9 @@ export class Stage_Compiler {
         }
         return [tsConfigFile];
     }
+    /**
+     * @category Meta
+     */
     parseArgs(defaultArgs, inputArgs) {
         const sass =
             typeof inputArgs?.sass === 'function' ?
@@ -191,6 +196,8 @@ export class Stage_Compiler {
     }
     /**
      * Default configuration for working with PostCSS.
+     *
+     * @category PostCSS
      *
      * @since 0.2.0-alpha
      */
@@ -278,6 +285,9 @@ export class Stage_Compiler {
     }
     /* LOCAL PROPERTIES
      * ====================================================================== */
+    /**
+     * @category Typescript
+     */
     get tsConfig() {
         const tsSrcDir = this.config.getSrcDir(this.fs, 'ts')[0];
         const rootDir = tsSrcDir?.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
@@ -298,6 +308,9 @@ export class Stage_Compiler {
         };
     }
     /* Args ===================================== */
+    /**
+     * @category Meta
+     */
     get ARGS_DEFAULT() {
         return {
             /**
@@ -338,34 +351,52 @@ export class Stage_Compiler {
             },
         };
     }
+    /**
+     * @category Meta
+     */
     args;
     /* CONSTRUCTOR
      * ====================================================================== */
+    /**
+     * @category Constructor
+     */
     constructor(
         /**
          * The name of the stage using this compiler instance.
+         *
+         * @category Internal
          *
          * @since 0.3.0-beta.draft
          */
         stage,
         /**
          * Current project config.
+         *
+         * @category Internal
          */
         config,
         /**
          * Current CLI params.
+         *
+         * @category Internal
          */
         params,
         /**
          * Instance used to log messages and debugging info.
+         *
+         * @category Internal
          */
         console,
         /**
          * Instance used to work with paths and files.
+         *
+         * @category Internal
          */
         fs,
         /**
          * An error handler for caught errors.
+         *
+         * @category Internal
          *
          * @since 0.3.0-beta.draft
          */
@@ -393,9 +424,11 @@ export class Stage_Compiler {
     /**
      * Logs the message for the benchmark end notice.
      *
+     * @category Internal
+     *
      * @since 0.3.0-alpha.1
      */
-    benchmarkEndTimeLog(msg, level, start, end) {
+    benchmarkEndTimeLog(msg, level, start, end, linesOut = 0) {
         const timePassed = Interval.fromDateTimes(start, end);
         const durationInSeconds = timePassed.toDuration().toMillis() / 1000;
         this.console.log(
@@ -407,12 +440,15 @@ export class Stage_Compiler {
                 clr: 'grey',
                 italic: true,
                 linesIn: 0,
-                linesOut: 0,
+                linesOut,
+                maxWidth: null,
             },
         );
     }
     /**
      * Logs the message for the benchmark start notice.
+     *
+     * @category Internal
      *
      * @since 0.3.0-alpha.1
      */
@@ -425,12 +461,15 @@ export class Stage_Compiler {
                 italic: true,
                 linesIn: 0,
                 linesOut: 0,
+                maxWidth: null,
             },
         );
     }
     /**
      * Takes an input tsconfig path (or object) and attempts to resolve and
      * include the values from any configs in its "extends".
+     *
+     * @category Typescript
      *
      * @since 0.3.0-beta.draft
      */
@@ -575,6 +614,8 @@ export class Stage_Compiler {
     /**
      * Gets the value of the given tsconfig file.
      *
+     * @category Typescript
+     *
      * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
      *
      * @param tsconfig         Path to TS config json used to compile the project.
@@ -631,6 +672,8 @@ export class Stage_Compiler {
     /**
      * Gets the value of the given tsconfig file.
      *
+     * @category Typescript
+     *
      * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
      *
      * @param tsconfig         Path to TS config json.
@@ -661,6 +704,8 @@ export class Stage_Compiler {
     }
     /**
      * Combines two ts config objects, overriding and merging as applicable.
+     *
+     * @category Typescript
      *
      * @since 0.3.0-beta.draft
      */
@@ -702,6 +747,9 @@ export class Stage_Compiler {
             $schema: 'https://json.schemastore.org/tsconfig',
         };
     }
+    /**
+     * @category PostCSS
+     */
     async postCSS(paths, level, _postCssOpts = {}) {
         const postCssOpts = mergeArgs(this.args.postCSS, _postCssOpts, true);
         const plugins = postCssOpts.plugins ?? [];
@@ -772,6 +820,8 @@ export class Stage_Compiler {
      * Runs the compileAsync from the sass package and returns with an ending
      * timestamp.
      *
+     * @category Sass
+     *
      * @since 0.3.0-alpha.1
      */
     async sassCompileAsync(input, level, opts) {
@@ -813,10 +863,15 @@ export class Stage_Compiler {
             },
         );
     }
+    /**
+     * @category Sass
+     */
     static DEFAULT_PATHTOSASSLOGGINGROOT =
         'node_modules/@maddimathon/build-utilities/node_modules';
     /**
      * Filters the paths in stack traces from the sass compiler API.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.3
      */
@@ -862,6 +917,8 @@ export class Stage_Compiler {
     /**
      * Runs a bare-bones instance of the sass API to compile. Intended only for
      * use by {@link Stage_Compiler.scssAPI} and {@link Stage_Compiler.scssBulk}.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.12
      */
@@ -918,6 +975,8 @@ export class Stage_Compiler {
     /**
      * Compiles scss via API. This skips compiling options and validating values.
      *
+     * @category Sass
+     *
      * @since 0.3.0-alpha.1
      */
     async scssAPI(input, output, level, sassCompleteOpts, logger, compileFn) {
@@ -945,6 +1004,8 @@ export class Stage_Compiler {
     }
     /**
      * Coverts scss args for the CLI.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.1
      */
@@ -999,6 +1060,8 @@ export class Stage_Compiler {
     /**
      * Compiles scs via CLI. This skips compiling options and validating values.
      *
+     * @category Sass
+     *
      * @since 0.3.0-alpha.1
      */
     async scssCLI(input, output, level, sassCompleteOpts) {
@@ -1021,6 +1084,8 @@ export class Stage_Compiler {
     }
     /**
      * Best for CLI or single-file compiles. Otherwise use scssBulk.
+     *
+     * @category Sass
      */
     async scss(input, output, level, sassOpts) {
         const opts = mergeArgs(this.args.sass, sassOpts, true);
@@ -1060,6 +1125,11 @@ export class Stage_Compiler {
             },
         );
     }
+    /**
+     * @category Sass
+     *
+     * @since 0.3.0-alpha.1
+     */
     async scssBulk(paths, level, sassOpts, maxConcurrent = 10) {
         const opts = mergeArgs(this.args.sass, sassOpts, true);
         const startTime = DateTime.now();
@@ -1182,12 +1252,15 @@ export class Stage_Compiler {
             compiledPaths.push(...compiled);
             if (opts.benchmarkCompileTime) {
                 const _msg =
-                    paths.length > maxConcurrent ? ` – ${compiled} files` : '';
+                    paths.length > maxConcurrent ?
+                        ` – ${compiled.length} files`
+                    :   '';
                 this.benchmarkEndTimeLog(
                     `done compiling chunk #${i / maxConcurrent + 1}${_msg}`,
                     1 + level,
                     _chunkStart,
                     DateTime.now(),
+                    1,
                 );
             }
         }
@@ -1233,6 +1306,8 @@ export class Stage_Compiler {
     }
     /**
      * {@inheritDoc Stage.Compiler.typescript}
+     *
+     * @category Typescript
      *
      * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
      */
@@ -1324,20 +1399,20 @@ export class Stage_Compiler {
         fs;
         params;
         sassErrorStackFilter;
-        level;
         args;
         deprecationWarnings = new Map();
         _sassLoggerWarningDuringPackaging = false;
         get sassLoggerWarningDuringPackaging() {
             return this._sassLoggerWarningDuringPackaging;
         }
+        level;
         constructor(console, fs, params, sassErrorStackFilter, level, args) {
             this.console = console;
             this.fs = fs;
             this.params = params;
             this.sassErrorStackFilter = sassErrorStackFilter;
-            this.level = level;
             this.args = args;
+            this.level = level + (this.params.verbose ? 1 : 0);
         }
         messageMaker(options) {
             const msgs = [];

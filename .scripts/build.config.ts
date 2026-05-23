@@ -31,7 +31,13 @@ const config: Config = {
         ts: {
             tidyGlobs: [
                 '**/tsconfig.tsbuildinfo',
+
                 'types/**/*.js',
+                'types/**/*.js.map',
+                'types/**/*.test.d.ts',
+                'types/**/*.test.d.ts.map',
+                'types/**/*.test.js',
+                'types/**/*.test.js.map',
             ],
         },
     },

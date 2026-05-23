@@ -65,12 +65,11 @@ export class DummyConsole implements Logger {
         level: number,
         args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        this.nc.timestamp.log(
+        this.nc.timestamp.error(
             msg,
             {
                 ...args,
                 depth: level,
-                via: 'error',
             },
         );
     }
@@ -118,12 +117,12 @@ export class DummyConsole implements Logger {
         args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
         if ( !this.params.verbose ) { return; }
-        this.nc.timestamp.log(
+
+        this.nc.timestamp.verbose(
             msg,
             {
                 ...args,
                 depth: level,
-                via: 'info',
             },
         );
     }
@@ -322,12 +321,11 @@ class _DummyConsole_VarDump implements Logger.VarInspect {
     ) {
         if ( !this.params.verbose ) { return; }
 
-        this.nc.timestamp.log(
+        this.nc.timestamp.verbose(
             this.stringify( variable, args ),
             {
                 ...msg,
                 depth: level,
-                via: 'info',
             },
         );
     }

@@ -396,6 +396,8 @@ export abstract class AbstractStage<
     /**
      * Whether the current run is the result of a watched change.
      * 
+     * @category Config
+     * 
      * @since 0.3.0-alpha.1
      */
     public get isWatchedUpdate(): boolean {
@@ -412,6 +414,8 @@ export abstract class AbstractStage<
 
     /**
      * Default scss options according to config & params.
+     * 
+     * @category Sass
      * 
      * @since 0.3.0-alpha.1
      */
@@ -555,6 +559,8 @@ export abstract class AbstractStage<
     /**
      * Takes an input tsconfig object and attempts to resolve and
      * include the values from any configs in its "extends".
+     * 
+     * @category Typescript
      * 
      * @since ___PKG_VERSION___
      */
@@ -807,6 +813,8 @@ export abstract class AbstractStage<
 
     /**
      * Handles errors thrown during sass compile.
+     * 
+     * @category Sass
      * 
      * @since 0.3.0-alpha.3
      */

@@ -195,15 +195,12 @@ export class Stage_Console implements Logger {
         level: number,
         args: RecursivePartial<Logger.MsgArgs> = {},
     ) {
-        this.nc.timestamp.log(
+        this.nc.timestamp.error(
             msg,
-            {
-                ...this.msgArgs( level, {
-                    clr: 'red',
-                    ...args,
-                } ),
-                via: 'error',
-            },
+            this.msgArgs( level, {
+                clr: 'red',
+                ...args,
+            } ),
         );
     }
 
@@ -329,12 +326,9 @@ export class Stage_Console implements Logger {
     ): void {
         if ( !this.params.verbose ) { return; }
 
-        this.nc.timestamp.log(
+        this.nc.timestamp.verbose(
             msg,
-            {
-                ...this.msgArgs( level, args ),
-                via: 'info',
-            },
+            this.msgArgs( level, args ),
         );
     }
 

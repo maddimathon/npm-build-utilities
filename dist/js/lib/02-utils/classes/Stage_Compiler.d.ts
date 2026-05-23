@@ -32,27 +32,39 @@ export declare class Stage_Compiler implements Stage.Compiler {
     /**
      * The name of the stage using this compiler instance.
      *
+     * @category Internal
+     *
      * @since 0.3.0-beta.draft
      */
     protected readonly stage: string;
     /**
      * Current project config.
+     *
+     * @category Internal
      */
     protected readonly config: Config.Class;
     /**
      * Current CLI params.
+     *
+     * @category Internal
      */
     protected readonly params: CLI.Params;
     /**
      * Instance used to log messages and debugging info.
+     *
+     * @category Internal
      */
     protected readonly console: Stage_Console;
     /**
      * Instance used to work with paths and files.
+     *
+     * @category Internal
      */
     protected readonly fs: FileSystem;
     /**
      * An error handler for caught errors.
+     *
+     * @category Internal
      *
      * @since 0.3.0-beta.draft
      */
@@ -62,6 +74,8 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * If none is found, a console prompt asks to write a default file.
      *
+     * @category Typescript
+     *
      * @param stage            Current stage being run.
      * @param level            Depth level for output to the console.
      * @param writeIfNotFound  Whether to prompt (via console) to write a new tsconfig file if none are found.
@@ -69,9 +83,14 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @since 0.2.0-alpha
      */
     static getTsConfigPaths(stage: Stage, level: number, writeIfNotFound?: boolean): Promise<string[]>;
+    /**
+     * @category Meta
+     */
     parseArgs(defaultArgs: Stage.Compiler['args'], inputArgs: Config.Class['compiler']): Stage.Compiler['args'];
     /**
      * Default configuration for working with PostCSS.
+     *
+     * @category PostCSS
      *
      * @since 0.2.0-alpha
      */
@@ -175,6 +194,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly map: false;
         };
     };
+    /**
+     * @category Typescript
+     */
     get tsConfig(): {
         readonly extends: "@maddimathon/build-utilities/tsconfig";
         readonly exclude: ["**/node_modules/**/*"];
@@ -183,6 +205,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly rootDir: string | undefined;
         };
     };
+    /**
+     * @category Meta
+     */
     get ARGS_DEFAULT(): {
         /**
          * This is actually the value of the
@@ -221,34 +246,52 @@ export declare class Stage_Compiler implements Stage.Compiler {
             readonly tidyGlobs: undefined;
         };
     };
+    /**
+     * @category Meta
+     */
     readonly args: Stage.Compiler.Args & {
         sass: Classify<Stage.Compiler.Args.Sass>;
     };
+    /**
+     * @category Constructor
+     */
     constructor(
     /**
      * The name of the stage using this compiler instance.
+     *
+     * @category Internal
      *
      * @since 0.3.0-beta.draft
      */
     stage: string, 
     /**
      * Current project config.
+     *
+     * @category Internal
      */
     config: Config.Class, 
     /**
      * Current CLI params.
+     *
+     * @category Internal
      */
     params: CLI.Params, 
     /**
      * Instance used to log messages and debugging info.
+     *
+     * @category Internal
      */
     console: Stage_Console, 
     /**
      * Instance used to work with paths and files.
+     *
+     * @category Internal
      */
     fs: FileSystem, 
     /**
      * An error handler for caught errors.
+     *
+     * @category Internal
      *
      * @since 0.3.0-beta.draft
      */
@@ -256,11 +299,15 @@ export declare class Stage_Compiler implements Stage.Compiler {
     /**
      * Logs the message for the benchmark end notice.
      *
+     * @category Internal
+     *
      * @since 0.3.0-alpha.1
      */
-    protected benchmarkEndTimeLog(msg: string, level: number, start: DateTime, end: DateTime): void;
+    protected benchmarkEndTimeLog(msg: string, level: number, start: DateTime, end: DateTime, linesOut?: number): void;
     /**
      * Logs the message for the benchmark start notice.
+     *
+     * @category Internal
      *
      * @since 0.3.0-alpha.1
      */
@@ -268,6 +315,8 @@ export declare class Stage_Compiler implements Stage.Compiler {
     /**
      * Takes an input tsconfig path (or object) and attempts to resolve and
      * include the values from any configs in its "extends".
+     *
+     * @category Typescript
      *
      * @since 0.3.0-beta.draft
      */
@@ -278,6 +327,8 @@ export declare class Stage_Compiler implements Stage.Compiler {
     }>;
     /**
      * Gets the value of the given tsconfig file.
+     *
+     * @category Typescript
      *
      * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
      *
@@ -290,6 +341,8 @@ export declare class Stage_Compiler implements Stage.Compiler {
     getTsConfig(tsconfig: string, level: number, errorIfNotFound?: boolean): Partial<TsConfig>;
     /**
      * Gets the value of the given tsconfig file.
+     *
+     * @category Typescript
      *
      * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
      *
@@ -305,6 +358,8 @@ export declare class Stage_Compiler implements Stage.Compiler {
     /**
      * Combines two ts config objects, overriding and merging as applicable.
      *
+     * @category Typescript
+     *
      * @since 0.3.0-beta.draft
      */
     protected mergeTsConfigs<T_Fallbacks extends Partial<TsConfig>, T_Overrides extends Partial<TsConfig>>(fallbacks: T_Fallbacks, overrides: T_Overrides): T_Fallbacks & {
@@ -316,6 +371,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
         readonly compilerOptions: TsConfig.CompilerOpts;
         readonly $schema: "https://json.schemastore.org/tsconfig";
     };
+    /**
+     * @category PostCSS
+     */
     postCSS(paths: {
         from: string;
         to?: string;
@@ -324,12 +382,19 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * Runs the compileAsync from the sass package and returns with an ending
      * timestamp.
      *
+     * @category Sass
+     *
      * @since 0.3.0-alpha.1
      */
     protected sassCompileAsync(input: string, level: number, opts: Stage.Compiler.Args.Sass): Promise<sass.CompileResult>;
+    /**
+     * @category Sass
+     */
     protected static DEFAULT_PATHTOSASSLOGGINGROOT: string;
     /**
      * Filters the paths in stack traces from the sass compiler API.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.3
      */
@@ -337,6 +402,8 @@ export declare class Stage_Compiler implements Stage.Compiler {
     /**
      * Runs a bare-bones instance of the sass API to compile. Intended only for
      * use by {@link Stage_Compiler.scssAPI} and {@link Stage_Compiler.scssBulk}.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.12
      */
@@ -347,6 +414,8 @@ export declare class Stage_Compiler implements Stage.Compiler {
     /**
      * Compiles scss via API. This skips compiling options and validating values.
      *
+     * @category Sass
+     *
      * @since 0.3.0-alpha.1
      */
     protected scssAPI(input: string, output: string, level: number, sassCompleteOpts: Classify<Stage.Compiler.Args.Sass>, logger?: Stage_Compiler.SassLogger, compileFn?: (input: string, level: number, opts: Stage.Compiler.Args.Sass) => Promise<sass.CompileResult>): Promise<{
@@ -356,11 +425,15 @@ export declare class Stage_Compiler implements Stage.Compiler {
     /**
      * Coverts scss args for the CLI.
      *
+     * @category Sass
+     *
      * @since 0.3.0-alpha.1
      */
     protected scssCLI_args(completeSassOpts: Stage.Compiler.Args.Sass): string;
     /**
      * Compiles scs via CLI. This skips compiling options and validating values.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.1
      */
@@ -370,14 +443,23 @@ export declare class Stage_Compiler implements Stage.Compiler {
     }>;
     /**
      * Best for CLI or single-file compiles. Otherwise use scssBulk.
+     *
+     * @category Sass
      */
     scss(input: string, output: string, level: number, sassOpts?: Stage.Compiler.Args.Sass): Promise<string>;
+    /**
+     * @category Sass
+     *
+     * @since 0.3.0-alpha.1
+     */
     scssBulk(paths: {
         input: string;
         output: string;
     }[], level: number, sassOpts?: Stage.Compiler.Args.Sass, maxConcurrent?: number): Promise<string[]>;
     /**
      * {@inheritDoc Stage.Compiler.typescript}
+     *
+     * @category Typescript
      *
      * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
      */
@@ -438,11 +520,11 @@ export declare namespace Stage_Compiler {
         protected readonly fs: Stage_Compiler['fs'];
         protected readonly params: Stage_Compiler['params'];
         protected readonly sassErrorStackFilter: Stage_Compiler['sassErrorStackFilter'];
-        protected readonly level: number;
         protected readonly args: Classify<Stage.Compiler.Args.Sass>;
         protected readonly deprecationWarnings: Map<keyof sass.Deprecations, Set<SassLogger.DeprecationWarning>>;
         protected _sassLoggerWarningDuringPackaging: boolean;
         get sassLoggerWarningDuringPackaging(): boolean;
+        protected readonly level: number;
         constructor(console: Stage_Compiler['console'], fs: Stage_Compiler['fs'], params: Stage_Compiler['params'], sassErrorStackFilter: Stage_Compiler['sassErrorStackFilter'], level: number, args: Classify<Stage.Compiler.Args.Sass>);
         protected messageMaker(options: sass.LoggerWarnOptions | {
             span: sass.SourceSpan;

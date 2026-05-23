@@ -144,13 +144,13 @@ export class Stage_Console {
     }
     /** {@inheritDoc Logger.error} */
     error(msg, level, args = {}) {
-        this.nc.timestamp.log(msg, {
-            ...this.msgArgs(level, {
+        this.nc.timestamp.error(
+            msg,
+            this.msgArgs(level, {
                 clr: 'red',
                 ...args,
             }),
-            via: 'error',
-        });
+        );
     }
     /** {@inheritDoc Logger.log} */
     log(msg, level, args = {}) {
@@ -237,10 +237,7 @@ export class Stage_Console {
         if (!this.params.verbose) {
             return;
         }
-        this.nc.timestamp.log(msg, {
-            ...this.msgArgs(level, args),
-            via: 'info',
-        });
+        this.nc.timestamp.verbose(msg, this.msgArgs(level, args));
     }
     /* PROMPTING ===================================== */
     get prompt() {

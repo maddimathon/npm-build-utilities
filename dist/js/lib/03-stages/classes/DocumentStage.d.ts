@@ -86,6 +86,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
             readonly Options: "https://prettier.io/docs/options";
         };
         readonly sass: {
+            readonly CustomFunction: "https://sass-lang.com/documentation/js-api/types/customfunction/";
             readonly Logger: "https://sass-lang.com/documentation/js-api/interfaces/logger-1/";
             readonly NodePackageImporter: "https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/";
             readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";
@@ -102,6 +103,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
             readonly Value: "https://sass-lang.com/documentation/js-api/classes/value/";
         };
         readonly 'sass-embedded': {
+            readonly CustomFunction: "https://sass-lang.com/documentation/js-api/types/customfunction/";
             readonly Logger: "https://sass-lang.com/documentation/js-api/interfaces/logger-1/";
             readonly NodePackageImporter: "https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/";
             readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";
@@ -227,6 +229,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
                 readonly Options: "https://prettier.io/docs/options";
             };
             readonly sass: {
+                readonly CustomFunction: "https://sass-lang.com/documentation/js-api/types/customfunction/";
                 readonly Logger: "https://sass-lang.com/documentation/js-api/interfaces/logger-1/";
                 readonly NodePackageImporter: "https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/";
                 readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";
@@ -243,6 +246,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
                 readonly Value: "https://sass-lang.com/documentation/js-api/classes/value/";
             };
             readonly 'sass-embedded': {
+                readonly CustomFunction: "https://sass-lang.com/documentation/js-api/types/customfunction/";
                 readonly Logger: "https://sass-lang.com/documentation/js-api/interfaces/logger-1/";
                 readonly NodePackageImporter: "https://sass-lang.com/documentation/js-api/classes/nodepackageimporter/";
                 readonly Options: "https://sass-lang.com/documentation/js-api/interfaces/options/";

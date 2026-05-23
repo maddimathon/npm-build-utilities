@@ -163,6 +163,6 @@ export class Compile extends CompileStage {
             writeArgs,
         );
 
-        return super.ts();
+        await super.ts();
     }
 }

@@ -41,10 +41,9 @@ export class DummyConsole {
         });
     }
     error(msg, level, args = {}) {
-        this.nc.timestamp.log(msg, {
+        this.nc.timestamp.error(msg, {
             ...args,
             depth: level,
-            via: 'error',
         });
     }
     log(msg, level, args = {}) {
@@ -69,10 +68,9 @@ export class DummyConsole {
         if (!this.params.verbose) {
             return;
         }
-        this.nc.timestamp.log(msg, {
+        this.nc.timestamp.verbose(msg, {
             ...args,
             depth: level,
-            via: 'info',
         });
     }
     /* PROMPTING ===================================== */
@@ -165,10 +163,9 @@ class _DummyConsole_VarDump {
         if (!this.params.verbose) {
             return;
         }
-        this.nc.timestamp.log(this.stringify(variable, args), {
+        this.nc.timestamp.verbose(this.stringify(variable, args), {
             ...msg,
             depth: level,
-            via: 'info',
         });
     }
 }

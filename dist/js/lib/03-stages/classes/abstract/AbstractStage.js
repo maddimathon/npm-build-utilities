@@ -287,6 +287,8 @@ export class AbstractStage {
     /**
      * Whether the current run is the result of a watched change.
      *
+     * @category Config
+     *
      * @since 0.3.0-alpha.1
      */
     get isWatchedUpdate() {
@@ -299,6 +301,8 @@ export class AbstractStage {
     }
     /**
      * Default scss options according to config & params.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.1
      */
@@ -411,6 +415,8 @@ export class AbstractStage {
     /**
      * Takes an input tsconfig object and attempts to resolve and
      * include the values from any configs in its "extends".
+     *
+     * @category Typescript
      *
      * @since 0.3.0-beta.draft
      */
@@ -622,6 +628,8 @@ export class AbstractStage {
     }
     /**
      * Handles errors thrown during sass compile.
+     *
+     * @category Sass
      *
      * @since 0.3.0-alpha.3
      */
