@@ -19,6 +19,7 @@ import type * as typeDoc from "typedoc";
 import type {
     Classify,
     PackageJson,
+    SyncOrAsync,
     TsConfig,
 } from '@maddimathon/utility-typescript/types';
 
@@ -60,8 +61,8 @@ import type { Logger } from './Logger.js';
  * @since 0.1.0-alpha
  */
 export interface Stage<
-    T_Args extends Stage.Args = Stage.Args,
-    T_SubStage extends string = string,
+    T_Args extends Stage.Args = any,
+    T_SubStage extends string = any,
 > {
 
     /**
@@ -270,6 +271,36 @@ export interface Stage<
         watcherVersion?: boolean,
         args?: Partial<MessageMaker.BulkMsgArgs>,
     ): void | Promise<void>;
+
+    /**
+     * Runs a function, with parameters as applicable, and catches (& handles)
+     * anything thrown.
+     *
+     * For the asynchronous method, see {@link Stage.atry}.
+     *
+     * Overloaded for better function param typing. See
+     * {@link Stage.TryerFunction} for details.
+     *
+     * @category Errors
+     * 
+     * @since ___PKG_VERSION___
+     */
+    try: Stage.TryerFunction<'sync'>;
+
+    /**
+     * Runs a function (asynchronously), with parameters as applicable, and
+     * catches (& handles) anything thrown.
+     *
+     * For the synchronous method, see {@link AbstractStage.try}.
+     *
+     * Overloaded for better function param typing. See
+     * {@link Stage.TryerFunction} for details.
+     *
+     * @category Errors
+     * 
+     * @since ___PKG_VERSION___
+     */
+    atry: Stage.TryerFunction<'async'>;
 
     /**
      * Handles uncaught errors after this stage is completely constructed (set
@@ -991,7 +1022,7 @@ export namespace Stage {
             postCSS: Args.PostCSS;
 
             /** {@inheritDoc Compiler.Args.Sass} */
-            sass: Args.Sass | ( ( p: { config: Config.Class; console: Logger; params: CLI.Params; } ) => Args.Sass );
+            sass: Args.Sass | ( ( p: Stage ) => Args.Sass );
 
             /**
              * Optional default configuration to use when compiling typescript.
@@ -1205,6 +1236,37 @@ export namespace Stage {
     };
 
     /**
+     * Utilities for dealing with errors in stages.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export namespace Errors {
+
+        /** 
+         * Types for handling errors in a variety of contexts.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        export namespace Handler {
+
+            /**
+             * Optional configuration for error-handling functions.
+             * 
+             * @since ___PKG_VERSION___
+             */
+            export interface Args extends MessageMaker.BulkMsgArgs {
+
+                /**
+                 * Whether to exit the process after handling.
+                 * 
+                 * @default true
+                 */
+                exitProcess: boolean;
+            };
+        };
+    }
+
+    /**
      * Default substage names.
      * 
      * @see {@link SubStage} 
@@ -1298,4 +1360,102 @@ export namespace Stage {
          */
         export type Test = "scss" | "js";
     };
+
+    /**
+     * A function to call a function and catch any errors (typically using the
+     * in-class error handling).
+     *
+     * Overloaded for better function param and return typing.
+     *
+     * @since ___PKG_VERSION___
+     */
+    export interface TryerFunction<T_SyncType extends 'async' | 'sync' = 'async' | 'sync'> {
+        /**
+         * If the `tryer` function has no params, then they are optional.
+         *
+         * If the handler must exit, then T_FallbackReturn is not possible.
+         *
+         * @param tryer     Function to run inside the try {}.
+         * @param level     Depth level for the error handler.
+         * @param params    Parameters passed to the tryer function, if any.
+         *
+         * @return  The `tryer` function’s return, or T_FallbackReturn if an
+         *          error is caught and the process isn’t exited.
+         */
+        <
+            T_Tryer extends ( ...params: never[] ) => unknown,
+            T_FallbackReturn extends any = "FAILED",
+        >(
+            tryer: T_Tryer,
+            level: number,
+            params?: Parameters<T_Tryer>,
+            handlerArgs?: Partial<Omit<Errors.Handler.Args, 'exitProcess'>> & { exitProcess?: true; },
+            fallbackReturn?: T_FallbackReturn,
+        ): SyncOrAsync<T_SyncType, ReturnType<T_Tryer>>;
+
+        /**
+         * If the `tryer` function *has* params, then they are required.
+         * 
+         * If the handler must exit, then T_FallbackReturn is not possible.
+         */
+        <
+            T_Tryer extends ( ...params: unknown[] ) => unknown,
+            T_FallbackReturn extends any = "FAILED",
+        >(
+            tryer: T_Tryer,
+            level: number,
+            params: Parameters<T_Tryer>,
+            handlerArgs?: Partial<Omit<Errors.Handler.Args, 'exitProcess'>> & { exitProcess?: true; },
+            fallbackReturn?: T_FallbackReturn,
+        ): SyncOrAsync<T_SyncType, ReturnType<T_Tryer>>;
+
+        /**
+         * If the `tryer` function has no params, then they are optional.
+         * 
+         * If the handler won't exit, then T_FallbackReturn is possible.
+         */
+        <
+            T_Tryer extends ( ...params: never[] ) => unknown,
+            T_FallbackReturn extends any = "FAILED",
+        >(
+            tryer: T_Tryer,
+            level: number,
+            params: Parameters<T_Tryer> | undefined,
+            handlerArgs: Partial<Omit<Errors.Handler.Args, 'exitProcess'>> & { exitProcess: false | boolean; },
+            fallbackReturn?: T_FallbackReturn,
+        ): SyncOrAsync<T_SyncType, ReturnType<T_Tryer> | T_FallbackReturn>;
+
+        /**
+         * If the `tryer` function *has* params, then they are required.
+         */
+        <
+            T_Tryer extends ( ...params: unknown[] ) => unknown,
+            T_FallbackReturn extends any = "FAILED",
+        >(
+            tryer: T_Tryer,
+            level: number,
+            params: Parameters<T_Tryer>,
+            handlerArgs: Partial<Omit<Errors.Handler.Args, 'exitProcess'>> & { exitProcess: false | boolean; },
+            fallbackReturn?: undefined | T_FallbackReturn,
+        ): SyncOrAsync<T_SyncType, ReturnType<T_Tryer> | T_FallbackReturn>;
+
+        /**
+         * Runs a function, with parameters as applicable, and catches (& handles)
+         * anything thrown.
+         * 
+         * For the asynchronous method, see {@link AbstractStage.atry}.
+         *
+         * Overloaded for better function param typing.
+         */
+        <
+            T_Tryer extends ( ...params: unknown[] | never[] ) => unknown,
+            T_FallbackReturn extends any = "FAILED",
+        >(
+            tryer: T_Tryer,
+            level: number,
+            params?: Parameters<T_Tryer>,
+            handlerArgs?: Partial<Errors.Handler.Args>,
+            fallbackReturn?: undefined | T_FallbackReturn,
+        ): SyncOrAsync<T_SyncType, ReturnType<T_Tryer> | T_FallbackReturn>;
+    }
 };

@@ -69,7 +69,7 @@ import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
 export abstract class AbstractStage<
     T_Args extends Stage.Args,
     T_SubStage extends string,
-> implements Stage<T_Args, T_SubStage> {
+> implements Omit<Stage<T_Args, T_SubStage>, 'atry' | 'try'> {
 
 
 
@@ -370,15 +370,22 @@ export abstract class AbstractStage<
 
         this.fs = this.args.utils.fs;
 
+        this.atry = this.atry.bind( this );
+        this.getDistDir = this.getDistDir.bind( this );
+        this.getScriptsPath = this.getScriptsPath.bind( this );
+        this.getSrcDir = this.getSrcDir.bind( this );
+        this.isSubStageIncluded = this.isSubStageIncluded.bind( this );
+        this.logError = this.logError.bind( this );
+        this.replaceInFiles = this.replaceInFiles.bind( this );
+        this.run = this.run.bind( this );
+        this.startEndNotice = this.startEndNotice.bind( this );
+        this.try = this.try.bind( this );
         this.uncaughtErrorListener = this.uncaughtErrorListener.bind( this );
-        this.handleError = this.handleError.bind( this );
+        this.writeLog = this.writeLog.bind( this );
+        this.writeTsConfig = this.writeTsConfig.bind( this );
 
         this.compiler = this.args.utils.compiler ?? new Stage_Compiler(
-            this.name,
-            this.config,
-            this.params,
-            this.console,
-            this.fs,
+            this,
             this.handleError,
         );
     }
@@ -945,71 +952,6 @@ export abstract class AbstractStage<
 
 
     /**
-     * If the `tryer` function has no params, then they are optional.
-     * 
-     * If the handler must exit, then 'FAILED' is not possible.
-     * 
-     * @param tryer     Function to run inside the try {}.
-     * @param level     Depth level for the error handler.
-     * @param params    Parameters passed to the tryer function, if any.
-     * 
-     * @return  The `tryer` function’s return, or 'FAILED' if an error is caught
-     *          and the process isn’t exited.
-     */
-    public try<
-        T_Params extends never[],
-        T_Return extends unknown,
-    >(
-        tryer: () => T_Return,
-        level: number,
-        params?: NoInfer<T_Params>,
-        handlerArgs?: Partial<AbstractError.Handler.Args> & { exitProcess?: false; },
-    ): T_Return;
-
-    /**
-     * If the `tryer` function *has* params, then they are required.
-     * 
-     * If the handler must exit, then 'FAILED' is not possible.
-     */
-    public try<
-        T_Params extends unknown[],
-        T_Return extends unknown,
-    >(
-        tryer: ( ...params: T_Params ) => T_Return,
-        level: number,
-        params: NoInfer<T_Params>,
-        handlerArgs?: Partial<AbstractError.Handler.Args> & { exitProcess?: false; },
-    ): T_Return;
-
-    /**
-     * If the `tryer` function has no params, then they are optional.
-     * 
-     * If the handler won't exit, then 'FAILED' is possible.
-     */
-    public try<
-        T_Params extends never[],
-        T_Return extends unknown,
-    >(
-        tryer: () => T_Return,
-        level: number,
-        params: NoInfer<T_Params> | undefined,
-        handlerArgs: Partial<AbstractError.Handler.Args> & { exitProcess: true | boolean; },
-    ): T_Return | "FAILED";
-
-    /**
-     * If the `tryer` function *has* params, then they are required.
-     */
-    public try<
-        T_Params extends unknown[],
-        T_Return extends unknown,
-    >(
-        tryer: ( ...params: T_Params ) => T_Return,
-        level: number,
-        params: NoInfer<T_Params>,
-        handlerArgs: Partial<AbstractError.Handler.Args> & { exitProcess: true | boolean; },
-    ): T_Return | "FAILED";
-
-    /**
      * Runs a function, with parameters as applicable, and catches (& handles)
      * anything thrown.
      * 
@@ -1021,97 +963,26 @@ export abstract class AbstractStage<
      *
      * @experimental
      */
-    public try<
+    public readonly try: Stage.TryerFunction<'sync'> = <
         T_Params extends unknown[] | never[],
         T_Return extends unknown,
+        T_FallbackReturn extends any = "FAILED",
     >(
         tryer: ( ...params: T_Params ) => T_Return,
         level: number,
-        params?: NoInfer<T_Params>,
+        params?: T_Params,
         handlerArgs?: Partial<AbstractError.Handler.Args>,
-    ): T_Return | "FAILED" {
+        fallbackReturn: T_FallbackReturn = 'FAILED' as T_FallbackReturn,
+    ): T_Return | T_FallbackReturn => {
 
         try {
-
             return tryer( ...( params ?? [] as T_Params ) );
-
         } catch ( error ) {
 
-            this.handleError(
-                error,
-                level,
-                handlerArgs,
-            );
-
-            return 'FAILED';
+            this.handleError( error, level, handlerArgs );
+            return fallbackReturn;
         }
-    }
-
-
-    /**
-     * If the `tryer` function has no params, then they are optional.
-     * 
-     * If the handler must exit, then 'FAILED' is not possible.
-     * 
-     * @param tryer     Function to run inside the try {}.
-     * @param level     Depth level for the error handler.
-     * @param params    Parameters passed to the tryer function, if any.
-     * 
-     * @return  The `tryer` function’s return, or 'FAILED' if an error is caught
-     *          and the process isn’t exited.
-     */
-    public async atry<
-        T_Params extends never[],
-        T_Return extends unknown,
-    >(
-        tryer: () => T_Return | Promise<T_Return>,
-        level: number,
-        params?: NoInfer<T_Params>,
-        handlerArgs?: Partial<AbstractError.Handler.Args> & { exitProcess?: false; },
-    ): Promise<T_Return>;
-
-    /**
-     * If the `tryer` function *has* params, then they are required.
-     * 
-     * If the handler must exit, then 'FAILED' is not possible.
-     */
-    public async atry<
-        T_Params extends unknown[],
-        T_Return extends unknown,
-    >(
-        tryer: ( ...params: T_Params ) => T_Return | Promise<T_Return>,
-        level: number,
-        params: NoInfer<T_Params>,
-        handlerArgs?: Partial<AbstractError.Handler.Args> & { exitProcess?: false; },
-    ): Promise<T_Return>;
-
-    /**
-     * If the `tryer` function has no params, then they are optional.
-     * 
-     * If the handler won't exit, then 'FAILED' is possible.
-     */
-    public async atry<
-        T_Params extends never[],
-        T_Return extends unknown,
-    >(
-        tryer: () => T_Return | Promise<T_Return>,
-        level: number,
-        params: NoInfer<T_Params> | undefined,
-        handlerArgs: Partial<AbstractError.Handler.Args> & { exitProcess: true | boolean; },
-    ): Promise<T_Return | "FAILED">;
-
-    /**
-     * If the `tryer` function *has* params, then they are required.
-     */
-    public async atry<
-        T_Params extends unknown[],
-        T_Return extends unknown,
-    >(
-        tryer: ( ...params: T_Params ) => T_Return | Promise<T_Return>,
-        level: number,
-        params: NoInfer<T_Params>,
-        handlerArgs: Partial<AbstractError.Handler.Args> & { exitProcess: true | boolean; },
-    ): Promise<T_Return | "FAILED">;
+    };
 
     /**
      * Runs a function (asynchronously), with parameters as applicable, and
@@ -1125,29 +996,24 @@ export abstract class AbstractStage<
      *
      * @experimental
      */
-    public async atry<
+    public readonly atry: Stage.TryerFunction<'async'> = <
         T_Params extends unknown[] | never[],
         T_Return extends unknown,
+        T_FallbackReturn extends any = "FAILED",
     >(
         tryer: ( ...params: T_Params ) => T_Return | Promise<T_Return>,
         level: number,
-        params?: NoInfer<T_Params>,
+        params?: T_Params,
         handlerArgs?: Partial<AbstractError.Handler.Args>,
-    ): Promise<T_Return | "FAILED"> {
-
-        return Promise.resolve(
+        fallbackReturn: T_FallbackReturn = 'FAILED' as T_FallbackReturn,
+    ): Promise<T_Return | T_FallbackReturn> =>
+        Promise.resolve(
             tryer( ...( params ?? [] as T_Params ) )
         ).catch( ( error ) => {
 
-            this.handleError(
-                error,
-                level,
-                handlerArgs,
-            );
-
-            return 'FAILED';
+            this.handleError( error, level, handlerArgs );
+            return fallbackReturn ?? 'FAILED' as T_FallbackReturn;
         } );
-    }
 
 
     /* MESSAGES ===================================== */

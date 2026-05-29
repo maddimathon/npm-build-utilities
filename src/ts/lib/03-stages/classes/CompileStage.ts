@@ -432,7 +432,7 @@ export class CompileStage extends AbstractStage<
             }
 
             return Promise.all( paths.map(
-                async ( { from, to } ) => this.atry(
+                async ( { from, to } ) => this.try(
                     this.fs.copyFile,
                     this.params.verbose ? 3 : 2,
                     [ from, to, copyFileArgs ],

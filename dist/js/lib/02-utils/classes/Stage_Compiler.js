@@ -34,10 +34,6 @@ import { catchOrReturn, FileSystem } from '../../00-universal/index.js';
  */
 export class Stage_Compiler {
     stage;
-    config;
-    params;
-    console;
-    fs;
     errorHandler;
     /* STATIC
      * ====================================================================== */
@@ -179,11 +175,7 @@ export class Stage_Compiler {
     parseArgs(defaultArgs, inputArgs) {
         const sass =
             typeof inputArgs?.sass === 'function' ?
-                inputArgs.sass({
-                    config: this.config,
-                    console: this.console,
-                    params: this.params,
-                })
+                inputArgs.sass(this.stage)
             :   inputArgs?.sass;
         return mergeArgs(
             defaultArgs,
@@ -358,6 +350,38 @@ export class Stage_Compiler {
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
+     * Current project config.
+     *
+     * @category Internal
+     *
+     * @since 0.3.0-beta.draft — Removed from constructor params.
+     */
+    config;
+    /**
+     * Current CLI params.
+     *
+     * @category Internal
+     *
+     * @since 0.3.0-beta.draft — Removed from constructor params.
+     */
+    params;
+    /**
+     * Instance used to log messages and debugging info.
+     *
+     * @category Internal
+     *
+     * @since 0.3.0-beta.draft — Removed from constructor params.
+     */
+    console;
+    /**
+     * Instance used to work with paths and files.
+     *
+     * @category Internal
+     *
+     * @since 0.3.0-beta.draft — Removed from constructor params.
+     */
+    fs;
+    /**
      * @category Constructor
      */
     constructor(
@@ -370,30 +394,6 @@ export class Stage_Compiler {
          */
         stage,
         /**
-         * Current project config.
-         *
-         * @category Internal
-         */
-        config,
-        /**
-         * Current CLI params.
-         *
-         * @category Internal
-         */
-        params,
-        /**
-         * Instance used to log messages and debugging info.
-         *
-         * @category Internal
-         */
-        console,
-        /**
-         * Instance used to work with paths and files.
-         *
-         * @category Internal
-         */
-        fs,
-        /**
          * An error handler for caught errors.
          *
          * @category Internal
@@ -403,12 +403,12 @@ export class Stage_Compiler {
         errorHandler,
     ) {
         this.stage = stage;
-        this.config = config;
-        this.params = params;
-        this.console = console;
-        this.fs = fs;
         this.errorHandler = errorHandler;
-        this.args = this.parseArgs(this.ARGS_DEFAULT, config.compiler);
+        this.config = this.stage.config;
+        this.params = this.stage.params;
+        this.console = this.stage.console;
+        this.fs = this.stage.fs;
+        this.args = this.parseArgs(this.ARGS_DEFAULT, this.config.compiler);
         this.getTsConfig = this.getTsConfig.bind(this);
         this.getTsConfigOutDir = this.getTsConfigOutDir.bind(this);
         this.postCSS = this.postCSS.bind(this);
@@ -509,7 +509,7 @@ export class Stage_Compiler {
                     `An error was thrown while trying to resolve a path (${path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)}`,
                     Stage_Compiler.Error.Code.Caught,
                     {
-                        stage: this.stage,
+                        stage: this.stage.name,
                         method: 'resolveTsConfig',
                     },
                     err,

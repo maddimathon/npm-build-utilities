@@ -36,31 +36,10 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.3.0-beta.draft
      */
-    protected readonly stage: string;
-    /**
-     * Current project config.
-     *
-     * @category Internal
-     */
-    protected readonly config: Config.Class;
-    /**
-     * Current CLI params.
-     *
-     * @category Internal
-     */
-    protected readonly params: CLI.Params;
-    /**
-     * Instance used to log messages and debugging info.
-     *
-     * @category Internal
-     */
-    protected readonly console: Stage_Console;
-    /**
-     * Instance used to work with paths and files.
-     *
-     * @category Internal
-     */
-    protected readonly fs: FileSystem;
+    protected readonly stage: Stage & {
+        config: Config.Class;
+        console: Stage_Console;
+    };
     /**
      * An error handler for caught errors.
      *
@@ -253,6 +232,38 @@ export declare class Stage_Compiler implements Stage.Compiler {
         sass: Classify<Stage.Compiler.Args.Sass>;
     };
     /**
+     * Current project config.
+     *
+     * @category Internal
+     *
+     * @since 0.3.0-beta.draft — Removed from constructor params.
+     */
+    protected readonly config: Config.Class;
+    /**
+     * Current CLI params.
+     *
+     * @category Internal
+     *
+     * @since 0.3.0-beta.draft — Removed from constructor params.
+     */
+    protected readonly params: CLI.Params;
+    /**
+     * Instance used to log messages and debugging info.
+     *
+     * @category Internal
+     *
+     * @since 0.3.0-beta.draft — Removed from constructor params.
+     */
+    protected readonly console: Stage_Console;
+    /**
+     * Instance used to work with paths and files.
+     *
+     * @category Internal
+     *
+     * @since 0.3.0-beta.draft — Removed from constructor params.
+     */
+    protected readonly fs: FileSystem;
+    /**
      * @category Constructor
      */
     constructor(
@@ -263,31 +274,10 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @since 0.3.0-beta.draft
      */
-    stage: string, 
-    /**
-     * Current project config.
-     *
-     * @category Internal
-     */
-    config: Config.Class, 
-    /**
-     * Current CLI params.
-     *
-     * @category Internal
-     */
-    params: CLI.Params, 
-    /**
-     * Instance used to log messages and debugging info.
-     *
-     * @category Internal
-     */
-    console: Stage_Console, 
-    /**
-     * Instance used to work with paths and files.
-     *
-     * @category Internal
-     */
-    fs: FileSystem, 
+    stage: Stage & {
+        config: Config.Class;
+        console: Stage_Console;
+    }, 
     /**
      * An error handler for caught errors.
      *

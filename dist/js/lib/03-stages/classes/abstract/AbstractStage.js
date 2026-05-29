@@ -262,18 +262,22 @@ export class AbstractStage {
         this.console = new Stage_Console(this.clr, this.config, this.params);
         this.args = this.buildArgs(args);
         this.fs = this.args.utils.fs;
+        this.atry = this.atry.bind(this);
+        this.getDistDir = this.getDistDir.bind(this);
+        this.getScriptsPath = this.getScriptsPath.bind(this);
+        this.getSrcDir = this.getSrcDir.bind(this);
+        this.isSubStageIncluded = this.isSubStageIncluded.bind(this);
+        this.logError = this.logError.bind(this);
+        this.replaceInFiles = this.replaceInFiles.bind(this);
+        this.run = this.run.bind(this);
+        this.startEndNotice = this.startEndNotice.bind(this);
+        this.try = this.try.bind(this);
         this.uncaughtErrorListener = this.uncaughtErrorListener.bind(this);
-        this.handleError = this.handleError.bind(this);
+        this.writeLog = this.writeLog.bind(this);
+        this.writeTsConfig = this.writeTsConfig.bind(this);
         this.compiler =
             this.args.utils.compiler
-            ?? new Stage_Compiler(
-                this.name,
-                this.config,
-                this.params,
-                this.console,
-                this.fs,
-                this.handleError,
-            );
+            ?? new Stage_Compiler(this, this.handleError);
     }
     /* METHODS
      * ====================================================================== */
@@ -798,14 +802,14 @@ export class AbstractStage {
      *
      * @experimental
      */
-    try(tryer, level, params, handlerArgs) {
+    try = (tryer, level, params, handlerArgs, fallbackReturn = 'FAILED') => {
         try {
             return tryer(...(params ?? []));
         } catch (error) {
             this.handleError(error, level, handlerArgs);
-            return 'FAILED';
+            return fallbackReturn;
         }
-    }
+    };
     /**
      * Runs a function (asynchronously), with parameters as applicable, and
      * catches (& handles) anything thrown.
@@ -818,12 +822,11 @@ export class AbstractStage {
      *
      * @experimental
      */
-    async atry(tryer, level, params, handlerArgs) {
-        return Promise.resolve(tryer(...(params ?? []))).catch((error) => {
+    atry = (tryer, level, params, handlerArgs, fallbackReturn = 'FAILED') =>
+        Promise.resolve(tryer(...(params ?? []))).catch((error) => {
             this.handleError(error, level, handlerArgs);
-            return 'FAILED';
+            return fallbackReturn ?? 'FAILED';
         });
-    }
     /* MESSAGES ===================================== */
     /**
      * {@inheritDoc Stage.startEndNotice}

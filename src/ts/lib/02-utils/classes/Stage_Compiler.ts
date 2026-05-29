@@ -217,11 +217,7 @@ export class Stage_Compiler implements Stage.Compiler {
     ): Stage.Compiler[ 'args' ] {
 
         const sass = typeof inputArgs?.sass === 'function'
-            ? inputArgs.sass( {
-                config: this.config,
-                console: this.console,
-                params: this.params,
-            } )
+            ? inputArgs.sass( this.stage )
             : inputArgs?.sass;
 
         return mergeArgs(
@@ -433,6 +429,42 @@ export class Stage_Compiler implements Stage.Compiler {
      * ====================================================================== */
 
     /**
+     * Current project config.
+     * 
+     * @category Internal
+     * 
+     * @since ___PKG_VERSION___ — Removed from constructor params.
+     */
+    protected readonly config: Config.Class;
+
+    /**
+     * Current CLI params.
+     * 
+     * @category Internal
+     * 
+     * @since ___PKG_VERSION___ — Removed from constructor params.
+     */
+    protected readonly params: CLI.Params;
+
+    /**
+     * Instance used to log messages and debugging info.
+     * 
+     * @category Internal
+     * 
+     * @since ___PKG_VERSION___ — Removed from constructor params.
+     */
+    protected readonly console: Stage_Console;
+
+    /**
+     * Instance used to work with paths and files.
+     * 
+     * @category Internal
+     * 
+     * @since ___PKG_VERSION___ — Removed from constructor params.
+     */
+    protected readonly fs: FileSystem;
+
+    /**
      * @category Constructor
      */
     constructor (
@@ -443,35 +475,10 @@ export class Stage_Compiler implements Stage.Compiler {
          * 
          * @since ___PKG_VERSION___
          */
-        protected readonly stage: string,
-
-        /**
-         * Current project config.
-         * 
-         * @category Internal
-         */
-        protected readonly config: Config.Class,
-
-        /**
-         * Current CLI params.
-         * 
-         * @category Internal
-         */
-        protected readonly params: CLI.Params,
-
-        /**
-         * Instance used to log messages and debugging info.
-         * 
-         * @category Internal
-         */
-        protected readonly console: Stage_Console,
-
-        /**
-         * Instance used to work with paths and files.
-         * 
-         * @category Internal
-         */
-        protected readonly fs: FileSystem,
+        protected readonly stage: Stage & {
+            config: Config.Class;
+            console: Stage_Console;
+        },
 
         /**
          * An error handler for caught errors.
@@ -486,11 +493,16 @@ export class Stage_Compiler implements Stage.Compiler {
             args?: Partial<AbstractError.Handler.Args>,
         ) => void,
     ) {
+        this.config = this.stage.config;
+        this.params = this.stage.params;
+        this.console = this.stage.console;
+        this.fs = this.stage.fs;
+
         this.args = this.parseArgs(
             this.ARGS_DEFAULT as Stage.Compiler.Args & {
                 sass: Classify<Stage.Compiler.Args.Sass>;
             },
-            config.compiler,
+            this.config.compiler,
         );
 
         this.getTsConfig = this.getTsConfig.bind( this );
@@ -621,7 +633,7 @@ export class Stage_Compiler implements Stage.Compiler {
                     `An error was thrown while trying to resolve a path (${ path }) extended by the ts config at ${ this.fs.pathRelative( resolvedObj.path ) }`,
                     Stage_Compiler.Error.Code.Caught,
                     {
-                        stage: this.stage,
+                        stage: this.stage.name,
                         method: 'resolveTsConfig',
                     },
                     err as AbstractError.Input,
