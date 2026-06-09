@@ -501,6 +501,24 @@ export declare namespace Stage_Compiler {
         }
     }
     /**
+     * Utilities for the {@link Stage_Compiler.scssCompileTimer} method.
+     *
+     * @since 0.3.0-beta.draft
+     */
+    namespace SassCompileTimer {
+        /**
+         * @since 0.3.0-beta.draft
+         */
+        interface Args {
+            /**
+             * Filters the link to the output path (if any) of the final
+             * compile's test in the result report.
+             */
+            compileResultPathFilter: (path: string) => string;
+            maxConcurrent: number;
+        }
+    }
+    /**
      * Handles logging for sass compilations.
      *
      * @since 0.3.0-alpha.12

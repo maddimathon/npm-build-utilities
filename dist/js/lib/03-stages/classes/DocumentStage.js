@@ -221,6 +221,13 @@ export class DocumentStage extends AbstractStage {
      * @category Config
      */
     static typeDocConfig(stage) {
+        const is = {
+            dryrun:
+                stage.params.dryrun
+                || (!stage.params.packaging && !stage.params.releasing),
+            packaging: stage.params.packaging || stage.params.releasing,
+            releasing: stage.params.releasing,
+        };
         const homepage = stage.pkg.homepage?.replace(/\/+$/gi, '');
         const repository = (
             typeof stage.pkg.repository === 'string' ?
@@ -262,7 +269,7 @@ export class DocumentStage extends AbstractStage {
             customFooterHtmlDisableWrapper: true,
             disableGit: false,
             disableSources: false,
-            excludeInternal: false,
+            excludeInternal: is.packaging,
             excludeNotDocumented: false,
             excludePrivate: false,
             excludeProtected: false,
@@ -357,6 +364,16 @@ export class DocumentStage extends AbstractStage {
                 ...typeDoc.OptionDefaults.notRenderedTags,
                 '@TODO',
                 '@UPGRADE',
+                '@expand',
+                '@expandType',
+                '@inline',
+                '@inlineType',
+                '@interface',
+                '@preventExpand',
+                '@preventInline',
+                '@primaryExport',
+                '@sortStrategy',
+                '@useDeclaredType',
             ],
             out: 'docs',
             plugin: [
@@ -383,11 +400,11 @@ export class DocumentStage extends AbstractStage {
             ),
             useFirstParagraphOfCommentAsSummary: true,
             visibilityFilters: {
-                '@alpha': !stage.params.releasing || !!stage.params.dryrun,
+                '@alpha': !is.releasing,
                 '@beta': true,
                 external: true,
                 inherited: true,
-                private: !stage.params.releasing || !!stage.params.dryrun,
+                private: !is.releasing,
                 protected: true,
             },
         };

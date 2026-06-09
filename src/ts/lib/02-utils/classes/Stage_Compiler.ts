@@ -66,8 +66,6 @@ import type { Stage_Console } from './Stage_Console.js';
  */
 export class Stage_Compiler implements Stage.Compiler {
 
-
-
     /* STATIC
      * ====================================================================== */
 
@@ -1692,6 +1690,27 @@ export namespace Stage_Compiler {
              */
             Caught,
         };
+    }
+
+    /**
+     * Utilities for the {@link Stage_Compiler.scssCompileTimer} method.
+     * 
+     * @since ___PKG_VERSION___
+     */
+    export namespace SassCompileTimer {
+
+        /**
+         * @since ___PKG_VERSION___
+         */
+        export interface Args {
+            /**
+             * Filters the link to the output path (if any) of the final
+             * compile's test in the result report.
+             */
+            compileResultPathFilter: ( path: string ) => string;
+
+            maxConcurrent: number;
+        }
     }
 
     /**

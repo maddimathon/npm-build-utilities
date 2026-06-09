@@ -165,7 +165,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
         readonly customFooterHtmlDisableWrapper: true;
         readonly disableGit: false;
         readonly disableSources: false;
-        readonly excludeInternal: false;
+        readonly excludeInternal: boolean;
         readonly excludeNotDocumented: false;
         readonly excludePrivate: false;
         readonly excludeProtected: false;
@@ -307,7 +307,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
         readonly navigationLinks: {
             [key: string]: string;
         };
-        readonly notRenderedTags: [...`@${string}`[], "@TODO", "@UPGRADE"];
+        readonly notRenderedTags: [...`@${string}`[], "@TODO", "@UPGRADE", "@expand", "@expandType", "@inline", "@inlineType", "@interface", "@preventExpand", "@preventInline", "@primaryExport", "@sortStrategy", "@useDeclaredType"];
         readonly out: "docs";
         readonly plugin: ["typedoc-plugin-mdn-links", "typedoc-plugin-inline-sources"];
         readonly projectDocuments: ["README.md"];
