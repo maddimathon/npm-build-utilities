@@ -30,6 +30,7 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
     get ARGS_DEFAULT(): {
         readonly files: false;
         readonly scss: {
+            maxConcurrent: number;
             postCSS: true;
         };
         readonly ts: true;
@@ -54,7 +55,7 @@ export declare class CompileStage extends AbstractStage<Stage.Args.Compile, Stag
      *
      * @since 0.2.0-alpha — Runs PostCSS if {@link Stage.Args.Compile.postCSS} is truthy.
      */
-    protected scss(): Promise<void>;
+    protected scss(): Promise<string[] | undefined>;
     /**
      * Compiles typescript to javascript.
      *

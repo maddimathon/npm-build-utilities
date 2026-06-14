@@ -79,6 +79,7 @@ export class CompileStage extends AbstractStage<
     public get ARGS_DEFAULT() {
 
         const scss = {
+            maxConcurrent: 15,
             postCSS: true,
         } satisfies Required<Exclude<Stage.Args.Compile[ 'scss' ], boolean>>;
 
@@ -272,55 +273,16 @@ export class CompileStage extends AbstractStage<
 
         this.console.vi.debug( { scssPathArgs }, this.params.verbose ? 3 : 2 );
 
-        this.console.verbose( 'compiling to css...', 2 );
-
-        const compile = (
-            scssPathArgs.length < 2
-            && scssPathArgs[ 0 ]?.input
-            && scssPathArgs[ 0 ]?.output
-        )
-            ? this.compiler.scss(
-                scssPathArgs[ 0 ].input,
-                scssPathArgs[ 0 ].output,
-                this.params.verbose ? 3 : 2,
-                this.sassOpts,
-            ).catch(
-                error => this.sassErrorHandler(
-                    error,
-                    this.params.verbose ? 3 : 2,
-                    this.sassOpts,
-                )
-            )
-            : this.compiler.scssBulk(
-                scssPathArgs,
-                this.params.verbose ? 3 : 2,
-                this.sassOpts,
-            ).catch(
-                error => this.sassErrorHandler(
-                    error,
-                    this.params.verbose ? 3 : 2,
-                    this.sassOpts,
-                )
-            );
-
-        return compile.then( async ( _outputPaths ) => {
-            const outputPaths = typeof _outputPaths == 'string' ? [ _outputPaths ] : _outputPaths;
-
-            // returns
-            if ( !subStageArgs.postCSS ) {
-                return;
-            }
-
-            this.console.verbose( 'processing with postcss...', 2 );
-            await this.atry(
-                this.compiler.postCSS,
-                this.params.verbose ? 3 : 2,
-                [
-                    outputPaths.map( from => ( { from } ) ),
-                    this.params.verbose ? 3 : 2,
-                ],
-            );
-        } );
+        return this.compileScss(
+            scssPathArgs,
+            this.params.verbose ? 2 : 1,
+            this.sassOpts,
+            {
+                maxConcurrent: subStageArgs.maxConcurrent,
+                postCSS: subStageArgs.postCSS,
+                prettier: false,
+            },
+        );
     }
 
     /**

@@ -510,7 +510,7 @@ export class Stage_Compiler {
                     Stage_Compiler.Error.Code.Caught,
                     {
                         stage: this.stage.name,
-                        method: 'resolveTsConfig',
+                        method: 'compiler.resolveTsConfig',
                     },
                     err,
                 );
@@ -716,12 +716,6 @@ export class Stage_Compiler {
             true,
             this.args.ts.mergeArraysInTsConfig,
         );
-        // const fallbacks_exclude = ( typeof fallbacks.exclude !== 'undefined' && !Array.isArray( fallbacks.exclude ) ) ? [ fallbacks.exclude ] : fallbacks.exclude ?? []
-        // const fallbacks_include = ( typeof fallbacks.include !== 'undefined' && !Array.isArray( fallbacks.include ) ) ? [ fallbacks.include ] : fallbacks.include ?? [];
-        // const overrides_exclude = ( typeof overrides.exclude !== 'undefined' && !Array.isArray( overrides.exclude ) ) ? [ overrides.exclude ] : overrides.exclude ?? [];
-        // const overrides_include = ( typeof overrides.include !== 'undefined' && !Array.isArray( overrides.include ) ) ? [ overrides.include ] : overrides.include ?? []
-        // const exclude = ( fallbacks_exclude ).concat( overrides_exclude );
-        // const include = ( fallbacks_include ).concat( overrides_include );
         const extendsArr = (
             (
                 typeof fallbacks.extends !== 'undefined'
@@ -867,7 +861,7 @@ export class Stage_Compiler {
      * @category Sass
      */
     static DEFAULT_PATHTOSASSLOGGINGROOT =
-        'node_modules/@maddimathon/build-utilities/node_modules';
+        'node_modules/@maddimathon/build-utilities/package.json';
     /**
      * Filters the paths in stack traces from the sass compiler API.
      *
@@ -876,18 +870,24 @@ export class Stage_Compiler {
      * @since 0.3.0-alpha.3
      */
     sassErrorStackFilter(stack, opts) {
-        const sassStackRegex = /^(\s*)([^\s]+)\s+(\d+:\d+)(?=\s|$)/i;
         const pathToSassLoggingRoot =
             opts.pathToSassLoggingRoot
             ?? this.args.sass?.pathToSassLoggingRoot
             ?? Stage_Compiler.DEFAULT_PATHTOSASSLOGGINGROOT;
-        const splitStack = stack.split('\n').filter((l) => l);
-        const sassPathsFiltered = splitStack.map((line) => {
-            const match = line.match(sassStackRegex);
+        const regex_stackPath = /^(\s*)([^\s]+)\s+(\d+:\d+)(?=\s|$)/i;
+        const regex_stackURL =
+            /^(\s*at\s+[^\n]*?\s+)\(?(?:file\:\/\/)?([\\|\/|\.][^\(\)]+)(?:\s+|\:)(\d+:\d+)?\)?(?=\s|$)/;
+        const splitStack = stack
+            .replace(/^\s*Error:\s+Error:\s+/, 'Error: ')
+            .split(/\s*\n/)
+            .filter((l) => l);
+        const _resolvePaths = (line) => {
+            const match = line.match(regex_stackPath);
             if (!match) {
                 return line;
             }
-            const [fullMatch, startPadding, path, lineLocation] = match;
+            const [fullMatch, startPadding = '', path = '', lineLocation = ''] =
+                match;
             if (!fullMatch) {
                 return line;
             }
@@ -895,24 +895,35 @@ export class Stage_Compiler {
                 this.fs.pathResolve(pathToSassLoggingRoot, path),
             );
             return line.replace(
-                sassStackRegex,
+                regex_stackPath,
                 escRegExpReplace(
                     `${startPadding}${relativePath}:${lineLocation}`,
                 ),
             );
-        });
-        const stackPathRegex =
-            /^(\s*at\s+[^\n]*?\s+)\(?(?:file\:\/\/)?([^\(\)]+)\)?(?=(?:\s*$))/;
-        const urlPathsFiltered = sassPathsFiltered.map((path) => {
-            const _matches = path.match(stackPathRegex);
-            if (_matches && _matches[2]) {
-                path =
-                    path.replace(stackPathRegex, '$1')
-                    + `(${this.fs.pathRelative(decodeURI(_matches[2])).replace(' ', '%20')})`;
+        };
+        const _resolveURLs = (line) => {
+            const _matches = line.match(regex_stackURL);
+            if (!_matches) {
+                return line;
             }
-            return path;
-        });
-        return urlPathsFiltered;
+            const [fullMatch, startPadding = '', path = '', lineLocation = ''] =
+                _matches;
+            if (!fullMatch || !path) {
+                return line;
+            }
+            const relativePath = this.fs
+                .pathRelative(
+                    this.fs.pathResolve(pathToSassLoggingRoot, decodeURI(path)),
+                )
+                .replace(' ', '%20');
+            return line.replace(
+                regex_stackURL,
+                escRegExpReplace(
+                    `${startPadding}(${relativePath}:${lineLocation})`,
+                ),
+            );
+        };
+        return splitStack.map((line) => _resolveURLs(_resolvePaths(line)));
     }
     /**
      * Runs a bare-bones instance of the sass API to compile. Intended only for
@@ -1239,9 +1250,24 @@ export class Stage_Compiler {
                 ),
             ).then((arr) =>
                 arr
-                    .map((result) => {
+                    .map((result, index) => {
                         // returns
                         if (result.status == 'rejected') {
+                            if (
+                                typeof result.reason === 'object'
+                                && result.reason !== null
+                            ) {
+                                try {
+                                    if (
+                                        typeof result.reason.context
+                                        === 'undefined'
+                                    ) {
+                                        result.reason.context = {};
+                                    }
+                                    result.reason.context.source =
+                                        chunk[index]?.input;
+                                } catch (err) {}
+                            }
                             compileErrors.push(result.reason);
                             return false;
                         }
@@ -1253,7 +1279,7 @@ export class Stage_Compiler {
             if (opts.benchmarkCompileTime) {
                 const _msg =
                     paths.length > maxConcurrent ?
-                        ` – ${compiled.length} files`
+                        ` – ${compiled.length}/${chunk.length} files`
                     :   '';
                 this.benchmarkEndTimeLog(
                     `done compiling chunk #${i / maxConcurrent + 1}${_msg}`,
@@ -1266,18 +1292,16 @@ export class Stage_Compiler {
         }
         if (opts.benchmarkCompileTime) {
             this.benchmarkEndTimeLog(
-                `bulk compile finished – ${pathCount} files`,
+                `bulk compile finished – ${compiledPaths.length}/${pathCount} files`,
                 level,
                 startTime,
                 DateTime.now(),
             );
         }
         await compiler.dispose();
-        // throws
+        // throws errors
         if (compileErrors.length) {
-            compileErrors.forEach((err) => {
-                throw err;
-            });
+            throw compileErrors;
         }
         // outputs deprecation warnings
         if (this.args.sass.holdDeprecationsToEnd) {
@@ -1384,7 +1408,7 @@ export class Stage_Compiler {
         let Code;
         (function (Code) {
             /**
-             * Re-throwing a caught error with context and a new trace.
+             * Re-throwing caught error(s) with context and a new trace.
              */
             Code[(Code['Caught'] = 0)] = 'Caught';
         })((Code = Error.Code || (Error.Code = {})));

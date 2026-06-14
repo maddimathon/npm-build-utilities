@@ -495,7 +495,7 @@ export declare namespace Stage_Compiler {
         */
         enum Code {
             /**
-             * Re-throwing a caught error with context and a new trace.
+             * Re-throwing caught error(s) with context and a new trace.
              */
             Caught = 0
         }

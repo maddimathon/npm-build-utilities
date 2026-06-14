@@ -220,6 +220,21 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
         errorIfNotFound?: boolean;
     }>): Promise<string | false>;
     /**
+     * Takes completed arguments and runs sass functions with proper error
+     * handling.
+     *
+     * @since 0.3.0-beta.draft
+     */
+    protected compileScss(paths: {
+        input: string;
+        output: string;
+    }[], logLevelBase: number, completeSassOpts: Stage.Compiler.Args.Sass, opts: {
+        maxConcurrent?: number | undefined;
+        postCSS?: boolean | undefined;
+        prettier?: boolean | undefined;
+        startMsg?: string | undefined;
+    }): Promise<string[]>;
+    /**
      * {@inheritDoc Stage.isSubStageIncluded}
      *
      * @category Config
@@ -281,7 +296,9 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @since 0.3.0-alpha.3
      */
-    protected sassErrorHandler(error: any, level: number, opts: Stage.Compiler.Args.Sass, args?: Partial<AbstractError.Handler.Args>): string[];
+    sassErrorHandler(error: any, level: number, opts: Stage.Compiler.Args.Sass, _args?: Partial<AbstractError.Handler.Args> & {
+        method?: 'error' | 'warn';
+    }): string[];
     /**
      * Runs a function, with parameters as applicable, and catches (& handles)
      * anything thrown.
@@ -454,7 +471,7 @@ export declare namespace AbstractStage {
              */
             ignoreGlobs: string[];
             /**
-             * Passed to {@link Stage.Compiler.sassBulk}.
+             * Passed to {@link Stage.Compiler.scssBulk}.
              *
              * @since 0.3.0-alpha.1
              */
@@ -465,6 +482,14 @@ export declare namespace AbstractStage {
              * @default true
              */
             postCSS: boolean;
+            /**
+             * Whether to run prettier on the output css.
+             *
+             * @default true
+             *
+             * @since 0.3.0-beta.draft
+             */
+            prettier: boolean;
             /**
              * The base path for the source directory (used to rewrite the
              * output path).

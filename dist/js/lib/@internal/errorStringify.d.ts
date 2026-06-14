@@ -19,7 +19,14 @@ import { AbstractError, UnknownCaughtError } from './classes/index.js';
  *
  * @internal
  */
-export declare function getErrorInfo(error: AbstractError.Input, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>): [typeof error, errorStringify.Info];
+export declare function getErrorInfo(error: AbstractError.Input, console: Logger, fs: FileSystemType, { stackFilter, ...args }: Partial<AbstractError.Handler.Args> & {
+    /**
+     * Filters strings with stack traces in them.
+     *
+     * @since 0.3.0-beta.draft
+     */
+    stackFilter?: (stack: string) => string;
+}): [typeof error, errorStringify.Info];
 /**
  * @since 0.2.0-alpha.4
  *
@@ -36,16 +43,16 @@ export declare namespace getErrorInfo {
      * Parses an error object in the most basic way.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused level, console, fs, and args params.
+     * @since 0.3.0-beta.draft — Removed unused level, console, fs, and args params. Added optional stackFilter param.
      */
     function object(error: Error & {
         cause?: unknown;
     } | Partial<Error & {
         cause?: unknown;
-    }> | Partial<AbstractError.NodeCliError> | UnknownCaughtError, info?: Partial<errorStringify.Info>): {
+    }> | Partial<AbstractError.NodeCliError> | UnknownCaughtError, info?: Partial<errorStringify.Info>, stackFilter?: (stack: string) => string): {
         readonly details: {};
         readonly name: string;
-        readonly message: string;
+        readonly message: string | undefined;
         readonly output: MessageMaker.BulkMsgs;
         readonly cause: unknown | undefined;
         readonly stack: string | undefined;
@@ -153,5 +160,5 @@ export declare namespace errorStringify {
      * @since 0.3.0-alpha.6
      * @since 0.3.0-beta.draft — Removed unused level param.
      */
-    function dump(error: ReturnType<typeof getErrorInfo>[0], info: errorStringify.Info, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>): MessageMaker.BulkMsgs;
+    function dump(error: ReturnType<typeof getErrorInfo>[0], info: errorStringify.Info, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>, extraDumpVars?: Record<string, any>, _maxLines?: number): MessageMaker.BulkMsgs;
 }

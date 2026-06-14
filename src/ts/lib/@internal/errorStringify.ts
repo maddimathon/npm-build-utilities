@@ -8,6 +8,8 @@
  * @license MIT
  */
 
+import type { ArrayItem } from '@maddimathon/utility-typescript/types';
+
 import {
     slugify,
     typeOf,
@@ -40,7 +42,17 @@ export function getErrorInfo(
     error: AbstractError.Input,
     console: Logger,
     fs: FileSystemType,
-    args: Partial<AbstractError.Handler.Args>,
+    {
+        stackFilter,
+        ...args
+    }: Partial<AbstractError.Handler.Args> & {
+        /**
+         * Filters strings with stack traces in them.
+         * 
+         * @since ___PKG_VERSION___
+         */
+        stackFilter?: ( stack: string ) => string;
+    },
 ) {
 
     /**
@@ -93,7 +105,6 @@ export function getErrorInfo(
                         },
                     },
                 );
-
                 break;
             }
 
@@ -208,19 +219,23 @@ export namespace getErrorInfo {
      * Parses an error object in the most basic way.
      * 
      * @since 0.2.0-alpha.4
-     * @since ___PKG_VERSION___ — Removed unused level, console, fs, and args params.
+     * @since ___PKG_VERSION___ — Removed unused level, console, fs, and args params. Added optional stackFilter param.
      */
     export function object(
         error: Error & { cause?: unknown; } | Partial<Error & { cause?: unknown; }> | Partial<AbstractError.NodeCliError> | UnknownCaughtError,
         info: Partial<errorStringify.Info> = {},
+        stackFilter?: ( stack: string ) => string,
     ) {
-
         const default_info = {
             name: error.name ?? 'Error',
-            message: error.message ?? '',
-            output: ( 'output' in error && error.output ) ? [ [ error.output.filter( _item => _item !== null ) ] ] : [],
-            cause: error.cause,
-            stack: error.stack,
+            message: error.message && stackFilter ? stackFilter( error.message ) : error.message,
+
+            output: 'output' in error && error.output && Array.isArray( error.output )
+                ? [ [ error.output.filter( _item => _item !== null ) ] ]
+                : [],
+
+            cause: typeof error.cause === 'string' && stackFilter ? stackFilter( error.cause ) : error.cause,
+            stack: error.stack && stackFilter ? stackFilter( error.stack ) : error.stack,
 
             details: {},
         } as const satisfies errorStringify.Info;
@@ -646,9 +661,17 @@ export namespace errorStringify {
         console: Logger,
         fs: FileSystemType,
         args: Partial<AbstractError.Handler.Args>,
+        extraDumpVars: Record<string, any> = {},
+        _maxLines: number = 200,
     ): MessageMaker.BulkMsgs {
 
         const dumps: MessageMaker.BulkMsgs = [
+            ...Object.entries( extraDumpVars ).map(
+                ( [ key, value ] ) => [
+                    VariableInspector.stringify( { [ key ]: value } ),
+                    { bold: false, italic: false, maxWidth: null, }
+                ] satisfies ArrayItem<MessageMaker.BulkMsgs>
+            ),
             [
                 VariableInspector.stringify( { error } ),
                 { bold: false, italic: false, maxWidth: null, }
@@ -676,6 +699,7 @@ export namespace errorStringify {
                 fs,
                 args,
                 dumps,
+                _maxLines,
             ),
         ];
 

@@ -24,7 +24,7 @@ const _msgMaker = new MessageMaker({ paintFormat: null });
  *
  * @internal
  */
-export function getErrorInfo(error, console, fs, args) {
+export function getErrorInfo(error, console, fs, { stackFilter, ...args }) {
     /**
      * Categorized information for the error message.
      */
@@ -153,18 +153,31 @@ export function getErrorInfo(error, console, fs, args) {
      * Parses an error object in the most basic way.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused level, console, fs, and args params.
+     * @since 0.3.0-beta.draft — Removed unused level, console, fs, and args params. Added optional stackFilter param.
      */
-    function object(error, info = {}) {
+    function object(error, info = {}, stackFilter) {
         const default_info = {
             name: error.name ?? 'Error',
-            message: error.message ?? '',
+            message:
+                error.message && stackFilter ?
+                    stackFilter(error.message)
+                :   error.message,
             output:
-                'output' in error && error.output ?
+                (
+                    'output' in error
+                    && error.output
+                    && Array.isArray(error.output)
+                ) ?
                     [[error.output.filter((_item) => _item !== null)]]
                 :   [],
-            cause: error.cause,
-            stack: error.stack,
+            cause:
+                typeof error.cause === 'string' && stackFilter ?
+                    stackFilter(error.cause)
+                :   error.cause,
+            stack:
+                error.stack && stackFilter ?
+                    stackFilter(error.stack)
+                :   error.stack,
             details: {},
         };
         if (error instanceof AbstractError && !info?.output) {
@@ -481,8 +494,20 @@ export function errorStringify(_error, level, console, fs, args) {
      * @since 0.3.0-alpha.6
      * @since 0.3.0-beta.draft — Removed unused level param.
      */
-    function dump(error, info, console, fs, args) {
+    function dump(
+        error,
+        info,
+        console,
+        fs,
+        args,
+        extraDumpVars = {},
+        _maxLines = 200,
+    ) {
         const dumps = [
+            ...Object.entries(extraDumpVars).map(([key, value]) => [
+                VariableInspector.stringify({ [key]: value }),
+                { bold: false, italic: false, maxWidth: null },
+            ]),
             [
                 VariableInspector.stringify({ error }),
                 { bold: false, italic: false, maxWidth: null },
@@ -510,6 +535,7 @@ export function errorStringify(_error, level, console, fs, args) {
                 fs,
                 args,
                 dumps,
+                _maxLines,
             ),
         ];
         return msgs;

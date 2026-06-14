@@ -166,6 +166,16 @@ export interface Stage<T_Args extends Stage.Args = any, T_SubStage extends strin
      */
     getSrcDir(subDir?: Config.Paths.SourceDirectory, ...subpaths: string[]): string | string[];
     /**
+     * Handles errors thrown during sass compile.
+     *
+     * @category Sass
+     *
+     * @since 0.3.0-beta.draft
+     */
+    sassErrorHandler(error: any, level: number, opts: Stage.Compiler.Args.Sass, args?: Partial<Stage.Errors.Handler.Args> & {
+        method?: 'error' | 'warn';
+    }): string[];
+    /**
      * Whether the given substage should be run according to the values of
      * {@link CLI.Params.only} and {@link CLI.Params.without}.
      *
@@ -488,6 +498,12 @@ export declare namespace Stage {
              * @since 0.2.0-alpha — Now can be an object to pass params.
              */
             scss: boolean | {
+                /**
+                 * Passed to {@link Stage.Compiler.scssBulk}.
+                 *
+                 * @since 0.3.0-beta.draft
+                 */
+                maxConcurrent: undefined | number;
                 /**
                  * Whether to run PostCSS on the compiled css.
                  */

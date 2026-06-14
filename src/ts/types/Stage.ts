@@ -231,6 +231,22 @@ export interface Stage<
     ): string | string[];
 
     /**
+     * Handles errors thrown during sass compile.
+     * 
+     * @category Sass
+     * 
+     * @since ___PKG_VERSION___
+     */
+    sassErrorHandler(
+        error: any,
+        level: number,
+        opts: Stage.Compiler.Args.Sass,
+        args?: Partial<Stage.Errors.Handler.Args> & {
+            method?: 'error' | 'warn';
+        },
+    ): string[];
+
+    /**
      * Whether the given substage should be run according to the values of
      * {@link CLI.Params.only} and {@link CLI.Params.without}.
      *
@@ -624,6 +640,13 @@ export namespace Stage {
              * @since 0.2.0-alpha — Now can be an object to pass params.
              */
             scss: boolean | {
+
+                /**
+                 * Passed to {@link Stage.Compiler.scssBulk}.
+                 * 
+                 * @since ___PKG_VERSION___
+                 */
+                maxConcurrent: undefined | number;
 
                 /**
                  * Whether to run PostCSS on the compiled css.

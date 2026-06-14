@@ -168,7 +168,7 @@ Better compile concurrency and way improves sass compiling!
 - Added AbstractStage.isWatchedUpdate property
 - Added AbstractStage.sassOpts property
 - Added AbstractStage.runCustomScssDirSubStage sassOpts param
-- Added Stage_Compiler.sassBulk method to run sass compilation concurrently
+- Added Stage_Compiler.scssBulk method to run sass compilation concurrently
     - Updated Stage_Compiler.sass for this to work
 - Added more input options to Compile.files substage
 - Added benchmarkCompileTime option to sass compiler
