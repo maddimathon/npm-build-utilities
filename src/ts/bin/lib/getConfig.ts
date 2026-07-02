@@ -18,7 +18,7 @@ import type {
     Config,
 } from '../../types/index.js';
 
-import type { Logger } from '../../types/Logger.js';
+import type { ProjectLogger } from '../../types/Logger.js';
 
 import { getPackageJson } from '../../lib/00-universal/getPackageJson.js';
 
@@ -54,7 +54,7 @@ import {
  */
 export async function getConfig(
     params: CLI.Params,
-    console: Logger | null = null,
+    console: ProjectLogger | null = null,
     level: number = 0,
 ): Promise<ProjectConfig> {
 

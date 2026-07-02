@@ -10,7 +10,7 @@
 import { MessageMaker } from '@maddimathon/utility-typescript';
 import { NodeConsole, NodeConsole_Prompt } from '@maddimathon/utility-typescript/node';
 import type { CLI, Config } from '../../../types/index.js';
-import type { Logger } from '../../../types/Logger.js';
+import type { Logger, ProjectLogger } from '../../../types/Logger.js';
 import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
 /**
  * A basic console class used as a back-up before {@link Stage_Console} is
@@ -18,11 +18,12 @@ import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
  *
  * @internal
  */
-export declare class DummyConsole implements Logger {
+export declare class DummyConsole implements ProjectLogger {
     readonly nc: NodeConsole;
     readonly config: Partial<Config | Config.Internal>;
     readonly params: Partial<CLI.Params>;
     readonly vi: Logger.VarInspect;
+    get msg(): MessageMaker;
     constructor(nc?: NodeConsole, config?: Partial<Config | Config.Internal>, params?: Partial<CLI.Params>);
     debug(msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>): void;
     error(msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>): void;

@@ -23,7 +23,7 @@ import type {
     Config,
 } from '../../../types/index.js';
 
-import type { Logger } from '../../../types/Logger.js';
+import type { Logger, ProjectLogger } from '../../../types/Logger.js';
 import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
 
 
@@ -33,9 +33,13 @@ import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
  * 
  * @internal
  */
-export class DummyConsole implements Logger {
+export class DummyConsole implements ProjectLogger {
 
     public readonly vi: Logger.VarInspect = new _DummyConsole_VarDump();
+
+    public get msg(): MessageMaker {
+        return this.nc.msg;
+    }
 
     public constructor (
         public readonly nc: NodeConsole = new NodeConsole(),

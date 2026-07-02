@@ -8,7 +8,7 @@
  * @license MIT
  */
 import type { CLI } from '../../types/index.js';
-import type { Logger } from '../../types/Logger.js';
+import type { ProjectLogger } from '../../types/Logger.js';
 import { ProjectConfig } from '../../lib/index.js';
 /**
  * Gets the configuration object for the current node package.
@@ -26,4 +26,4 @@ import { ProjectConfig } from '../../lib/index.js';
  *
  * @internal
  */
-export declare function getConfig(params: CLI.Params, console?: Logger | null, level?: number): Promise<ProjectConfig>;
+export declare function getConfig(params: CLI.Params, console?: ProjectLogger | null, level?: number): Promise<ProjectConfig>;

@@ -586,7 +586,7 @@ export class FileSystem extends NodeFiles {
                 continue;
             }
 
-            this.console.params.debug && this.console.verbose( 'minimizing ' + this.pathRelative( _inputPath ) + ' ...', level, { maxWidth: null } );
+            this.console.params?.debug && this.console.verbose( 'minimizing ' + this.pathRelative( _inputPath ) + ' ...', level, { maxWidth: null } );
 
             try {
                 _content = await minimizerFn( {
@@ -737,7 +737,7 @@ export class FileSystem extends NodeFiles {
         // returns
         if ( !replace.length ) {
             this.console.verbose( 'FileSystem.replaceInFiles() - no replacements passed', level );
-            this.console.vi.debug( { replace }, ( this.console.params.verbose ? 1 : 0 ) + level );
+            this.console.vi.debug( { replace }, ( this.console.params?.verbose ? 1 : 0 ) + level );
             return [];
         }
 
@@ -750,8 +750,8 @@ export class FileSystem extends NodeFiles {
         // returns
         if ( !replacements.length ) {
             this.console.verbose( 'FileSystem.replaceInFiles() - no valid replacement args passed', level );
-            this.console.vi.debug( { replace }, ( this.console.params.verbose ? 1 : 0 ) + level );
-            this.console.vi.debug( { replacements }, ( this.console.params.verbose ? 1 : 0 ) + level );
+            this.console.vi.debug( { replace }, ( this.console.params?.verbose ? 1 : 0 ) + level );
+            this.console.vi.debug( { replacements }, ( this.console.params?.verbose ? 1 : 0 ) + level );
             return [];
         }
 
@@ -768,11 +768,11 @@ export class FileSystem extends NodeFiles {
 
         // returns
         if ( !files.length ) {
-            this.console.vi.debug( { globs }, ( this.console.params.verbose ? 1 : 0 ) + level );
+            this.console.vi.debug( { globs }, ( this.console.params?.verbose ? 1 : 0 ) + level );
             return [];
         }
 
-        if ( this.console.params.debug && this.console.params.verbose ) {
+        if ( this.console.params?.debug && this.console.params?.verbose ) {
 
             const _level = ( this.console.params.verbose ? 1 : 0 ) + level;
 

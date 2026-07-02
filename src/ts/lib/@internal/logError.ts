@@ -76,7 +76,7 @@ export function logError(
         msgs,
         slugify( filename ),
         {
-            config: console.config,
+            config: console.config ?? {},
             date,
             fs,
             subDir: [ 'errors' ],

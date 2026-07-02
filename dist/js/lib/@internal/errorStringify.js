@@ -98,7 +98,7 @@ export function getErrorInfo(error, console, fs, { stackFilter, ...args }) {
         case 'number':
         case 'string':
             const _errorStringLength =
-                (args.maxWidth ?? console.nc.args.msgMaker.msg?.maxWidth ?? 100)
+                (args.maxWidth ?? console.msg.args.msg?.maxWidth ?? 100)
                 - new UnknownCaughtError('').name.length
                 - errorType.length
                 - 6;
@@ -224,7 +224,7 @@ export function errorStringify(_error, level, console, fs, args) {
     ];
     if (
         (error instanceof UnknownCaughtError && !(error.cause instanceof Error))
-        || console.params.debug
+        || console.params?.debug
     ) {
         msgs.push(...errorStringify.dump(error, info, console, fs, args));
     }
@@ -305,7 +305,7 @@ export function errorStringify(_error, level, console, fs, args) {
         }
         const trimmedMsg = fullMessage.replace(/\u001B\[[\d;]*m/g, '').trim();
         const fileWriteResult = writeLog(trimmedMsg, slugify(info.name), {
-            config: console.config,
+            config: console.config ?? {},
             fs,
         });
         if (fileWriteResult) {
@@ -339,7 +339,7 @@ export function errorStringify(_error, level, console, fs, args) {
     function output(error, info, console, fs, args) {
         // returns
         if (!info.output.length) {
-            return console.params.debug ?
+            return console.params?.debug ?
                     [
                         ...errorStringify.heading('Output'),
                         ['No content.', { bold: false, italic: true }],
@@ -380,7 +380,7 @@ export function errorStringify(_error, level, console, fs, args) {
     function cause(info, level, console, fs, args) {
         // returns
         if (typeof info.cause === 'undefined') {
-            return console.params.debug ?
+            return console.params?.debug ?
                     [
                         ...errorStringify.heading('Cause'),
                         ['No content.', { bold: false, italic: true }],
@@ -415,7 +415,7 @@ export function errorStringify(_error, level, console, fs, args) {
     function stack(info, console, fs, args) {
         // returns
         if (!info.stack?.length) {
-            return console.params.debug ?
+            return console.params?.debug ?
                     [
                         ...errorStringify.heading('Stack'),
                         ['No content.', { bold: false, italic: true }],
@@ -465,7 +465,7 @@ export function errorStringify(_error, level, console, fs, args) {
         }
         // returns
         if (!details.length) {
-            return console.params.debug ?
+            return console.params?.debug ?
                     [
                         ...errorStringify.heading('Details'),
                         ['No content.', { bold: false, italic: true }],
@@ -513,7 +513,7 @@ export function errorStringify(_error, level, console, fs, args) {
                 { bold: false, italic: false, maxWidth: null },
             ],
         ];
-        if (console.params.verbose) {
+        if (console.params?.verbose) {
             dumps.push(
                 [
                     VariableInspector.stringify({ info }),

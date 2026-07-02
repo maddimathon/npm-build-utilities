@@ -44,7 +44,7 @@ import type {
 import type { Stage_Compiler } from '../lib/02-utils/classes/Stage_Compiler.js';
 
 import type { FileSystemType } from './FileSystemType.js';
-import type { Logger } from './Logger.js';
+import type { ProjectLogger } from './Logger.js';
 
 
 /**
@@ -105,7 +105,7 @@ export interface Stage<
      * 
      * @category Utilities
      */
-    readonly console: Logger;
+    readonly console: ProjectLogger;
 
     /**
      * Instance used to deal with files and paths.

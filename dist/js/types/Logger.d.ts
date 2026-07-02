@@ -26,21 +26,19 @@ export interface Logger {
     /**
      * Current project config.
      */
-    readonly config: Partial<Config | Config.Internal>;
+    readonly config?: Partial<Config | Config.Internal>;
+    /**
+     * A local instance of {@link MessageMaker}.
+     */
+    readonly msg: MessageMaker;
     /**
      * Instance to use within/out the class.
      */
-    readonly nc: NodeConsole;
+    readonly nc?: NodeConsole;
     /**
      * Current CLI params.
      */
-    readonly params: Partial<CLI.Params>;
-    /**
-     * {@inheritDoc Logger.Prompt}
-     *
-     * @since 0.3.0-alpha.9
-     */
-    readonly prompt: Logger.Prompt;
+    readonly params?: Pick<Partial<CLI.Params>, 'debug' | 'verbose'>;
     /**
      * Adds {@link VariableInspector} capabilities to the logger.
      */
@@ -223,4 +221,31 @@ export declare namespace Logger {
             msg: Omit<NodeConsole.MsgArgs & MessageMaker.BulkMsgArgs, 'depth'>;
         }
     }
+}
+/**
+ * The shape for a project or stage-related logger.
+ *
+ * @category Types
+ *
+ * @since 0.3.0-beta.draft
+ */
+export interface ProjectLogger extends Logger {
+    /**
+     * Current project config.
+     */
+    readonly config: Partial<Config | Config.Internal>;
+    /**
+     * Instance to use within/out the class.
+     */
+    readonly nc: NodeConsole;
+    /**
+     * Current CLI params.
+     */
+    readonly params: Partial<CLI.Params>;
+    /**
+     * {@inheritDoc Logger.Prompt}
+     *
+     * @since 0.3.0-alpha.9
+     */
+    readonly prompt: Logger.Prompt;
 }

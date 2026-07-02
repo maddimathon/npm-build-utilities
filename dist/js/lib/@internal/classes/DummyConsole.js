@@ -26,6 +26,9 @@ export class DummyConsole {
     config;
     params;
     vi = new _DummyConsole_VarDump();
+    get msg() {
+        return this.nc.msg;
+    }
     constructor(nc = new NodeConsole(), config = {}, params = {}) {
         this.nc = nc;
         this.config = config;

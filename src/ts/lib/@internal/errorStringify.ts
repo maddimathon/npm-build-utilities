@@ -146,7 +146,7 @@ export function getErrorInfo(
             const _errorStringLength = (
                 (
                     args.maxWidth
-                    ?? console.nc.args.msgMaker.msg?.maxWidth
+                    ?? console.msg.args.msg?.maxWidth
                     ?? 100
                 )
                 - ( new UnknownCaughtError( '' ) ).name.length
@@ -297,7 +297,7 @@ export function errorStringify(
             error instanceof UnknownCaughtError
             && !( error.cause instanceof Error )
         )
-        || console.params.debug
+        || console.params?.debug
     ) {
         msgs.push(
             ...errorStringify.dump( error, info, console, fs, args ),
@@ -429,7 +429,7 @@ export namespace errorStringify {
             trimmedMsg,
             slugify( info.name ),
             {
-                config: console.config,
+                config: console.config ?? {},
                 fs,
             },
         );
@@ -475,7 +475,7 @@ export namespace errorStringify {
 
         // returns
         if ( !info.output.length ) {
-            return console.params.debug ? [
+            return console.params?.debug ? [
                 ...errorStringify.heading( 'Output' ),
                 [ 'No content.', { bold: false, italic: true } ]
             ] : [];
@@ -520,7 +520,7 @@ export namespace errorStringify {
 
         // returns
         if ( typeof info.cause === 'undefined' ) {
-            return console.params.debug ? [
+            return console.params?.debug ? [
                 ...errorStringify.heading( 'Cause' ),
                 [ 'No content.', { bold: false, italic: true } ]
             ] : [];
@@ -561,7 +561,7 @@ export namespace errorStringify {
 
         // returns
         if ( !info.stack?.length ) {
-            return console.params.debug ? [
+            return console.params?.debug ? [
                 ...errorStringify.heading( 'Stack' ),
                 [ 'No content.', { bold: false, italic: true } ]
             ] : [];
@@ -625,7 +625,7 @@ export namespace errorStringify {
 
         // returns
         if ( !details.length ) {
-            return console.params.debug ? [
+            return console.params?.debug ? [
                 ...errorStringify.heading( 'Details' ),
                 [ 'No content.', { bold: false, italic: true } ]
             ] : [];
@@ -678,7 +678,7 @@ export namespace errorStringify {
             ],
         ];
 
-        if ( console.params.verbose ) {
+        if ( console.params?.verbose ) {
             dumps.push(
                 [
                     VariableInspector.stringify( { info } ),

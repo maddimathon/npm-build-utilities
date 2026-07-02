@@ -449,14 +449,14 @@ export class AbstractStage {
             },
         ]);
     }
-    /* CONFIG & ARGS ===================================== */
+    /* COMPILERS ===================================== */
     /**
      * Takes completed arguments and runs sass functions with proper error
      * handling.
      *
      * @since 0.3.0-beta.draft
      */
-    async compileScss(paths, logLevelBase, completeSassOpts, opts) {
+    async compileScss(paths, logLevelBase, completeSassOpts, opts = {}) {
         const level_1 = logLevelBase + (this.params.verbose ? 1 : 0);
         const catcher = (error) =>
             this.sassErrorHandler(error, level_1, completeSassOpts);
@@ -485,6 +485,19 @@ export class AbstractStage {
         return compile.then(async (_outputPaths) => {
             const outputPaths =
                 typeof _outputPaths == 'string' ? [_outputPaths] : _outputPaths;
+            if (opts.replace) {
+                this.console.verbose(
+                    'replacing in compiled files...',
+                    logLevelBase,
+                );
+                for (const _key of ['current', 'package']) {
+                    this.try(this.replaceInFiles, level_1, [
+                        outputPaths,
+                        _key,
+                        level_1,
+                    ]);
+                }
+            }
             if (opts.postCSS) {
                 this.console.verbose(
                     'processing with postcss...',
@@ -1264,10 +1277,8 @@ export class AbstractStage {
             (this.params.verbose ? 2 : 1) + logLevelBase,
             { ...this.sassOpts, ...sassOpts },
             {
-                maxConcurrent: opts.maxConcurrent ?? 15,
-                postCSS: opts.postCSS,
-                prettier: opts.prettier,
                 startMsg: 'compiling to css at ' + distDir + '...',
+                ...opts,
             },
         );
     }
@@ -1302,6 +1313,8 @@ export class AbstractStage {
             maxConcurrent: undefined,
             postCSS: true,
             prettier: false,
+            replace: false,
+            startMsg: undefined,
         };
     })(
         (runCustomScssDirSubStage =

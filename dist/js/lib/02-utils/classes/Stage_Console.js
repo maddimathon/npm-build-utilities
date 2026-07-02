@@ -40,6 +40,10 @@ export class Stage_Console {
     params;
     /* LOCAL PROPERTIES
      * ====================================================================== */
+    /** {@inheritDoc Logger.msg} */
+    get msg() {
+        return this.nc.msg;
+    }
     /** {@inheritDoc Logger.nc} */
     nc;
     /** {@inheritDoc Logger.vi} */

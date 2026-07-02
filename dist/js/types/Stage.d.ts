@@ -21,7 +21,7 @@ import type { SemVer } from '../lib/@internal/classes/index.js';
 import type { FileSystem } from '../lib/00-universal/classes/index.js';
 import type { Stage_Compiler } from '../lib/02-utils/classes/Stage_Compiler.js';
 import type { FileSystemType } from './FileSystemType.js';
-import type { Logger } from './Logger.js';
+import type { ProjectLogger } from './Logger.js';
 /**
  * Implementation of a single build stage class.
  *
@@ -71,7 +71,7 @@ export interface Stage<T_Args extends Stage.Args = any, T_SubStage extends strin
      *
      * @category Utilities
      */
-    readonly console: Logger;
+    readonly console: ProjectLogger;
     /**
      * Instance used to deal with files and paths.
      *

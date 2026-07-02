@@ -273,7 +273,7 @@ export class CompileStage extends AbstractStage<
 
         this.console.vi.debug( { scssPathArgs }, this.params.verbose ? 3 : 2 );
 
-        return this.compileScss(
+        await this.compileScss(
             scssPathArgs,
             this.params.verbose ? 2 : 1,
             this.sassOpts,

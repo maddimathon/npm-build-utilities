@@ -600,7 +600,7 @@ export abstract class AbstractStage<
     }
 
 
-    /* CONFIG & ARGS ===================================== */
+    /* COMPILERS ===================================== */
 
     /**
      * Takes completed arguments and runs sass functions with proper error
@@ -615,12 +615,7 @@ export abstract class AbstractStage<
         }[],
         logLevelBase: number,
         completeSassOpts: Stage.Compiler.Args.Sass,
-        opts: {
-            maxConcurrent?: number | undefined;
-            postCSS?: boolean | undefined;
-            prettier?: boolean | undefined;
-            startMsg?: string | undefined;
-        },
+        opts: Partial<AbstractStage.compileScss.Opts> = {},
     ): Promise<string[]> {
 
         const level_1 = logLevelBase + ( this.params.verbose ? 1 : 0 );
@@ -650,6 +645,18 @@ export abstract class AbstractStage<
         return compile.then(
             async ( _outputPaths ) => {
                 const outputPaths = typeof _outputPaths == 'string' ? [ _outputPaths ] : _outputPaths;
+
+                if ( opts.replace ) {
+                    this.console.verbose( 'replacing in compiled files...', logLevelBase );
+
+                    for ( const _key of [ 'current', 'package' ] as const ) {
+                        this.try(
+                            this.replaceInFiles,
+                            level_1,
+                            [ outputPaths, _key, level_1 ],
+                        );
+                    }
+                }
 
                 if ( opts.postCSS ) {
                     this.console.verbose( 'processing with postcss...', logLevelBase );
@@ -843,7 +850,7 @@ export abstract class AbstractStage<
      * @param level    Depth level for output to the console.
      * @param args     Overrides for default options.
      */
-    protected handleError(
+    public handleError(
         error: any,
         level: number,
         args?: Partial<AbstractError.Handler.Args>,
@@ -1445,8 +1452,8 @@ export abstract class AbstractStage<
         const subpaths = Array.isArray( _subpath ) ? _subpath : [ _subpath ];
 
         const opts = mergeArgs(
-            AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS,
-            typeof _opts === 'boolean' ? { postCSS: _opts, } : _opts
+            AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS as AbstractStage.runCustomScssDirSubStage.Opts,
+            typeof _opts === 'boolean' ? { postCSS: _opts } : _opts
         );
 
         const srcDir = ( opts.srcDir ?? this.getSrcDir() ).replace( /\/$/g, '' );
@@ -1544,10 +1551,8 @@ export abstract class AbstractStage<
             ( this.params.verbose ? 2 : 1 ) + logLevelBase,
             { ...this.sassOpts, ...sassOpts },
             {
-                maxConcurrent: opts.maxConcurrent ?? 15,
-                postCSS: opts.postCSS,
-                prettier: opts.prettier,
                 startMsg: 'compiling to css at ' + distDir + '...',
+                ...opts,
             },
         );
     }
@@ -1559,6 +1564,53 @@ export abstract class AbstractStage<
  * @since 0.2.0-alpha.2
  */
 export namespace AbstractStage {
+
+    /**
+     * @since ___PKG_VERSION___
+     */
+    export namespace compileScss {
+
+        /**
+         * @since ___PKG_VERSION___
+         */
+        export interface Opts {
+
+            /**
+             * Passed to {@link Stage.Compiler.scssBulk}.
+             * 
+             * @since 0.3.0-alpha.1
+             */
+            maxConcurrent: undefined | number;
+
+            /**
+             * Whether to run PostCSS on the output css.
+             * 
+             * @default true
+             * 
+             * @since 0.2.0-alpha.2
+             */
+            postCSS: boolean;
+
+            /**
+             * Whether to run prettier on the output css.
+             * 
+             * @default false
+             */
+            prettier: boolean;
+
+            /** 
+             * Runs standard replacements on the compiled files.
+             * 
+             * @default false
+             */
+            replace?: boolean | undefined;
+
+            /**
+             * String for the starting progress message.
+             */
+            startMsg?: string | undefined;
+        }
+    }
 
     /**
      * Utilities for the {@link AbstractStage.runCustomScssDirSubStage} method.
@@ -1577,7 +1629,7 @@ export namespace AbstractStage {
          * 
          * @source
          */
-        export const DEFAULT_OPTS: AbstractStage.runCustomScssDirSubStage.Opts = {
+        export const DEFAULT_OPTS = {
 
             clearOutputDir: 'targeted',
 
@@ -1595,7 +1647,10 @@ export namespace AbstractStage {
 
             postCSS: true,
             prettier: false,
-        };
+
+            replace: false,
+            startMsg: undefined,
+        } satisfies AbstractStage.runCustomScssDirSubStage.Opts;
 
         /**
          * Options for the {@link AbstractStage.runCustomScssDirSubStage}
@@ -1603,7 +1658,7 @@ export namespace AbstractStage {
          *
          * @since 0.2.0-alpha.2
          */
-        export interface Opts {
+        export interface Opts extends compileScss.Opts {
 
             /**
              * Whether to delete the entire output directory before compiling.
@@ -1637,21 +1692,7 @@ export namespace AbstractStage {
             ignoreGlobs: string[];
 
             /**
-             * Passed to {@link Stage.Compiler.scssBulk}.
-             * 
-             * @since 0.3.0-alpha.1
-             */
-            maxConcurrent: undefined | number;
-
-            /**
-             * Whether to run PostCSS on the output css.
-             * 
-             * @default true
-             */
-            postCSS: boolean;
-
-            /**
-             * Whether to run prettier on the output css.
+             * {@inheritDoc AbstractStage.compileScss.prettier}
              * 
              * @default true
              * 

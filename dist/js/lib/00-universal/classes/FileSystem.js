@@ -417,7 +417,7 @@ export class FileSystem extends NodeFiles {
             if (!_content) {
                 continue;
             }
-            this.console.params.debug
+            this.console.params?.debug
                 && this.console.verbose(
                     'minimizing ' + this.pathRelative(_inputPath) + ' ...',
                     level,
@@ -541,7 +541,7 @@ export class FileSystem extends NodeFiles {
             );
             this.console.vi.debug(
                 { replace },
-                (this.console.params.verbose ? 1 : 0) + level,
+                (this.console.params?.verbose ? 1 : 0) + level,
             );
             return [];
         }
@@ -557,11 +557,11 @@ export class FileSystem extends NodeFiles {
             );
             this.console.vi.debug(
                 { replace },
-                (this.console.params.verbose ? 1 : 0) + level,
+                (this.console.params?.verbose ? 1 : 0) + level,
             );
             this.console.vi.debug(
                 { replacements },
-                (this.console.params.verbose ? 1 : 0) + level,
+                (this.console.params?.verbose ? 1 : 0) + level,
             );
             return [];
         }
@@ -577,11 +577,11 @@ export class FileSystem extends NodeFiles {
         if (!files.length) {
             this.console.vi.debug(
                 { globs },
-                (this.console.params.verbose ? 1 : 0) + level,
+                (this.console.params?.verbose ? 1 : 0) + level,
             );
             return [];
         }
-        if (this.console.params.debug && this.console.params.verbose) {
+        if (this.console.params?.debug && this.console.params?.verbose) {
             const _level = (this.console.params.verbose ? 1 : 0) + level;
             let i = 1;
             for (const [find, repl] of replacements) {

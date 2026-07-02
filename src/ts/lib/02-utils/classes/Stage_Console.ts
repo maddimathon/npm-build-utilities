@@ -56,6 +56,11 @@ export class Stage_Console implements Logger {
     /* LOCAL PROPERTIES
      * ====================================================================== */
 
+    /** {@inheritDoc Logger.msg} */
+    public get msg(): MessageMaker {
+        return this.nc.msg;
+    }
+
     /** {@inheritDoc Logger.nc} */
     public readonly nc: NodeConsole;
 

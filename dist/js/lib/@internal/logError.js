@@ -45,7 +45,7 @@ export function logError(logMsg, error, level, args) {
     ];
     const filename = (typeof error === 'object' && error?.name) || 'error';
     const result = writeLog(msgs, slugify(filename), {
-        config: console.config,
+        config: console.config ?? {},
         date,
         fs,
         subDir: ['errors'],

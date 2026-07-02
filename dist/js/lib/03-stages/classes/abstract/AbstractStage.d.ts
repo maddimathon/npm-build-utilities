@@ -228,12 +228,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
     protected compileScss(paths: {
         input: string;
         output: string;
-    }[], logLevelBase: number, completeSassOpts: Stage.Compiler.Args.Sass, opts: {
-        maxConcurrent?: number | undefined;
-        postCSS?: boolean | undefined;
-        prettier?: boolean | undefined;
-        startMsg?: string | undefined;
-    }): Promise<string[]>;
+    }[], logLevelBase: number, completeSassOpts: Stage.Compiler.Args.Sass, opts?: Partial<AbstractStage.compileScss.Opts>): Promise<string[]>;
     /**
      * {@inheritDoc Stage.isSubStageIncluded}
      *
@@ -268,7 +263,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @param level    Depth level for output to the console.
      * @param args     Overrides for default options.
      */
-    protected handleError(error: any, level: number, args?: Partial<AbstractError.Handler.Args>): void;
+    handleError(error: any, level: number, args?: Partial<AbstractError.Handler.Args>): void;
     /**
      * Alias for {@link internal.logError}.
      *
@@ -419,6 +414,46 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
  */
 export declare namespace AbstractStage {
     /**
+     * @since 0.3.0-beta.draft
+     */
+    namespace compileScss {
+        /**
+         * @since 0.3.0-beta.draft
+         */
+        interface Opts {
+            /**
+             * Passed to {@link Stage.Compiler.scssBulk}.
+             *
+             * @since 0.3.0-alpha.1
+             */
+            maxConcurrent: undefined | number;
+            /**
+             * Whether to run PostCSS on the output css.
+             *
+             * @default true
+             *
+             * @since 0.2.0-alpha.2
+             */
+            postCSS: boolean;
+            /**
+             * Whether to run prettier on the output css.
+             *
+             * @default false
+             */
+            prettier: boolean;
+            /**
+             * Runs standard replacements on the compiled files.
+             *
+             * @default false
+             */
+            replace?: boolean | undefined;
+            /**
+             * String for the starting progress message.
+             */
+            startMsg?: string | undefined;
+        }
+    }
+    /**
      * Utilities for the {@link AbstractStage.runCustomScssDirSubStage} method.
      *
      * @since 0.2.0-alpha.2
@@ -434,14 +469,23 @@ export declare namespace AbstractStage {
          *
          * @source
          */
-        const DEFAULT_OPTS: AbstractStage.runCustomScssDirSubStage.Opts;
+        const DEFAULT_OPTS: {
+            clearOutputDir: "targeted";
+            globs: string[];
+            ignoreGlobs: string[];
+            maxConcurrent: undefined;
+            postCSS: true;
+            prettier: false;
+            replace: false;
+            startMsg: undefined;
+        };
         /**
          * Options for the {@link AbstractStage.runCustomScssDirSubStage}
          * method.
          *
          * @since 0.2.0-alpha.2
          */
-        interface Opts {
+        interface Opts extends compileScss.Opts {
             /**
              * Whether to delete the entire output directory before compiling.
              *
@@ -471,19 +515,7 @@ export declare namespace AbstractStage {
              */
             ignoreGlobs: string[];
             /**
-             * Passed to {@link Stage.Compiler.scssBulk}.
-             *
-             * @since 0.3.0-alpha.1
-             */
-            maxConcurrent: undefined | number;
-            /**
-             * Whether to run PostCSS on the output css.
-             *
-             * @default true
-             */
-            postCSS: boolean;
-            /**
-             * Whether to run prettier on the output css.
+             * {@inheritDoc AbstractStage.compileScss.prettier}
              *
              * @default true
              *

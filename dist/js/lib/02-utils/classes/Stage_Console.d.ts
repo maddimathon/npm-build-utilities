@@ -27,6 +27,8 @@ export declare class Stage_Console implements Logger {
     readonly clr: MessageMaker.Colour;
     readonly config: Config.Class;
     readonly params: CLI.Params;
+    /** {@inheritDoc Logger.msg} */
+    get msg(): MessageMaker;
     /** {@inheritDoc Logger.nc} */
     readonly nc: NodeConsole;
     /** {@inheritDoc Logger.vi} */
