@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-beta.1** — 2026-07-07
+
+Quick dependency version fix.
+
+
 ## **0.3.0-beta** — 2026-07-07
 
 Fixes to tsconfig templates & utilities, scss compiling.
