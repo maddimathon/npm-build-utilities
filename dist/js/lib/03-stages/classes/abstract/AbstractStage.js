@@ -299,9 +299,9 @@ export class AbstractStage {
     get isWatchedUpdate() {
         return Boolean(
             !(this.params?.packaging || this.params?.releasing)
-                && (this.params.watchedWatcher
-                    || this.params.watchedFilename
-                    || this.params.watchedEvent),
+            && (this.params.watchedWatcher
+                || this.params.watchedFilename
+                || this.params.watchedEvent),
         );
     }
     /**
@@ -561,8 +561,8 @@ export class AbstractStage {
         };
         const include = Boolean(
             only.isUndefined
-                || this.params.only == subStage
-                || this.params.only.includes(subStage),
+            || this.params.only == subStage
+            || this.params.only.includes(subStage),
         );
         this.params.debug
             && this.console.vi.verbose({ include }, 1 + level, {
@@ -594,8 +594,8 @@ export class AbstractStage {
         };
         const exclude = Boolean(
             without.isDefined
-                && (this.params.without == subStage
-                    || this.params.without.includes(subStage)),
+            && (this.params.without == subStage
+                || this.params.without.includes(subStage)),
         );
         this.params.debug
             && this.console.vi.verbose({ exclude }, 1 + level, {

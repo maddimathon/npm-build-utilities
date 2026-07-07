@@ -97,6 +97,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'color-functional-notation': false;
                 readonly 'color-mix-variadic-function-arguments': false;
                 readonly 'color-mix': false;
+                readonly 'container-rule-prelude-list': true;
                 readonly 'content-alt-text': {
                     readonly preserve: true;
                 };
@@ -117,6 +118,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'focus-within-pseudo-class': false;
                 readonly 'font-format-keywords': false;
                 readonly 'font-variant-property': false;
+                readonly 'font-width-property': {
+                    readonly preserve: true;
+                };
                 readonly 'gamut-mapping': false;
                 readonly 'gap-properties': true;
                 readonly 'gradients-interpolation-method': false;
@@ -124,6 +128,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'hexadecimal-alpha-notation': true;
                 readonly 'hwb-function': true;
                 readonly 'ic-unit': false;
+                readonly 'image-function': true;
                 readonly 'image-set-function': false;
                 readonly 'is-pseudo-class': false;
                 readonly 'lab-function': {
@@ -137,6 +142,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'logical-viewport-units': true;
                 readonly 'media-queries-aspect-ratio-number-values': false;
                 readonly 'media-query-ranges': true;
+                readonly mixins: {
+                    readonly preserve: false;
+                };
                 readonly 'nested-calc': {
                     readonly preserve: false;
                 };
@@ -149,13 +157,18 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'overflow-property': true;
                 readonly 'overflow-wrap-property': false;
                 readonly 'place-properties': true;
+                readonly 'position-area-property': true;
                 readonly 'prefers-color-scheme-query': false;
+                readonly 'property-rule-prelude-list': true;
                 readonly 'random-function': false;
                 readonly 'rebeccapurple-color': true;
                 readonly 'relative-color-syntax': false;
                 readonly 'scope-pseudo-class': false;
                 readonly 'sign-functions': false;
                 readonly 'stepped-value-functions': false;
+                readonly 'syntax-descriptor-syntax-production': {
+                    readonly preserve: false;
+                };
                 readonly 'system-ui-font-family': false;
                 readonly 'text-decoration-shorthand': false;
                 readonly 'trigonometric-functions': false;
@@ -171,17 +184,6 @@ export declare class Stage_Compiler implements Stage.Compiler {
         };
         readonly processor: {
             readonly map: false;
-        };
-    };
-    /**
-     * @category Typescript
-     */
-    get tsConfig(): {
-        readonly extends: "@maddimathon/build-utilities/tsconfig";
-        readonly exclude: ["**/node_modules/**/*"];
-        readonly compilerOptions: {
-            readonly outDir: string;
-            readonly rootDir: string | undefined;
         };
     };
     /**
@@ -303,33 +305,6 @@ export declare class Stage_Compiler implements Stage.Compiler {
      */
     protected benchmarkStartTimeLog(msg: string, level: number, start: DateTime): void;
     /**
-     * Takes an input tsconfig path (or object) and attempts to resolve and
-     * include the values from any configs in its "extends".
-     *
-     * @category Typescript
-     *
-     * @since 0.3.0-beta.draft
-     */
-    resolveTsConfig(tsconfig: string | Partial<TsConfig> & {
-        path: string;
-    }, level: number, errorIfNotFound?: boolean): Promise<PartialExcept<TsConfig, "compilerOptions"> & {
-        path: string;
-    }>;
-    /**
-     * Gets the value of the given tsconfig file.
-     *
-     * @category Typescript
-     *
-     * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
-     *
-     * @param tsconfig         Path to TS config json used to compile the project.
-     * @param level            Depth level for this message.
-     * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
-     *
-     * @since 0.2.0-alpha
-     */
-    getTsConfig(tsconfig: string, level: number, errorIfNotFound?: boolean): Partial<TsConfig>;
-    /**
      * Gets the value of the given tsconfig file.
      *
      * @category Typescript
@@ -368,6 +343,34 @@ export declare class Stage_Compiler implements Stage.Compiler {
         from: string;
         to?: string;
     }[], level: number, _postCssOpts?: Stage.Compiler.Args.PostCSS): Promise<void>;
+    /**
+     * Gets the value of the given tsconfig file.
+     *
+     * @category Typescript
+     *
+     * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
+     *
+     * @param tsconfig         Path to TS config json used to compile the project.
+     * @param level            Depth level for this message.
+     * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
+     *
+     * @since 0.2.0-alpha
+     * @since 0.3.0-beta.draft — Renamed from getTsConfig to readTsConfigFile.
+     */
+    readTsConfigFile(tsconfig: string, level: number, errorIfNotFound?: boolean): Partial<TsConfig>;
+    /**
+     * Takes an input tsconfig path (or object) and attempts to resolve and
+     * include the values from any configs in its "extends".
+     *
+     * @category Typescript
+     *
+     * @since 0.3.0-beta.draft
+     */
+    resolveTsConfig(tsconfig: string | Partial<TsConfig> & {
+        path: string;
+    }, level: number, errorIfNotFound?: boolean): Promise<PartialExcept<TsConfig, "compilerOptions"> & {
+        path: string;
+    }>;
     /**
      * Runs the compileAsync from the sass package and returns with an ending
      * timestamp.
@@ -447,11 +450,28 @@ export declare class Stage_Compiler implements Stage.Compiler {
         output: string;
     }[], level: number, sassOpts?: Stage.Compiler.Args.Sass, maxConcurrent?: number): Promise<string[]>;
     /**
+     * Returns a default, simple tsconfig object (using config for paths).
+     *
+     * @category Typescript
+     *
+     * @param path  Optional. The path at which this tsconfig file will be written.
+     *
+     * @since 0.3.0-beta.draft — Converted to a method instead of an accessor for better path-matching.
+     */
+    tsConfig(path?: string): {
+        readonly extends: "@maddimathon/build-utilities/tsconfig";
+        readonly exclude: string[];
+        readonly compilerOptions: {
+            readonly rootDir: string | undefined;
+            readonly outDir: string;
+        };
+    };
+    /**
      * {@inheritDoc Stage.Compiler.typescript}
      *
      * @category Typescript
      *
-     * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
+     * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfigOutDir} method.
      */
     typescript(tsconfig: string, level: number, errorIfNotFound?: boolean): Promise<void>;
 }

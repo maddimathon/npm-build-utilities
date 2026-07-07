@@ -17,7 +17,6 @@
     "type": "module",
 
     "scripts": {
-        
         "help": "build-utils help",
         "debug": "build-utils debug",
 

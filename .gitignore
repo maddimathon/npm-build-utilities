@@ -35,6 +35,7 @@ demos/*/dist
 demos/*/CHANGELOG.md
 demos/*/package-lock.json
 demos/*/README.md
+demos/no-config/.scripts
 
 
 # DOCS

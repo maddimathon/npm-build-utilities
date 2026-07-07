@@ -1,11 +1,7 @@
 {
-    "extends": "@maddimathon/build-utilities/tsconfig",
+    "extends": "@maddimathon/build-utilities/tsconfig.scripts",
     "include": [
         "../.scripts/**/*",
         ".scripts/**/*"
-    ],
-    "compilerOptions": {
-        "baseUrl": "../",
-        "noEmit": true
-    }
+    ]
 }

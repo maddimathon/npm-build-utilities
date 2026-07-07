@@ -2,7 +2,7 @@
 'use strict';
 /*
  * @package @maddimathon/build-utilities
- * @author Maddi Mathon (www.maddimathon.com)
+ * @author Maddi Mathon (https://www.maddimathon.com/web)
  *
  * @license MIT
  */

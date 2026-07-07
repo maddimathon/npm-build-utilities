@@ -2,7 +2,7 @@
     "name": "@maddimathon/build-utilities",
     "version": "0.3.0-beta",
 
-    "author": "Maddi Mathon (www.maddimathon.com)",
+    "author": "Maddi Mathon (https://www.maddimathon.com/web)",
     "description": "Opinionated utilities for easy build systems in npm projects.",
     "keywords": [
         "javascript-build-utilities",
@@ -103,10 +103,19 @@
     },
 
     "scripts": {
-        "unlink-ts": "rm -rf node_modules/@maddimathon/utility-sass || echo ''",
+        "unlink": "run-s unlink:*",
+            "unlink:ts": "rm -rf node_modules/@maddimathon/utility-typescript || echo ''",
+            "unlink:tsconfig": "rm -rf node_modules/@maddimathon/tsconfig/dist || echo ''",
+            "unlink:compiler-typedoc": "rm -rf node_modules/@maddimathon/compiler-typedoc/dist || echo ''",
+            "unlink:universal-types": "rm -rf node_modules/@maddimathon/universal-types/dist || echo ''",
 
-        "link-ts": "npm run unlink-ts && mkdir -p node_modules/@maddimathon/utility-typescript && cp -R -H -f -p ../utility-typescript/package.json ../utility-typescript/tsconfig.json ../utility-typescript/dist node_modules/@maddimathon/utility-typescript",
+        "link": "run-s link:*",
+            "link:ts": "npm run unlink:ts && mkdir -p node_modules/@maddimathon/utility-typescript && cp -R -H -f -p ../utility-typescript/package.json ../utility-typescript/tsconfig.json ../utility-typescript/dist node_modules/@maddimathon/utility-typescript",
+            "link:tsconfig": "npm run unlink:tsconfig && mkdir -p node_modules/@maddimathon/tsconfig && cp -R -H -f -p ../npm-base-utilities/packages/tsconfig/dist ../npm-base-utilities/packages/tsconfig/package.json node_modules/@maddimathon/tsconfig",
+            "link:compiler-typedoc": "npm run unlink:compiler-typedoc && mkdir -p node_modules/@maddimathon/compiler-typedoc && cp -R -H -f -p ../npm-base-utilities/packages/@helpers/compiler-typedoc/dist ../npm-base-utilities/packages/@helpers/compiler-typedoc/package.json node_modules/@maddimathon/compiler-typedoc",
+            "link:universal-types": "npm run unlink:universal-types && mkdir -p node_modules/@maddimathon/universal-types && cp -R -H -f -p ../npm-base-utilities/packages/@helpers/universal-types/dist ../npm-base-utilities/packages/@helpers/universal-types/package.json node_modules/@maddimathon/universal-types",
 
+            
         "test-utils": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts --config .scripts/build.config.ts",
 
         "rm": "rm -r dist docs || echo ''",
@@ -147,41 +156,42 @@
     },
     
     "dependencies": {
-        "@jest/globals": "^30.2.0",
-        "@maddimathon/utility-typescript": "2.0.0-beta.3",
-        "@tsconfig/node20": "~20.1.8",
-        "glob": "~13.0.0",
-        "jest": "^30.2.0",
+        "@maddimathon/utility-typescript": "~2.0.0-beta.4",
+        "@tsconfig/node20": "~20.1.9",
+        "glob": "~13.0.6",
         "luxon": "^3.7.2",
         "minimist": "~1.2.8",
-        "postcss": "^8.5.6",
-        "postcss-preset-env": "^10.4.0",
-        "prettier": "^3.6.2",
-        "sass-embedded": "^1.93.3",
-        "semver": "~7.7.3",
-        "typedoc": "^0.28.14",
+        "postcss": "^8.5.16",
+        "postcss-preset-env": "^11.3.2",
+        "prettier": "^3.9.4",
+        "sass-embedded": "~1.95.0",
+        "semver": "~7.8.5",
         "typedoc-plugin-inline-sources": "^1.3.0",
-        "typedoc-plugin-mdn-links": "~5.1.1",
-        "typescript": "^5.9.3"
+        "typedoc-plugin-mdn-links": "~5.1.1"
     },
     "devDependencies": {
-        "@types/luxon": "3.7.1",
-        "@types/minimist": "1.2.5",
+        "@jest/globals": "^30.4.1",
+        "@types/jest": "^30.0.0",
+        "@types/luxon": "^3.7.1",
+        "@types/minimist": "^1.2.5",
         "@types/node": "22.15.30",
-        "@types/semver": "7.7.1",
+        "@types/semver": "^7.7.1",
+        "jest": "^30.4.2",
         "npm-run-all": "4.1.5",
-        "tsx": "4.20.6",
-        "watch-cli": "0.2.3"
+        "tsx": "^4.20.6",
+        "typedoc": "^0.28.19",
+        "typescript": "^6.0.3",
+        "watch-cli": "^0.2.3"
     },
 
     "peerDependencies": {
-        "@jest/globals": "^30.2.0",
-        "jest": "^30.2.0",
-        "postcss": "^8.5.6",
-        "postcss-preset-env": "^10.4.0",
-        "sass-embedded": "^1.93.3",
-        "typedoc": "^0.28.14",
-        "typescript": "^5.9.3"
+        "@jest/globals": "^30.4.1",
+        "jest": "^30.4.2",
+        "postcss": "^8.5.16",
+        "postcss-preset-env": "^11.3.2",
+        "sass-embedded": "~1.95.0",
+        "typedoc": "^0.28.19",
+        "typescript": "^6.0.3"
     },
     "peerDependenciesMeta": {
         "@jest/globals": {

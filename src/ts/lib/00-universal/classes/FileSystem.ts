@@ -466,7 +466,6 @@ export class FileSystem extends NodeFiles {
         try {
             super.delete( this.glob( globs, args ), level, dryRun );
         } catch ( error ) {
-
             if (
                 error
                 && typeof error === 'object'

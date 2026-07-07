@@ -3,16 +3,16 @@
 'use strict';
 /*
  * @package @maddimathon/build-utilities
- * @author Maddi Mathon (www.maddimathon.com)
+ * @author Maddi Mathon (https://www.maddimathon.com/web)
  *
  * @license MIT
  */
 
-import { BuildStage } from "@maddimathon/build-utilities";
-
 /**
- * @import { Config } from "@maddimathon/build-utilities"
+ * @import { Config, Stage } from "@maddimathon/build-utilities"
  */
+
+import { BuildStage } from "@maddimathon/build-utilities";
 
 const _defaults = {
     build: BuildStage.prototype.ARGS_DEFAULT,
@@ -26,10 +26,8 @@ const config = {
     launchYear: '2025',
 
     stages: {
-
         compile: {
             files: {
-
                 root: [
                     'README.md',
                 ],
@@ -42,11 +40,13 @@ const config = {
         },
 
         build: {
-
-            prettify: ( stage ) => {
+            /**
+             * @param {Stage} _stage
+             */
+            prettify: ( _stage ) => {
 
                 return {
-                    ..._defaults.build.prettify( stage ),
+                    ..._defaults.build.prettify( _stage ),
 
                     html: undefined,
                     json: undefined,

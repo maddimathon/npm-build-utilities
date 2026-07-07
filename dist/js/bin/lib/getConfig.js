@@ -138,9 +138,11 @@ export async function getConfig(params, console = null, level = 0) {
         linesIn: 0,
     };
     const currentYear = timestamp(null, {
-        date: false,
-        time: true,
-        format: { time: { year: 'numeric' } },
+        date: {
+            month: false,
+            day: false,
+        },
+        time: false,
     });
     // the basic minimum object
     /**
@@ -253,19 +255,7 @@ export async function getConfig(params, console = null, level = 0) {
         return configInstance;
     }
     /** Path for writing the config file. */
-    const configPath =
-        (await console.prompt.select(
-            'Where should we write the config file?',
-            level,
-            {
-                choices: defaultConfigPaths,
-                msgArgs,
-            },
-        )) ?? defaultConfigPaths[0];
-    // returns
-    if (!configPath) {
-        return configInstance;
-    }
+    const configPath = '.scripts/build.config.js';
     /** Whether to force-write the config file. */
     const force =
         fs.exists(configPath) ?
@@ -297,6 +287,30 @@ export async function getConfig(params, console = null, level = 0) {
     ].join('\n');
     console.vi.debug({ configFileContent }, level);
     fs.write(configPath, configFileContent, { force });
+    // maybe write a tsconfig too
+    if (
+        await console.prompt.bool(
+            'Do you also want to write a tsconfig file for your build scripts?',
+            level,
+            {
+                default: true,
+                msgArgs,
+            },
+        )
+    ) {
+        fs.write(
+            '.scripts/tsconfig.json',
+            JSON.stringify(
+                {
+                    extends: '@maddimathon/build-utilities/tsconfig.scripts',
+                    include: ['../.scripts/**/*', '.scripts/**/*'],
+                },
+                null,
+                4,
+            ),
+            { force },
+        );
+    }
     return fs
         .prettier(configPath, 'js')
         .catch((error) => {

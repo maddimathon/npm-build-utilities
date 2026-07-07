@@ -947,11 +947,6 @@ export namespace Stage {
         readonly ARGS_DEFAULT: Stage.Compiler.Args;
 
         /**
-         * Default TS config file.
-         */
-        readonly tsConfig: TsConfig;
-
-        /**
          * Process css with the 
          * {@link https://www.npmjs.com/package/postCSS | PostCSS npm package}.
          * 
@@ -1003,6 +998,13 @@ export namespace Stage {
             level: number,
             sassOpts?: Compiler.Args.Sass,
         ): Promise<string[]>;
+
+        /**
+         * Generates a default TS config file.
+         * 
+         * @since ___PKG_VERSION___ — Converted to a method instead of an accessor for better path-matching.
+         */
+        tsConfig( string?: string ): TsConfig;
 
         /**
          * Compile typescript using the 

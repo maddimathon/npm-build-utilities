@@ -151,15 +151,15 @@ export class Stage_Compiler {
         if (!tsConfigFile) {
             return [];
         }
-        const baseUrl = tsSrcDir.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
-        stage.console.vi.debug({ baseUrl }, 2);
+        const rootDir = tsSrcDir.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
+        stage.console.vi.debug({ rootDir }, 2);
         const outDir = stage.fs.pathRelative(
-            stage.fs.pathResolve(baseUrl, stage.getDistDir(), 'js'),
+            stage.fs.pathResolve(rootDir, stage.getDistDir(), 'js'),
         );
         stage.console.vi.debug({ outDir }, 2);
         const _writeResult = stage.fs.write(
             stage.fs.pathResolve(tsConfigFile),
-            JSON.stringify(stage.compiler.tsConfig, null, 4),
+            JSON.stringify(stage.compiler.tsConfig(tsConfigFile), null, 4),
             { force: true },
         );
         // returns
@@ -208,6 +208,7 @@ export class Stage_Compiler {
             'color-functional-notation': false,
             'color-mix-variadic-function-arguments': false,
             'color-mix': false,
+            'container-rule-prelude-list': true,
             'content-alt-text': { preserve: true },
             'contrast-color-function': { preserve: true },
             'custom-media-queries': false,
@@ -222,6 +223,7 @@ export class Stage_Compiler {
             'focus-within-pseudo-class': false,
             'font-format-keywords': false,
             'font-variant-property': false,
+            'font-width-property': { preserve: true },
             'gamut-mapping': false,
             'gap-properties': true,
             'gradients-interpolation-method': false,
@@ -229,6 +231,7 @@ export class Stage_Compiler {
             'hexadecimal-alpha-notation': true,
             'hwb-function': true,
             'ic-unit': false,
+            'image-function': true,
             'image-set-function': false,
             'is-pseudo-class': false,
             'lab-function': { preserve: true },
@@ -240,6 +243,7 @@ export class Stage_Compiler {
             'logical-viewport-units': true,
             'media-queries-aspect-ratio-number-values': false,
             'media-query-ranges': true,
+            mixins: { preserve: false },
             'nested-calc': { preserve: false },
             'nesting-rules': false,
             'not-pseudo-class': true,
@@ -248,13 +252,16 @@ export class Stage_Compiler {
             'overflow-property': true,
             'overflow-wrap-property': false,
             'place-properties': true,
+            'position-area-property': true,
             'prefers-color-scheme-query': false,
+            'property-rule-prelude-list': true,
             'random-function': false,
             'rebeccapurple-color': true,
             'relative-color-syntax': false,
             'scope-pseudo-class': false,
             'sign-functions': false,
             'stepped-value-functions': false,
+            'syntax-descriptor-syntax-production': { preserve: false },
             'system-ui-font-family': false,
             'text-decoration-shorthand': false,
             'trigonometric-functions': false,
@@ -277,29 +284,6 @@ export class Stage_Compiler {
     }
     /* LOCAL PROPERTIES
      * ====================================================================== */
-    /**
-     * @category Typescript
-     */
-    get tsConfig() {
-        const tsSrcDir = this.config.getSrcDir(this.fs, 'ts')[0];
-        const rootDir = tsSrcDir?.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
-        const outDir = this.fs.pathRelative(
-            this.fs.pathResolve(
-                rootDir ?? '.',
-                this.config.getDistDir(this.fs),
-                'ts',
-            ),
-        );
-        return {
-            extends: '@maddimathon/build-utilities/tsconfig',
-            exclude: ['**/node_modules/**/*'],
-            compilerOptions: {
-                outDir,
-                rootDir,
-            },
-        };
-    }
-    /* Args ===================================== */
     /**
      * @category Meta
      */
@@ -409,9 +393,9 @@ export class Stage_Compiler {
         this.console = this.stage.console;
         this.fs = this.stage.fs;
         this.args = this.parseArgs(this.ARGS_DEFAULT, this.config.compiler);
-        this.getTsConfig = this.getTsConfig.bind(this);
         this.getTsConfigOutDir = this.getTsConfigOutDir.bind(this);
         this.postCSS = this.postCSS.bind(this);
+        this.readTsConfigFile = this.readTsConfigFile.bind(this);
         this.scss = this.scss.bind(this);
         this.scssAPI = this.scssAPI.bind(this);
         this.scssCLI = this.scssCLI.bind(this);
@@ -464,210 +448,6 @@ export class Stage_Compiler {
                 maxWidth: null,
             },
         );
-    }
-    /**
-     * Takes an input tsconfig path (or object) and attempts to resolve and
-     * include the values from any configs in its "extends".
-     *
-     * @category Typescript
-     *
-     * @since 0.3.0-beta.draft
-     */
-    async resolveTsConfig(tsconfig, level, errorIfNotFound = true) {
-        const _tsconfig_obj =
-            typeof tsconfig === 'string' ?
-                {
-                    ...this.getTsConfig(tsconfig, level, errorIfNotFound),
-                    path: tsconfig,
-                }
-            :   tsconfig;
-        const path = _tsconfig_obj.path;
-        let resolvedObj = {
-            ..._tsconfig_obj,
-            compilerOptions: _tsconfig_obj.compilerOptions ?? {},
-        };
-        const extendsValue =
-            typeof resolvedObj.extends === 'string' ?
-                [resolvedObj.extends]
-            :   resolvedObj.extends;
-        // returns
-        if (!extendsValue) {
-            return { ...resolvedObj, path };
-        }
-        delete resolvedObj.extends;
-        const extendsPaths = new Set(extendsValue);
-        const localBasePath =
-            resolvedObj.path ?
-                [this.fs.pathRelative(this.fs.dirname(resolvedObj.path))]
-            :   [];
-        const _errCatcher = (err) => {
-            if (
-                typeof err !== 'object'
-                || err?.code !== 'ERR_MODULE_NOT_FOUND'
-            ) {
-                const compileError = new Stage_Compiler.Error(
-                    `An error was thrown while trying to resolve a path (${path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)}`,
-                    Stage_Compiler.Error.Code.Caught,
-                    {
-                        stage: this.stage.name,
-                        method: 'compiler.resolveTsConfig',
-                    },
-                    err,
-                );
-                if (errorIfNotFound) {
-                    throw compileError;
-                } else {
-                    this.errorHandler(compileError, level, {
-                        exitProcess: false,
-                    });
-                }
-            }
-        };
-        /**
-         * The complete resolved value of the ts configs being extended.
-         */
-        let extendsObject = {};
-        for (const _path of extendsValue) {
-            const _isRelative = _path.match(/^\.*\//gi) !== null;
-            /**
-             * The object from the extended json file.
-             */
-            let _filepath;
-            // tries as a package module
-            if (!_isRelative) {
-                let _modulePath;
-                try {
-                    _modulePath = import.meta.resolve(_path);
-                } catch (err) {
-                    _errCatcher(err);
-                }
-                if (_modulePath) {
-                    _filepath = decodeURI(_modulePath).replace(
-                        /^file:\/\//gi,
-                        '',
-                    );
-                }
-            }
-            if (!_filepath) {
-                _filepath = this.fs.pathResolve(...localBasePath, _path);
-                // tries some other options
-                if (!this.fs.exists(_filepath)) {
-                    _filepath = this.fs.pathResolve(_path);
-                    // tries some other options
-                    if (!_isRelative && !this.fs.exists(_filepath)) {
-                        _filepath = this.fs.pathResolve(
-                            this.config.paths.modules,
-                            ...localBasePath,
-                            _path,
-                        );
-                        // tries some other options
-                        if (!this.fs.exists(_filepath)) {
-                            _filepath = this.fs.pathResolve(
-                                this.config.paths.modules,
-                                _path,
-                            );
-                        }
-                    }
-                }
-            }
-            // continues
-            if (!_filepath || !this.fs.exists(_filepath)) {
-                this.console.debug(
-                    `a _path (${_path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be found`,
-                    level,
-                );
-                continue;
-            }
-            const _pathResolvedValue = await this.resolveTsConfig(
-                _filepath,
-                (this.params.verbose ? 1 : 0) + level,
-                errorIfNotFound,
-            ).catch((err) => _errCatcher(err));
-            // continues
-            if (!_pathResolvedValue) {
-                // TODO - remove, this is just for testing
-                this.console.warn(
-                    `a _path (${_path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be resolved`,
-                    level,
-                );
-                this.console.debug(
-                    `a _path (${_path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be resolved`,
-                    level,
-                );
-                continue;
-            }
-            extendsObject = this.mergeTsConfigs(
-                extendsObject,
-                _pathResolvedValue,
-            );
-            extendsPaths.delete(_path);
-        }
-        resolvedObj = {
-            ...this.mergeTsConfigs(extendsObject, resolvedObj),
-            path: resolvedObj.path,
-        };
-        if (extendsPaths.size) {
-            resolvedObj.extends = Array.from(extendsPaths.values());
-        }
-        return objectKeySort(resolvedObj, true);
-    }
-    /**
-     * Gets the value of the given tsconfig file.
-     *
-     * @category Typescript
-     *
-     * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
-     *
-     * @param tsconfig         Path to TS config json used to compile the project.
-     * @param level            Depth level for this message.
-     * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
-     *
-     * @since 0.2.0-alpha
-     */
-    getTsConfig(tsconfig, level, errorIfNotFound = true) {
-        this.console.verbose('getting tsconfig value...', level);
-        const resolvedPath = this.fs.pathResolve(tsconfig);
-        // throws or returns
-        if (!this.fs.exists(resolvedPath)) {
-            if (errorIfNotFound) {
-                throw new StageError(
-                    'tsconfig path does not exist: ' + tsconfig,
-                    {
-                        class: 'Stage_Compiler',
-                        method: 'typescript',
-                    },
-                );
-            }
-            return {};
-        }
-        // throws or returns
-        if (!this.fs.isFile(resolvedPath)) {
-            if (errorIfNotFound) {
-                throw new StageError(
-                    'tsconfig path was not a file: ' + tsconfig,
-                    {
-                        class: 'Stage_Compiler',
-                        method: 'typescript',
-                    },
-                );
-            }
-            return {};
-        }
-        const config_obj = JSON.parse(
-            this.fs.readFile(resolvedPath).replace(/^\s*\/\/[^\n]*$/gim, ''),
-        );
-        // returns
-        if (typeof config_obj === 'object') {
-            if (!config_obj.compilerOptions) {
-                config_obj.compilerOptions = {};
-            }
-            config_obj.compilerOptions.sourceMap =
-                (config_obj.compilerOptions?.sourceMap ?? false)
-                && !this.params.packaging
-                && !this.params.releasing;
-            return config_obj;
-        }
-        return {};
     }
     /**
      * Gets the value of the given tsconfig file.
@@ -809,6 +589,193 @@ export class Stage_Compiler {
                     });
             }),
         );
+    }
+    /**
+     * Gets the value of the given tsconfig file.
+     *
+     * @category Typescript
+     *
+     * @throws {@link StageError}  If the tsconfig file doesn’t exist and errorIfNotFound is truthy.
+     *
+     * @param tsconfig         Path to TS config json used to compile the project.
+     * @param level            Depth level for this message.
+     * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
+     *
+     * @since 0.2.0-alpha
+     * @since 0.3.0-beta.draft — Renamed from getTsConfig to readTsConfigFile.
+     */
+    readTsConfigFile(tsconfig, level, errorIfNotFound = true) {
+        this.console.verbose('getting tsconfig file content...', level);
+        let resolvedPath = this.fs.pathResolve(tsconfig);
+        let errMsg = null;
+        if (!this.fs.exists(resolvedPath)) {
+            errMsg = 'tsconfig path does not exist: ' + tsconfig;
+        } else if (!this.fs.isFile(resolvedPath)) {
+            errMsg = 'tsconfig path was not a file: ' + tsconfig;
+        }
+        // throws and unsets resolvedPath
+        if (errMsg) {
+            // throws
+            if (errorIfNotFound) {
+                throw new StageError(errMsg, {
+                    class: 'Stage_Compiler',
+                    method: 'readTsConfigFile',
+                });
+            }
+            resolvedPath = null;
+        }
+        const parsedFileContent =
+            resolvedPath ?
+                JSON.parse(
+                    this.fs
+                        .readFile(resolvedPath)
+                        .replace(/^\s*\/\/[^\n]*$/gim, ''),
+                )
+            :   {};
+        return typeof parsedFileContent === 'object' ? parsedFileContent : {};
+    }
+    /**
+     * Takes an input tsconfig path (or object) and attempts to resolve and
+     * include the values from any configs in its "extends".
+     *
+     * @category Typescript
+     *
+     * @since 0.3.0-beta.draft
+     */
+    async resolveTsConfig(tsconfig, level, errorIfNotFound = true) {
+        const _tsconfig_obj =
+            typeof tsconfig === 'string' ?
+                {
+                    ...this.readTsConfigFile(tsconfig, level, errorIfNotFound),
+                    path: tsconfig,
+                }
+            :   tsconfig;
+        const path = _tsconfig_obj.path;
+        this.console.verbose('resolving tsconfig contents...', level);
+        const resolvedObj = {
+            ..._tsconfig_obj,
+            compilerOptions: _tsconfig_obj.compilerOptions ?? {},
+        };
+        const extendsValue =
+            typeof resolvedObj.extends === 'string' ?
+                [resolvedObj.extends]
+            :   resolvedObj.extends;
+        // returns
+        if (!extendsValue) {
+            return { ...resolvedObj, path };
+        }
+        delete resolvedObj.extends;
+        const extendsPaths = new Set(extendsValue);
+        const localBasePath =
+            resolvedObj.path ?
+                [this.fs.pathRelative(this.fs.dirname(resolvedObj.path))]
+            :   [];
+        const _errCatcher = (err) => {
+            if (
+                typeof err !== 'object'
+                || err?.code !== 'ERR_MODULE_NOT_FOUND'
+            ) {
+                const compileError = new Stage_Compiler.Error(
+                    `An error was thrown while trying to resolve a path (${path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)}`,
+                    Stage_Compiler.Error.Code.Caught,
+                    {
+                        stage: this.stage.name,
+                        method: 'compiler.resolveTsConfig',
+                    },
+                    err,
+                );
+                if (errorIfNotFound) {
+                    throw compileError;
+                } else {
+                    this.errorHandler(compileError, level, {
+                        exitProcess: false,
+                    });
+                }
+            }
+        };
+        /**
+         * The complete resolved value of the ts configs being extended.
+         */
+        let extendsObject = {};
+        // deletes extendees from extendsPaths on success
+        for (const _path of extendsValue) {
+            const _isRelative = _path.match(/^\.*\//gi) !== null;
+            /**
+             * The object from the extended json file.
+             */
+            let _filepath;
+            // tries as a package module
+            if (!_isRelative) {
+                let __modulePath;
+                try {
+                    __modulePath = import.meta.resolve(_path);
+                } catch (err) {
+                    _errCatcher(err);
+                }
+                if (__modulePath) {
+                    _filepath = decodeURI(__modulePath).replace(
+                        /^file:\/\//gi,
+                        '',
+                    );
+                }
+            }
+            if (!_filepath) {
+                _filepath = this.fs.pathResolve(...localBasePath, _path);
+                // tries some other options
+                if (!this.fs.exists(_filepath)) {
+                    _filepath = this.fs.pathResolve(_path);
+                    // tries some other options
+                    if (!_isRelative && !this.fs.exists(_filepath)) {
+                        _filepath = this.fs.pathResolve(
+                            this.config.paths.modules,
+                            ...localBasePath,
+                            _path,
+                        );
+                        // tries some other options
+                        if (!this.fs.exists(_filepath)) {
+                            _filepath = this.fs.pathResolve(
+                                this.config.paths.modules,
+                                _path,
+                            );
+                        }
+                    }
+                }
+            }
+            // continues
+            if (!_filepath || !this.fs.exists(_filepath)) {
+                this.console.debug(
+                    `a _path (${_path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be found`,
+                    level,
+                );
+                continue;
+            }
+            const _pathResolvedValue = await this.resolveTsConfig(
+                _filepath,
+                (this.params.verbose ? 1 : 0) + level,
+                errorIfNotFound,
+            ).catch((err) => _errCatcher(err));
+            // continues
+            if (!_pathResolvedValue) {
+                this.console.debug(
+                    `a _path (${_path}) extended by the ts config at ${this.fs.pathRelative(resolvedObj.path)} could not be resolved`,
+                    level,
+                );
+                continue;
+            }
+            extendsObject = this.mergeTsConfigs(
+                extendsObject,
+                _pathResolvedValue,
+            );
+            extendsPaths.delete(_path);
+        }
+        const mergedResolvedObj = {
+            ...this.mergeTsConfigs(extendsObject, resolvedObj),
+            path: resolvedObj.path,
+        };
+        if (extendsPaths.size) {
+            mergedResolvedObj.extends = Array.from(extendsPaths.values());
+        }
+        return objectKeySort(mergedResolvedObj, true);
     }
     /**
      * Runs the compileAsync from the sass package and returns with an ending
@@ -1007,7 +974,7 @@ export class Stage_Compiler {
                 ),
             compileFn,
         ).then(({ output, logger }) => {
-            if (this.args.sass.holdDeprecationsToEnd) {
+            if (this.args.sass?.holdDeprecationsToEnd) {
                 logger.outputAllDeprecations();
             }
             return { output, logger };
@@ -1304,7 +1271,7 @@ export class Stage_Compiler {
             throw compileErrors;
         }
         // outputs deprecation warnings
-        if (this.args.sass.holdDeprecationsToEnd) {
+        if (this.args.sass?.holdDeprecationsToEnd) {
             logger.outputAllDeprecations();
         }
         // prompts for exit
@@ -1329,11 +1296,43 @@ export class Stage_Compiler {
         return compiledPaths;
     }
     /**
+     * Returns a default, simple tsconfig object (using config for paths).
+     *
+     * @category Typescript
+     *
+     * @param path  Optional. The path at which this tsconfig file will be written.
+     *
+     * @since 0.3.0-beta.draft — Converted to a method instead of an accessor for better path-matching.
+     */
+    tsConfig(path) {
+        // @ts-expect-error
+        const relativePath =
+            path && this.fs.pathRelative(this.fs.pathResolve(path));
+        const tsSrcDir = this.config.getSrcDir(this.fs, 'ts')[0];
+        const rootDir = tsSrcDir?.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
+        const outDir = this.fs.pathRelative(
+            this.fs.pathResolve(
+                rootDir ?? '.',
+                this.config.getDistDir(this.fs),
+                'ts',
+            ),
+        );
+        const exclude = ['**/node_modules/**/*'];
+        return {
+            extends: '@maddimathon/build-utilities/tsconfig',
+            exclude,
+            compilerOptions: {
+                rootDir,
+                outDir,
+            },
+        };
+    }
+    /**
      * {@inheritDoc Stage.Compiler.typescript}
      *
      * @category Typescript
      *
-     * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfig} method.
+     * @since 0.2.0-alpha — Now has errorIfNotFound param for use with new {@link Stage_Compiler.getTsConfigOutDir} method.
      */
     async typescript(tsconfig, level, errorIfNotFound) {
         this.console.verbose('running tsc...', level);

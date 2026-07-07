@@ -2,7 +2,7 @@
 'use strict';
 /*
  * @package @maddimathon/build-utilities
- * @author Maddi Mathon (www.maddimathon.com)
+ * @author Maddi Mathon (https://www.maddimathon.com/web)
  *
  * @license MIT
  */
@@ -30,9 +30,11 @@ export class Test extends TestStage {
             return;
         }
 
+        const _testCmd = 'npm i && npm run --silent dryrun';
+
         this.console.log( [
             [ 'testing built package in demo directories...' ],
-            [ 'to test, run `npm i && npm run --silent dryrun` in each directory', {
+            [ 'to test, run `' + _testCmd + '` in each directory', {
                 bold: false,
                 clr: 'grey',
                 italic: true,
@@ -54,7 +56,7 @@ export class Test extends TestStage {
 
             // exits on false
             if ( !( await this.console.prompt.bool(
-                `Does the ${ demoName } demo compile as expected and without error?`,
+                'Does the ' + demoName + ' demo (`cd demos/' + demoName + ' && ' + _testCmd + '`) compile as expected and without error?',
                 2,
                 {
                     default: false,

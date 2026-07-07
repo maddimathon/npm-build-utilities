@@ -64,11 +64,6 @@ export function defaultConfig(args) {
         const _currentYear = timestamp(null, {
             time: false,
             date: true,
-            format: {
-                date: {
-                    year: 'numeric',
-                },
-            },
         });
         return {
             current: [
@@ -113,7 +108,6 @@ export function defaultConfig(args) {
         launchYear: timestamp(null, {
             date: false,
             time: true,
-            format: { time: { year: 'numeric' } },
         }),
         paths,
         replace,

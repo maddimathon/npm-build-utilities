@@ -6,7 +6,8 @@
         "alwaysStrict": true,
         "checkJs": true,
         "composite": false,
-        "esModuleInterop": true,
+        "declaration": true,
+        "declarationMap": false,
         "exactOptionalPropertyTypes": false,
         "forceConsistentCasingInFileNames": true,
         "isolatedDeclarations": false,
@@ -27,7 +28,6 @@
         "pretty": true,
         "removeComments": false,
         "resolveJsonModule": true,
-        "resolvePackageJsonExports": true,
         "skipLibCheck": true,
         "sourceMap": false,
         "strict": true,
@@ -37,6 +37,10 @@
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
         "target": "ES2022",
+        "types": [
+            "node",
+            "jest"
+        ],
         "useUnknownInCatchVariables": true,
         "verbatimModuleSyntax": true
     }

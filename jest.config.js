@@ -7,4 +7,13 @@
 
 import { jestConfig } from './dist/js/lib/00-universal/jestConfig.js';
 
-export default jestConfig();
+export default jestConfig( {}, {
+    testPathIgnorePatterns: [
+        '(^|\\/).snapshots\\/',
+        '(^|\\/)@releases\\/',
+        '(^|\\/)demos\\/',
+        '(^|\\/)docs\\/',
+        '(^|\\/)node_modules\\/',
+        '(^|\\/)\\._.+',
+    ],
+} );

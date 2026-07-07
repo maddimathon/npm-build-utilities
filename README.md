@@ -36,8 +36,8 @@ or
 
 <!--README_INSTALL-->
 ```bash
-npm i -D @maddimathon/build-utilities@0.3.0-alpha.18
-npm i -D github:maddimathon/build-utilities#0.3.0-alpha.18
+npm i -D @maddimathon/build-utilities@0.3.0-beta
+npm i -D github:maddimathon/build-utilities#0.3.0-beta
 ```
 <!--/README_INSTALL-->
 
@@ -79,7 +79,7 @@ See <a href="https://maddimathon.github.io/npm-build-utilities/Using_the_Library
 
 ## Development & Coding Practices
 
-This library is maintained by [Maddi Mathon](https://www.maddimathon.com) and is
+This library is maintained by [Maddi Mathon](https://www.maddimathon.com/web) and is
 currently unlikely to accept other contributions.
 
 Each file that defines items/exports should limit its exports to one item and

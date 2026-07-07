@@ -161,7 +161,7 @@ export declare class DocumentStage extends AbstractStage<Stage.Args.Document, St
         readonly cascadedModifierTags: [...`@${string}`[], "@alpha", "@beta", "@experimental", "@internal"];
         readonly categorizeByGroup: true;
         readonly categoryOrder: ["Documentation", "*", "Other", "Internal", "Deprecated"];
-        readonly customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com" target="_blank">Maddi Mathon</a>, ${string}.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`;
+        readonly customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com/web" target="_blank">Maddi Mathon</a>, ${string}.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`;
         readonly customFooterHtmlDisableWrapper: true;
         readonly disableGit: false;
         readonly disableSources: false;

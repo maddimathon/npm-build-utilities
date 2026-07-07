@@ -236,9 +236,9 @@ export class DocumentStage extends AbstractStage {
         const navigationLinks = {
             // 'About': `${ homepage }/ReadMe.html`,
             GitHub: repository ?? '',
-            'by Maddi Mathon': 'https://www.maddimathon.com',
+            'by Maddi Mathon': 'https://www.maddimathon.com/web',
         };
-        if (!repository || !navigationLinks['GitHub']) {
+        if (!navigationLinks['GitHub']) {
             delete navigationLinks['GitHub'];
         }
         return {
@@ -265,7 +265,7 @@ export class DocumentStage extends AbstractStage {
                 'Internal',
                 'Deprecated',
             ],
-            customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com" target="_blank">Maddi Mathon</a>, ${stage.config.launchYear}.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`,
+            customFooterHtml: `<p>Copyright <a href="https://www.maddimathon.com/web" target="_blank">Maddi Mathon</a>, ${stage.config.launchYear}.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p>`,
             customFooterHtmlDisableWrapper: true,
             disableGit: false,
             disableSources: false,

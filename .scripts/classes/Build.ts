@@ -2,7 +2,7 @@
 'use strict';
 /*
  * @package @maddimathon/build-utilities
- * @author Maddi Mathon (www.maddimathon.com)
+ * @author Maddi Mathon (https://www.maddimathon.com/web)
  *
  * @license MIT
  */
@@ -16,11 +16,11 @@ import type { Stage } from '../../src/ts/index.js';
 
 import { BuildStage } from '../../src/ts/index.js';
 
-// import type {
-// } from "../../src/ts/lib/@internal.js";
+import type {
+} from "../../src/ts/lib/@internal.js";
 
-// import {
-// } from '../../src/ts/lib/@internal.js';
+import {
+} from '../../src/ts/lib/@internal.js';
 
 /**
  * Extension of the built-in one.
@@ -41,8 +41,7 @@ export class Build extends BuildStage {
     ];
 
     protected demo_deleteGlobs() {
-
-        const deleteGlobs = [
+        return [
             'demos/*/.snapshots/',
             'demos/*/@releases/',
             'demos/*/dist/',
@@ -51,14 +50,12 @@ export class Build extends BuildStage {
             'demos/*/.releasenotes.md',
             'demos/*/package-lock.json',
 
-            '**/demos/no-config/.scripts/',
-            '**/demos/no-config/build-utils.config.js',
-            '**/demos/no-config/CHANGELOG.md',
-            '**/demos/no-config/jest.config.js',
-            '**/demos/no-config/tsconfig.json',
+            'demos/no-config/.scripts/',
+            'demos/no-config/build-utils.config.js',
+            'demos/no-config/CHANGELOG.md',
+            'demos/no-config/jest.config.js',
+            'demos/no-config/tsconfig.json',
         ];
-
-        return deleteGlobs;
     }
 
     protected async demos() {
@@ -66,9 +63,7 @@ export class Build extends BuildStage {
 
 
         this.console.verbose( 'deleting existing compiled demo files...', 2 );
-
         const deleteGlobs = this.demo_deleteGlobs();
-
         this.fs.delete( deleteGlobs, this.params.verbose ? 3 : 2 );
 
 
@@ -84,20 +79,23 @@ export class Build extends BuildStage {
             { force: true }
         );
         this.fs.write(
-            'demos/complete/src/ts/tsconfig.json',
+            'demos/complete/.scripts/tsconfig.json',
             JSON.stringify( {
-                extends: '@maddimathon/build-utilities/tsconfig',
+                extends: '@maddimathon/build-utilities/tsconfig.scripts',
                 include: [
-                    '../../src/ts/**/*',
-                    './src/ts/**/*',
-                ],
-                compilerOptions: {
-                    baseUrl: '../../',
-                    noEmit: false,
-                    outDir: '../../dist/js',
-                },
+                    '../.scripts/**/*',
+                    '.scripts/**/*',
+                ]
             }, null, 4 ),
-            { force: true }
+            { force: true },
+        );
+
+        const tsconfigPath = 'demos/complete/src/ts/tsconfig.json';
+
+        this.fs.write(
+            tsconfigPath,
+            JSON.stringify( this.compiler.tsConfig( tsconfigPath ), null, 4 ),
+            { force: true },
         );
 
 
