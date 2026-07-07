@@ -179,21 +179,11 @@ export class Stage_Compiler implements Stage.Compiler {
             return [];
         }
 
-        const rootDir = tsSrcDir.replace( /(?<=^|\/)[^\/]+(\/|$)/g, '..\/' );
-
-        stage.console.vi.debug( { rootDir }, 2 );
-
-        const outDir = stage.fs.pathRelative( stage.fs.pathResolve(
-            rootDir,
-            stage.getDistDir(),
-            'js',
-        ) );
-
-        stage.console.vi.debug( { outDir }, 2 );
-
         const _writeResult = stage.fs.write(
             stage.fs.pathResolve( tsConfigFile ),
-            JSON.stringify( stage.compiler.tsConfig( tsConfigFile ), null, 4 ),
+            JSON.stringify( stage.compiler.tsConfig( {
+                path: tsConfigFile,
+            } ), null, 4 ),
             { force: true },
         );
 
@@ -406,7 +396,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @category Internal
      * 
-     * @since ___PKG_VERSION___ — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     protected readonly config: Config.Class;
 
@@ -415,7 +405,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @category Internal
      * 
-     * @since ___PKG_VERSION___ — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     protected readonly params: CLI.Params;
 
@@ -424,7 +414,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @category Internal
      * 
-     * @since ___PKG_VERSION___ — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     protected readonly console: Stage_Console;
 
@@ -433,7 +423,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @category Internal
      * 
-     * @since ___PKG_VERSION___ — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     protected readonly fs: FileSystem;
 
@@ -446,7 +436,7 @@ export class Stage_Compiler implements Stage.Compiler {
          * 
          * @category Internal
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         protected readonly stage: Stage & {
             config: Config.Class;
@@ -458,7 +448,7 @@ export class Stage_Compiler implements Stage.Compiler {
          * 
          * @category Internal
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         protected readonly errorHandler: (
             error: any,
@@ -591,7 +581,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @category Typescript
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     protected mergeTsConfigs<
         T_Fallbacks extends Partial<TsConfig>,
@@ -728,7 +718,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
      * 
      * @since 0.2.0-alpha
-     * @since ___PKG_VERSION___ — Renamed from getTsConfig to readTsConfigFile.
+     * @since 0.3.0-beta — Renamed from getTsConfig to readTsConfigFile.
      */
     public readTsConfigFile(
         tsconfig: string,
@@ -777,7 +767,7 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @category Typescript
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     public async resolveTsConfig(
         tsconfig: string | Partial<TsConfig> & { path: string; },
@@ -1580,24 +1570,25 @@ export class Stage_Compiler implements Stage.Compiler {
      * 
      * @category Typescript
      * 
-     * @param path  Optional. The path at which this tsconfig file will be written.
-     * 
-     * @since ___PKG_VERSION___ — Converted to a method instead of an accessor for better path-matching.
+     * @since 0.3.0-beta — Converted to a method instead of an accessor for better path-matching.
      */
-    public tsConfig( path?: string ) {
+    public tsConfig(
+        { path, ...compilerOptions }: Partial<TsConfig[ 'compilerOptions' ] & { path?: string; }> = {}
+    ) {
 
-        // @ts-expect-error
-        const relativePath = path && this.fs.pathRelative( this.fs.pathResolve( path ) );
-
-        const tsSrcDir = this.config.getSrcDir( this.fs, 'ts' )[ 0 ];
-
-        const rootDir = tsSrcDir?.replace( /(?<=^|\/)[^\/]+(\/|$)/g, '..\/' );
-
-        const outDir = this.fs.pathRelative( this.fs.pathResolve(
-            rootDir ?? '.',
-            this.config.getDistDir( this.fs ),
-            'ts',
-        ) );
+        const outDir = compilerOptions?.outDir ?? this.fs.pathRelative(
+            this.fs.pathResolve(
+                path?.replace(
+                    /(?<=^|\/)[^\/]*\.[a-z][a-z|0-9|\-]*$/gi,
+                    '',
+                ).replace(
+                    /(?<=^|\/)[^\/]+(\/|$)/g,
+                    '..\/',
+                ) ?? '../',
+                this.config.getDistDir( this.fs ),
+                'ts',
+            )
+        );
 
         const exclude = [
             '**/node_modules/**/*',
@@ -1607,7 +1598,8 @@ export class Stage_Compiler implements Stage.Compiler {
             extends: '@maddimathon/build-utilities/tsconfig',
             exclude,
             compilerOptions: {
-                rootDir,
+                ...compilerOptions ?? {},
+                rootDir: compilerOptions?.rootDir ?? './',
                 outDir,
             },
         } as const satisfies TsConfig;
@@ -1679,7 +1671,7 @@ export namespace Stage_Compiler {
     /**
      * An extension of the utilities error used by the {@link Stage_Compiler} class.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      *
      * @internal
      */
@@ -1703,7 +1695,7 @@ export namespace Stage_Compiler {
     /**
      * Used only for {@link Stage_Compiler.Error}.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      *
      * @internal
      */
@@ -1712,7 +1704,7 @@ export namespace Stage_Compiler {
         /**
          * All allowed error codes.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
         */
         export enum Code {
             /**
@@ -1725,12 +1717,12 @@ export namespace Stage_Compiler {
     /**
      * Utilities for the {@link Stage_Compiler.scssCompileTimer} method.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     export namespace SassCompileTimer {
 
         /**
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         export interface Args {
             /**

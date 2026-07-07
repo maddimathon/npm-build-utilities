@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import * as typeDoc from 'typedoc';
@@ -531,7 +531,7 @@ export class DocumentStage extends AbstractStage {
             const _distRegex = new RegExp(
                 '(^|(?<!\\.)\\.?\\/)'
                     + escRegExp(
-                        this.fs.pathRelative(this.getDistDir(undefined, 'js')),
+                        this.fs.pathRelative(this.getDistDir(undefined, 'ts')),
                     ),
             );
             // this.console.vi.log( { _distRegex }, 2 );

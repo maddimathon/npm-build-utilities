@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import type { RecursivePartial } from '@maddimathon/utility-typescript/types';
@@ -119,7 +119,7 @@ export declare namespace Logger {
         nc: RecursivePartial<NodeConsole.Args>;
     }
     /**
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     interface MsgArgs extends Omit<NodeConsole.MsgArgs & MessageMaker.TimestampedArgs, 'depth'> {
     }
@@ -167,7 +167,7 @@ export declare namespace Logger {
          * @param level     Depth level for this message.
          * @param args      Argument overrides for the variable's inspection, including msg options.
          *
-         * @since 0.3.0-beta.draft — Reconfigured args parameters to one object of inspection args.
+         * @since 0.3.0-beta — Reconfigured args parameters to one object of inspection args.
          */
         debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, args?: RecursivePartial<VarInspect.Args>): void;
         /**
@@ -177,7 +177,7 @@ export declare namespace Logger {
          * @param level     Depth level for this message.
          * @param args      Argument overrides for the variable's inspection, including msg options.
          *
-         * @since 0.3.0-beta.draft — Reconfigured args parameters to one object of inspection args.
+         * @since 0.3.0-beta — Reconfigured args parameters to one object of inspection args.
          */
         log(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, args?: RecursivePartial<VarInspect.Args>): void;
         /**
@@ -188,7 +188,7 @@ export declare namespace Logger {
          * @param level     Depth level for this message.
          * @param args      Argument overrides for the variable's inspection, including msg options.
          *
-         * @since 0.3.0-beta.draft — Reconfigured args parameters to one object of inspection args.
+         * @since 0.3.0-beta — Reconfigured args parameters to one object of inspection args.
          */
         progress(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, args?: RecursivePartial<VarInspect.Args>): void;
         /**
@@ -206,16 +206,16 @@ export declare namespace Logger {
          * @param level     Depth level for this message.
          * @param args      Argument overrides for the variable's inspection, including msg options.
          *
-         * @since 0.3.0-beta.draft — Reconfigured args parameters to one object of inspection args.
+         * @since 0.3.0-beta — Reconfigured args parameters to one object of inspection args.
          */
         verbose(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, args?: RecursivePartial<VarInspect.Args>): void;
     }
     /**
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     namespace VarInspect {
         /**
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
          */
         interface Args extends NonNullable<ConstructorParameters<typeof VariableInspector>[1]> {
             msg: Omit<NodeConsole.MsgArgs & MessageMaker.BulkMsgArgs, 'depth'>;
@@ -227,7 +227,7 @@ export declare namespace Logger {
  *
  * @category Types
  *
- * @since 0.3.0-beta.draft
+ * @since 0.3.0-beta
  */
 export interface ProjectLogger extends Logger {
     /**

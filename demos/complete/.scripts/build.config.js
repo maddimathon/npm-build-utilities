@@ -54,6 +54,10 @@ const config = {
                 };
             },
         },
+
+        document: true,
+
+        test: true,
     },
 };
 

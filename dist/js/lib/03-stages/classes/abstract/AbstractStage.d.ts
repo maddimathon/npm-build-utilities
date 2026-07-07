@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import type { PackageJson, TsConfig } from '@maddimathon/utility-typescript/types';
@@ -214,7 +214,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @category Typescript
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     writeTsConfig(outputPath: string, level: number, tsconfig: Partial<TsConfig>, { errorIfNotFound, ...args }?: Partial<NodeFiles.WriteFileArgs & {
         errorIfNotFound?: boolean;
@@ -223,7 +223,7 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * Takes completed arguments and runs sass functions with proper error
      * handling.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     protected compileScss(paths: {
         input: string;
@@ -414,11 +414,11 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
  */
 export declare namespace AbstractStage {
     /**
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     namespace compileScss {
         /**
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
          */
         interface Opts {
             /**
@@ -519,7 +519,7 @@ export declare namespace AbstractStage {
              *
              * @default true
              *
-             * @since 0.3.0-beta.draft
+             * @since 0.3.0-beta
              */
             prettier: boolean;
             /**

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import {
@@ -20,7 +20,7 @@ const _msgMaker = new MessageMaker({ paintFormat: null });
  * Gets some basic, standardized info for any input error.
  *
  * @since 0.2.0-alpha.4
- * @since 0.3.0-beta.draft — Removed unused level param.
+ * @since 0.3.0-beta — Removed unused level param.
  *
  * @internal
  */
@@ -153,7 +153,7 @@ export function getErrorInfo(error, console, fs, { stackFilter, ...args }) {
      * Parses an error object in the most basic way.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused level, console, fs, and args params. Added optional stackFilter param.
+     * @since 0.3.0-beta — Removed unused level, console, fs, and args params. Added optional stackFilter param.
      */
     function object(error, info = {}, stackFilter) {
         const default_info = {
@@ -324,7 +324,7 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo message property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused error, level, console, fs, args param.
+     * @since 0.3.0-beta — Removed unused error, level, console, fs, args param.
      */
     function message(info) {
         return [[`[${info.name}] ${info.message ?? ''}`]];
@@ -334,7 +334,7 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo output property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused level param.
+     * @since 0.3.0-beta — Removed unused level param.
      */
     function output(error, info, console, fs, args) {
         // returns
@@ -375,7 +375,7 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo cause property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused error param.
+     * @since 0.3.0-beta — Removed unused error param.
      */
     function cause(info, level, console, fs, args) {
         // returns
@@ -410,7 +410,7 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo stack property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused error, level param.
+     * @since 0.3.0-beta — Removed unused error, level param.
      */
     function stack(info, console, fs, args) {
         // returns
@@ -450,7 +450,7 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats the getErrorInfo details property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused error, level param.
+     * @since 0.3.0-beta — Removed unused error, level param.
      */
     function details(info, console, fs, args) {
         const details = [];
@@ -492,7 +492,7 @@ export function errorStringify(_error, level, console, fs, args) {
      * Formats a var dump of the error itself.
      *
      * @since 0.3.0-alpha.6
-     * @since 0.3.0-beta.draft — Removed unused level param.
+     * @since 0.3.0-beta — Removed unused level param.
      */
     function dump(
         error,

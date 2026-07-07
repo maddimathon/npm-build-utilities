@@ -235,7 +235,7 @@ export interface Stage<
      * 
      * @category Sass
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     sassErrorHandler(
         error: any,
@@ -299,7 +299,7 @@ export interface Stage<
      *
      * @category Errors
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     try: Stage.TryerFunction<'sync'>;
 
@@ -314,7 +314,7 @@ export interface Stage<
      *
      * @category Errors
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     atry: Stage.TryerFunction<'async'>;
 
@@ -644,7 +644,7 @@ export namespace Stage {
                 /**
                  * Passed to {@link Stage.Compiler.scssBulk}.
                  * 
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-beta
                  */
                 maxConcurrent: undefined | number;
 
@@ -657,7 +657,7 @@ export namespace Stage {
             /**
              * Whether to include this sub-stage.
              * 
-             * @since ___PKG_VERSION___ — Added option to include an array of strings that are paths to tsconfig files.
+             * @since 0.3.0-beta — Added option to include an array of strings that are paths to tsconfig files.
              */
             ts: boolean | string[];
         };
@@ -732,7 +732,7 @@ export namespace Stage {
             /**
              * Whether to attach the release zip to the github release.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta
              */
             attachZip?: boolean;
 
@@ -1002,9 +1002,9 @@ export namespace Stage {
         /**
          * Generates a default TS config file.
          * 
-         * @since ___PKG_VERSION___ — Converted to a method instead of an accessor for better path-matching.
+         * @since 0.3.0-beta — Converted to a method instead of an accessor for better path-matching.
          */
-        tsConfig( string?: string ): TsConfig;
+        tsConfig( compilerOptions?: Partial<TsConfig[ 'compilerOptions' ]> ): TsConfig;
 
         /**
          * Compile typescript using the 
@@ -1062,7 +1062,7 @@ export namespace Stage {
                  * 
                  * @default true
                  * 
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-beta
                  */
                 mergeArraysInTsConfig?: boolean;
 
@@ -1263,21 +1263,21 @@ export namespace Stage {
     /**
      * Utilities for dealing with errors in stages.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     export namespace Errors {
 
         /** 
          * Types for handling errors in a variety of contexts.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         export namespace Handler {
 
             /**
              * Optional configuration for error-handling functions.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta
              */
             export interface Args extends MessageMaker.BulkMsgArgs {
 
@@ -1392,7 +1392,7 @@ export namespace Stage {
      *
      * Overloaded for better function param and return typing.
      *
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     export interface TryerFunction<T_SyncType extends 'async' | 'sync' = 'async' | 'sync'> {
         /**

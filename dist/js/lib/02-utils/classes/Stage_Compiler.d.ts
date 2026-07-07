@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -34,7 +34,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     protected readonly stage: Stage & {
         config: Config.Class;
@@ -45,7 +45,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     protected readonly errorHandler: (error: any, level: number, args?: Partial<AbstractError.Handler.Args>) => void;
     /**
@@ -238,7 +238,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     protected readonly config: Config.Class;
     /**
@@ -246,7 +246,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     protected readonly params: CLI.Params;
     /**
@@ -254,7 +254,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     protected readonly console: Stage_Console;
     /**
@@ -262,7 +262,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     protected readonly fs: FileSystem;
     /**
@@ -274,7 +274,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     stage: Stage & {
         config: Config.Class;
@@ -285,7 +285,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     errorHandler: (error: any, level: number, args?: Partial<AbstractError.Handler.Args>) => void);
     /**
@@ -325,7 +325,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Typescript
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     protected mergeTsConfigs<T_Fallbacks extends Partial<TsConfig>, T_Overrides extends Partial<TsConfig>>(fallbacks: T_Fallbacks, overrides: T_Overrides): T_Fallbacks & {
         readonly exclude: undefined;
@@ -355,7 +355,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
      *
      * @since 0.2.0-alpha
-     * @since 0.3.0-beta.draft — Renamed from getTsConfig to readTsConfigFile.
+     * @since 0.3.0-beta — Renamed from getTsConfig to readTsConfigFile.
      */
     readTsConfigFile(tsconfig: string, level: number, errorIfNotFound?: boolean): Partial<TsConfig>;
     /**
@@ -364,7 +364,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Typescript
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     resolveTsConfig(tsconfig: string | Partial<TsConfig> & {
         path: string;
@@ -454,16 +454,121 @@ export declare class Stage_Compiler implements Stage.Compiler {
      *
      * @category Typescript
      *
-     * @param path  Optional. The path at which this tsconfig file will be written.
-     *
-     * @since 0.3.0-beta.draft — Converted to a method instead of an accessor for better path-matching.
+     * @since 0.3.0-beta — Converted to a method instead of an accessor for better path-matching.
      */
-    tsConfig(path?: string): {
+    tsConfig({ path, ...compilerOptions }?: Partial<TsConfig['compilerOptions'] & {
+        path?: string;
+    }>): {
         readonly extends: "@maddimathon/build-utilities/tsconfig";
         readonly exclude: string[];
         readonly compilerOptions: {
-            readonly rootDir: string | undefined;
+            readonly rootDir: string;
             readonly outDir: string;
+            readonly allowUnreachableCode?: boolean | undefined;
+            readonly allowUnusedLabels?: boolean | undefined;
+            readonly alwaysStrict?: boolean;
+            readonly exactOptionalPropertyTypes?: boolean;
+            readonly noFallthroughCasesInSwitch?: boolean;
+            readonly noImplicitAny?: boolean;
+            readonly noImplicitOverride?: boolean;
+            readonly noImplicitReturns?: boolean;
+            readonly noImplicitThis?: boolean;
+            readonly noPropertyAccessFromIndexSignature?: boolean;
+            readonly noUncheckedIndexedAccess?: boolean;
+            readonly noUnusedLocals?: boolean;
+            readonly noUnusedParameters?: boolean;
+            readonly strict?: boolean;
+            readonly strictBindCallApply?: boolean;
+            readonly strictFunctionTypes?: boolean;
+            readonly strictNullChecks?: boolean;
+            readonly strictPropertyInitialization?: boolean;
+            readonly useUnknownInCatchVariables?: boolean;
+            readonly allowArbitraryExtensions?: boolean;
+            readonly allowImportingTsExtensions?: boolean;
+            readonly allowUmdGlobalAccess?: boolean;
+            readonly baseUrl?: string;
+            readonly customConditions?: string[];
+            readonly module?: TsConfig.CompilerOpts.Module | Lowercase<TsConfig.CompilerOpts.Module> | Capitalize<Lowercase<TsConfig.CompilerOpts.Module>> | Uppercase<TsConfig.CompilerOpts.Module>;
+            readonly moduleResolution?: TsConfig.CompilerOpts.ModuleResolution | Lowercase<TsConfig.CompilerOpts.ModuleResolution> | Capitalize<Lowercase<TsConfig.CompilerOpts.ModuleResolution>> | Uppercase<TsConfig.CompilerOpts.ModuleResolution>;
+            readonly moduleSuffixes?: string[];
+            readonly noResolve?: boolean;
+            readonly paths?: {
+                [key: string]: string[] | string[];
+            };
+            readonly resolveJsonModule?: boolean;
+            readonly resolvePackageJsonExports?: boolean;
+            readonly resolvePackageJsonImports?: boolean;
+            readonly rootDirs?: string[];
+            readonly typeRoots?: string[];
+            readonly types?: string[];
+            readonly declaration?: boolean;
+            readonly declarationDir?: string;
+            readonly declarationMap?: boolean;
+            readonly downlevelIteration?: boolean;
+            readonly emitBOM?: boolean;
+            readonly emitDeclarationOnly?: boolean;
+            readonly importHelpers?: boolean;
+            readonly importsNotUsedAsValues?: "remove" | "preserve" | "error";
+            readonly inlineSourceMap?: boolean;
+            readonly inlineSources?: boolean;
+            readonly mapRoot?: string;
+            readonly newLine?: "crlf" | "lf";
+            readonly noEmit?: boolean;
+            readonly noEmitHelpers?: boolean;
+            readonly noEmitOnError?: boolean;
+            readonly outFile?: string;
+            readonly preserveConstEnums?: boolean;
+            readonly preserveValueImports?: boolean;
+            readonly removeComments?: boolean;
+            readonly sourceMap?: boolean;
+            readonly sourceRoot?: string;
+            readonly stripInternal?: boolean;
+            readonly allowJs?: boolean;
+            readonly checkJs?: boolean;
+            readonly maxNodeModuleJsDepth?: number;
+            readonly disableSizeLimit?: boolean;
+            readonly plugin?: string[];
+            readonly allowSyntheticDefaultImports?: boolean;
+            readonly esModuleInterop?: boolean;
+            readonly forceConsistentCasingInFileNames?: boolean;
+            readonly isolatedModules?: boolean;
+            readonly preserveSymlinks?: boolean;
+            readonly verbatimModuleSyntax?: boolean;
+            readonly charset?: "utf8" | "utf16";
+            readonly keyofStringsOnly?: boolean;
+            readonly noImplicitUseStrict?: boolean;
+            readonly noStrictGenericChecks?: boolean;
+            readonly suppressExcessPropertyErrors?: boolean;
+            readonly suppressImplicitAnyIndexErrors?: boolean;
+            readonly emitDecoratorMetadata?: boolean;
+            readonly experimentalDecorators?: boolean;
+            readonly jsx?: "preserve" | "react" | "react-native" | "react-jsx" | "react-jsxdev";
+            readonly jsxFactory?: string;
+            readonly jsxFragmentFactory?: string;
+            readonly jsxImportSource?: string;
+            readonly lib?: TsConfig.CompilerOpts.Lib | Lowercase<TsConfig.CompilerOpts.Lib> | Capitalize<Lowercase<TsConfig.CompilerOpts.Lib>> | Uppercase<TsConfig.CompilerOpts.Lib> | (TsConfig.CompilerOpts.Lib | Lowercase<TsConfig.CompilerOpts.Lib> | Capitalize<Lowercase<TsConfig.CompilerOpts.Lib>> | Uppercase<TsConfig.CompilerOpts.Lib>)[];
+            readonly moduleDetection?: "legacy" | "auto" | "forced";
+            readonly noLib?: boolean;
+            readonly reactNamespace?: string;
+            readonly target?: TsConfig.CompilerOpts.Target | Lowercase<TsConfig.CompilerOpts.Target> | Capitalize<Lowercase<TsConfig.CompilerOpts.Target>> | Uppercase<TsConfig.CompilerOpts.Target>;
+            readonly useDefineForClassFields?: boolean;
+            readonly explainFiles?: boolean;
+            readonly extendedDiagnostics?: boolean;
+            readonly generateCpuProfile?: string;
+            readonly listEmittedFiles?: boolean;
+            readonly listFiles?: boolean;
+            readonly traceResolution?: boolean;
+            readonly composite?: boolean;
+            readonly disableReferencedProjectLoad?: boolean;
+            readonly disableSolutionSearching?: boolean;
+            readonly disableSourceOfProjectReferenceRedirect?: boolean;
+            readonly incremental?: boolean;
+            readonly tsBuildInfoFile?: string;
+            readonly noErrorTruncation?: boolean;
+            readonly preserveWatchOutput?: boolean;
+            readonly pretty?: boolean;
+            readonly skipLibCheck?: boolean;
+            readonly assumeChangesOnlyAffectDirectDependencies?: boolean;
         };
     };
     /**
@@ -488,7 +593,7 @@ export declare namespace Stage_Compiler {
     /**
      * An extension of the utilities error used by the {@link Stage_Compiler} class.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      *
      * @internal
      */
@@ -503,7 +608,7 @@ export declare namespace Stage_Compiler {
     /**
      * Used only for {@link Stage_Compiler.Error}.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      *
      * @internal
      */
@@ -511,7 +616,7 @@ export declare namespace Stage_Compiler {
         /**
          * All allowed error codes.
          *
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
         */
         enum Code {
             /**
@@ -523,11 +628,11 @@ export declare namespace Stage_Compiler {
     /**
      * Utilities for the {@link Stage_Compiler.scssCompileTimer} method.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     namespace SassCompileTimer {
         /**
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
          */
         interface Args {
             /**

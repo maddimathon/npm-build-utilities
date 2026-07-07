@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import node_SemVer from 'semver';
@@ -257,7 +257,7 @@ export class SemVer {
          * All allowed error code strings.
          *
          * @since 0.1.0-alpha
-         * @since 0.3.0-beta.draft — Switched from union of strings to enum.
+         * @since 0.3.0-beta — Switched from union of strings to enum.
          */
         let Code;
         (function (Code) {
@@ -266,21 +266,21 @@ export class SemVer {
              * valid version.
              *
              * @since 0.1.0-alpha
-             * @since 0.3.0-beta.draft — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             Code['INVALID_INPUT'] = '4';
             /**
              * Error code for invalid build meta strings.
              *
              * @since 0.1.0-alpha
-             * @since 0.3.0-beta.draft — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             Code['INVALID_META'] = '3';
             /**
              * Error code for invalid prerelease strings.
              *
              * @since 0.1.0-alpha
-             * @since 0.3.0-beta.draft — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             Code['INVALID_PRERELEASE'] = '2';
             /**
@@ -288,7 +288,7 @@ export class SemVer {
              * patch versions.
              *
              * @since 0.1.0-alpha
-             * @since 0.3.0-beta.draft — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             Code['INVALID_VERSION'] = '1';
         })((Code = Error.Code || (Error.Code = {})));

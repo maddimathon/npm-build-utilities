@@ -488,14 +488,14 @@ export class _Stage_Console_VarInspect implements Logger.VarInspect {
      * ====================================================================== */
 
     /**
-     * @since ___PKG_VERSION___ — Removed `_msgArgs`, `config`, `nc`, `params` params.
+     * @since 0.3.0-beta — Removed `_msgArgs`, `config`, `nc`, `params` params.
      */
     constructor (
 
         /**
          * Functions to use for outputting messages.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         protected readonly console: {
             [ K in "debug" | "error" | "log" | "progress" | "warn" | "verbose" ]: (
@@ -541,7 +541,7 @@ export class _Stage_Console_VarInspect implements Logger.VarInspect {
     }
 
     /**
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     public error(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
@@ -593,7 +593,7 @@ export class _Stage_Console_VarInspect implements Logger.VarInspect {
     }
 
     /**
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     public warn(
         variable: ConstructorParameters<typeof VariableInspector>[ 0 ],

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import {
@@ -423,7 +423,7 @@ export class AbstractStage {
      *
      * @category Typescript
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     async writeTsConfig(
         outputPath,
@@ -454,7 +454,7 @@ export class AbstractStage {
      * Takes completed arguments and runs sass functions with proper error
      * handling.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     async compileScss(paths, logLevelBase, completeSassOpts, opts = {}) {
         const level_1 = logLevelBase + (this.params.verbose ? 1 : 0);

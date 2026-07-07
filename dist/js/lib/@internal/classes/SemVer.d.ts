@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import type { Logger } from '../../../types/Logger.js';
@@ -121,7 +121,7 @@ export declare namespace SemVer {
          * All allowed error code strings.
          *
          * @since 0.1.0-alpha
-         * @since 0.3.0-beta.draft — Switched from union of strings to enum.
+         * @since 0.3.0-beta — Switched from union of strings to enum.
          */
         enum Code {
             /**
@@ -129,21 +129,21 @@ export declare namespace SemVer {
              * valid version.
              *
              * @since 0.1.0-alpha
-             * @since 0.3.0-beta.draft — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             INVALID_INPUT = "4",
             /**
              * Error code for invalid build meta strings.
              *
              * @since 0.1.0-alpha
-             * @since 0.3.0-beta.draft — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             INVALID_META = "3",
             /**
              * Error code for invalid prerelease strings.
              *
              * @since 0.1.0-alpha
-             * @since 0.3.0-beta.draft — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             INVALID_PRERELEASE = "2",
             /**
@@ -151,7 +151,7 @@ export declare namespace SemVer {
              * patch versions.
              *
              * @since 0.1.0-alpha
-             * @since 0.3.0-beta.draft — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             INVALID_VERSION = "1"
         }

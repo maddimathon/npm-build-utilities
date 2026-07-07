@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -170,7 +170,7 @@ export interface Stage<T_Args extends Stage.Args = any, T_SubStage extends strin
      *
      * @category Sass
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     sassErrorHandler(error: any, level: number, opts: Stage.Compiler.Args.Sass, args?: Partial<Stage.Errors.Handler.Args> & {
         method?: 'error' | 'warn';
@@ -218,7 +218,7 @@ export interface Stage<T_Args extends Stage.Args = any, T_SubStage extends strin
      *
      * @category Errors
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     try: Stage.TryerFunction<'sync'>;
     /**
@@ -232,7 +232,7 @@ export interface Stage<T_Args extends Stage.Args = any, T_SubStage extends strin
      *
      * @category Errors
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     atry: Stage.TryerFunction<'async'>;
     /**
@@ -501,7 +501,7 @@ export declare namespace Stage {
                 /**
                  * Passed to {@link Stage.Compiler.scssBulk}.
                  *
-                 * @since 0.3.0-beta.draft
+                 * @since 0.3.0-beta
                  */
                 maxConcurrent: undefined | number;
                 /**
@@ -512,7 +512,7 @@ export declare namespace Stage {
             /**
              * Whether to include this sub-stage.
              *
-             * @since 0.3.0-beta.draft — Added option to include an array of strings that are paths to tsconfig files.
+             * @since 0.3.0-beta — Added option to include an array of strings that are paths to tsconfig files.
              */
             ts: boolean | string[];
         }
@@ -576,7 +576,7 @@ export declare namespace Stage {
             /**
              * Whether to attach the release zip to the github release.
              *
-             * @since 0.3.0-beta.draft
+             * @since 0.3.0-beta
              */
             attachZip?: boolean;
             /**
@@ -788,9 +788,9 @@ export declare namespace Stage {
         /**
          * Generates a default TS config file.
          *
-         * @since 0.3.0-beta.draft — Converted to a method instead of an accessor for better path-matching.
+         * @since 0.3.0-beta — Converted to a method instead of an accessor for better path-matching.
          */
-        tsConfig(string?: string): TsConfig;
+        tsConfig(compilerOptions?: Partial<TsConfig['compilerOptions']>): TsConfig;
         /**
          * Compile typescript using the
          * {@link https://www.npmjs.com/package/typescript | typescript npm package}.
@@ -837,7 +837,7 @@ export declare namespace Stage {
                  *
                  * @default true
                  *
-                 * @since 0.3.0-beta.draft
+                 * @since 0.3.0-beta
                  */
                 mergeArraysInTsConfig?: boolean;
                 /**
@@ -1016,19 +1016,19 @@ export declare namespace Stage {
     /**
      * Utilities for dealing with errors in stages.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     namespace Errors {
         /**
          * Types for handling errors in a variety of contexts.
          *
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
          */
         namespace Handler {
             /**
              * Optional configuration for error-handling functions.
              *
-             * @since 0.3.0-beta.draft
+             * @since 0.3.0-beta
              */
             interface Args extends MessageMaker.BulkMsgArgs {
                 /**
@@ -1116,7 +1116,7 @@ export declare namespace Stage {
      *
      * Overloaded for better function param and return typing.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     interface TryerFunction<T_SyncType extends 'async' | 'sync' = 'async' | 'sync'> {
         /**

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import {
@@ -313,13 +313,13 @@ export class _Stage_Console_VarInspect {
     /* CONSTRUCTOR
      * ====================================================================== */
     /**
-     * @since 0.3.0-beta.draft — Removed `_msgArgs`, `config`, `nc`, `params` params.
+     * @since 0.3.0-beta — Removed `_msgArgs`, `config`, `nc`, `params` params.
      */
     constructor(
         /**
          * Functions to use for outputting messages.
          *
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
          */
         console,
     ) {
@@ -347,7 +347,7 @@ export class _Stage_Console_VarInspect {
         );
     }
     /**
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     error(variable, level, { msg, ...args } = {}) {
         this.console.error(
@@ -380,7 +380,7 @@ export class _Stage_Console_VarInspect {
         );
     }
     /**
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     warn(variable, level, { msg, ...args } = {}) {
         this.console.warn(

@@ -35,7 +35,10 @@ demos/*/dist
 demos/*/CHANGELOG.md
 demos/*/package-lock.json
 demos/*/README.md
+demos/*/jest.config.js
+
 demos/no-config/.scripts
+demos/no-config/**/tsconfig.json
 
 
 # DOCS

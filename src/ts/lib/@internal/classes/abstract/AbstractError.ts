@@ -196,13 +196,13 @@ export namespace AbstractError {
          * Basic context information for a thrown error.
          * 
          * @since 0.1.0-alpha
-         * @since ___PKG_VERSION___ — Added optional stage prop.
+         * @since 0.3.0-beta — Added optional stage prop.
          */
         export interface Basic {
             /**
              * Current build stage during which error is caught.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta
              */
             stage?: string;
 
@@ -215,13 +215,13 @@ export namespace AbstractError {
          * Context information for an error thrown in a class.
          * 
          * @since 0.1.0-alpha
-         * @since ___PKG_VERSION___ — Added optional stage prop.
+         * @since 0.3.0-beta — Added optional stage prop.
          */
         export interface Class extends Partial<Basic> {
             /**
              * Current build stage during which error is caught.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta
              */
             stage?: string;
 

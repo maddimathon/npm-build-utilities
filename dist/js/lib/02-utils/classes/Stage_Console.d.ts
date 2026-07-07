@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import { MessageMaker, VariableInspector } from '@maddimathon/utility-typescript';
@@ -127,19 +127,19 @@ export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     /**
      * Functions to use for outputting messages.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     protected readonly console: {
         [K in "debug" | "error" | "log" | "progress" | "warn" | "verbose"]: (msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>) => void;
     };
     /**
-     * @since 0.3.0-beta.draft — Removed `_msgArgs`, `config`, `nc`, `params` params.
+     * @since 0.3.0-beta — Removed `_msgArgs`, `config`, `nc`, `params` params.
      */
     constructor(
     /**
      * Functions to use for outputting messages.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     console: {
         [K in "debug" | "error" | "log" | "progress" | "warn" | "verbose"]: (msg: string | string[] | MessageMaker.BulkMsgs, level: number, args?: RecursivePartial<Logger.MsgArgs>) => void;
@@ -149,7 +149,7 @@ export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     /** {@inheritDoc Logger.VarInspect.debug} */
     debug(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
     /**
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     error(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
     /** {@inheritDoc Logger.VarInspect.log} */
@@ -159,7 +159,7 @@ export declare class _Stage_Console_VarInspect implements Logger.VarInspect {
     /** {@inheritDoc Logger.VarInspect.stringify} */
     stringify(variable: ConstructorParameters<typeof VariableInspector>[0], args?: RecursivePartial<Logger.VarInspect.Args>): string;
     /**
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     warn(variable: ConstructorParameters<typeof VariableInspector>[0], level: number, { msg, ...args }?: RecursivePartial<Logger.VarInspect.Args>): void;
     /** {@inheritDoc Logger.VarInspect.verbose} */

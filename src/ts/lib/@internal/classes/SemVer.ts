@@ -297,7 +297,7 @@ export namespace SemVer {
          * All allowed error code strings.
          * 
          * @since 0.1.0-alpha
-         * @since ___PKG_VERSION___ — Switched from union of strings to enum.
+         * @since 0.3.0-beta — Switched from union of strings to enum.
          */
         export enum Code {
 
@@ -306,7 +306,7 @@ export namespace SemVer {
              * valid version.
              * 
              * @since 0.1.0-alpha
-             * @since ___PKG_VERSION___ — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             INVALID_INPUT = '4',
 
@@ -314,7 +314,7 @@ export namespace SemVer {
              * Error code for invalid build meta strings.
              * 
              * @since 0.1.0-alpha
-             * @since ___PKG_VERSION___ — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             INVALID_META = '3',
 
@@ -322,7 +322,7 @@ export namespace SemVer {
              * Error code for invalid prerelease strings.
              * 
              * @since 0.1.0-alpha
-             * @since ___PKG_VERSION___ — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             INVALID_PRERELEASE = '2',
 
@@ -331,7 +331,7 @@ export namespace SemVer {
              * patch versions.
              * 
              * @since 0.1.0-alpha
-             * @since ___PKG_VERSION___ — Switched to enum member.
+             * @since 0.3.0-beta — Switched to enum member.
              */
             INVALID_VERSION = '1',
         };

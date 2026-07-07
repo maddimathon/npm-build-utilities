@@ -156,7 +156,7 @@
     },
     
     "dependencies": {
-        "@maddimathon/utility-typescript": "~2.0.0-beta.4",
+        "@maddimathon/utility-typescript": "~2.0.0-beta.5",
         "@tsconfig/node20": "~20.1.9",
         "glob": "~13.0.6",
         "luxon": "^3.7.2",

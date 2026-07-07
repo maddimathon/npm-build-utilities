@@ -614,7 +614,7 @@ export class DocumentStage extends AbstractStage<
                 return;
             }
 
-            const _distRegex = new RegExp( '(^|(?<!\\.)\\.?\\/)' + escRegExp( this.fs.pathRelative( this.getDistDir( undefined, 'js' ) ) ) );
+            const _distRegex = new RegExp( '(^|(?<!\\.)\\.?\\/)' + escRegExp( this.fs.pathRelative( this.getDistDir( undefined, 'ts' ) ) ) );
             // this.console.vi.log( { _distRegex }, 2 );
 
             const _srcReplace = '$1' + escRegExpReplace( this.fs.pathRelative( this.getSrcDir( undefined, 'ts' ) ) );
@@ -675,7 +675,6 @@ export class DocumentStage extends AbstractStage<
 
         // returns
         if ( !project ) {
-
             this.handleError(
                 new StageError(
                     'ⅹ TypeDoc project setup failed',
@@ -686,15 +685,12 @@ export class DocumentStage extends AbstractStage<
                     exitProcess: this.params.packaging && !this.params.dryrun,
                 },
             );
-
             return;
         }
 
         // for some unknown reason, this breaks if I use this.atry
         try {
-
             await app.generateOutputs( project );
-
         } catch ( error ) {
 
             this.handleError(

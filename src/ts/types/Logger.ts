@@ -173,7 +173,7 @@ export namespace Logger {
     };
 
     /**
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     export interface MsgArgs extends Omit<NodeConsole.MsgArgs & MessageMaker.TimestampedArgs, 'depth'> { }
 
@@ -252,7 +252,7 @@ export namespace Logger {
          * @param level     Depth level for this message.
          * @param args      Argument overrides for the variable's inspection, including msg options.
          * 
-         * @since ___PKG_VERSION___ — Reconfigured args parameters to one object of inspection args.
+         * @since 0.3.0-beta — Reconfigured args parameters to one object of inspection args.
          */
         debug(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
@@ -267,7 +267,7 @@ export namespace Logger {
          * @param level     Depth level for this message.
          * @param args      Argument overrides for the variable's inspection, including msg options.
          * 
-         * @since ___PKG_VERSION___ — Reconfigured args parameters to one object of inspection args.
+         * @since 0.3.0-beta — Reconfigured args parameters to one object of inspection args.
          */
         log(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
@@ -283,7 +283,7 @@ export namespace Logger {
          * @param level     Depth level for this message.
          * @param args      Argument overrides for the variable's inspection, including msg options.
          * 
-         * @since ___PKG_VERSION___ — Reconfigured args parameters to one object of inspection args.
+         * @since 0.3.0-beta — Reconfigured args parameters to one object of inspection args.
          */
         progress(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
@@ -310,7 +310,7 @@ export namespace Logger {
          * @param level     Depth level for this message.
          * @param args      Argument overrides for the variable's inspection, including msg options.
          * 
-         * @since ___PKG_VERSION___ — Reconfigured args parameters to one object of inspection args.
+         * @since 0.3.0-beta — Reconfigured args parameters to one object of inspection args.
          */
         verbose(
             variable: ConstructorParameters<typeof VariableInspector>[ 0 ],
@@ -320,12 +320,12 @@ export namespace Logger {
     };
 
     /**
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     export namespace VarInspect {
 
         /**
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         export interface Args extends NonNullable<ConstructorParameters<typeof VariableInspector>[ 1 ]> {
             msg: Omit<NodeConsole.MsgArgs & MessageMaker.BulkMsgArgs, 'depth'>;
@@ -339,7 +339,7 @@ export namespace Logger {
  * 
  * @category Types
  * 
- * @since ___PKG_VERSION___
+ * @since 0.3.0-beta
  */
 export interface ProjectLogger extends Logger {
 

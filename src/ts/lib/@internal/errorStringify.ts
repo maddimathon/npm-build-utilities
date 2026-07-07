@@ -34,7 +34,7 @@ const _msgMaker = new MessageMaker( { paintFormat: null } );
  * Gets some basic, standardized info for any input error.
  * 
  * @since 0.2.0-alpha.4
- * @since ___PKG_VERSION___ — Removed unused level param.
+ * @since 0.3.0-beta — Removed unused level param.
  * 
  * @internal
  */
@@ -49,7 +49,7 @@ export function getErrorInfo(
         /**
          * Filters strings with stack traces in them.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         stackFilter?: ( stack: string ) => string;
     },
@@ -219,7 +219,7 @@ export namespace getErrorInfo {
      * Parses an error object in the most basic way.
      * 
      * @since 0.2.0-alpha.4
-     * @since ___PKG_VERSION___ — Removed unused level, console, fs, and args params. Added optional stackFilter param.
+     * @since 0.3.0-beta — Removed unused level, console, fs, and args params. Added optional stackFilter param.
      */
     export function object(
         error: Error & { cause?: unknown; } | Partial<Error & { cause?: unknown; }> | Partial<AbstractError.NodeCliError> | UnknownCaughtError,
@@ -448,7 +448,7 @@ export namespace errorStringify {
      * Formats the getErrorInfo message property.
      * 
      * @since 0.2.0-alpha.4
-     * @since ___PKG_VERSION___ — Removed unused error, level, console, fs, args param.
+     * @since 0.3.0-beta — Removed unused error, level, console, fs, args param.
      */
     export function message(
         info: errorStringify.Info,
@@ -463,7 +463,7 @@ export namespace errorStringify {
      * Formats the getErrorInfo output property.
      * 
      * @since 0.2.0-alpha.4
-     * @since ___PKG_VERSION___ — Removed unused level param.
+     * @since 0.3.0-beta — Removed unused level param.
      */
     export function output(
         error: ReturnType<typeof getErrorInfo>[ 0 ],
@@ -508,7 +508,7 @@ export namespace errorStringify {
      * Formats the getErrorInfo cause property.
      * 
      * @since 0.2.0-alpha.4
-     * @since ___PKG_VERSION___ — Removed unused error param.
+     * @since 0.3.0-beta — Removed unused error param.
      */
     export function cause(
         info: errorStringify.Info,
@@ -550,7 +550,7 @@ export namespace errorStringify {
      * Formats the getErrorInfo stack property.
      * 
      * @since 0.2.0-alpha.4
-     * @since ___PKG_VERSION___ — Removed unused error, level param.
+     * @since 0.3.0-beta — Removed unused error, level param.
      */
     export function stack(
         info: errorStringify.Info,
@@ -601,7 +601,7 @@ export namespace errorStringify {
      * Formats the getErrorInfo details property.
      * 
      * @since 0.2.0-alpha.4
-     * @since ___PKG_VERSION___ — Removed unused error, level param.
+     * @since 0.3.0-beta — Removed unused error, level param.
      */
     export function details(
         info: errorStringify.Info,
@@ -653,7 +653,7 @@ export namespace errorStringify {
      * Formats a var dump of the error itself.
      * 
      * @since 0.3.0-alpha.6
-     * @since ___PKG_VERSION___ — Removed unused level param.
+     * @since 0.3.0-beta — Removed unused level param.
      */
     export function dump(
         error: ReturnType<typeof getErrorInfo>[ 0 ],

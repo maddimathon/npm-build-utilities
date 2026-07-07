@@ -571,7 +571,7 @@ export abstract class AbstractStage<
      * 
      * @category Typescript
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     public async writeTsConfig(
         outputPath: string,
@@ -606,7 +606,7 @@ export abstract class AbstractStage<
      * Takes completed arguments and runs sass functions with proper error
      * handling.
      *
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     protected async compileScss(
         paths: {
@@ -1566,12 +1566,12 @@ export abstract class AbstractStage<
 export namespace AbstractStage {
 
     /**
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta
      */
     export namespace compileScss {
 
         /**
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         export interface Opts {
 
@@ -1696,7 +1696,7 @@ export namespace AbstractStage {
              * 
              * @default true
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta
              */
             prettier: boolean;
 

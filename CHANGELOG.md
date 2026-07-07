@@ -19,6 +19,40 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-beta** — 2026-07-07
+
+Fixes to tsconfig templates & utilities, scss compiling.
+
+### Renamed & Moved
+- Renamed Stage_Compiler.getTsConfig to {@link Stage_Compiler.readTsConfigFile}
+
+### Misc. Breaking
+- Updated with utility-typescript@2.0.0-beta.3
+- Converted {@link Stage.Compiler.tsconfig} & {@link Stage_Compiler.tsconfig} from accessor to method
+
+### Added
+- New {@link internal.Stage_Compiler} methods: {@link internal.Stage_Compiler.resolveTsConfig} -
+  including error handling and proper node resolution of 'extends' values
+- New {@link AbstractStage} method: {@link AbstractStage.writeTsConfig}
+- New {@link Config} property: {@link Config.Paths.modules} (path to
+  node_modules folder, relative to project root)
+- New {@link Stage.Compiler.Args.ts} property: mergeArraysInTsConfig
+- New {@link internal._Stage_Console_VarInspect.error} and {@link internal._Stage_Console_VarInspect.warn}
+- New {@link AbstractStage.compileScss} method
+
+### Changed
+- {@link Stage.Args.Compile.ts} now also accepts an array of strings (tsconfig paths)
+- Added inspectArgs as third param to {@link Logger.vi} methods and combined msg and time args
+- Added option to remove zip attachment from github release
+
+### Fixed
+- Fixes to {@link internal.Stage_Console} structure and output (with utility-typescript updates)
+- Improvements to {@link AbstractStage.writeTsConfig} and {@link
+  Stage_Compiler.resolveTsConfig}, including error handling and proper node
+  resolution of 'extends' values
+- Improved sass compile error handling
+
+
 ## **0.3.0-alpha.18** — 2026-03-07
 
 Made methods {@link AbstractStage.atry} and {@link AbstractStage.try} public.

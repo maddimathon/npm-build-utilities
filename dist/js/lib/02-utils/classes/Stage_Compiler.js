@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -151,15 +151,15 @@ export class Stage_Compiler {
         if (!tsConfigFile) {
             return [];
         }
-        const rootDir = tsSrcDir.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
-        stage.console.vi.debug({ rootDir }, 2);
-        const outDir = stage.fs.pathRelative(
-            stage.fs.pathResolve(rootDir, stage.getDistDir(), 'js'),
-        );
-        stage.console.vi.debug({ outDir }, 2);
         const _writeResult = stage.fs.write(
             stage.fs.pathResolve(tsConfigFile),
-            JSON.stringify(stage.compiler.tsConfig(tsConfigFile), null, 4),
+            JSON.stringify(
+                stage.compiler.tsConfig({
+                    path: tsConfigFile,
+                }),
+                null,
+                4,
+            ),
             { force: true },
         );
         // returns
@@ -338,7 +338,7 @@ export class Stage_Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     config;
     /**
@@ -346,7 +346,7 @@ export class Stage_Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     params;
     /**
@@ -354,7 +354,7 @@ export class Stage_Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     console;
     /**
@@ -362,7 +362,7 @@ export class Stage_Compiler {
      *
      * @category Internal
      *
-     * @since 0.3.0-beta.draft — Removed from constructor params.
+     * @since 0.3.0-beta — Removed from constructor params.
      */
     fs;
     /**
@@ -374,7 +374,7 @@ export class Stage_Compiler {
          *
          * @category Internal
          *
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
          */
         stage,
         /**
@@ -382,7 +382,7 @@ export class Stage_Compiler {
          *
          * @category Internal
          *
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
          */
         errorHandler,
     ) {
@@ -487,7 +487,7 @@ export class Stage_Compiler {
      *
      * @category Typescript
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     mergeTsConfigs(fallbacks, overrides) {
         const compilerOptions = mergeArgs(
@@ -602,7 +602,7 @@ export class Stage_Compiler {
      * @param errorIfNotFound  Whether to throw an error if tsconfig is not found.
      *
      * @since 0.2.0-alpha
-     * @since 0.3.0-beta.draft — Renamed from getTsConfig to readTsConfigFile.
+     * @since 0.3.0-beta — Renamed from getTsConfig to readTsConfigFile.
      */
     readTsConfigFile(tsconfig, level, errorIfNotFound = true) {
         this.console.verbose('getting tsconfig file content...', level);
@@ -640,7 +640,7 @@ export class Stage_Compiler {
      *
      * @category Typescript
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     async resolveTsConfig(tsconfig, level, errorIfNotFound = true) {
         const _tsconfig_obj =
@@ -1300,29 +1300,27 @@ export class Stage_Compiler {
      *
      * @category Typescript
      *
-     * @param path  Optional. The path at which this tsconfig file will be written.
-     *
-     * @since 0.3.0-beta.draft — Converted to a method instead of an accessor for better path-matching.
+     * @since 0.3.0-beta — Converted to a method instead of an accessor for better path-matching.
      */
-    tsConfig(path) {
-        // @ts-expect-error
-        const relativePath =
-            path && this.fs.pathRelative(this.fs.pathResolve(path));
-        const tsSrcDir = this.config.getSrcDir(this.fs, 'ts')[0];
-        const rootDir = tsSrcDir?.replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/');
-        const outDir = this.fs.pathRelative(
-            this.fs.pathResolve(
-                rootDir ?? '.',
-                this.config.getDistDir(this.fs),
-                'ts',
-            ),
-        );
+    tsConfig({ path, ...compilerOptions } = {}) {
+        const outDir =
+            compilerOptions?.outDir
+            ?? this.fs.pathRelative(
+                this.fs.pathResolve(
+                    path
+                        ?.replace(/(?<=^|\/)[^\/]*\.[a-z][a-z|0-9|\-]*$/gi, '')
+                        .replace(/(?<=^|\/)[^\/]+(\/|$)/g, '..\/') ?? '../',
+                    this.config.getDistDir(this.fs),
+                    'ts',
+                ),
+            );
         const exclude = ['**/node_modules/**/*'];
         return {
             extends: '@maddimathon/build-utilities/tsconfig',
             exclude,
             compilerOptions: {
-                rootDir,
+                ...(compilerOptions ?? {}),
+                rootDir: compilerOptions?.rootDir ?? './',
                 outDir,
             },
         };
@@ -1378,7 +1376,7 @@ export class Stage_Compiler {
     /**
      * An extension of the utilities error used by the {@link Stage_Compiler} class.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      *
      * @internal
      */
@@ -1394,7 +1392,7 @@ export class Stage_Compiler {
     /**
      * Used only for {@link Stage_Compiler.Error}.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      *
      * @internal
      */
@@ -1402,7 +1400,7 @@ export class Stage_Compiler {
         /**
          * All allowed error codes.
          *
-         * @since 0.3.0-beta.draft
+         * @since 0.3.0-beta
          */
         let Code;
         (function (Code) {

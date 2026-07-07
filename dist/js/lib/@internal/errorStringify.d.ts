@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import { MessageMaker } from '@maddimathon/utility-typescript';
@@ -15,7 +15,7 @@ import { AbstractError, UnknownCaughtError } from './classes/index.js';
  * Gets some basic, standardized info for any input error.
  *
  * @since 0.2.0-alpha.4
- * @since 0.3.0-beta.draft — Removed unused level param.
+ * @since 0.3.0-beta — Removed unused level param.
  *
  * @internal
  */
@@ -23,7 +23,7 @@ export declare function getErrorInfo(error: AbstractError.Input, console: Logger
     /**
      * Filters strings with stack traces in them.
      *
-     * @since 0.3.0-beta.draft
+     * @since 0.3.0-beta
      */
     stackFilter?: (stack: string) => string;
 }): [typeof error, errorStringify.Info];
@@ -43,7 +43,7 @@ export declare namespace getErrorInfo {
      * Parses an error object in the most basic way.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused level, console, fs, and args params. Added optional stackFilter param.
+     * @since 0.3.0-beta — Removed unused level, console, fs, and args params. Added optional stackFilter param.
      */
     function object(error: Error & {
         cause?: unknown;
@@ -123,42 +123,42 @@ export declare namespace errorStringify {
      * Formats the getErrorInfo message property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused error, level, console, fs, args param.
+     * @since 0.3.0-beta — Removed unused error, level, console, fs, args param.
      */
     function message(info: errorStringify.Info): MessageMaker.BulkMsgs;
     /**
      * Formats the getErrorInfo output property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused level param.
+     * @since 0.3.0-beta — Removed unused level param.
      */
     function output(error: ReturnType<typeof getErrorInfo>[0], info: errorStringify.Info, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>): MessageMaker.BulkMsgs;
     /**
      * Formats the getErrorInfo cause property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused error param.
+     * @since 0.3.0-beta — Removed unused error param.
      */
     function cause(info: errorStringify.Info, level: number, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>): MessageMaker.BulkMsgs;
     /**
      * Formats the getErrorInfo stack property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused error, level param.
+     * @since 0.3.0-beta — Removed unused error, level param.
      */
     function stack(info: errorStringify.Info, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>): MessageMaker.BulkMsgs;
     /**
      * Formats the getErrorInfo details property.
      *
      * @since 0.2.0-alpha.4
-     * @since 0.3.0-beta.draft — Removed unused error, level param.
+     * @since 0.3.0-beta — Removed unused error, level param.
      */
     function details(info: errorStringify.Info, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>): MessageMaker.BulkMsgs;
     /**
      * Formats a var dump of the error itself.
      *
      * @since 0.3.0-alpha.6
-     * @since 0.3.0-beta.draft — Removed unused level param.
+     * @since 0.3.0-beta — Removed unused level param.
      */
     function dump(error: ReturnType<typeof getErrorInfo>[0], info: errorStringify.Info, console: Logger, fs: FileSystemType, args: Partial<AbstractError.Handler.Args>, extraDumpVars?: Record<string, any>, _maxLines?: number): MessageMaker.BulkMsgs;
 }

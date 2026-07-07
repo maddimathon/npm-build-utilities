@@ -352,7 +352,7 @@ export namespace Config {
          *
          * @default 'node_modules'
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta
          */
         modules: string;
 

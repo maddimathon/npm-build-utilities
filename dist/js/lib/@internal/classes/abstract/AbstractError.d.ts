@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.draft
+ * @maddimathon/build-utilities@0.3.0-beta
  * @license MIT
  */
 import type { Classify } from '@maddimathon/utility-typescript/types';
@@ -108,13 +108,13 @@ export declare namespace AbstractError {
          * Basic context information for a thrown error.
          *
          * @since 0.1.0-alpha
-         * @since 0.3.0-beta.draft — Added optional stage prop.
+         * @since 0.3.0-beta — Added optional stage prop.
          */
         interface Basic {
             /**
              * Current build stage during which error is caught.
              *
-             * @since 0.3.0-beta.draft
+             * @since 0.3.0-beta
              */
             stage?: string;
             file: string;
@@ -125,13 +125,13 @@ export declare namespace AbstractError {
          * Context information for an error thrown in a class.
          *
          * @since 0.1.0-alpha
-         * @since 0.3.0-beta.draft — Added optional stage prop.
+         * @since 0.3.0-beta — Added optional stage prop.
          */
         interface Class extends Partial<Basic> {
             /**
              * Current build stage during which error is caught.
              *
-             * @since 0.3.0-beta.draft
+             * @since 0.3.0-beta
              */
             stage?: string;
             class: string;

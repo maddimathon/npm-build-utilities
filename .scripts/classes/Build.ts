@@ -94,7 +94,7 @@ export class Build extends BuildStage {
 
         this.fs.write(
             tsconfigPath,
-            JSON.stringify( this.compiler.tsConfig( tsconfigPath ), null, 4 ),
+            JSON.stringify( this.compiler.tsConfig( { path: 'src/ts/tsconfig.json' } ), null, 4 ),
             { force: true },
         );
 
