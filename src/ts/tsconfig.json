@@ -6,8 +6,6 @@
         "alwaysStrict": true,
         "checkJs": true,
         "composite": true,
-        "declaration": true,
-        "declarationMap": false,
         "exactOptionalPropertyTypes": false,
         "forceConsistentCasingInFileNames": true,
         "isolatedDeclarations": false,

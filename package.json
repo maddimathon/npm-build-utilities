@@ -105,15 +105,15 @@
     "scripts": {
         "unlink": "run-s unlink:*",
             "unlink:ts": "rm -rf node_modules/@maddimathon/utility-typescript || echo ''",
-            "unlink:tsconfig": "rm -rf node_modules/@maddimathon/tsconfig/dist || echo ''",
-            "unlink:compiler-typedoc": "rm -rf node_modules/@maddimathon/compiler-typedoc/dist || echo ''",
-            "unlink:universal-types": "rm -rf node_modules/@maddimathon/universal-types/dist || echo ''",
+            "x-unlink:tsconfig": "rm -rf node_modules/@maddimathon/tsconfig/dist || echo ''",
+            "x-unlink:compiler-typedoc": "rm -rf node_modules/@maddimathon/compiler-typedoc/dist || echo ''",
+            "x-unlink:universal-types": "rm -rf node_modules/@maddimathon/universal-types/dist || echo ''",
 
         "link": "run-s link:*",
             "link:ts": "npm run unlink:ts && mkdir -p node_modules/@maddimathon/utility-typescript && cp -R -H -f -p ../utility-typescript/package.json ../utility-typescript/tsconfig.json ../utility-typescript/dist node_modules/@maddimathon/utility-typescript",
-            "link:tsconfig": "npm run unlink:tsconfig && mkdir -p node_modules/@maddimathon/tsconfig && cp -R -H -f -p ../npm-base-utilities/packages/tsconfig/dist ../npm-base-utilities/packages/tsconfig/package.json node_modules/@maddimathon/tsconfig",
-            "link:compiler-typedoc": "npm run unlink:compiler-typedoc && mkdir -p node_modules/@maddimathon/compiler-typedoc && cp -R -H -f -p ../npm-base-utilities/packages/@helpers/compiler-typedoc/dist ../npm-base-utilities/packages/@helpers/compiler-typedoc/package.json node_modules/@maddimathon/compiler-typedoc",
-            "link:universal-types": "npm run unlink:universal-types && mkdir -p node_modules/@maddimathon/universal-types && cp -R -H -f -p ../npm-base-utilities/packages/@helpers/universal-types/dist ../npm-base-utilities/packages/@helpers/universal-types/package.json node_modules/@maddimathon/universal-types",
+            "x-link:tsconfig": "npm run unlink:tsconfig && mkdir -p node_modules/@maddimathon/tsconfig && cp -R -H -f -p ../npm-base-utilities/packages/tsconfig/dist ../npm-base-utilities/packages/tsconfig/package.json node_modules/@maddimathon/tsconfig",
+            "x-link:compiler-typedoc": "npm run unlink:compiler-typedoc && mkdir -p node_modules/@maddimathon/compiler-typedoc && cp -R -H -f -p ../npm-base-utilities/packages/@helpers/compiler-typedoc/dist ../npm-base-utilities/packages/@helpers/compiler-typedoc/package.json node_modules/@maddimathon/compiler-typedoc",
+            "x-link:universal-types": "npm run unlink:universal-types && mkdir -p node_modules/@maddimathon/universal-types && cp -R -H -f -p ../npm-base-utilities/packages/@helpers/universal-types/dist ../npm-base-utilities/packages/@helpers/universal-types/package.json node_modules/@maddimathon/universal-types",
 
             
         "test-utils": "tsx --tsconfig .scripts/tsconfig.json src/ts/bin/index.ts --config .scripts/build.config.ts",
