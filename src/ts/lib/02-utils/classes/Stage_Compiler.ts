@@ -471,11 +471,13 @@ export class Stage_Compiler implements Stage.Compiler {
         this.getTsConfigOutDir = this.getTsConfigOutDir.bind( this );
         this.postCSS = this.postCSS.bind( this );
         this.readTsConfigFile = this.readTsConfigFile.bind( this );
+        this.resolveTsConfig = this.resolveTsConfig.bind( this );
+        this.sassCompileAsync = this.sassCompileAsync.bind( this );
         this.scss = this.scss.bind( this );
         this.scssAPI = this.scssAPI.bind( this );
         this.scssCLI = this.scssCLI.bind( this );
         this.scssBulk = this.scssBulk.bind( this );
-        this.sassCompileAsync = this.sassCompileAsync.bind( this );
+        this.tsConfig = this.tsConfig.bind( this );
         this.typescript = this.typescript.bind( this );
     }
 

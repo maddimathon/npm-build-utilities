@@ -77,10 +77,6 @@ export class Compile extends CompileStage {
                 ],
 
                 compilerOptions: {
-                    // lib: [
-                    //     'DOM',
-                    //     'ESNext',
-                    // ],
                     sourceMap: false,
                 },
             },
@@ -99,15 +95,17 @@ export class Compile extends CompileStage {
 
                 compilerOptions: {
                     allowJs: true,
+                    allowUnreachableCode: undefined,
                     checkJs: true,
                     composite: false,
                     exactOptionalPropertyTypes: false,
-                    isolatedDeclarations: false,
-                    isolatedModules: false,
+                    isolatedDeclarations: undefined,
+                    isolatedModules: undefined,
                     module: 'NodeNext',
                     moduleResolution: 'NodeNext',
                     noEmit: true,
                     target: 'ES2022',
+                    types: [ 'node' ],
                 },
             },
             writeArgs,
@@ -116,10 +114,26 @@ export class Compile extends CompileStage {
         const scriptsPath_relative = scriptsConfigPath ? this.fs.pathRelative( scriptsConfigPath ) : scriptsConfigPath;
 
         await this.writeTsConfig(
+            'tsconfig.browser.json',
+            2,
+            {
+                extends: [
+                    basePath_relative ? basePath_relative : './tsconfig.base.json',
+                ],
+
+                compilerOptions: {
+                    module: 'ES2015',
+                    target: 'ES2015',
+                },
+            },
+            writeArgs,
+        );
+
+        await this.writeTsConfig(
             'src/ts/tsconfig.json',
             2,
             {
-                extends: scriptsPath_relative ? scriptsPath_relative : '../../tsconfig.base.json',
+                extends: scriptsPath_relative ? scriptsPath_relative : '../../tsconfig.scripts.json',
 
                 include: [
                     "../../src/ts/**/*",
@@ -131,12 +145,14 @@ export class Compile extends CompileStage {
                 ],
 
                 compilerOptions: {
+                    allowUnreachableCode: false,
                     composite: true,
                     module: 'Node18',
                     moduleResolution: 'Node16',
                     noEmit: undefined,
                     outDir: '../../dist/js/',
                     target: 'ES2022',
+                    types: [ 'node', 'jest' ],
                 },
             },
             writeArgs,
@@ -158,6 +174,7 @@ export class Compile extends CompileStage {
                 compilerOptions: {
                     // rootDir: '../../',
                     noEmit: true,
+                    types: [ 'node' ],
                 }
             },
             writeArgs,

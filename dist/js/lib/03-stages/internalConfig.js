@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.1
+ * @maddimathon/build-utilities@0.3.0-beta.1.draft
  * @license MIT
  */
 import { defaultConfig } from './defaultConfig.js';
@@ -33,6 +33,7 @@ function _internalConfig_stage(name, config) {
                 internalStage = [getDefaultStageClass(name)];
                 return internalStage;
         }
+        // @ts-expect-error - should be unreachable
         return false;
     }
     // returns - this is a class input

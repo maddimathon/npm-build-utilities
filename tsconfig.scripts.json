@@ -8,8 +8,6 @@
         "composite": false,
         "exactOptionalPropertyTypes": false,
         "forceConsistentCasingInFileNames": true,
-        "isolatedDeclarations": false,
-        "isolatedModules": false,
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
         "noEmit": true,
@@ -36,8 +34,7 @@
         "strictPropertyInitialization": true,
         "target": "ES2022",
         "types": [
-            "node",
-            "jest"
+            "node"
         ],
         "useUnknownInCatchVariables": true,
         "verbatimModuleSyntax": true

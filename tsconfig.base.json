@@ -1,6 +1,7 @@
 {
     "$schema": "https://json.schemastore.org/tsconfig",
     "compilerOptions": {
+        "allowUnreachableCode": false,
         "allowUnusedLabels": false,
         "alwaysStrict": true,
         "composite": true,
@@ -30,10 +31,6 @@
         "strictFunctionTypes": true,
         "strictNullChecks": true,
         "strictPropertyInitialization": true,
-        "types": [
-            "node",
-            "jest"
-        ],
         "useUnknownInCatchVariables": true,
         "verbatimModuleSyntax": true
     }

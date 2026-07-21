@@ -682,6 +682,7 @@ export class FileSystem extends NodeFiles {
                         'No parser was given or assigned for format "' + format + '"',
                         'prettify',
                     );
+                    // @ts-expect-error - should be unreachable
                     return [];
             }
         }

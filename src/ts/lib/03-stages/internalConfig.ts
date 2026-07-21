@@ -61,6 +61,7 @@ function _internalConfig_stage<_StageName extends Stage.Name>(
                 return internalStage;
         }
 
+        // @ts-expect-error - should be unreachable
         return false;
     }
 
