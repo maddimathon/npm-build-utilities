@@ -123,7 +123,7 @@ export class Compile extends CompileStage {
 
                 compilerOptions: {
                     module: 'ES2015',
-                    target: 'ES2015',
+                    target: 'ES2016',
                 },
             },
             writeArgs,

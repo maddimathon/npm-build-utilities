@@ -661,12 +661,23 @@ export abstract class AbstractStage<
                 if ( opts.postCSS ) {
                     this.console.verbose( 'processing with postcss...', logLevelBase );
 
+                    let _postCSSpaths = outputPaths;
+
+                    const { ignoreGlobs, ...postCssOpts } = typeof opts.postCSS === 'object'
+                        ? opts.postCSS
+                        : {};
+
+                    if ( ignoreGlobs?.length ) {
+                        _postCSSpaths = this.fs.glob( _postCSSpaths, { ignore: ignoreGlobs } );
+                    }
+
                     await this.atry(
                         this.compiler.postCSS,
                         level_1,
                         [
-                            outputPaths.map( from => ( { from } ) ),
+                            _postCSSpaths.map( from => ( { from } ) ),
                             level_1,
+                            postCssOpts,
                         ],
                     );
                 }
@@ -1399,6 +1410,8 @@ export abstract class AbstractStage<
      * the dist directories.
      *
      * Deletes any existing, logs update messages, etc.
+     * 
+     * @category Running
      *
      * @param subpath       The subdirectory, relative to src path.
      * @param distDir       Force a diffrent output directory than the auto-generated one.
@@ -1408,52 +1421,26 @@ export abstract class AbstractStage<
      * @since 0.1.4-alpha
      * @since 0.2.0-alpha — Added `postCSS` param and PostCSS compatibility.
      * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
-     * 
-     * @since 0.2.0-alpha.2 — Changed `postCSS` param to `opts` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding. 
-     * 
+     * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
-     */
-    protected async runCustomScssDirSubStage(
-        subpath: string | string[],
-        distDir?: string,
-        opts?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
-        logLevelBase?: number,
-        sassOpts?: Stage.Compiler.Args.Sass,
-    ): Promise<string[]>;
-
-    /**
-     * Deprecated overload here for forward-compatibility.  Please use the
-     * overload above instead.
-     *
-     * @deprecated 0.2.0-alpha.2 — Please pass an
-     *             {@link AbstractStage.runCustomScssDirSubStage.Opts} object as 
-     *             the third param instead.
-     */
-    protected async runCustomScssDirSubStage(
-        subpath: string | string[],
-        distDir?: string,
-        postCSS?: boolean,
-        logLevelBase?: number,
-        sassOpts?: Stage.Compiler.Args.Sass,
-    ): Promise<string[]>;
-
-    /**
-     * @category Running
+     * @since ___PKG_VERSION___ — Changed `sassOpts` param to a property in `options`.
      * 
      * @experimental
      */
     protected async runCustomScssDirSubStage(
         _subpath: string | string[],
         _distDir?: string,
-        _opts?: boolean | Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
+        options?: Partial<AbstractStage.runCustomScssDirSubStage.Opts>,
         logLevelBase: number = 1,
-        sassOpts: Stage.Compiler.Args.Sass = {},
     ): Promise<string[]> {
         const subpaths = Array.isArray( _subpath ) ? _subpath : [ _subpath ];
 
-        const opts = mergeArgs(
+        const {
+            sass: sassOpts,
+            ...opts
+        } = mergeArgs(
             AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS as AbstractStage.runCustomScssDirSubStage.Opts,
-            typeof _opts === 'boolean' ? { postCSS: _opts } : _opts
+            options,
         );
 
         const srcDir = ( opts.srcDir ?? this.getSrcDir() ).replace( /\/$/g, '' );
@@ -1588,8 +1575,14 @@ export namespace AbstractStage {
              * @default true
              * 
              * @since 0.2.0-alpha.2
+             * @since ___PKG_VERSION___ — Added option to pass an object of args instead.
              */
-            postCSS: boolean;
+            postCSS: boolean | Stage.Compiler.Args.PostCSS & {
+                /**
+                 * @since ___PKG_VERSION___
+                 */
+                ignoreGlobs?: string[];
+            };
 
             /**
              * Whether to run prettier on the output css.
@@ -1692,13 +1685,20 @@ export namespace AbstractStage {
             ignoreGlobs: string[];
 
             /**
-             * {@inheritDoc AbstractStage.compileScss.prettier}
+             * {@inheritDoc AbstractStage.compileScss.Opts.prettier}
              * 
              * @default true
              * 
              * @since 0.3.0-beta
              */
             prettier: boolean;
+
+            /**
+             * Sass args for the compiler.
+             * 
+             * @since ___PKG_VERSION___
+             */
+            sass?: undefined | Stage.Compiler.Args.Sass;
 
             /**
              * The base path for the source directory (used to rewrite the

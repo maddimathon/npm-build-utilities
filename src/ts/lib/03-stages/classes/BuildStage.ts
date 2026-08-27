@@ -497,12 +497,7 @@ export class BuildStage extends AbstractStage<
                 continue;
             }
 
-            this.replaceInFiles(
-                paths[ _key ],
-                _key,
-                2,
-                paths.ignore,
-            );
+            this.replaceInFiles( paths[ _key ], _key, 2, paths.ignore );
         }
     }
 

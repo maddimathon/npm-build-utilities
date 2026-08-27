@@ -503,9 +503,18 @@ export class AbstractStage {
                     'processing with postcss...',
                     logLevelBase,
                 );
+                let _postCSSpaths = outputPaths;
+                const { ignoreGlobs, ...postCssOpts } =
+                    typeof opts.postCSS === 'object' ? opts.postCSS : {};
+                if (ignoreGlobs?.length) {
+                    _postCSSpaths = this.fs.glob(_postCSSpaths, {
+                        ignore: ignoreGlobs,
+                    });
+                }
                 await this.atry(this.compiler.postCSS, level_1, [
-                    outputPaths.map((from) => ({ from })),
+                    _postCSSpaths.map((from) => ({ from })),
                     level_1,
+                    postCssOpts,
                 ]);
             }
             if (opts.prettier) {
@@ -1164,21 +1173,38 @@ export class AbstractStage {
         ]);
     }
     /**
+     * This runs a custom sub-stage that uses globs to find non-partial
+     * scss/sass files and compile them at the given subpath from the source to
+     * the dist directories.
+     *
+     * Deletes any existing, logs update messages, etc.
+     *
      * @category Running
+     *
+     * @param subpath       The subdirectory, relative to src path.
+     * @param distDir       Force a diffrent output directory than the auto-generated one.
+     * @param opts          Additional options. See {@link AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS} for defaults.
+     * @param logLevelBase  Base output level for log messages. Default 1.
+     *
+     * @since 0.1.4-alpha
+     * @since 0.2.0-alpha — Added `postCSS` param and PostCSS compatibility.
+     * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
+     * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
+     * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
+     * @since 0.3.0-beta.1.draft — Changed `sassOpts` param to a property in `options`.
      *
      * @experimental
      */
     async runCustomScssDirSubStage(
         _subpath,
         _distDir,
-        _opts,
+        options,
         logLevelBase = 1,
-        sassOpts = {},
     ) {
         const subpaths = Array.isArray(_subpath) ? _subpath : [_subpath];
-        const opts = mergeArgs(
+        const { sass: sassOpts, ...opts } = mergeArgs(
             AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS,
-            typeof _opts === 'boolean' ? { postCSS: _opts } : _opts,
+            options,
         );
         const srcDir = (opts.srcDir ?? this.getSrcDir()).replace(/\/$/g, '');
         const srcSubpaths = subpaths.map((path) =>

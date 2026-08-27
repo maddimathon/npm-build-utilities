@@ -167,6 +167,12 @@ export declare namespace FileSystemType {
          */
         interface Args extends NodeFiles.CopyFileArgs {
             /**
+             * Outputs extra information to the console.
+             *
+             * @since 0.3.0-beta.1.draft
+             */
+            debug: boolean;
+            /**
              * Optional argument overrides passed to {@link FileSystemType.glob}
              * while matching paths to copy.
              */

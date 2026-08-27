@@ -83,6 +83,7 @@ export declare class FileSystem extends NodeFiles {
     readonly args: FileSystem.Args;
     get ARGS_DEFAULT(): {
         copy: {
+            debug: boolean;
             force: boolean;
             recursive: boolean;
             rename: boolean;

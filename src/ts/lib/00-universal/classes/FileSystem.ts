@@ -226,12 +226,11 @@ export class FileSystem extends NodeFiles {
     public override readonly args: FileSystem.Args;
 
     public override get ARGS_DEFAULT() {
-
         return {
             ...NodeFiles.prototype.ARGS_DEFAULT,
 
             copy: {
-
+                debug: false,
                 force: true,
                 recursive: true,
                 rename: true,
@@ -381,10 +380,10 @@ export class FileSystem extends NodeFiles {
     ) {
         args = mergeArgs( this.args.copy, args, true );
 
-        outputDir = './' + outputDir.replace( /(^\.\/|\/$)/g, '' ) + '/';
+        outputDir = this.pathRelative( outputDir ).replace( /\/$/g, '' ) + '/';
 
         if ( sourceDir ) {
-            sourceDir = './' + sourceDir.replace( /(^\.\/|\/$)/g, '' ) + '/';
+            sourceDir = this.pathRelative( sourceDir ).replace( /\/$/g, '' ) + '/';
         }
 
         if ( !Array.isArray( globs ) ) {
@@ -396,12 +395,15 @@ export class FileSystem extends NodeFiles {
             args.glob,
         );
 
+        if ( args.debug ) {
+            this.console.vi.log( { 'FileSystem.copy()': { outputDir, sourceDir, globs, copyPaths } }, level );
+        }
+
         const sourceDirRegex = sourceDir && new RegExp( '^' + escRegExp( this.pathRelative( sourceDir ) + '/' ), 'gi' );
 
         const output: string[] = [];
 
         for ( const source of copyPaths ) {
-
             const source_relative = this.pathRelative( source );
 
             const destination = this.pathResolve(
@@ -417,9 +419,12 @@ export class FileSystem extends NodeFiles {
 
             const t_output = this.copyFile( source, destination, args );
 
+            if ( args.debug ) {
+                this.console.vi.log( { 'FileSystem.copy() iteration': { source, source_relative, destination, result: t_output } }, level + 1 );
+            }
+
             // throws
             if ( !t_output ) {
-
                 throw new FileSystem.Error(
                     [
                         'this.copyFile returned falsey',

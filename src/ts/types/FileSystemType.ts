@@ -222,6 +222,12 @@ export namespace FileSystemType {
          * @since 0.1.0-alpha
          */
         export interface Args extends NodeFiles.CopyFileArgs {
+            /**
+             * Outputs extra information to the console.
+             *
+             * @since ___PKG_VERSION___
+             */
+            debug: boolean;
 
             /**
              * Optional argument overrides passed to {@link FileSystemType.glob}

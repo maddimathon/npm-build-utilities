@@ -149,6 +149,7 @@ export class FileSystem extends NodeFiles {
         return {
             ...NodeFiles.prototype.ARGS_DEFAULT,
             copy: {
+                debug: false,
                 force: true,
                 recursive: true,
                 rename: true,
@@ -253,9 +254,9 @@ export class FileSystem extends NodeFiles {
      */
     copy(globs, level, outputDir, sourceDir, args) {
         args = mergeArgs(this.args.copy, args, true);
-        outputDir = './' + outputDir.replace(/(^\.\/|\/$)/g, '') + '/';
+        outputDir = this.pathRelative(outputDir).replace(/\/$/g, '') + '/';
         if (sourceDir) {
-            sourceDir = './' + sourceDir.replace(/(^\.\/|\/$)/g, '') + '/';
+            sourceDir = this.pathRelative(sourceDir).replace(/\/$/g, '') + '/';
         }
         if (!Array.isArray(globs)) {
             globs = [globs];
@@ -266,6 +267,19 @@ export class FileSystem extends NodeFiles {
             :   globs,
             args.glob,
         );
+        if (args.debug) {
+            this.console.vi.log(
+                {
+                    'FileSystem.copy()': {
+                        outputDir,
+                        sourceDir,
+                        globs,
+                        copyPaths,
+                    },
+                },
+                level,
+            );
+        }
         const sourceDirRegex =
             sourceDir
             && new RegExp(
@@ -287,6 +301,19 @@ export class FileSystem extends NodeFiles {
                 { linesIn: 0, linesOut: 0, maxWidth: null },
             );
             const t_output = this.copyFile(source, destination, args);
+            if (args.debug) {
+                this.console.vi.log(
+                    {
+                        'FileSystem.copy() iteration': {
+                            source,
+                            source_relative,
+                            destination,
+                            result: t_output,
+                        },
+                    },
+                    level + 1,
+                );
+            }
             // throws
             if (!t_output) {
                 throw new FileSystem.Error(
