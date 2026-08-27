@@ -227,6 +227,13 @@ export declare class FileSystem extends NodeFiles {
         output: string;
     }[]>;
     /**
+     * Resolves path(s) via `import.meta.resolve`, but converts the resulting
+     * URL into a simple path instead.
+     *
+     * @category Path-makers
+     */
+    pathResolveModule(firstPath: string, ...paths: string[]): string;
+    /**
      * {@inheritDoc internal.FileSystemType.prettier}
      *
      * @category Transformers
