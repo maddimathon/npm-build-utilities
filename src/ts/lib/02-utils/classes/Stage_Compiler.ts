@@ -23,6 +23,7 @@ import type {
 
 import {
     arrayUnique,
+    changeIndent,
     escRegExp,
     escRegExpReplace,
     mergeArgs,
@@ -669,7 +670,6 @@ export class Stage_Compiler implements Stage.Compiler {
                     to: _outputPath,
                     ...postCssOpts.processor,
                 } ).then( ( _result ) => {
-
                     this.fs.write(
                         _outputPath,
                         _result.css,
@@ -677,11 +677,9 @@ export class Stage_Compiler implements Stage.Compiler {
                     );
 
                     if ( _result.map ) {
-
                         const _mapPath = _outputPath.replace( /\.css$/gi, '.css.map' );
 
                         if ( _outputPath != _mapPath ) {
-
                             this.fs.write(
                                 _mapPath,
                                 _result.map.toString(),
@@ -1107,7 +1105,6 @@ export class Stage_Compiler implements Stage.Compiler {
         output: string;
         logger: Stage_Compiler.SassLogger;
     }> {
-
         const opts = {
             ...sassCompleteOpts,
 
@@ -1130,7 +1127,7 @@ export class Stage_Compiler implements Stage.Compiler {
                     level,
                     { maxWidth: null },
                 );
-                this.fs.write( output, compiled.css, { force: true } );
+                this.fs.write( output, changeIndent( compiled.css, 2, 4 ), { force: true } );
 
                 // returns
                 if ( !compiled.sourceMap ) {
@@ -1181,28 +1178,28 @@ export class Stage_Compiler implements Stage.Compiler {
         output: string;
         logger: Stage_Compiler.SassLogger;
     }> {
-
-        return this.scssAPI_barebones(
-            input,
-            output,
-            level,
-            sassCompleteOpts,
-            logger ?? new Stage_Compiler.SassLogger(
-                this.console,
-                this.fs,
-                this.params,
-                this.sassErrorStackFilter,
+        return new Promise( async ( resolve ) => {
+            const result = await this.scssAPI_barebones(
+                input,
+                output,
                 level,
                 sassCompleteOpts,
-            ),
-            compileFn,
-        ).then( ( { output, logger } ) => {
+                logger ?? new Stage_Compiler.SassLogger(
+                    this.console,
+                    this.fs,
+                    this.params,
+                    this.sassErrorStackFilter,
+                    level,
+                    sassCompleteOpts,
+                ),
+                compileFn,
+            );
 
             if ( this.args.sass?.holdDeprecationsToEnd ) {
-                logger.outputAllDeprecations();
+                result.logger.outputAllDeprecations();
             }
 
-            return { output, logger };
+            resolve( { output: result.output, logger: result.logger } );
         } );
     }
 
@@ -1279,26 +1276,28 @@ export class Stage_Compiler implements Stage.Compiler {
         output: string;
         logger: undefined;
     }> {
-        const start = DateTime.now();
+        return new Promise( ( resolve ) => {
+            const start = DateTime.now();
 
-        if ( sassCompleteOpts.benchmarkCompileTime ) {
-            this.benchmarkStartTimeLog( `compiling ${ input }`, level, start );
-        }
+            if ( sassCompleteOpts.benchmarkCompileTime ) {
+                this.benchmarkStartTimeLog( `compiling ${ input }`, level, start );
+            }
 
-        this.console.nc.cmd(
-            `sass ${ this.fs.pathRelative( input ) }:${ this.fs.pathRelative( output ) } ${ this.scssCLI_args( sassCompleteOpts ) }`
-        );
-
-        if ( sassCompleteOpts.benchmarkCompileTime ) {
-            this.benchmarkEndTimeLog(
-                `compile finished: ${ input }`,
-                level,
-                start,
-                DateTime.now(),
+            this.console.nc.cmd(
+                `sass ${ this.fs.pathRelative( input ) }:${ this.fs.pathRelative( output ) } ${ this.scssCLI_args( sassCompleteOpts ) }`
             );
-        }
 
-        return { output, logger: undefined };
+            if ( sassCompleteOpts.benchmarkCompileTime ) {
+                this.benchmarkEndTimeLog(
+                    `compile finished: ${ input }`,
+                    level,
+                    start,
+                    DateTime.now(),
+                );
+            }
+
+            resolve( { output, logger: undefined } );
+        } );
     }
 
     /**

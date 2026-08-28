@@ -13,6 +13,7 @@ import * as postcss_PresetEnv from 'postcss-preset-env';
 import * as sass from 'sass-embedded';
 import {
     arrayUnique,
+    changeIndent,
     escRegExp,
     escRegExpReplace,
     mergeArgs,
@@ -926,7 +927,9 @@ export class Stage_Compiler {
                         level,
                         { maxWidth: null },
                     );
-                this.fs.write(output, compiled.css, { force: true });
+                this.fs.write(output, changeIndent(compiled.css, 2, 4), {
+                    force: true,
+                });
                 // returns
                 if (!compiled.sourceMap) {
                     return { output, logger };
@@ -960,26 +963,27 @@ export class Stage_Compiler {
      * @since 0.3.0-alpha.1
      */
     async scssAPI(input, output, level, sassCompleteOpts, logger, compileFn) {
-        return this.scssAPI_barebones(
-            input,
-            output,
-            level,
-            sassCompleteOpts,
-            logger
-                ?? new Stage_Compiler.SassLogger(
-                    this.console,
-                    this.fs,
-                    this.params,
-                    this.sassErrorStackFilter,
-                    level,
-                    sassCompleteOpts,
-                ),
-            compileFn,
-        ).then(({ output, logger }) => {
+        return new Promise(async (resolve) => {
+            const result = await this.scssAPI_barebones(
+                input,
+                output,
+                level,
+                sassCompleteOpts,
+                logger
+                    ?? new Stage_Compiler.SassLogger(
+                        this.console,
+                        this.fs,
+                        this.params,
+                        this.sassErrorStackFilter,
+                        level,
+                        sassCompleteOpts,
+                    ),
+                compileFn,
+            );
             if (this.args.sass?.holdDeprecationsToEnd) {
-                logger.outputAllDeprecations();
+                result.logger.outputAllDeprecations();
             }
-            return { output, logger };
+            resolve({ output: result.output, logger: result.logger });
         });
     }
     /**
@@ -1045,22 +1049,24 @@ export class Stage_Compiler {
      * @since 0.3.0-alpha.1
      */
     async scssCLI(input, output, level, sassCompleteOpts) {
-        const start = DateTime.now();
-        if (sassCompleteOpts.benchmarkCompileTime) {
-            this.benchmarkStartTimeLog(`compiling ${input}`, level, start);
-        }
-        this.console.nc.cmd(
-            `sass ${this.fs.pathRelative(input)}:${this.fs.pathRelative(output)} ${this.scssCLI_args(sassCompleteOpts)}`,
-        );
-        if (sassCompleteOpts.benchmarkCompileTime) {
-            this.benchmarkEndTimeLog(
-                `compile finished: ${input}`,
-                level,
-                start,
-                DateTime.now(),
+        return new Promise((resolve) => {
+            const start = DateTime.now();
+            if (sassCompleteOpts.benchmarkCompileTime) {
+                this.benchmarkStartTimeLog(`compiling ${input}`, level, start);
+            }
+            this.console.nc.cmd(
+                `sass ${this.fs.pathRelative(input)}:${this.fs.pathRelative(output)} ${this.scssCLI_args(sassCompleteOpts)}`,
             );
-        }
-        return { output, logger: undefined };
+            if (sassCompleteOpts.benchmarkCompileTime) {
+                this.benchmarkEndTimeLog(
+                    `compile finished: ${input}`,
+                    level,
+                    start,
+                    DateTime.now(),
+                );
+            }
+            resolve({ output, logger: undefined });
+        });
     }
     /**
      * Best for CLI or single-file compiles. Otherwise use scssBulk.
@@ -1178,6 +1184,7 @@ export class Stage_Compiler {
                             );
                         }
                     }
+                    // compiled.css = changeIndent( compiled.css, 2, 4 );
                     return compiled;
                 },
                 (error) => {
