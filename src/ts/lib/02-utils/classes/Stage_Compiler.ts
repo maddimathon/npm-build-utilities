@@ -28,6 +28,7 @@ import {
     escRegExpReplace,
     mergeArgs,
     objectKeySort,
+    slugify,
     type MessageMaker,
 } from '@maddimathon/utility-typescript';
 
@@ -276,7 +277,7 @@ export class Stage_Compiler implements Stage.Compiler {
             'logical-resize': true,
             'logical-viewport-units': true,
             'media-queries-aspect-ratio-number-values': false,
-            'media-query-ranges': true,
+            'media-query-ranges': false,
             'mixins': { preserve: false },
             'nested-calc': { preserve: false },
             'nesting-rules': false,
@@ -1744,7 +1745,7 @@ export namespace Stage_Compiler {
     export class SassLogger implements sass.Logger {
 
         protected readonly deprecationWarnings = new Map<
-            keyof sass.Deprecations,
+            string,
             Set<SassLogger.DeprecationWarning>
         >();
 
@@ -1793,7 +1794,12 @@ export namespace Stage_Compiler {
         }
 
         protected optionSpanMaker(
-            options: sass.LoggerWarnOptions | { span: sass.SourceSpan; },
+            options: {
+                deprecation: boolean;
+                deprecationType?: string | SassLogger.DeprecationWarning[ 'deprecationType' ];
+                span?: sass.SourceSpan;
+                stack?: string;
+            } | { span: sass.SourceSpan; },
         ) {
             if ( !options.span ) {
                 return null;
@@ -1861,7 +1867,7 @@ export namespace Stage_Compiler {
 
             return [
                 [
-                    `[Sass: Deprecated] ${ introMessage ?? depType.id }\n`,
+                    `[Sass: Deprecated] ${ introMessage ?? ( typeof depType === 'object' ? depType.id : depType ) }\n`,
                     {
                         bold: true,
                         clr: 'yellow',
@@ -1877,15 +1883,32 @@ export namespace Stage_Compiler {
 
             for ( const [ depKey, value ] of this.deprecationWarnings.entries() ) {
 
-                const _warningsArr: SassLogger.DeprecationWarning[] = Array.from( value );
+                const _warningsArr = Array.from( value );
 
-                const depType: SassLogger.ParsedDeprecationType = _warningsArr.map(
-                    warn => warn.deprecationType
+                const depType = _warningsArr.map(
+                    warn => typeof warn.deprecationType === 'string'
+                        ? {
+                            custom: true,
+                            id: depKey,
+                        } satisfies SassLogger.ParsedDeprecationType
+                        : warn.deprecationType
                 ).reduce(
                     (
-                        previous: Partial<SassLogger.DeprecationWarning[ 'deprecationType' ]> | SassLogger.ParsedDeprecationType,
-                        current: SassLogger.DeprecationWarning[ 'deprecationType' ],
+                        _previous,
+                        _current,
                     ): SassLogger.ParsedDeprecationType => {
+                        // returns
+                        if ( 'custom' in _current && _current.custom ) {
+                            return {
+                                ..._previous,
+                                ..._current,
+
+                                id: depKey,
+                            };
+                        }
+
+                        const previous = ( _previous ?? {} ) as Partial<SassLogger.SassDeprecationWarning[ 'deprecationType' ]> | SassLogger.ParsedDeprecationType;
+                        const current = ( _current ?? {} ) as SassLogger.SassDeprecationWarning[ 'deprecationType' ];
 
                         const deprecatedIn = previous.deprecatedIn instanceof Set
                             ? previous.deprecatedIn
@@ -1931,7 +1954,7 @@ export namespace Stage_Compiler {
                             ...previous,
                             ...current,
 
-                            id: depKey,
+                            id: depKey as SassLogger.ParsedDeprecationType[ 'id' ],
                             description,
                             status,
                             deprecatedIn,
@@ -1944,9 +1967,9 @@ export namespace Stage_Compiler {
                 );
 
                 const parsedInstances: SassLogger.ParsedDeprecationInstance[] = _warningsArr.map(
-                    ( value ): SassLogger.ParsedDeprecationInstance => {
+                    ( __warn ): SassLogger.ParsedDeprecationInstance => {
 
-                        const message = value.message.trim();
+                        const message = __warn.message.trim();
 
                         const moreInfoMessage = message.match(
                             /[\n\s]*(More info: .+?)[\n\s]*$/i
@@ -1961,11 +1984,12 @@ export namespace Stage_Compiler {
                         ).trim();
 
                         return {
+                            custom: typeof __warn.deprecationType === 'string',
                             message,
                             shortMessage,
                             moreInfoMessage: moreInfoMessage ? moreInfoMessage[ 1 ] : moreInfoMessage,
-                            span: this.optionSpanMaker( value ),
-                            stack: value.stack,
+                            span: this.optionSpanMaker( __warn ),
+                            stack: __warn.stack,
                         };
                     }
                 );
@@ -1991,15 +2015,17 @@ export namespace Stage_Compiler {
                         depType,
                         headerMessage,
                     ),
-                    [
+                ];
+
+                if ( moreInfoMessages.size ) {
+                    theseMsgs.push( [
                         [ ...moreInfoMessages ],
                         {
                             clr: 'yellow',
                             italic: true,
                         },
-                    ],
-                    [ '' ],
-                ];
+                    ] );
+                }
 
                 if ( parsedInstances.length > 10 || this.args.neverDisplayDeprecationDetails ) {
 
@@ -2007,24 +2033,45 @@ export namespace Stage_Compiler {
                     theseMsgs.push( [
                         [
                             `There were ${ parsedInstances.length } instances of this warning:`,
+                            '',
                         ],
                         {},
                     ] );
-                    theseMsgs.push( [
-                        arrayUnique(
-                            parsedInstances.map(
-                                _psd => (
-                                    _psd.span?.end
-                                    ?? _psd.span?.start
-                                    ?? _psd.stack?.trim().split( /\n+/ )[ 0 ]
-                                ) || false
-                            ).filter( _psd => _psd !== false ).map( _l => `    ${ _l }` )
-                        ),
-                        {
-                            italic: true,
-                            maxWidth: null,
-                        },
-                    ] );
+
+                    if ( depType.custom ) {
+                        theseMsgs.push( [
+                            arrayUnique(
+                                parsedInstances.map(
+                                    _psd => _psd.stack?.split( /\n+/ ).filter(
+                                        _l => _l
+                                    ).map(
+                                        _l => `    ${ this.sassErrorStackFilter( _l, this.args ) }`
+                                    ).join( '\n' ) ?? ''
+                                ).filter( _psd => _psd )
+                            ).join( '\n\n' ),
+                            {
+                                italic: true,
+                                maxWidth: null,
+                            },
+                        ] );
+                    } else {
+                        theseMsgs.push( [
+                            arrayUnique(
+                                parsedInstances.map(
+                                    _psd => (
+                                        _psd.span?.end
+                                        ?? _psd.span?.start
+                                        ?? _psd.stack?.trim().split( /\n+/ ).filter( _l => _l )[ 0 ]
+                                    ) || false
+                                ).filter( _psd => _psd !== false ).map( _l => `    ${ this.sassErrorStackFilter( _l, this.args ) }` )
+                            ),
+                            {
+                                italic: true,
+                                maxWidth: null,
+                            },
+                        ] );
+                    }
+
                     theseMsgs.push( [ '' ] );
                 } else {
 
@@ -2128,27 +2175,46 @@ export namespace Stage_Compiler {
          * @since 0.3.0-alpha.12 — Moved to own class.
          */
         public warn( message: string, options: sass.LoggerWarnOptions ) {
-
             const msgs: MessageMaker.BulkMsgs = [];
 
             const span = this.optionSpanMaker( options );
 
+            const customDeprecationRegExp = /^\[deprecated\]\s+/gis;
+            const customDeprecationMessage = message.match( customDeprecationRegExp );
+
+            let deprecationID = null;
+
+            if ( customDeprecationMessage !== null ) {
+                message = message.replace( customDeprecationRegExp, '' );
+                deprecationID = slugify( message );
+            } else if ( options.deprecation ) {
+                deprecationID = options.deprecationType.id;
+            }
+
             let deprecationIsDuplicate = false;
 
             // returns if duplicate
-            if ( options.deprecation ) {
-                const deprecationID = options.deprecationType.id;
+            if ( deprecationID !== null ) {
 
+                // checking if this is a duplicate
                 if ( this.deprecationWarnings.has( deprecationID ) ) {
                     deprecationIsDuplicate = true;
                 } else {
                     this.deprecationWarnings.set( deprecationID, new Set() );
                 }
 
-                this.deprecationWarnings.get( deprecationID )?.add( {
-                    ...options,
-                    message,
-                } );
+                this.deprecationWarnings.get( deprecationID )?.add(
+                    options.deprecation
+                        ? {
+                            ...options,
+                            message,
+                        } : {
+                            ...options,
+                            deprecation: true,
+                            deprecationType: 'custom',
+                            message,
+                        }
+                );
 
                 // returns
                 if (
@@ -2161,10 +2227,13 @@ export namespace Stage_Compiler {
                     return;
                 }
 
-                msgs.push( ...this.deprecation_headerMessageMaker( options.deprecationType ) );
-
+                msgs.push( ...this.deprecation_headerMessageMaker(
+                    options.deprecation ? options.deprecationType : {
+                        custom: true,
+                        id: deprecationID,
+                    }
+                ) );
             } else {
-
                 msgs.push( [
                     `[Sass: Warning]`,
                     {
@@ -2175,17 +2244,14 @@ export namespace Stage_Compiler {
 
             span && this.params.verbose && this.console.vi.debug( { span }, this.level );
 
-            msgs.push( [
-                message.trim(),
-                {},
-            ] );
+            msgs.push( [ message.trim() ] );
 
             this.console.warn(
                 msgs.concat( this.messageMaker( options ) ),
                 this.level,
                 {
                     bold: false,
-                    clr: options.deprecation ? 'yellow' : ( this.params.packaging || this.params.releasing ) ? 'red' : 'orange',
+                    clr: deprecationID !== null ? 'yellow' : ( this.params.packaging || this.params.releasing ) ? 'red' : 'orange',
                     italic: false,
                     linesIn: 1,
                     linesOut: 1,
@@ -2214,11 +2280,28 @@ export namespace Stage_Compiler {
         /**
          * The object value for a deprecation warning from sass.
          * 
-         * @since 0.3.0-alpha.12
+         * @since ___PKG_VERSION___
          */
-        export type DeprecationWarning = Extract<sass.LoggerWarnOptions, { deprecation: true; }> & {
+        export type SassDeprecationWarning = Extract<sass.LoggerWarnOptions, { deprecation: true; }> & {
             message: string;
         };
+
+        /**
+         * The object value for a custom user-triggered deprecation warning from
+         * a library or stylesheet.
+         *
+         * @since ___PKG_VERSION___
+         */
+        export type CustomDeprecationWarning = Omit<SassDeprecationWarning, 'deprecationType'> & {
+            deprecationType: 'custom';
+        };
+
+        /**
+         * The object value for a deprecation warning from sass.
+         * 
+         * @since 0.3.0-alpha.12
+         */
+        export type DeprecationWarning = SassDeprecationWarning | CustomDeprecationWarning;
 
         /**
          * The parsed value for each instance of a single deprecation warning.
@@ -2226,11 +2309,12 @@ export namespace Stage_Compiler {
          * @since 0.3.0-alpha.12
          */
         export type ParsedDeprecationInstance = {
-            message: DeprecationWarning[ 'message' ];
+            custom: boolean;
+            message: SassDeprecationWarning[ 'message' ];
             shortMessage: string;
             moreInfoMessage: null | string;
             span: ReturnType<SassLogger[ 'optionSpanMaker' ]>;
-            stack: DeprecationWarning[ 'stack' ];
+            stack: SassDeprecationWarning[ 'stack' ];
         };
 
         /**
@@ -2240,13 +2324,15 @@ export namespace Stage_Compiler {
          * @since 0.3.0-alpha.12
          */
         export type ParsedDeprecationType = Omit<
-            DeprecationWarning[ 'deprecationType' ],
-            "deprecatedIn" | "description" | "obsoleteIn" | "status"
+            SassDeprecationWarning[ 'deprecationType' ],
+            "deprecatedIn" | "description" | "id" | "obsoleteIn" | "status"
         > & {
-            deprecatedIn?: Set<string>;
-            description?: Set<string>;
-            status?: Set<DeprecationWarning[ 'deprecationType' ][ 'status' ]>;
-            obsoleteIn?: Set<string>;
+            custom?: true | undefined;
+            deprecatedIn?: undefined | Set<string>;
+            description?: undefined | Set<string>;
+            id: string;
+            status?: undefined | Set<SassDeprecationWarning[ 'deprecationType' ][ 'status' ]>;
+            obsoleteIn?: undefined | Set<string>;
         };
     }
 }

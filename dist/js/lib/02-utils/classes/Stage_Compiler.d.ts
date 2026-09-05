@@ -141,7 +141,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'logical-resize': true;
                 readonly 'logical-viewport-units': true;
                 readonly 'media-queries-aspect-ratio-number-values': false;
-                readonly 'media-query-ranges': true;
+                readonly 'media-query-ranges': false;
                 readonly mixins: {
                     readonly preserve: false;
                 };
@@ -654,7 +654,7 @@ export declare namespace Stage_Compiler {
         protected readonly params: Stage_Compiler['params'];
         protected readonly sassErrorStackFilter: Stage_Compiler['sassErrorStackFilter'];
         protected readonly args: Classify<Stage.Compiler.Args.Sass>;
-        protected readonly deprecationWarnings: Map<keyof sass.Deprecations, Set<SassLogger.DeprecationWarning>>;
+        protected readonly deprecationWarnings: Map<string, Set<SassLogger.DeprecationWarning>>;
         protected _sassLoggerWarningDuringPackaging: boolean;
         get sassLoggerWarningDuringPackaging(): boolean;
         protected readonly level: number;
@@ -662,7 +662,12 @@ export declare namespace Stage_Compiler {
         protected messageMaker(options: sass.LoggerWarnOptions | {
             span: sass.SourceSpan;
         }): MessageMaker.BulkMsgs;
-        protected optionSpanMaker(options: sass.LoggerWarnOptions | {
+        protected optionSpanMaker(options: {
+            deprecation: boolean;
+            deprecationType?: string | SassLogger.DeprecationWarning['deprecationType'];
+            span?: sass.SourceSpan;
+            stack?: string;
+        } | {
             span: sass.SourceSpan;
         }): {
             start: string | undefined;
@@ -700,24 +705,40 @@ export declare namespace Stage_Compiler {
         /**
          * The object value for a deprecation warning from sass.
          *
-         * @since 0.3.0-alpha.12
+         * @since 0.3.0-beta.1.draft
          */
-        type DeprecationWarning = Extract<sass.LoggerWarnOptions, {
+        type SassDeprecationWarning = Extract<sass.LoggerWarnOptions, {
             deprecation: true;
         }> & {
             message: string;
         };
+        /**
+         * The object value for a custom user-triggered deprecation warning from
+         * a library or stylesheet.
+         *
+         * @since 0.3.0-beta.1.draft
+         */
+        type CustomDeprecationWarning = Omit<SassDeprecationWarning, 'deprecationType'> & {
+            deprecationType: 'custom';
+        };
+        /**
+         * The object value for a deprecation warning from sass.
+         *
+         * @since 0.3.0-alpha.12
+         */
+        type DeprecationWarning = SassDeprecationWarning | CustomDeprecationWarning;
         /**
          * The parsed value for each instance of a single deprecation warning.
          *
          * @since 0.3.0-alpha.12
          */
         type ParsedDeprecationInstance = {
-            message: DeprecationWarning['message'];
+            custom: boolean;
+            message: SassDeprecationWarning['message'];
             shortMessage: string;
             moreInfoMessage: null | string;
             span: ReturnType<SassLogger['optionSpanMaker']>;
-            stack: DeprecationWarning['stack'];
+            stack: SassDeprecationWarning['stack'];
         };
         /**
          * The parsed value for all instances of a deprecation warning during
@@ -725,11 +746,13 @@ export declare namespace Stage_Compiler {
          *
          * @since 0.3.0-alpha.12
          */
-        type ParsedDeprecationType = Omit<DeprecationWarning['deprecationType'], "deprecatedIn" | "description" | "obsoleteIn" | "status"> & {
-            deprecatedIn?: Set<string>;
-            description?: Set<string>;
-            status?: Set<DeprecationWarning['deprecationType']['status']>;
-            obsoleteIn?: Set<string>;
+        type ParsedDeprecationType = Omit<SassDeprecationWarning['deprecationType'], "deprecatedIn" | "description" | "id" | "obsoleteIn" | "status"> & {
+            custom?: true | undefined;
+            deprecatedIn?: undefined | Set<string>;
+            description?: undefined | Set<string>;
+            id: string;
+            status?: undefined | Set<SassDeprecationWarning['deprecationType']['status']>;
+            obsoleteIn?: undefined | Set<string>;
         };
     }
 }
