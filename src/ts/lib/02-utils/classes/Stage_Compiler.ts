@@ -2027,8 +2027,11 @@ export namespace Stage_Compiler {
                     ] );
                 }
 
-                if ( parsedInstances.length > 10 || this.args.neverDisplayDeprecationDetails ) {
-
+                if (
+                    parsedInstances.length > 10
+                    || this.args.neverDisplayDeprecationDetails
+                    || depType.custom
+                ) {
                     // only display the paths to instances
                     theseMsgs.push( [
                         [
@@ -2074,7 +2077,6 @@ export namespace Stage_Compiler {
 
                     theseMsgs.push( [ '' ] );
                 } else {
-
                     // display details about each instance
                     theseMsgs.push( [
                         [

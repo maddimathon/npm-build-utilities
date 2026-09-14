@@ -1674,6 +1674,7 @@ export class Stage_Compiler {
                 if (
                     parsedInstances.length > 10
                     || this.args.neverDisplayDeprecationDetails
+                    || depType.custom
                 ) {
                     // only display the paths to instances
                     theseMsgs.push([

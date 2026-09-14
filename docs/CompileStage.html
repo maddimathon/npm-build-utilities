@@ -17,7 +17,7 @@
 <div class="tsd-tag-since">
 <h4 class="tsd-anchor-link" id="since">Since<a href="#since" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.1.0-alpha</p>
 </div></div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="1367">
+<section class="tsd-panel tsd-hierarchy" data-refl="1418">
 <h4>Hierarchy (<a href="hierarchy.html#CompileStage">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="AbstractStage.html" class="tsd-signature-type tsd-kind-class">AbstractStage</a><span class="tsd-signature-symbol">&lt;</span><a href="Stage-1.html" class="tsd-signature-type tsd-kind-namespace">Stage</a><span class="tsd-signature-symbol">.</span><a href="Stage/Args-1.html" class="tsd-signature-type tsd-kind-namespace">Args</a><span class="tsd-signature-symbol">.</span><a href="Stage/Args/Compile.html" class="tsd-signature-type tsd-kind-interface">Compile</a><span class="tsd-signature-symbol">,</span> <a href="Stage-1.html" class="tsd-signature-type tsd-kind-namespace">Stage</a><span class="tsd-signature-symbol">.</span><a href="Stage/SubStage.html" class="tsd-signature-type tsd-kind-namespace">SubStage</a><span class="tsd-signature-symbol">.</span><a href="Stage/SubStage/Compile.html" class="tsd-signature-type tsd-kind-type-alias">Compile</a><span class="tsd-signature-symbol">&gt;</span>
@@ -68,8 +68,10 @@
 <div class="tsd-index-list"><a href="#substages" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="assets/icons.svg#icon-1024"></use></svg><span>sub<wbr/>Stages</span></a>
 <a href="#run" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run</span></a>
 <a href="#startendnotice" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>start<wbr/>End<wbr/>Notice</span></a>
-<a href="#runcustomdircopysubstage" class="tsd-index-link tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Custom<wbr/>Dir<wbr/>Copy<wbr/>Sub<wbr/>Stage</span></a>
-<a href="#runcustomscssdirsubstage" class="tsd-index-link tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Custom<wbr/>Scss<wbr/>Dir<wbr/>Sub<wbr/>Stage</span></a>
+<a href="#customscsssubstage" class="tsd-index-link tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="assets/icons.svg#icon-262144"></use></svg><span>custom<wbr/>Scss<wbr/>Substage</span></a>
+<a href="#customcopysubstage" class="tsd-index-link tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>custom<wbr/>Copy<wbr/>Substage</span></a>
+<a href="#runcustomdircopysubstage" class="tsd-index-link deprecated tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Custom<wbr/>Dir<wbr/>Copy<wbr/>Sub<wbr/>Stage</span></a>
+<a href="#runcustomscssdirsubstage" class="tsd-index-link deprecated tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Custom<wbr/>Scss<wbr/>Dir<wbr/>Sub<wbr/>Stage</span></a>
 <a href="#runstage" class="tsd-index-link tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Stage</span></a>
 <a href="#runsubstage" class="tsd-index-link tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Sub<wbr/>Stage</span></a>
 </div></section>
@@ -545,7 +547,77 @@ stage.</p>
 <ul>
 <li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/CompileStage.ts#L123" class="external" target="_blank">lib/03-stages/classes/CompileStage.ts:123</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-protected">
-<h3 class="tsd-anchor-link" id="runcustomdircopysubstage"><code class="tsd-tag">Protected</code><span>run<wbr/>Custom<wbr/>Dir<wbr/>Copy<wbr/>Sub<wbr/>Stage</span><a href="#runcustomdircopysubstage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="customscsssubstage"><code class="tsd-tag">Protected</code><span>custom<wbr/>Scss<wbr/>Substage</span><a href="#customscsssubstage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-protected">
+<li>
+<div class="tsd-signature" id="customscsssubstagecustomscsssubstage"><span class="tsd-signature-keyword">get</span> <span class="tsd-kind-get-signature">customScssSubstage</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="AbstractStage-1.html" class="tsd-signature-type tsd-kind-namespace">AbstractStage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/customScssSubstage.html" class="tsd-signature-type tsd-kind-interface">customScssSubstage</a></div>
+<div class="tsd-description"><code class="tsd-tag">Experimental</code>
+<div class="tsd-comment tsd-typography"><p>This runs a custom sub-stage that uses globs to find non-partial
+scss/sass files and compile them at the given subpath from the source to
+the dist directories.</p>
+<p>Deletes any existing, logs update messages, etc.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="AbstractStage-1.html" class="tsd-signature-type tsd-kind-namespace">AbstractStage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/customScssSubstage.html" class="tsd-signature-type tsd-kind-interface">customScssSubstage</a></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-3">Since<a href="#since-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.1.4-alpha</p>
+</div>
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-4">Since<a href="#since-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha — Added <code>postCSS</code> param and PostCSS compatibility.</p>
+</div>
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-5">Since<a href="#since-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.1 — Added <code>logLevelBase</code> param.</p>
+</div>
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-6">Since<a href="#since-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.2 — Changed <code>postCSS</code> param to <code>options</code> object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.</p>
+</div>
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-7">Since<a href="#since-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.1 — Added <code>sassOpts</code> param and allowed <code>subpath</code> to be an array.</p>
+</div>
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-8">Since<a href="#since-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta.1.draft — Changed <code>sassOpts</code> param to a property in <code>options</code>. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from AbstractStage.customScssSubstage</p>
+<ul>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1526" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1526</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-protected">
+<h3 class="tsd-anchor-link" id="customcopysubstage"><code class="tsd-tag">Protected</code><span>custom<wbr/>Copy<wbr/>Substage</span><a href="#customcopysubstage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited tsd-is-protected">
+<li class="tsd-is-inherited">
+<div class="tsd-signature tsd-anchor-link" id="customcopysubstage-1"><span class="tsd-kind-call-signature">customCopySubstage</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">subpath</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_distDir</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">logLevelBase</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#customcopysubstage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description"><code class="tsd-tag">Experimental</code>
+<div class="tsd-comment tsd-typography"><p>This runs a custom sub-stage that only copies a whole folder at the given
+subpath from the source to the dist directories.</p>
+<p>Deletes any existing, logs update messages, etc.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">subpath</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>The subdriectory, relative to src path.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">_distDir</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Optionally force a diffrent output directory than the auto-generated one.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">logLevelBase</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1</span></span>
+<div class="tsd-comment tsd-typography"><p>Base output level for log messages.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-9">Since<a href="#since-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.1.4-alpha</p>
+</div>
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-10">Since<a href="#since-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.1 — Added logLevelBase param.</p>
+</div>
+<div class="tsd-tag-since">
+<h4 class="tsd-anchor-link" id="since-11">Since<a href="#since-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta.1.draft — Renamed from runCustomDirCopySubStage to customCopySubstage.</p>
+</div></div><aside class="tsd-sources">
+<p>Inherited from <a href="AbstractStage.html">AbstractStage</a>.<a href="AbstractStage.html#customcopysubstage">customCopySubstage</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1425" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1425</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited tsd-is-protected">
+<h3 class="tsd-anchor-link" id="runcustomdircopysubstage"><code class="tsd-tag">Protected</code><span class="deprecated">run<wbr/>Custom<wbr/>Dir<wbr/>Copy<wbr/>Sub<wbr/>Stage</span><a href="#runcustomdircopysubstage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-protected">
 <li class="tsd-is-inherited">
 <div class="tsd-signature tsd-anchor-link" id="runcustomdircopysubstage-1"><span class="tsd-kind-call-signature">runCustomDirCopySubStage</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">subpath</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_distDir</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">logLevelBase</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#runcustomdircopysubstage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></div>
@@ -569,19 +641,22 @@ subpath from the source to the dist directories.</p>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-3">Since<a href="#since-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.1.4-alpha</p>
+<h4 class="tsd-anchor-link" id="since-12">Since<a href="#since-12" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.1.4-alpha</p>
 </div>
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-4">Since<a href="#since-4" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.1 — Added logLevelBase param.</p>
+<h4 class="tsd-anchor-link" id="since-13">Since<a href="#since-13" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.1 — Added logLevelBase param.</p>
+</div>
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated">Deprecated<a href="#deprecated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta.1.draft — Use <a href="AbstractStage.html#customcopysubstage" class="tsd-kind-method">AbstractStage.customCopySubstage</a> instead.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="AbstractStage.html">AbstractStage</a>.<a href="AbstractStage.html#runcustomdircopysubstage">runCustomDirCopySubStage</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1357" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1357</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1358" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1358</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-protected">
-<h3 class="tsd-anchor-link" id="runcustomscssdirsubstage"><code class="tsd-tag">Protected</code><span>run<wbr/>Custom<wbr/>Scss<wbr/>Dir<wbr/>Sub<wbr/>Stage</span><a href="#runcustomscssdirsubstage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h3 class="tsd-anchor-link" id="runcustomscssdirsubstage"><code class="tsd-tag">Protected</code><span class="deprecated">run<wbr/>Custom<wbr/>Scss<wbr/>Dir<wbr/>Sub<wbr/>Stage</span><a href="#runcustomscssdirsubstage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-protected">
 <li class="tsd-is-inherited">
-<div class="tsd-signature tsd-anchor-link" id="runcustomscssdirsubstage-1"><span class="tsd-kind-call-signature">runCustomScssDirSubStage</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">_subpath</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">_distDir</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype" class="tsd-signature-type external" target="_blank">Partial</a><span class="tsd-signature-symbol">&lt;</span><a href="AbstractStage-1.html" class="tsd-signature-type tsd-kind-namespace">AbstractStage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/runCustomScssDirSubStage.html" class="tsd-signature-type tsd-kind-namespace">runCustomScssDirSubStage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/runCustomScssDirSubStage/Opts.html" class="tsd-signature-type tsd-kind-interface">Opts</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">logLevelBase</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#runcustomscssdirsubstage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="runcustomscssdirsubstage-1"><span class="tsd-kind-call-signature">runCustomScssDirSubStage</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">subpath</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">distDir</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">opts</span><span class="tsd-signature-symbol">?:</span> <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype" class="tsd-signature-type external" target="_blank">Partial</a><span class="tsd-signature-symbol">&lt;</span><a href="AbstractStage-1.html" class="tsd-signature-type tsd-kind-namespace">AbstractStage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/customScssSubstage-1.html" class="tsd-signature-type tsd-kind-namespace">customScssSubstage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/customScssSubstage/Opts.html" class="tsd-signature-type tsd-kind-interface">Opts</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">logLevelBase</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#runcustomscssdirsubstage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description"><code class="tsd-tag">Experimental</code>
 <div class="tsd-comment tsd-typography"><p>This runs a custom sub-stage that uses globs to find non-partial
 scss/sass files and compile them at the given subpath from the source to
@@ -591,35 +666,44 @@ the dist directories.</p>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">_subpath</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></span></li>
-<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">_distDir</span>: <span class="tsd-signature-type">string</span></span></li>
-<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">options</span>: <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype" class="tsd-signature-type external" target="_blank">Partial</a><span class="tsd-signature-symbol">&lt;</span><a href="AbstractStage-1.html" class="tsd-signature-type tsd-kind-namespace">AbstractStage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/runCustomScssDirSubStage.html" class="tsd-signature-type tsd-kind-namespace">runCustomScssDirSubStage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/runCustomScssDirSubStage/Opts.html" class="tsd-signature-type tsd-kind-interface">Opts</a><span class="tsd-signature-symbol">&gt;</span></span></li>
+<li><span><span class="tsd-kind-parameter">subpath</span>: <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></span>
+<div class="tsd-comment tsd-typography"><p>The subdirectory, relative to src path.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">distDir</span>: <span class="tsd-signature-type">string</span></span>
+<div class="tsd-comment tsd-typography"><p>Force a diffrent output directory than the auto-generated one.</p>
+</div></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">opts</span>: <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype" class="tsd-signature-type external" target="_blank">Partial</a><span class="tsd-signature-symbol">&lt;</span><a href="AbstractStage-1.html" class="tsd-signature-type tsd-kind-namespace">AbstractStage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/customScssSubstage-1.html" class="tsd-signature-type tsd-kind-namespace">customScssSubstage</a><span class="tsd-signature-symbol">.</span><a href="AbstractStage/customScssSubstage/Opts.html" class="tsd-signature-type tsd-kind-interface">Opts</a><span class="tsd-signature-symbol">&gt;</span></span>
+<div class="tsd-comment tsd-typography"><p>Additional options. See <a href="AbstractStage/runCustomScssDirSubStage/DEFAULT_OPTS.html" class="tsd-kind-variable">AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS</a> for defaults.</p>
+</div></li>
 <li><span><span class="tsd-kind-parameter">logLevelBase</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 1</span></span>
 <div class="tsd-comment tsd-typography"><p>Base output level for log messages. Default 1.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-5">Since<a href="#since-5" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.1.4-alpha</p>
+<h4 class="tsd-anchor-link" id="since-14">Since<a href="#since-14" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.1.4-alpha</p>
 </div>
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-6">Since<a href="#since-6" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha — Added <code>postCSS</code> param and PostCSS compatibility.</p>
+<h4 class="tsd-anchor-link" id="since-15">Since<a href="#since-15" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha — Added <code>postCSS</code> param and PostCSS compatibility.</p>
 </div>
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-7">Since<a href="#since-7" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.1 — Added <code>logLevelBase</code> param.</p>
+<h4 class="tsd-anchor-link" id="since-16">Since<a href="#since-16" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.1 — Added <code>logLevelBase</code> param.</p>
 </div>
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-8">Since<a href="#since-8" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.2 — Changed <code>postCSS</code> param to <code>options</code> object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.</p>
+<h4 class="tsd-anchor-link" id="since-17">Since<a href="#since-17" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha.2 — Changed <code>postCSS</code> param to <code>options</code> object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.</p>
 </div>
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-9">Since<a href="#since-9" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.1 — Added <code>sassOpts</code> param and allowed <code>subpath</code> to be an array.</p>
+<h4 class="tsd-anchor-link" id="since-18">Since<a href="#since-18" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.1 — Added <code>sassOpts</code> param and allowed <code>subpath</code> to be an array.</p>
 </div>
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-10">Since<a href="#since-10" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta.1.draft — Changed <code>sassOpts</code> param to a property in <code>options</code>.</p>
+<h4 class="tsd-anchor-link" id="since-19">Since<a href="#since-19" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta.1.draft — Changed <code>sassOpts</code> param to a property in <code>options</code>. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.</p>
+</div>
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-1">Deprecated<a href="#deprecated-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta.1.draft — Use AbstractStage.customCopySubstage.dir instead.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="AbstractStage.html">AbstractStage</a>.<a href="AbstractStage.html#runcustomscssdirsubstage">runCustomScssDirSubStage</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1430" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1430</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1499" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1499</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-protected">
 <h3 class="tsd-anchor-link" id="runstage"><code class="tsd-tag">Protected</code><span>run<wbr/>Stage</span><a href="#runstage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-protected">
@@ -652,7 +736,7 @@ the dist directories.</p>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-11">Since<a href="#since-11" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.10 — Added option to run a custom stage class.</p>
+<h4 class="tsd-anchor-link" id="since-20">Since<a href="#since-20" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.10 — Added option to run a custom stage class.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="AbstractStage.html">AbstractStage</a>.<a href="AbstractStage.html#runstage">runStage</a></p>
 <ul>
@@ -688,7 +772,7 @@ the dist directories.</p>
 <h4 class="tsd-returns-title">Returns <a href="Stage/Compiler/Args/Sass.html" class="tsd-signature-type tsd-kind-interface">Sass</a></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-12">Since<a href="#since-12" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.1</p>
+<h4 class="tsd-anchor-link" id="since-21">Since<a href="#since-21" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.1</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from AbstractStage.sassOpts</p>
 <ul>
@@ -711,7 +795,7 @@ the dist directories.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-13">Since<a href="#since-13" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.3</p>
+<h4 class="tsd-anchor-link" id="since-22">Since<a href="#since-22" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-alpha.3</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="AbstractStage.html">AbstractStage</a>.<a href="AbstractStage.html#sasserrorhandler">sassErrorHandler</a></p>
 <ul>
@@ -741,7 +825,7 @@ the dist directories.</p>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-14">Since<a href="#since-14" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha — Runs PostCSS if Stage.Args.Compile.postCSS is truthy.</p>
+<h4 class="tsd-anchor-link" id="since-23">Since<a href="#since-23" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha — Runs PostCSS if Stage.Args.Compile.postCSS is truthy.</p>
 </div></div><aside class="tsd-sources">
 <ul>
 <li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/CompileStage.ts#L143" class="external" target="_blank">lib/03-stages/classes/CompileStage.ts:143</a></li></ul></aside></div></li></ul></section>
@@ -778,7 +862,7 @@ include the values from any configs in its &quot;extends&quot;.</p>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-15">Since<a href="#since-15" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta</p>
+<h4 class="tsd-anchor-link" id="since-24">Since<a href="#since-24" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="AbstractStage.html">AbstractStage</a>.<a href="AbstractStage.html#writetsconfig">writeTsConfig</a></p>
 <ul>
@@ -931,7 +1015,7 @@ non-dryrun release).</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-16">Since<a href="#since-16" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha</p>
+<h4 class="tsd-anchor-link" id="since-25">Since<a href="#since-25" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.2.0-alpha</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="AbstractStage.html">AbstractStage</a>.<a href="AbstractStage.html#uncaughterrorlistener">uncaughtErrorListener</a></p>
 <ul>
@@ -955,7 +1039,7 @@ handling.</p>
 <h4 class="tsd-returns-title">Returns <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="tsd-signature-type external" target="_blank">Promise</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-since">
-<h4 class="tsd-anchor-link" id="since-17">Since<a href="#since-17" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta</p>
+<h4 class="tsd-anchor-link" id="since-26">Since<a href="#since-26" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="AbstractStage.html">AbstractStage</a>.<a href="AbstractStage.html#compilescss">compileScss</a></p>
 <ul>
@@ -987,7 +1071,7 @@ handling.</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Project"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Project</summary>
 <div><a href="#pkg" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="assets/icons.svg#icon-262144"></use></svg><span>pkg</span></a><a href="#version" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="assets/icons.svg#icon-262144"></use></svg><span>version</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Running"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Running</summary>
-<div><a href="#substages"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="assets/icons.svg#icon-1024"></use></svg><span>sub<wbr/>Stages</span></a><a href="#run" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run</span></a><a href="#startendnotice"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>start<wbr/>End<wbr/>Notice</span></a><a href="#runcustomdircopysubstage" class="tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Custom<wbr/>Dir<wbr/>Copy<wbr/>Sub<wbr/>Stage</span></a><a href="#runcustomscssdirsubstage" class="tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Custom<wbr/>Scss<wbr/>Dir<wbr/>Sub<wbr/>Stage</span></a><a href="#runstage" class="tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Stage</span></a><a href="#runsubstage" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Sub<wbr/>Stage</span></a></div></details>
+<div><a href="#substages"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="assets/icons.svg#icon-1024"></use></svg><span>sub<wbr/>Stages</span></a><a href="#run" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run</span></a><a href="#startendnotice"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>start<wbr/>End<wbr/>Notice</span></a><a href="#customscsssubstage" class="tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="assets/icons.svg#icon-262144"></use></svg><span>custom<wbr/>Scss<wbr/>Substage</span></a><a href="#customcopysubstage" class="tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>custom<wbr/>Copy<wbr/>Substage</span></a><a href="#runcustomdircopysubstage" class="tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Custom<wbr/>Dir<wbr/>Copy<wbr/>Sub<wbr/>Stage</span></a><a href="#runcustomscssdirsubstage" class="tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Custom<wbr/>Scss<wbr/>Dir<wbr/>Sub<wbr/>Stage</span></a><a href="#runstage" class="tsd-is-inherited tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Stage</span></a><a href="#runsubstage" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Sub<wbr/>Stage</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Sass"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Sass</summary>
 <div><a href="#sassopts" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Accessor"><use href="assets/icons.svg#icon-262144"></use></svg><span>sass<wbr/>Opts</span></a><a href="#sasserrorhandler" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="assets/icons.svg#icon-2048"></use></svg><span>sass<wbr/>Error<wbr/>Handler</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Sub-Stages"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Sub-Stages</summary>

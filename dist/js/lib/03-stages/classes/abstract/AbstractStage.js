@@ -1118,10 +1118,80 @@ export class AbstractStage {
      *
      * @since 0.1.4-alpha
      * @since 0.2.0-alpha.1 — Added logLevelBase param.
+     * @deprecated 0.3.0-beta.1.draft — Use {@link AbstractStage.customCopySubstage} instead.
      *
      * @experimental
      */
     async runCustomDirCopySubStage(subpath, _distDir, logLevelBase = 1) {
+        this.console.progress(
+            'copying ' + subpath + ' to dist...',
+            0 + logLevelBase,
+        );
+        const distDir =
+            _distDir ?? this.getDistDir(undefined).replace(/\/$/g, '');
+        if (!this.isWatchedUpdate && this.fs.exists(distDir)) {
+            this.console.verbose(
+                'deleting any existing files...',
+                1 + logLevelBase,
+            );
+            this.fs.delete(
+                [distDir + '/' + subpath],
+                (this.params.verbose ? 2 : 1) + logLevelBase,
+            );
+        }
+        const srcDir = this.getSrcDir(undefined).replace(/\/+$/gi, '');
+        // returns
+        if (!this.fs.exists(srcDir + '/' + subpath)) {
+            this.console.verbose(
+                'ⅹ source dir '
+                    + this.fs.pathRelative(srcDir)
+                    + ' does not exist, exiting...',
+                1 + logLevelBase,
+            );
+            return;
+        }
+        // returns
+        if (!this.fs.isDirectory(srcDir + '/' + subpath)) {
+            this.console.verbose(
+                'ⅹ source dir '
+                    + this.fs.pathRelative(srcDir)
+                    + ' is not a directory, exiting...',
+                1 + logLevelBase,
+            );
+            return;
+        }
+        this.console.verbose('copying files...', 1 + logLevelBase);
+        this.try(this.fs.copy, (this.params.verbose ? 2 : 1) + logLevelBase, [
+            subpath,
+            (this.params.verbose ? 2 : 1) + logLevelBase,
+            distDir,
+            srcDir,
+            {
+                force: true,
+                rename: false,
+                recursive: true,
+            },
+        ]);
+    }
+    /**
+     * This runs a custom sub-stage that only copies a whole folder at the given
+     * subpath from the source to the dist directories.
+     *
+     * Deletes any existing, logs update messages, etc.
+     *
+     * @category Running
+     *
+     * @param subpath       The subdriectory, relative to src path.
+     * @param _distDir      Optionally force a diffrent output directory than the auto-generated one.
+     * @param logLevelBase  Base output level for log messages.
+     *
+     * @since 0.1.4-alpha
+     * @since 0.2.0-alpha.1 — Added logLevelBase param.
+     * @since 0.3.0-beta.1.draft — Renamed from runCustomDirCopySubStage to customCopySubstage.
+     *
+     * @experimental
+     */
+    async customCopySubstage(subpath, _distDir, logLevelBase = 1) {
         this.console.progress(
             'copying ' + subpath + ' to dist...',
             0 + logLevelBase,
@@ -1191,122 +1261,182 @@ export class AbstractStage {
      * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
-     * @since 0.3.0-beta.1.draft — Changed `sassOpts` param to a property in `options`.
+     * @since 0.3.0-beta.1.draft — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
+     *
+     * @deprecated 0.3.0-beta.1.draft — Use {@link AbstractStage.customCopySubstage.dir} instead.
      *
      * @experimental
      */
-    async runCustomScssDirSubStage(
-        _subpath,
-        _distDir,
-        options,
-        logLevelBase = 1,
-    ) {
-        const subpaths = Array.isArray(_subpath) ? _subpath : [_subpath];
-        const { sass: sassOpts, ...opts } = mergeArgs(
-            AbstractStage.runCustomScssDirSubStage.DEFAULT_OPTS,
-            options,
+    async runCustomScssDirSubStage(subpath, distDir, opts, logLevelBase = 1) {
+        return this.customScssSubstage.dir(
+            subpath,
+            distDir,
+            opts,
+            logLevelBase,
         );
-        const srcDir = (opts.srcDir ?? this.getSrcDir()).replace(/\/$/g, '');
-        const srcSubpaths = subpaths.map((path) =>
-            this.fs.pathResolve(srcDir, path),
-        );
-        const distDir = (_distDir ?? this.getDistDir()).replace(/\/$/g, '');
-        this.console.progress(
-            'compiling '
-                + srcSubpaths.map(this.fs.pathRelative).join(', ')
-                + ' to css at '
-                + distDir
-                + '...',
-            0 + logLevelBase,
-        );
-        const distSubpaths = subpaths.map((path) =>
-            this.fs.pathResolve(distDir, path),
-        );
-        // if the output dir exists, we should delete the old contents
-        if (
-            opts.clearOutputDir
-            && !this.isWatchedUpdate
-            && distSubpaths.filter(this.fs.exists).length
+    }
+    /**
+     * This runs a custom sub-stage that uses globs to find non-partial
+     * scss/sass files and compile them at the given subpath from the source to
+     * the dist directories.
+     *
+     * Deletes any existing, logs update messages, etc.
+     *
+     * @category Running
+     *
+     * @since 0.1.4-alpha
+     * @since 0.2.0-alpha — Added `postCSS` param and PostCSS compatibility.
+     * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
+     * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
+     * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
+     * @since 0.3.0-beta.1.draft — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
+     *
+     * @experimental
+     */
+    get customScssSubstage() {
+        const _baseMethod = async function (
+            _subpaths,
+            _distDir,
+            _opts,
+            logLevelBase = 1,
         ) {
-            this.console.verbose(
-                'deleting existing dist files...',
-                1 + logLevelBase,
+            const subpaths = Array.isArray(_subpaths) ? _subpaths : [_subpaths];
+            const { sass: sassOpts, ...opts } = mergeArgs(
+                AbstractStage.customScssSubstage.DEFAULT_OPTS,
+                _opts,
             );
-            this.fs.delete(
-                opts.clearOutputDir === 'complete' ?
-                    distDir
-                :   [`${distDir}/**/*.css`, `${distDir}/**/*.css.map`],
+            const srcDir = (opts.srcDir ?? this.getSrcDir()).replace(
+                /\/$/g,
+                '',
+            );
+            const srcSubpaths = subpaths.map((path) =>
+                this.fs.pathResolve(srcDir, path),
+            );
+            const distDir = (_distDir ?? this.getDistDir()).replace(/\/$/g, '');
+            this.console.progress(
+                'compiling '
+                    + srcSubpaths.map(this.fs.pathRelative).join(', ')
+                    + ' to css at '
+                    + distDir
+                    + '...',
+                0 + logLevelBase,
+            );
+            const distSubpaths = subpaths.map((path) =>
+                this.fs.pathResolve(distDir, path),
+            );
+            // if the output dir exists, we should delete the old contents
+            if (
+                opts.clearOutputDir
+                && !this.isWatchedUpdate
+                && distSubpaths.filter(this.fs.exists).length
+            ) {
+                this.console.verbose(
+                    'deleting existing dist files...',
+                    1 + logLevelBase,
+                );
+                this.fs.delete(
+                    opts.clearOutputDir === 'complete' ?
+                        distDir
+                    :   [`${distDir}/**/*.css`, `${distDir}/**/*.css.map`],
+                    (this.params.verbose ? 2 : 1) + logLevelBase,
+                );
+            }
+            // returns
+            if (!srcSubpaths.filter(this.fs.exists).length) {
+                this.console.progress(
+                    `ⅹ source dir(s) ${subpaths.map(this.fs.pathRelative).join(', ')} do not exist in ${srcDir}, exiting...`,
+                    1 + logLevelBase,
+                );
+                return [];
+            }
+            // returns
+            if (!srcSubpaths.filter(this.fs.isDirectory).length) {
+                this.console.progress(
+                    `ⅹ source dir(s) ${subpaths.map(this.fs.pathRelative).join(', ')} in ${srcDir} are not directories, exiting...`,
+                    1 + logLevelBase,
+                );
+                return [];
+            }
+            this.params.debug
+                && this.console.verbose(
+                    'globbing for scss files...',
+                    1 + logLevelBase,
+                );
+            const scssPaths = this.fs
+                .glob(
+                    opts.globs
+                        .map((_g) =>
+                            srcSubpaths.map(
+                                (src) => src + '/' + _g.replace(/^\//gi, ''),
+                            ),
+                        )
+                        .flat(),
+                    {
+                        ignore: [
+                            ...FileSystem.globs.SYSTEM,
+                            ...opts.ignoreGlobs,
+                        ],
+                    },
+                )
+                .filter(this.fs.isFile)
+                .map(this.fs.pathRelative);
+            // returns
+            if (!scssPaths.length) {
+                this.console.progress(
+                    `ⅹ no css, sass, or scss files found in ${srcDir} subpaths ${subpaths.map(this.fs.pathRelative).join(', ')}, exiting...`,
+                    1 + logLevelBase,
+                    { italic: true },
+                );
+                return [];
+            }
+            const regex = {
+                srcDir: new RegExp(escRegExp(srcDir + '/'), 'gi'),
+            };
+            const regex_replace = {
+                distDir: escRegExpReplace(distDir + '/'),
+            };
+            const scssPaths_mapped = scssPaths.map((input) => ({
+                input,
+                output: this.fs
+                    .pathRelative(input)
+                    .replace(regex.srcDir, regex_replace.distDir)
+                    .replace(/\.(sass|scss)$/gi, '.css')
+                    .replace(/\/_?index\.css$/gi, '.css'),
+            }));
+            return this.compileScss(
+                scssPaths_mapped,
                 (this.params.verbose ? 2 : 1) + logLevelBase,
-            );
-        }
-        // returns
-        if (!srcSubpaths.filter(this.fs.exists).length) {
-            this.console.progress(
-                `ⅹ source dir(s) ${subpaths.map(this.fs.pathRelative).join(', ')} do not exist in ${srcDir}, exiting...`,
-                1 + logLevelBase,
-            );
-            return [];
-        }
-        // returns
-        if (!srcSubpaths.filter(this.fs.isDirectory).length) {
-            this.console.progress(
-                `ⅹ source dir(s) ${subpaths.map(this.fs.pathRelative).join(', ')} in ${srcDir} are not directories, exiting...`,
-                1 + logLevelBase,
-            );
-            return [];
-        }
-        this.params.debug
-            && this.console.verbose(
-                'globbing for scss files...',
-                1 + logLevelBase,
-            );
-        const scssPaths = this.fs
-            .glob(
-                opts.globs
-                    .map((_g) =>
-                        srcSubpaths.map(
-                            (src) => src + '/' + _g.replace(/^\//gi, ''),
-                        ),
-                    )
-                    .flat(),
+                { ...this.sassOpts, ...sassOpts },
                 {
-                    ignore: [...FileSystem.globs.SYSTEM, ...opts.ignoreGlobs],
+                    startMsg: 'compiling to css at ' + distDir + '...',
+                    ...opts,
                 },
-            )
-            .filter(this.fs.isFile)
-            .map(this.fs.pathRelative);
-        // returns
-        if (!scssPaths.length) {
-            this.console.progress(
-                `ⅹ no css, sass, or scss files found in ${srcDir} subpaths ${subpaths.map(this.fs.pathRelative).join(', ')}, exiting...`,
-                1 + logLevelBase,
-                { italic: true },
             );
-            return [];
-        }
-        const regex = {
-            srcDir: new RegExp(escRegExp(srcDir + '/'), 'gi'),
+        }.bind(this);
+        return {
+            dir: async function (...args) {
+                return _baseMethod(...args);
+            }.bind(this),
+            demoDir: async function (
+                subpaths,
+                distDir,
+                opts = {},
+                logLevelBase,
+            ) {
+                return _baseMethod(
+                    subpaths,
+                    distDir,
+                    {
+                        clearOutputDir: 'complete',
+                        postCSS: false,
+                        replace: true,
+                        prettier: true,
+                        ...opts,
+                    },
+                    logLevelBase,
+                );
+            }.bind(this),
         };
-        const regex_replace = {
-            distDir: escRegExpReplace(distDir + '/'),
-        };
-        const scssPaths_mapped = scssPaths.map((input) => ({
-            input,
-            output: this.fs
-                .pathRelative(input)
-                .replace(regex.srcDir, regex_replace.distDir)
-                .replace(/\.(sass|scss)$/gi, '.css')
-                .replace(/\/_?index\.css$/gi, '.css'),
-        }));
-        return this.compileScss(
-            scssPaths_mapped,
-            (this.params.verbose ? 2 : 1) + logLevelBase,
-            { ...this.sassOpts, ...sassOpts },
-            {
-                startMsg: 'compiling to css at ' + distDir + '...',
-                ...opts,
-            },
-        );
     }
 }
 /**
@@ -1316,9 +1446,43 @@ export class AbstractStage {
  */
 (function (AbstractStage) {
     /**
+     * Utilities for the {@link AbstractStage.customScssSubstage} methods.
+     *
+     * @since 0.2.0-alpha.2
+     * @since 0.3.0-beta.1.draft — Renamed from runCustomScssDirSubStage to customScssSubstage.
+     */
+    let customScssSubstage;
+    (function (customScssSubstage) {
+        /**
+         * Default options for the {@link AbstractStage.customScssSubstage}
+         * methods.
+         *
+         * @see {@link customScssSubstage.Opts} For property details.
+         *
+         * @since 0.2.0-alpha.2
+         *
+         * @source
+         */
+        customScssSubstage.DEFAULT_OPTS = {
+            clearOutputDir: 'targeted',
+            globs: ['**/*.scss', '**/*.sass', '**/*.css'],
+            ignoreGlobs: ['**/_*'],
+            maxConcurrent: undefined,
+            postCSS: true,
+            prettier: false,
+            replace: false,
+            startMsg: undefined,
+        };
+    })(
+        (customScssSubstage =
+            AbstractStage.customScssSubstage
+            || (AbstractStage.customScssSubstage = {})),
+    );
+    /**
      * Utilities for the {@link AbstractStage.runCustomScssDirSubStage} method.
      *
      * @since 0.2.0-alpha.2
+     * @deprecated 0.3.0-beta.1.draft — Use {@link customScssSubstage} namespace instead.
      */
     let runCustomScssDirSubStage;
     (function (runCustomScssDirSubStage) {
@@ -1329,18 +1493,12 @@ export class AbstractStage {
          * @see {@link Opts} For property details.
          *
          * @since 0.2.0-alpha.2
+         * @deprecated 0.3.0-beta.1.draft — Use {@link customScssSubstage} namespace instead.
          *
          * @source
          */
         runCustomScssDirSubStage.DEFAULT_OPTS = {
-            clearOutputDir: 'targeted',
-            globs: ['**/*.scss', '**/*.sass', '**/*.css'],
-            ignoreGlobs: ['**/_*'],
-            maxConcurrent: undefined,
-            postCSS: true,
-            prettier: false,
-            replace: false,
-            startMsg: undefined,
+            ...customScssSubstage.DEFAULT_OPTS,
         };
     })(
         (runCustomScssDirSubStage =
