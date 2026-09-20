@@ -19,6 +19,26 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-beta.2** — 2026-09-19
+
+### Moved & Renamed
+- Renamed AbstractStage.runCustomScssDirSubStage() to AbstractStage.customScssSubstage.dir()
+- Renamed AbstractStage.runCustomDirCopySubStage() to AbstractStage.customCopySubstage()
+
+### Added
+- New methods: 
+    - FileSystem.pathResolveModule()
+    - AbstractStage.customScssSubstage.demoDir()
+- Added functionality for custom sass deprecation messages (warnings starting with
+  '[deprecated] ', case insensitive) to also be collected/combined together
+
+### Fixed
+- Minor fix to this binding in Stage_Compiler
+- Improvements to scss compile utilities
+- Minor improvements to FileSystem.copy()
+- Minor sass compiler improvements
+
+
 ## **0.3.0-beta.1** — 2026-07-07
 
 Quick dependency version fix.

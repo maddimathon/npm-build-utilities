@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.1.draft
+ * @maddimathon/build-utilities@0.3.0-beta.2
  * @license MIT
  */
 import type { GlobOptions } from 'glob';
@@ -169,7 +169,7 @@ export declare namespace FileSystemType {
             /**
              * Outputs extra information to the console.
              *
-             * @since 0.3.0-beta.1.draft
+             * @since 0.3.0-beta.2
              */
             debug: boolean;
             /**

@@ -225,7 +225,7 @@ export namespace FileSystemType {
             /**
              * Outputs extra information to the console.
              *
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta.2
              */
             debug: boolean;
 

@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.1.draft
+ * @maddimathon/build-utilities@0.3.0-beta.2
  * @license MIT
  */
 import {
@@ -1118,7 +1118,7 @@ export class AbstractStage {
      *
      * @since 0.1.4-alpha
      * @since 0.2.0-alpha.1 — Added logLevelBase param.
-     * @deprecated 0.3.0-beta.1.draft — Use {@link AbstractStage.customCopySubstage} instead.
+     * @deprecated 0.3.0-beta.2 — Use {@link AbstractStage.customCopySubstage} instead.
      *
      * @experimental
      */
@@ -1187,7 +1187,7 @@ export class AbstractStage {
      *
      * @since 0.1.4-alpha
      * @since 0.2.0-alpha.1 — Added logLevelBase param.
-     * @since 0.3.0-beta.1.draft — Renamed from runCustomDirCopySubStage to customCopySubstage.
+     * @since 0.3.0-beta.2 — Renamed from runCustomDirCopySubStage to customCopySubstage.
      *
      * @experimental
      */
@@ -1261,9 +1261,9 @@ export class AbstractStage {
      * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
-     * @since 0.3.0-beta.1.draft — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
+     * @since 0.3.0-beta.2 — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
      *
-     * @deprecated 0.3.0-beta.1.draft — Use {@link AbstractStage.customCopySubstage.dir} instead.
+     * @deprecated 0.3.0-beta.2 — Use {@link AbstractStage.customScssSubstage.dir} instead.
      *
      * @experimental
      */
@@ -1289,7 +1289,7 @@ export class AbstractStage {
      * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
-     * @since 0.3.0-beta.1.draft — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
+     * @since 0.3.0-beta.2 — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
      *
      * @experimental
      */
@@ -1427,7 +1427,7 @@ export class AbstractStage {
                     subpaths,
                     distDir,
                     {
-                        clearOutputDir: 'complete',
+                        clearOutputDir: false,
                         postCSS: false,
                         replace: true,
                         prettier: true,
@@ -1449,7 +1449,7 @@ export class AbstractStage {
      * Utilities for the {@link AbstractStage.customScssSubstage} methods.
      *
      * @since 0.2.0-alpha.2
-     * @since 0.3.0-beta.1.draft — Renamed from runCustomScssDirSubStage to customScssSubstage.
+     * @since 0.3.0-beta.2 — Renamed from runCustomScssDirSubStage to customScssSubstage.
      */
     let customScssSubstage;
     (function (customScssSubstage) {
@@ -1482,7 +1482,7 @@ export class AbstractStage {
      * Utilities for the {@link AbstractStage.runCustomScssDirSubStage} method.
      *
      * @since 0.2.0-alpha.2
-     * @deprecated 0.3.0-beta.1.draft — Use {@link customScssSubstage} namespace instead.
+     * @deprecated 0.3.0-beta.2 — Use {@link customScssSubstage} namespace instead.
      */
     let runCustomScssDirSubStage;
     (function (runCustomScssDirSubStage) {
@@ -1493,7 +1493,7 @@ export class AbstractStage {
          * @see {@link Opts} For property details.
          *
          * @since 0.2.0-alpha.2
-         * @deprecated 0.3.0-beta.1.draft — Use {@link customScssSubstage} namespace instead.
+         * @deprecated 0.3.0-beta.2 — Use {@link customScssSubstage} namespace instead.
          *
          * @source
          */

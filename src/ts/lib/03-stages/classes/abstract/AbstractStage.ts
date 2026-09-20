@@ -1351,7 +1351,7 @@ export abstract class AbstractStage<
      * 
      * @since 0.1.4-alpha
      * @since 0.2.0-alpha.1 — Added logLevelBase param.
-     * @deprecated ___PKG_VERSION___ — Use {@link AbstractStage.customCopySubstage} instead.
+     * @deprecated 0.3.0-beta.2 — Use {@link AbstractStage.customCopySubstage} instead.
      * 
      * @experimental
      */
@@ -1418,7 +1418,7 @@ export abstract class AbstractStage<
      * 
      * @since 0.1.4-alpha
      * @since 0.2.0-alpha.1 — Added logLevelBase param.
-     * @since ___PKG_VERSION___ — Renamed from runCustomDirCopySubStage to customCopySubstage.
+     * @since 0.3.0-beta.2 — Renamed from runCustomDirCopySubStage to customCopySubstage.
      * 
      * @experimental
      */
@@ -1490,9 +1490,9 @@ export abstract class AbstractStage<
      * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
-     * @since ___PKG_VERSION___ — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
+     * @since 0.3.0-beta.2 — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
      * 
-     * @deprecated ___PKG_VERSION___ — Use {@link AbstractStage.customScssSubstage.dir} instead.
+     * @deprecated 0.3.0-beta.2 — Use {@link AbstractStage.customScssSubstage.dir} instead.
      * 
      * @experimental
      */
@@ -1519,7 +1519,7 @@ export abstract class AbstractStage<
      * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
      * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
      * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
-     * @since ___PKG_VERSION___ — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
+     * @since 0.3.0-beta.2 — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
      * 
      * @experimental
      */
@@ -1663,7 +1663,7 @@ export abstract class AbstractStage<
                     subpaths,
                     distDir,
                     {
-                        clearOutputDir: 'complete',
+                        clearOutputDir: false,
                         postCSS: false,
                         replace: true,
                         prettier: true,
@@ -1706,11 +1706,11 @@ export namespace AbstractStage {
              * @default true
              * 
              * @since 0.2.0-alpha.2
-             * @since ___PKG_VERSION___ — Added option to pass an object of args instead.
+             * @since 0.3.0-beta.2 — Added option to pass an object of args instead.
              */
             postCSS: boolean | Stage.Compiler.Args.PostCSS & {
                 /**
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-beta.2
                  */
                 ignoreGlobs?: string[];
             };
@@ -1739,7 +1739,7 @@ export namespace AbstractStage {
     /**
      * Methods available for running custom scss substages.
      * 
-     * @since ___PKG_VERSION___
+     * @since 0.3.0-beta.2
      */
     export interface customScssSubstage {
         /**
@@ -1750,7 +1750,7 @@ export namespace AbstractStage {
          * @param opts          Additional options. See {@link customScssSubstage.DEFAULT_OPTS} for defaults.
          * @param logLevelBase  Base output level for log messages. Default 1.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta.2
          */
         dir(
             subpaths: string | string[],
@@ -1767,7 +1767,7 @@ export namespace AbstractStage {
          * @param opts          Additional options. See {@link customScssSubstage.DEFAULT_OPTS} for defaults. Some defaults are changed for better demo output.
          * @param logLevelBase  Base output level for log messages. Default 1.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta.2
          */
         demoDir(
             subpaths: string | string[],
@@ -1781,7 +1781,7 @@ export namespace AbstractStage {
      * Utilities for the {@link AbstractStage.customScssSubstage} methods.
      * 
      * @since 0.2.0-alpha.2
-     * @since ___PKG_VERSION___ — Renamed from runCustomScssDirSubStage to customScssSubstage.
+     * @since 0.3.0-beta.2 — Renamed from runCustomScssDirSubStage to customScssSubstage.
      */
     export namespace customScssSubstage {
 
@@ -1869,7 +1869,7 @@ export namespace AbstractStage {
             /**
              * Sass args for the compiler.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta.2
              */
             sass?: undefined | Stage.Compiler.Args.Sass;
 
@@ -1887,7 +1887,7 @@ export namespace AbstractStage {
      * Utilities for the {@link AbstractStage.runCustomScssDirSubStage} method.
      * 
      * @since 0.2.0-alpha.2
-     * @deprecated ___PKG_VERSION___ — Use {@link customScssSubstage} namespace instead.
+     * @deprecated 0.3.0-beta.2 — Use {@link customScssSubstage} namespace instead.
      */
     export namespace runCustomScssDirSubStage {
 
@@ -1898,7 +1898,7 @@ export namespace AbstractStage {
          * @see {@link Opts} For property details.
          *
          * @since 0.2.0-alpha.2
-         * @deprecated ___PKG_VERSION___ — Use {@link customScssSubstage} namespace instead.
+         * @deprecated 0.3.0-beta.2 — Use {@link customScssSubstage} namespace instead.
          * 
          * @source
          */
@@ -1909,7 +1909,7 @@ export namespace AbstractStage {
          * method.
          *
          * @since 0.2.0-alpha.2
-         * @deprecated ___PKG_VERSION___ — Use {@link customScssSubstage} namespace instead.
+         * @deprecated 0.3.0-beta.2 — Use {@link customScssSubstage} namespace instead.
          */
         export interface Opts extends customScssSubstage.Opts { }
     }

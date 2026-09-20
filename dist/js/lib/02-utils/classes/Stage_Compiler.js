@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.1.draft
+ * @maddimathon/build-utilities@0.3.0-beta.2
  * @license MIT
  */
 import { DateTime, Interval } from 'luxon';
@@ -221,6 +221,7 @@ export class Stage_Compiler {
             'double-position-gradients': true,
             'exponential-functions': true,
             'float-clear-logical-values': true,
+            'fit-tolerance-property': { preserve: true },
             'focus-visible-pseudo-class': false,
             'focus-within-pseudo-class': false,
             'font-format-keywords': false,
@@ -256,6 +257,7 @@ export class Stage_Compiler {
             'place-properties': true,
             'position-area-property': true,
             'prefers-color-scheme-query': false,
+            'property-rule-optional-descriptors': true,
             'property-rule-prelude-list': true,
             'random-function': false,
             'rebeccapurple-color': true,

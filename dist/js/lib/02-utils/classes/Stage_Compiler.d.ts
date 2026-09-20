@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.1.draft
+ * @maddimathon/build-utilities@0.3.0-beta.2
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -114,6 +114,9 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'double-position-gradients': true;
                 readonly 'exponential-functions': true;
                 readonly 'float-clear-logical-values': true;
+                readonly 'fit-tolerance-property': {
+                    readonly preserve: true;
+                };
                 readonly 'focus-visible-pseudo-class': false;
                 readonly 'focus-within-pseudo-class': false;
                 readonly 'font-format-keywords': false;
@@ -159,6 +162,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'place-properties': true;
                 readonly 'position-area-property': true;
                 readonly 'prefers-color-scheme-query': false;
+                readonly 'property-rule-optional-descriptors': true;
                 readonly 'property-rule-prelude-list': true;
                 readonly 'random-function': false;
                 readonly 'rebeccapurple-color': true;
@@ -705,7 +709,7 @@ export declare namespace Stage_Compiler {
         /**
          * The object value for a deprecation warning from sass.
          *
-         * @since 0.3.0-beta.1.draft
+         * @since 0.3.0-beta.2
          */
         type SassDeprecationWarning = Extract<sass.LoggerWarnOptions, {
             deprecation: true;
@@ -716,7 +720,7 @@ export declare namespace Stage_Compiler {
          * The object value for a custom user-triggered deprecation warning from
          * a library or stylesheet.
          *
-         * @since 0.3.0-beta.1.draft
+         * @since 0.3.0-beta.2
          */
         type CustomDeprecationWarning = Omit<SassDeprecationWarning, 'deprecationType'> & {
             deprecationType: 'custom';

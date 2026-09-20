@@ -254,6 +254,7 @@ export class Stage_Compiler implements Stage.Compiler {
             'double-position-gradients': true,
             'exponential-functions': true,
             'float-clear-logical-values': true,
+            'fit-tolerance-property': { preserve: true },
             'focus-visible-pseudo-class': false,
             'focus-within-pseudo-class': false,
             'font-format-keywords': false,
@@ -289,6 +290,7 @@ export class Stage_Compiler implements Stage.Compiler {
             'place-properties': true,
             'position-area-property': true,
             'prefers-color-scheme-query': false,
+            'property-rule-optional-descriptors': true,
             'property-rule-prelude-list': true,
             'random-function': false,
             'rebeccapurple-color': true,
@@ -2282,7 +2284,7 @@ export namespace Stage_Compiler {
         /**
          * The object value for a deprecation warning from sass.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta.2
          */
         export type SassDeprecationWarning = Extract<sass.LoggerWarnOptions, { deprecation: true; }> & {
             message: string;
@@ -2292,7 +2294,7 @@ export namespace Stage_Compiler {
          * The object value for a custom user-triggered deprecation warning from
          * a library or stylesheet.
          *
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta.2
          */
         export type CustomDeprecationWarning = Omit<SassDeprecationWarning, 'deprecationType'> & {
             deprecationType: 'custom';
