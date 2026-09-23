@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.2
+ * @maddimathon/build-utilities@0.3.0-beta.3.draft
  * @license MIT
  */
 import type { PackageJson } from '@maddimathon/utility-typescript/types';
@@ -40,7 +40,10 @@ export declare class ReleaseStage extends AbstractStage<Stage.Args.Release, Stag
      */
     readonly subStages: Stage.SubStage.Release[];
     get ARGS_DEFAULT(): {
-        readonly commit: null;
+        readonly commit: {
+            readonly checkBefore: true;
+            readonly paths: [];
+        };
         readonly replace: (_stage: Stage) => {
             readonly ignore: [".git/**", "**/.git/**", ".scripts/**", "**/.scripts/**", ".vscode/**/*.code-snippets", ".vscode/**/settings.json", "node_modules/**", "**/node_modules/**", "._*", "._*/**", "**/._*", "**/._*/**", "**/.DS_Store", "**/.smbdelete**", "**/.vscode/**", "**/*.zip"];
             readonly package: [string, string, string, string];

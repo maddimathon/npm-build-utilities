@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.2
+ * @maddimathon/build-utilities@0.3.0-beta.3.draft
  * @license MIT
  */
 import type postcss from 'postcss';
@@ -582,15 +582,7 @@ export declare namespace Stage {
             /**
              * Files to add to commit after packaging but before release.
              */
-            commit: null | (
-            /**
-             * @param stage         Instance of the current stage (probably
-             *                      {@link ReleaseStage}).
-             * @param defaultPaths  The default paths to add to the commit.
-             *
-             * @return  All relative or absolute paths to add to the commit.
-             */
-            (stage: Stage, defaultPaths?: string[]) => string[]);
+            commit: null | Release.Commit | Release.CommitFunction;
             /**
              * Whether to include this sub-stage, or the configuration if so.
              */
@@ -606,6 +598,69 @@ export declare namespace Stage {
                  */
                 package: string[];
             });
+        }
+        /**
+         * Types for the {@link Args.Release} args.
+         *
+         * @since 0.3.0-beta.3.draft
+         */
+        namespace Release {
+            /**
+             * Commit substage arguments.
+             *
+             * @since 0.3.0-beta.3.draft
+             */
+            interface Commit {
+                /**
+                 * Whether to prompt the user to check git diff(s) before
+                 * staging and committing.
+                 *
+                 * @default true
+                 *
+                 * @since 0.3.0-beta.3.draft
+                 */
+                checkBefore: boolean;
+                paths: string[];
+            }
+            /**
+             * @since 0.3.0-beta.3.draft
+             */
+            interface CommitFunction {
+                /**
+                 * @param stage         Instance of the current stage (probably
+                 *                      {@link ReleaseStage}).
+                 * @param defaultPaths  The default paths to add to the commit.
+                 *
+                 * @return  All relative or absolute paths to add to the commit.
+                 */
+                (stage: Stage, args?: Release.Commit): string[] | Release.Commit;
+                /**
+                 * @param stage         Instance of the current stage (probably
+                 *                      {@link ReleaseStage}).
+                 * @param defaultPaths  The default paths to add to the commit.
+                 *
+                 * @return  All relative or absolute paths to add to the commit.
+                 */
+                (stage: Stage, args?: Release.Commit): Release.Commit;
+                /**
+                 * @param stage         Instance of the current stage (probably
+                 *                      {@link ReleaseStage}).
+                 * @param defaultPaths  The default paths to add to the commit.
+                 *
+                 * @return  All relative or absolute paths to add to the commit.
+                 *
+                 * @deprecated 0.3.0-beta.3.draft — Please return a {@link Release.Commit} object instead.
+                 */
+                (stage: Stage, args?: string[] | Release.Commit): string[];
+                /**
+                 * @param stage         Instance of the current stage (probably
+                 *                      {@link ReleaseStage}).
+                 * @param defaultPaths  The default paths to add to the commit.
+                 *
+                 * @return  All relative or absolute paths to add to the commit.
+                 */
+                (stage: Stage, args?: string[] | Release.Commit): string[] | Release.Commit;
+            }
         }
         /**
          * The required shape for a snapshot stage.

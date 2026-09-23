@@ -7,7 +7,7 @@ children:
 ---
 
 <!--README_HEADER-->
-# NPM Build Utilities @ 0.3.0-beta.2
+# NPM Build Utilities @ 0.3.0-beta.3.draft
 <!--/README_HEADER-->
 
 <!--README_DESC-->
@@ -36,8 +36,8 @@ or
 
 <!--README_INSTALL-->
 ```bash
-npm i -D @maddimathon/build-utilities@0.3.0-beta.2
-npm i -D github:maddimathon/build-utilities#0.3.0-beta.2
+npm i -D @maddimathon/build-utilities@0.3.0-beta.3
+npm i -D github:maddimathon/build-utilities#0.3.0-beta.3
 ```
 <!--/README_INSTALL-->
 

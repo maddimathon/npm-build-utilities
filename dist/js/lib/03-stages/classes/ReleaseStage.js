@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.2
+ * @maddimathon/build-utilities@0.3.0-beta.3.draft
  * @license MIT
  */
 import {
@@ -114,7 +114,10 @@ export class ReleaseStage extends AbstractStage {
             };
         };
         return {
-            commit: null,
+            commit: {
+                checkBefore: true,
+                paths: [],
+            },
             replace,
             utils: {},
         };
@@ -454,9 +457,28 @@ export class ReleaseStage extends AbstractStage {
         updatedPaths = arrayUnique(updatedPaths).filter(
             (_path) => this.fs.exists(_path) || _path.includes('*'),
         );
-        if (this.args.commit) {
-            updatedPaths = this.args.commit(this, updatedPaths);
+        const _defaultArgs = this.ARGS_DEFAULT.commit;
+        let _argsReturn = null;
+        if (typeof this.args.commit === 'function') {
+            const __argsReturn = this.args.commit(this, {
+                ..._defaultArgs,
+                paths: updatedPaths,
+            });
+            _argsReturn = __argsReturn;
+            updatedPaths =
+                Array.isArray(__argsReturn) ? __argsReturn : __argsReturn.paths;
+        } else {
+            _argsReturn = this.args.commit;
+            updatedPaths = updatedPaths.concat(
+                Array.isArray(_argsReturn) ? _argsReturn : (
+                    (_argsReturn?.paths ?? [])
+                ),
+            );
         }
+        const args =
+            Array.isArray(_argsReturn) ?
+                { paths: _argsReturn }
+            :   (_argsReturn ?? {});
         const gitCmd =
             ''
             + `git fetch`
@@ -470,6 +492,26 @@ export class ReleaseStage extends AbstractStage {
             this.console.vi.verbose({ gitCmd }, 3);
             this.console.vi.debug({ gitCmd }, this.params.verbose ? 3 : 2);
             return;
+        }
+        // maybe returns if user cancelled
+        if (args.checkBefore) {
+            // returns - user cancelled
+            if (
+                !(await this.console.prompt.bool(
+                    'Check the git diff(s) - is it safe to commit and push this release?',
+                    2,
+                    {
+                        default: false,
+                        msgArgs: {
+                            bold: false,
+                            linesIn: 1,
+                        },
+                    },
+                ))
+            ) {
+                this.console.verbose('cancelling release...', 3);
+                return;
+            }
         }
         this.console.vi.debug({ gitCmd }, 2);
         // commit, tag, and push tags

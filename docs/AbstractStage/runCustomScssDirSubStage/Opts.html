@@ -1,5 +1,5 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Opts | NPM Build Utilities @ 0.3.0-beta.2</title><meta name="description" content="Documentation for NPM Build Utilities @ 0.3.0-beta.2"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../../assets/style.css"/><link rel="stylesheet" href="../../assets/highlight.css"/><script defer src="../../assets/main.js"></script><script async src="../../assets/icons.js" id="tsd-icons-script"></script><script async src="../../assets/search.js" id="tsd-search-script"></script><script async src="../../assets/navigation.js" id="tsd-nav-script"></script><script async src="../../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
-<div class="tsd-toolbar-contents container"><a href="../../index.html" class="title">NPM Build Utilities @ 0.3.0-beta.2</a>
+<!DOCTYPE html><html class="default" lang="en" data-base="../../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Opts | NPM Build Utilities @ 0.3.0-beta.3.draft</title><meta name="description" content="Documentation for NPM Build Utilities @ 0.3.0-beta.3.draft"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../../assets/style.css"/><link rel="stylesheet" href="../../assets/highlight.css"/><script defer src="../../assets/main.js"></script><script async src="../../assets/icons.js" id="tsd-icons-script"></script><script async src="../../assets/search.js" id="tsd-search-script"></script><script async src="../../assets/navigation.js" id="tsd-nav-script"></script><script async src="../../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container"><a href="../../index.html" class="title">NPM Build Utilities @ 0.3.0-beta.3.draft</a>
 <div id="tsd-toolbar-links"><a href="https://github.com/maddimathon/npm-build-utilities">GitHub</a><a href="https://www.maddimathon.com/web">by Maddi Mathon</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/>
 <ul role="listbox" id="tsd-search-results"></ul>
 <div id="tsd-search-status" aria-live="polite" aria-atomic="true">
@@ -24,14 +24,14 @@ method.</p>
 <h4 class="tsd-anchor-link" id="deprecated">Deprecated<a href="#deprecated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>0.3.0-beta.2 — Use <a href="../customScssSubstage.html" class="tsd-kind-interface">customScssSubstage</a> namespace instead.</p>
 </div></div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">Opts</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#clearoutputdir">clearOutputDir</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;targeted&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;complete&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#globs">globs</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#ignoreglobs">ignoreGlobs</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#maxconcurrent">maxConcurrent</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#postcss">postCSS</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <a href="../../Stage/Compiler/Args/PostCSS.html" class="tsd-signature-type tsd-kind-interface">PostCSS</a> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">ignoreGlobs</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#prettier">prettier</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#replace">replace</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#sass">sass</a><span class="tsd-signature-symbol">?:</span> <a href="../../Stage/Compiler/Args/Sass.html" class="tsd-signature-type tsd-kind-interface">Sass</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#srcdir">srcDir</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#startmsg">startMsg</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div>
-<section class="tsd-panel tsd-hierarchy" data-refl="1178">
+<section class="tsd-panel tsd-hierarchy" data-refl="1179">
 <h4>Hierarchy (<a href="../../hierarchy.html#AbstractStage.runCustomScssDirSubStage.Opts">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="../../AbstractStage-1.html" class="tsd-signature-type tsd-kind-namespace">AbstractStage</a><span class="tsd-signature-symbol">.</span><a href="../customScssSubstage-1.html" class="tsd-signature-type tsd-kind-namespace">customScssSubstage</a><span class="tsd-signature-symbol">.</span><a href="../customScssSubstage/Opts.html" class="tsd-signature-type tsd-kind-interface">Opts</a>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">Opts</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1914" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1914</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1988" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1988</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -71,7 +71,7 @@ method.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#clearoutputdir">clearOutputDir</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1839" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1839</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1913" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1913</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="globs"><span class="deprecated">globs</span><a href="#globs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">globs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
@@ -85,7 +85,7 @@ method.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#globs">globs</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1851" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1851</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1925" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1925</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="ignoreglobs"><span class="deprecated">ignore<wbr/>Globs</span><a href="#ignoreglobs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">ignoreGlobs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
@@ -99,7 +99,7 @@ method.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#ignoreglobs">ignoreGlobs</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1858" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1858</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1932" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1932</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="maxconcurrent"><span class="deprecated">max<wbr/>Concurrent</span><a href="#maxconcurrent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">maxConcurrent</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></div>
@@ -111,7 +111,7 @@ method.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#maxconcurrent">maxConcurrent</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1701" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1701</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1775" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1775</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="postcss"><span class="deprecated">post<wbr/>CSS</span><a href="#postcss" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">postCSS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span> <span class="tsd-signature-symbol">|</span> <a href="../../Stage/Compiler/Args/PostCSS.html" class="tsd-signature-type tsd-kind-interface">PostCSS</a> <span class="tsd-signature-symbol">&amp;</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">ignoreGlobs</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span> <span class="tsd-signature-symbol">}</span></div>
@@ -143,7 +143,7 @@ method.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#postcss">postCSS</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1711" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1711</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1785" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1785</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="prettier"><span class="deprecated">prettier</span><a href="#prettier" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">prettier</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -160,7 +160,7 @@ method.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#prettier">prettier</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1867" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1867</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1941" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1941</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="replace"><code class="tsd-tag">Optional</code><span class="deprecated">replace</span><a href="#replace" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">replace</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -174,7 +174,7 @@ method.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#replace">replace</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1730" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1730</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1804" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1804</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="sass"><code class="tsd-tag">Optional</code><span class="deprecated">sass</span><a href="#sass" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">sass</span><span class="tsd-signature-symbol">?:</span> <a href="../../Stage/Compiler/Args/Sass.html" class="tsd-signature-type tsd-kind-interface">Sass</a></div>
@@ -186,7 +186,7 @@ method.</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#sass">sass</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1874" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1874</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1948" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1948</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="srcdir"><code class="tsd-tag">Optional</code><span class="deprecated">src<wbr/>Dir</span><a href="#srcdir" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">srcDir</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -199,7 +199,7 @@ output path).</p>
 </div></div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#srcdir">srcDir</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1882" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1882</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1956" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1956</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited">
 <h3 class="tsd-anchor-link" id="startmsg"><code class="tsd-tag">Optional</code><span class="deprecated">start<wbr/>Msg</span><a href="#startmsg" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">startMsg</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -207,7 +207,7 @@ output path).</p>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="../customScssSubstage/Opts.html">Opts</a>.<a href="../customScssSubstage/Opts.html#startmsg">startMsg</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/0.3.0-beta.2/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1735" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1735</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/maddimathon/npm-build-utilities/blob/main/src/ts/lib/03-stages/classes/abstract/AbstractStage.ts#L1809" class="external" target="_blank">lib/03-stages/classes/abstract/AbstractStage.ts:1809</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -230,7 +230,7 @@ output path).</p>
 <div><a href="#clearoutputdir" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>clear<wbr/>Output<wbr/>Dir</span></a><a href="#globs" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>globs</span></a><a href="#ignoreglobs" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>ignore<wbr/>Globs</span></a><a href="#maxconcurrent" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>max<wbr/>Concurrent</span></a><a href="#postcss" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>post<wbr/>CSS</span></a><a href="#prettier" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>prettier</span></a><a href="#replace" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>replace</span></a><a href="#sass" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>sass</span></a><a href="#srcdir" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>src<wbr/>Dir</span></a><a href="#startmsg" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../../assets/icons.svg#icon-1024"></use></svg><span>start<wbr/>Msg</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/maddimathon/npm-build-utilities" class="tsd-nav-link">GitHub</a><a href="https://www.maddimathon.com/web" class="tsd-nav-link">by Maddi Mathon</a></nav>
-<nav class="tsd-navigation"><a href="../../index.html">NPM Build Utilities @ 0.3.0-beta.2</a>
+<nav class="tsd-navigation"><a href="../../index.html">NPM Build Utilities @ 0.3.0-beta.3.draft</a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container">
 <li>Loading...</li></ul></nav></div></div></div><footer><p>Copyright <a href="https://www.maddimathon.com/web" target="_blank">Maddi Mathon</a>, 2025.</p><p>Site generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a>.</p></footer>
 <div class="overlay"></div></body></html>

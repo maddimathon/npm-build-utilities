@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.2
+ * @maddimathon/build-utilities@0.3.0-beta.3.draft
  * @license MIT
  */
 import type { PackageJson, TsConfig } from '@maddimathon/utility-typescript/types';
@@ -216,8 +216,9 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      *
      * @since 0.3.0-beta
      */
-    writeTsConfig(outputPath: string, level: number, tsconfig: Partial<TsConfig>, { errorIfNotFound, ...args }?: Partial<NodeFiles.WriteFileArgs & {
-        errorIfNotFound?: boolean;
+    writeTsConfig(outputPath: string, level: number, tsconfig: Partial<TsConfig>, { appendToLib, errorIfNotFound, ...args }?: Partial<NodeFiles.WriteFileArgs & {
+        appendToLib: boolean | 'if-exists';
+        errorIfNotFound: boolean;
     }>): Promise<string | false>;
     /**
      * Takes completed arguments and runs sass functions with proper error

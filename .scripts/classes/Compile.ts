@@ -66,7 +66,11 @@ export class Compile extends CompileStage {
     protected override async ts() {
         this.console.progress( 'writing tsconfig files...', 1 );
 
-        const writeArgs = { force: true, rename: false };
+        const writeArgs = {
+            // appendToLib: 'if-exists',
+            force: true,
+            rename: false,
+        } as const;
 
         const baseConfigPath = await this.writeTsConfig(
             'tsconfig.base.json',

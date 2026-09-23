@@ -20,6 +20,8 @@ import type { NodeFiles } from '@maddimathon/utility-typescript/node';
 import {
     type MessageMaker,
 
+    arrayUnique,
+
     escRegExp,
     escRegExpReplace,
     mergeArgs,
@@ -577,7 +579,14 @@ export abstract class AbstractStage<
         outputPath: string,
         level: number,
         tsconfig: Partial<TsConfig>,
-        { errorIfNotFound = true, ...args }: Partial<NodeFiles.WriteFileArgs & { errorIfNotFound?: boolean; }> = {},
+        {
+            appendToLib = 'if-exists',
+            errorIfNotFound = true,
+            ...args
+        }: Partial<NodeFiles.WriteFileArgs & {
+            appendToLib: boolean | 'if-exists';
+            errorIfNotFound: boolean;
+        }> = {},
     ) {
         const { path, ...resolvedConfig } = await this.compiler.resolveTsConfig(
             {
@@ -587,6 +596,71 @@ export abstract class AbstractStage<
             level,
             errorIfNotFound,
         );
+
+        // add the target and module to lib
+        if (
+            appendToLib === true
+            || ( appendToLib === 'if-exists' && resolvedConfig.compilerOptions.lib?.length )
+        ) {
+            const lib = resolvedConfig.compilerOptions.lib
+                ? Array.isArray( resolvedConfig.compilerOptions.lib )
+                    ? resolvedConfig.compilerOptions.lib.map(
+                        str => str.toLowerCase() as Lowercase<TsConfig.CompilerOpts.Lib>
+                    )
+                    : [ resolvedConfig.compilerOptions.lib.toLowerCase() as Lowercase<TsConfig.CompilerOpts.Lib> ]
+                : [];
+
+            [
+                resolvedConfig.compilerOptions.module,
+                resolvedConfig.compilerOptions.target,
+            ].forEach(
+                value => {
+                    // returns
+                    if ( !value ) {
+                        return;
+                    }
+
+                    const lc_value = value?.toLowerCase();
+
+                    // returns
+                    if ( lib.includes( lc_value as Lowercase<TsConfig.CompilerOpts.Lib> ) ) {
+                        return;
+                    }
+
+                    switch ( lc_value ) {
+
+                        case 'es5':
+                        case 'es2015':
+                        case 'es6':
+                        case 'es2016':
+                        case 'es7':
+                        case 'es2017':
+                        case 'es2018':
+                        case 'es2019':
+                        case 'es2020':
+                        case 'es2021':
+                        case 'es2022':
+                        case 'esnext':
+                        case 'dom':
+                        case 'webworker':
+                        case 'scripthost':
+                            lib.push( lc_value );
+                            break;
+
+                        default:
+                            if ( lc_value.match( /^(es)(\d+|next)$/i ) !== null ) {
+                                lib.push( lc_value as 'esnext' | `es2022` );
+                            }
+                            break;
+                    }
+
+                }
+            );
+
+            if ( lib.length ) {
+                resolvedConfig.compilerOptions.lib = arrayUnique( lib );
+            }
+        }
 
         return this.try(
             this.fs.write,
