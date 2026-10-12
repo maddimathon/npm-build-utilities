@@ -19,6 +19,7 @@ import type * as typeDoc from "typedoc";
 import type {
     Classify,
     PackageJson,
+    PartialPick,
     SyncOrAsync,
     TsConfig,
 } from '@maddimathon/utility-typescript/types';
@@ -59,277 +60,12 @@ import type { ProjectLogger } from './Logger.js';
  * @typeParam T_SubStage  String literal of all {@link Stage.subStages} options.
  *
  * @since 0.1.0-alpha
+ * @since 0.3.0-beta.3 — Some methods were made optional. To require all methods, use the {@link Stage.Complete} interface.
  */
 export interface Stage<
     T_Args extends Stage.Args = any,
     T_SubStage extends string = any,
-> {
-
-    /**
-     * A completed args object for this instance.
-     * 
-     * @category Config
-     */
-    readonly args: T_Args;
-
-    /**
-     * Default args for this stage.
-     * 
-     * @category Config
-     */
-    readonly ARGS_DEFAULT: T_Args;
-
-    /**
-     * Colour used for colour-coding this stage.
-     * 
-     * @category Config
-     */
-    readonly clr: MessageMaker.Colour;
-
-    /**
-     * Complete project configuration.
-     * 
-     * @category Config
-     */
-    readonly config: Config.Internal;
-
-    /**
-     * Instance used to compile files from the src directory.
-     * 
-     * @category Utilities
-     */
-    readonly compiler: Stage.Compiler;
-
-    /**
-     * Instance used to send messages to the console.
-     * 
-     * @category Utilities
-     */
-    readonly console: ProjectLogger;
-
-    /**
-     * Instance used to deal with files and paths.
-     * 
-     * @category Utilities
-     */
-    readonly fs: FileSystem;
-
-    /**
-     * Wheather the current project version is a draft (e.g., this is not a
-     * non-dryrun release).
-     * 
-     * @category Project
-     */
-    readonly isDraftVersion: boolean;
-
-    /**
-     * Name for this stage used for notices.
-     * 
-     * @category Config
-     */
-    readonly name: string;
-
-    /**
-     * Current CLI params.
-     * 
-     * @category Config
-     */
-    readonly params: CLI.Params;
-
-    /**
-     * Current value of the package.json file for this project.
-     * 
-     * @category Project
-     */
-    readonly pkg: PackageJson;
-
-    /**
-     * All sub-stages to run in this stage (in order).
-     * 
-     * @category Config
-     */
-    readonly subStages: T_SubStage[];
-
-    /**
-     * Current version object for the project.
-     * 
-     * @category Project
-     */
-    readonly version: SemVer;
-
-    /**
-     * Builds a complete version of this class' args, falling back to defaults
-     * as needed.
-     * 
-     * @category Config
-     * 
-     * @see {@link Stage.ARGS_DEFAULT}
-     */
-    buildArgs( args?: Partial<T_Args> ): T_Args;
-
-    /**
-     * Gets the paths from the config for the given dist sub directory.
-     * 
-     * @category Utilities
-     * 
-     * @param subDir    Sub-path to get.
-     * @param subpaths  Optional additional subpaths.
-     */
-    getDistDir(
-        subDir?: Config.Paths.SourceDirectory,
-        ...subpaths: string[]
-    ): string;
-
-
-    /**
-     * Gets an absolute path to the {@link Config.Paths.scripts} directories.
-     * 
-     * @category Utilities
-     * 
-     * @param subDir    Sub-path to get.
-     * @param subpaths  Optional additional subpaths.
-     */
-    getScriptsPath(
-        subDir?: "logs",
-        ...subpaths: string[]
-    ): string;
-
-
-    /**
-     * If there's a subdir, the return will be an array of strings.
-     * 
-     * @category Utilities
-     * 
-     * @param subDir    Sub-path to get.
-     * @param subpaths  Optional additional subpaths.
-     */
-    getSrcDir(
-        subDir: Config.Paths.SourceDirectory,
-        ...subpaths: string[]
-    ): string[];
-
-    /**
-     * If there's no subdir, the return will be a string.
-     * 
-     * @param subDir    Sub-path to get.
-     * @param subpaths  Optional additional subpaths.
-     */
-    getSrcDir(
-        subDir?: undefined,
-        ...subpaths: string[]
-    ): string;
-
-    /**
-     * Gets the paths from the config for the given src sub directory.
-     * 
-     * @param subDir    Sub-path to get.
-     * @param subpaths  Optional additional subpaths.
-     */
-    getSrcDir(
-        subDir?: Config.Paths.SourceDirectory,
-        ...subpaths: string[]
-    ): string | string[];
-
-    /**
-     * Handles errors thrown during sass compile.
-     * 
-     * @category Sass
-     * 
-     * @since 0.3.0-beta
-     */
-    sassErrorHandler(
-        error: any,
-        level: number,
-        opts: Stage.Compiler.Args.Sass,
-        args?: Partial<Stage.Errors.Handler.Args> & {
-            method?: 'error' | 'warn';
-        },
-    ): string[];
-
-    /**
-     * Whether the given substage should be run according to the values of
-     * {@link CLI.Params.only} and {@link CLI.Params.without}.
-     *
-     * @category Running
-     *
-     * @param subStage  Substage to check.
-     * @param level     Depth level for this message.
-     *
-     * @return  Whether to run this sub-stage.
-     */
-    isSubStageIncluded(
-        subStage: T_SubStage,
-        level: number,
-    ): boolean;
-
-    /**
-     * Runs the entire stage (asynchronously).
-     *
-     * **This method should probably not be overwritten after
-     * {@link AbstractStage}.**
-     *
-     * @category Running
-     */
-    run(): Promise<void>;
-
-    /**
-     * Prints a message to the console signalling the start or end of this build
-     * stage.
-     *
-     * @category Running
-     * 
-     * @param which           Whether we are starting or ending.
-     * @param watcherVersion  Whether to display the watcher version of the message **if applicable**. Default false.
-     * @param args            Message argument overrides.
-     */
-    startEndNotice(
-        which: "start" | "end" | null,
-        watcherVersion?: boolean,
-        args?: Partial<MessageMaker.BulkMsgArgs>,
-    ): void | Promise<void>;
-
-    /**
-     * Runs a function, with parameters as applicable, and catches (& handles)
-     * anything thrown.
-     *
-     * For the asynchronous method, see {@link Stage.atry}.
-     *
-     * Overloaded for better function param typing. See
-     * {@link Stage.TryerFunction} for details.
-     *
-     * @category Errors
-     * 
-     * @since 0.3.0-beta
-     */
-    try: Stage.TryerFunction<'sync'>;
-
-    /**
-     * Runs a function (asynchronously), with parameters as applicable, and
-     * catches (& handles) anything thrown.
-     *
-     * For the synchronous method, see {@link AbstractStage.try}.
-     *
-     * Overloaded for better function param typing. See
-     * {@link Stage.TryerFunction} for details.
-     *
-     * @category Errors
-     * 
-     * @since 0.3.0-beta
-     */
-    atry: Stage.TryerFunction<'async'>;
-
-    /**
-     * Handles uncaught errors after this stage is completely constructed (set
-     * in the {@link Project.run} method).
-     *
-     * @category Errors
-     * 
-     * @param error  Uncaught exception to handle.
-     * 
-     * @since 0.2.0-alpha
-     */
-    uncaughtErrorListener: ( error: unknown ) => void;
-};
+> extends PartialPick<Stage.Complete<T_Args, T_SubStage>, 'isSubStageIncluded'> { };
 
 /**
  * Utility types for the {@link Stage} interface.
@@ -339,6 +75,285 @@ export interface Stage<
  * @since 0.1.0-alpha
  */
 export namespace Stage {
+
+    /**
+     * A completed Stage class, including sometimes-optional methods.
+     * 
+     * @typeParam T_Args      Complete {@link Stage.args} object for this stage.
+     * @typeParam T_SubStage  String literal of all {@link Stage.subStages} options.
+     * 
+     * @since 0.3.0-beta.3 — Replaced the previous Stage interface so that it can instead be a more flexible type.
+     */
+    export interface Complete<
+        T_Args extends Stage.Args = any,
+        T_SubStage extends string = any,
+    > {
+
+        /**
+         * A completed args object for this instance.
+         * 
+         * @category Config
+         */
+        readonly args: T_Args;
+
+        /**
+         * Default args for this stage.
+         * 
+         * @category Config
+         */
+        readonly ARGS_DEFAULT: T_Args;
+
+        /**
+         * Colour used for colour-coding this stage.
+         * 
+         * @category Config
+         */
+        readonly clr: MessageMaker.Colour;
+
+        /**
+         * Complete project configuration.
+         * 
+         * @category Config
+         */
+        readonly config: Config.Internal;
+
+        /**
+         * Instance used to compile files from the src directory.
+         * 
+         * @category Utilities
+         */
+        readonly compiler: Stage.Compiler;
+
+        /**
+         * Instance used to send messages to the console.
+         * 
+         * @category Utilities
+         */
+        readonly console: ProjectLogger;
+
+        /**
+         * Instance used to deal with files and paths.
+         * 
+         * @category Utilities
+         */
+        readonly fs: FileSystem;
+
+        /**
+         * Wheather the current project version is a draft (e.g., this is not a
+         * non-dryrun release).
+         * 
+         * @category Project
+         */
+        readonly isDraftVersion: boolean;
+
+        /**
+         * Name for this stage used for notices.
+         * 
+         * @category Config
+         */
+        readonly name: string;
+
+        /**
+         * Current CLI params.
+         * 
+         * @category Config
+         */
+        readonly params: CLI.Params;
+
+        /**
+         * Current value of the package.json file for this project.
+         * 
+         * @category Project
+         */
+        readonly pkg: PackageJson;
+
+        /**
+         * All sub-stages to run in this stage (in order).
+         * 
+         * @category Config
+         */
+        readonly subStages: T_SubStage[];
+
+        /**
+         * Current version object for the project.
+         * 
+         * @category Project
+         */
+        readonly version: SemVer;
+
+        /**
+         * Builds a complete version of this class' args, falling back to defaults
+         * as needed.
+         * 
+         * @category Config
+         * 
+         * @see {@link Stage.ARGS_DEFAULT}
+         */
+        buildArgs( args?: Partial<T_Args> ): T_Args;
+
+        /**
+         * Gets the paths from the config for the given dist sub directory.
+         * 
+         * @category Utilities
+         * 
+         * @param subDir    Sub-path to get.
+         * @param subpaths  Optional additional subpaths.
+         */
+        getDistDir(
+            subDir?: Config.Paths.SourceDirectory,
+            ...subpaths: string[]
+        ): string;
+
+
+        /**
+         * Gets an absolute path to the {@link Config.Paths.scripts} directories.
+         * 
+         * @category Utilities
+         * 
+         * @param subDir    Sub-path to get.
+         * @param subpaths  Optional additional subpaths.
+         */
+        getScriptsPath(
+            subDir?: "logs",
+            ...subpaths: string[]
+        ): string;
+
+
+        /**
+         * If there's a subdir, the return will be an array of strings.
+         * 
+         * @category Utilities
+         * 
+         * @param subDir    Sub-path to get.
+         * @param subpaths  Optional additional subpaths.
+         */
+        getSrcDir(
+            subDir: Config.Paths.SourceDirectory,
+            ...subpaths: string[]
+        ): string[];
+
+        /**
+         * If there's no subdir, the return will be a string.
+         * 
+         * @param subDir    Sub-path to get.
+         * @param subpaths  Optional additional subpaths.
+         */
+        getSrcDir(
+            subDir?: undefined,
+            ...subpaths: string[]
+        ): string;
+
+        /**
+         * Gets the paths from the config for the given src sub directory.
+         * 
+         * @param subDir    Sub-path to get.
+         * @param subpaths  Optional additional subpaths.
+         */
+        getSrcDir(
+            subDir?: Config.Paths.SourceDirectory,
+            ...subpaths: string[]
+        ): string | string[];
+
+        /**
+         * Handles errors thrown during sass compile.
+         * 
+         * @category Sass
+         * 
+         * @since 0.3.0-beta
+         */
+        sassErrorHandler(
+            error: any,
+            level: number,
+            opts: Stage.Compiler.Args.Sass,
+            args?: Partial<Stage.Errors.Handler.Args> & {
+                method?: 'error' | 'warn';
+            },
+        ): string[];
+
+        /**
+         * Whether the given substage should be run according to the values of
+         * {@link CLI.Params.only} and {@link CLI.Params.without}.
+         *
+         * @category Running
+         *
+         * @param subStage  Substage to check.
+         * @param level     Depth level for this message.
+         *
+         * @return  Whether to run this sub-stage.
+         */
+        isSubStageIncluded(
+            subStage: T_SubStage,
+            level: number,
+        ): boolean;
+
+        /**
+         * Runs the entire stage (asynchronously).
+         *
+         * **This method should probably not be overwritten after
+         * {@link AbstractStage}.**
+         *
+         * @category Running
+         */
+        run(): Promise<void>;
+
+        /**
+         * Prints a message to the console signalling the start or end of this build
+         * stage.
+         *
+         * @category Running
+         * 
+         * @param which           Whether we are starting or ending.
+         * @param watcherVersion  Whether to display the watcher version of the message **if applicable**. Default false.
+         * @param args            Message argument overrides.
+         */
+        startEndNotice(
+            which: "start" | "end" | null,
+            watcherVersion?: boolean,
+            args?: Partial<MessageMaker.BulkMsgArgs>,
+        ): void | Promise<void>;
+
+        /**
+         * Runs a function, with parameters as applicable, and catches (& handles)
+         * anything thrown.
+         *
+         * For the asynchronous method, see {@link Stage.atry}.
+         *
+         * Overloaded for better function param typing. See
+         * {@link Stage.TryerFunction} for details.
+         *
+         * @category Errors
+         * 
+         * @since 0.3.0-beta
+         */
+        try: Stage.TryerFunction<'sync'>;
+
+        /**
+         * Runs a function (asynchronously), with parameters as applicable, and
+         * catches (& handles) anything thrown.
+         *
+         * For the synchronous method, see {@link AbstractStage.try}.
+         *
+         * Overloaded for better function param typing. See
+         * {@link Stage.TryerFunction} for details.
+         *
+         * @category Errors
+         * 
+         * @since 0.3.0-beta
+         */
+        atry: Stage.TryerFunction<'async'>;
+
+        /**
+         * Handles uncaught errors after this stage is completely constructed (set
+         * in the {@link Project.run} method).
+         *
+         * @category Errors
+         * 
+         * @param error  Uncaught exception to handle.
+         * 
+         * @since 0.2.0-alpha
+         */
+        uncaughtErrorListener: ( error: unknown ) => void;
+    };
 
     /**
      * Any stage class compatible with this package.
@@ -763,13 +778,13 @@ export namespace Stage {
         /**
          * Types for the {@link Args.Release} args.
          * 
-         * @since ___PKG_VERSION___
+         * @since 0.3.0-beta.3
          */
         export namespace Release {
             /**
              * Commit substage arguments.
              * 
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta.3
              */
             export interface Commit {
                 /**
@@ -778,7 +793,7 @@ export namespace Stage {
                  * 
                  * @default true
                  *
-                 * @since ___PKG_VERSION___
+                 * @since 0.3.0-beta.3
                  */
                 checkBefore: boolean;
 
@@ -786,7 +801,7 @@ export namespace Stage {
             }
 
             /**
-             * @since ___PKG_VERSION___
+             * @since 0.3.0-beta.3
              */
             export interface CommitFunction {
 
@@ -815,7 +830,7 @@ export namespace Stage {
                  * 
                  * @return  All relative or absolute paths to add to the commit.
                  * 
-                 * @deprecated ___PKG_VERSION___ — Please return a {@link Release.Commit} object instead.
+                 * @deprecated 0.3.0-beta.3 — Please return a {@link Release.Commit} object instead.
                  */
                 ( stage: Stage, args?: string[] | Release.Commit ): string[];
 

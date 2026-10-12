@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
 import type { CLI } from '../../types/index.js';
@@ -23,7 +23,5 @@ import { ProjectConfig } from '../../lib/index.js';
  *
  * @since 0.1.0-alpha
  * @since 0.1.4-alpha — Experimental support for typescript config files.
- *
- * @internal
  */
 export declare function getConfig(params: CLI.Params, console?: ProjectLogger | null, level?: number): Promise<ProjectConfig>;

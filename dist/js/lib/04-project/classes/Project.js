@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
 import { DummyConsole, errorHandler } from '../../@internal/index.js';
@@ -13,7 +13,7 @@ import { parseParamsCLI } from '../../01-config/index.js';
 // import {
 // } from '../../02-utils/index.js';
 import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
-import { defaultConfig } from '../../03-stages/defaultConfig.js';
+import { defaultConfig, MinimumStage } from '../../03-stages/index.js';
 import { ProjectConfig } from './ProjectConfig.js';
 /**
  * Manages and runs a single project (typically used by the cli).
@@ -130,4 +130,40 @@ export class Project {
         process.on('uncaughtException', Project.uncaughtErrorListener);
         process.removeListener('uncaughtException', inst.uncaughtErrorListener);
     }
+    /**
+     * @since 0.3.0-beta.3
+     */
+    async pseudoRun(name, clr, callback) {
+        const stage = new Project.PseudoStage(
+            name,
+            clr ?? 'black',
+            this.config,
+            this.params,
+            {},
+            undefined,
+            undefined,
+        );
+        return stage.run(callback);
+    }
 }
+/**
+ * Utilities for the {@link Project} class.
+ *
+ * @category Project
+ *
+ * @since 0.3.0-beta.3
+ */
+(function (Project) {
+    /**
+     * @since 0.3.0-beta.3
+     */
+    class PseudoStage extends MinimumStage {
+        get ARGS_DEFAULT() {
+            return {
+                utils: {},
+            };
+        }
+        subStages = [];
+    }
+    Project.PseudoStage = PseudoStage;
+})(Project || (Project = {}));

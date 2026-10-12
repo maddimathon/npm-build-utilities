@@ -8,6 +8,8 @@
  * @license MIT
  */
 
+import type { MessageMaker } from '@maddimathon/utility-typescript';
+
 import type {
     CLI,
     Config,
@@ -38,7 +40,8 @@ import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
 
 import {
     defaultConfig,
-} from '../../03-stages/defaultConfig.js';
+    MinimumStage,
+} from '../../03-stages/index.js';
 
 import { ProjectConfig } from './ProjectConfig.js';
 
@@ -198,5 +201,51 @@ export class Project {
 
         process.on( 'uncaughtException', Project.uncaughtErrorListener );
         process.removeListener( 'uncaughtException', inst.uncaughtErrorListener );
+    }
+
+    /**
+     * @since 0.3.0-beta.3
+     */
+    public async pseudoRun<T_Return extends any>(
+        name: string,
+        clr: MessageMaker.Colour | null,
+        callback: MinimumStage.RunnerFunction<T_Return>,
+    ): Promise<T_Return> {
+
+        const stage = new Project.PseudoStage(
+            name,
+            clr ?? 'black',
+            this.config,
+            this.params,
+            {},
+            undefined,
+            undefined,
+        );
+
+        return stage.run( callback );
+    }
+}
+
+/**
+ * Utilities for the {@link Project} class.
+ * 
+ * @category Project
+ * 
+ * @since 0.3.0-beta.3
+ */
+export namespace Project {
+
+    /**
+     * @since 0.3.0-beta.3
+     */
+    export class PseudoStage extends MinimumStage<Stage.Args, never> {
+
+        public get ARGS_DEFAULT(): Stage.Args {
+            return {
+                utils: {},
+            };
+        }
+
+        public readonly subStages: never[] = [];
     }
 }

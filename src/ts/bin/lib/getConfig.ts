@@ -49,8 +49,6 @@ import {
  *
  * @since 0.1.0-alpha
  * @since 0.1.4-alpha — Experimental support for typescript config files.
- * 
- * @internal
  */
 export async function getConfig(
     params: CLI.Params,

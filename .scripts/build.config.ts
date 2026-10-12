@@ -7,10 +7,12 @@
  * @license MIT
  */
 
-import {
-    type Config,
-    type Stage,
+import type {
+    Config,
+    Stage,
+} from "../src/ts/index.js";
 
+import {
     FileSystem,
 } from "../src/ts/index.js";
 

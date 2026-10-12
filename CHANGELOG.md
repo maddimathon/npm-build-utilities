@@ -19,6 +19,17 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-beta.3** — 2026-10-12
+
+Added more script-running options.
+
+### Added
+- Added option to prompt user to confirm before commit & push of release
+- New bin function: runBuildScript()
+- New Project method: pseudoRun() (runs a pseudo-stage, to allow arbitrary build
+  script to use the build utilities outside of the standard build)
+
+
 ## **0.3.0-beta.2** — 2026-09-19
 
 ### Moved & Renamed

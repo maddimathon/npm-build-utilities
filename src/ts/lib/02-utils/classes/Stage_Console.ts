@@ -241,7 +241,6 @@ export class Stage_Console implements Logger {
         which: "start" | "end" | null,
         args: Partial<MessageMaker.BulkMsgArgs> = {},
     ): void {
-
         const depth = this.params[ 'log-base-level' ];
 
         let linesIn = args.linesIn ?? 2;

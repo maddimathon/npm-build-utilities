@@ -13,7 +13,6 @@
  * ```
  * 
  * @packageDocumentation
- * @internal
  */
 /*!
  * @maddimathon/build-utilities@___CURRENT_VERSION___
@@ -21,3 +20,4 @@
  */
 
 export * from './getConfig.js';
+export * from './runBuildScript.js';

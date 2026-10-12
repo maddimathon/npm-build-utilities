@@ -4,13 +4,15 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
 import type jest from 'jest';
 import type { Config } from '../../types/Config.js';
 /**
  * Returns a default jest config object with optional overrides.
+ *
+ * @category Config
  *
  * @since 0.3.0-alpha.9
  */
@@ -33,6 +35,8 @@ export declare function jestConfig<T_Config extends Partial<Config>, T_Overrides
 } & T_Overrides & typeof jestConfig.DEFAULT);
 /**
  * utilities for the {@link jestConfig} function.
+ *
+ * @category Config
  *
  * @since 0.3.0-alpha.9
  */

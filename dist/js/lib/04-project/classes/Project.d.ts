@@ -4,12 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
+import type { MessageMaker } from '@maddimathon/utility-typescript';
 import type { CLI, Config, Stage } from '../../../types/index.js';
 import type { Logger } from '../../../types/Logger.js';
 import { Stage_Console } from '../../02-utils/classes/Stage_Console.js';
+import { MinimumStage } from '../../03-stages/index.js';
 import { ProjectConfig } from './ProjectConfig.js';
 /**
  * Manages and runs a single project (typically used by the cli).
@@ -56,4 +58,24 @@ export declare class Project {
      * Runs the given stage with the project config and current params.
      */
     run(stage: "debug" | Stage.Name): Promise<void>;
+    /**
+     * @since 0.3.0-beta.3
+     */
+    pseudoRun<T_Return extends any>(name: string, clr: MessageMaker.Colour | null, callback: MinimumStage.RunnerFunction<T_Return>): Promise<T_Return>;
+}
+/**
+ * Utilities for the {@link Project} class.
+ *
+ * @category Project
+ *
+ * @since 0.3.0-beta.3
+ */
+export declare namespace Project {
+    /**
+     * @since 0.3.0-beta.3
+     */
+    class PseudoStage extends MinimumStage<Stage.Args, never> {
+        get ARGS_DEFAULT(): Stage.Args;
+        readonly subStages: never[];
+    }
 }

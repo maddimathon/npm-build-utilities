@@ -13,10 +13,10 @@
  * ```
  *
  * @packageDocumentation
- * @internal
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
 export * from './getConfig.js';
+export * from './runBuildScript.js';

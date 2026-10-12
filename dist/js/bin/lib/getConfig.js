@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
 import { timestamp, VariableInspector } from '@maddimathon/utility-typescript';
@@ -29,8 +29,6 @@ import {
  *
  * @since 0.1.0-alpha
  * @since 0.1.4-alpha — Experimental support for typescript config files.
- *
- * @internal
  */
 export async function getConfig(params, console = null, level = 0) {
     if (!console) {

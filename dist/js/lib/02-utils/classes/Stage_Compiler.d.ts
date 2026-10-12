@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
 import { DateTime } from 'luxon';
@@ -104,6 +104,7 @@ export declare class Stage_Compiler implements Stage.Compiler {
                 readonly 'contrast-color-function': {
                     readonly preserve: true;
                 };
+                readonly 'custom-functions': false;
                 readonly 'custom-media-queries': false;
                 readonly 'custom-properties': {
                     readonly preserve: true;

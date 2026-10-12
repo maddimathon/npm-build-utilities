@@ -4,12 +4,14 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
 import { escRegExp, mergeArgs } from '@maddimathon/utility-typescript';
 /**
  * Returns a default jest config object with optional overrides.
+ *
+ * @category Config
  *
  * @since 0.3.0-alpha.9
  */
@@ -18,6 +20,8 @@ export function jestConfig(projectConfig, overrides) {
 }
 /**
  * utilities for the {@link jestConfig} function.
+ *
+ * @category Config
  *
  * @since 0.3.0-alpha.9
  */

@@ -9,3 +9,4 @@
  */
 
 export * from './AbstractStage.js';
+export * from './MinimumStage.js';

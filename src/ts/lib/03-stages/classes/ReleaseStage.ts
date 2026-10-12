@@ -601,6 +601,8 @@ export class ReleaseStage extends AbstractStage<
                 },
             ) ) {
                 this.console.verbose( 'cancelling release...', 3 );
+                process.exit();
+                // @ts-expect-error - unreachable
                 return;
             }
         }

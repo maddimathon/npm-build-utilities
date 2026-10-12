@@ -17,6 +17,8 @@ import type { Config } from '../../types/Config.js';
 /**
  * Returns a default jest config object with optional overrides.
  * 
+ * @category Config
+ * 
  * @since 0.3.0-alpha.9
  */
 export function jestConfig<T_Config extends Partial<Config>, T_Overrides extends undefined | jest.Config>(
@@ -32,6 +34,8 @@ export function jestConfig<T_Config extends Partial<Config>, T_Overrides extends
 
 /**
  * utilities for the {@link jestConfig} function.
+ * 
+ * @category Config
  * 
  * @since 0.3.0-alpha.9
  */

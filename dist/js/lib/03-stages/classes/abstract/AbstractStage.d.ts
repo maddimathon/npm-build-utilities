@@ -4,17 +4,15 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3.draft
+ * @maddimathon/build-utilities@0.3.0-beta.3
  * @license MIT
  */
 import type { PackageJson, TsConfig } from '@maddimathon/utility-typescript/types';
 import type { NodeFiles } from '@maddimathon/utility-typescript/node';
 import { type MessageMaker } from '@maddimathon/utility-typescript';
 import type { CLI, Config, Stage } from '../../../../types/index.js';
-import { type AbstractError, SemVer } from '../../../@internal/index.js';
-import { FileSystem } from '../../../00-universal/index.js';
-import { Stage_Compiler } from '../../../02-utils/classes/Stage_Compiler.js';
-import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
+import { SemVer } from '../../../@internal/index.js';
+import { MinimumStage } from './MinimumStage.js';
 /**
  * Abstract class for a single build stage, along with a variety of utilities
  * for building projects.
@@ -26,129 +24,7 @@ import { Stage_Console } from '../../../02-utils/classes/Stage_Console.js';
  *
  * @since 0.1.0-alpha
  */
-export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStage extends string> implements Omit<Stage<T_Args, T_SubStage>, 'atry' | 'try'> {
-    #private;
-    /**
-     * {@inheritDoc Stage.clr}
-     *
-     * @category Config
-     */
-    readonly clr: MessageMaker.Colour;
-    /**
-     * {@inheritDoc Stage.config}
-     *
-     * @category Config
-     */
-    readonly config: Config.Class;
-    /**
-     * {@inheritDoc Stage.console}
-     *
-     * @category Utilities
-     */
-    readonly console: Stage_Console;
-    /**
-     * {@inheritDoc Stage.compiler}
-     *
-     * @category Utilities
-     */
-    readonly compiler: Stage_Compiler;
-    /**
-     * {@inheritDoc Stage.fs}
-     *
-     * @category Utilities
-     */
-    get fs(): FileSystem;
-    /**
-     * {@inheritDoc Stage.fs}
-     *
-     * @category Utilities
-     */
-    set fs(fs: FileSystem | undefined);
-    /**
-     * {@inheritDoc Stage.name}
-     *
-     * @category Config
-     */
-    readonly name: string;
-    /**
-     * {@inheritDoc Stage.params}
-     *
-     * @category Config
-     */
-    readonly params: CLI.Params;
-    /**
-     * {@inheritDoc Stage.pkg}
-     *
-     * @category Project
-     */
-    get pkg(): {
-        readonly name: string;
-        readonly version: string;
-        readonly description: string | undefined;
-        readonly homepage: string | undefined;
-        readonly config: {
-            [key: string]: any;
-            [key: number]: any;
-        } | undefined;
-        readonly license: string | undefined;
-        readonly repository: string | undefined;
-        readonly engines: {
-            [key: string]: string;
-        } | undefined;
-        readonly files: string[] | undefined;
-        readonly main: string | undefined;
-        readonly bin: string | {
-            [key: string]: string;
-        } | undefined;
-        readonly bugs: {
-            url?: string;
-            email?: string;
-        } | undefined;
-    };
-    /**
-     * Path to release directory for building a package for the current version.
-     *
-     * @category Config
-     */
-    get releaseDir(): string;
-    /**
-     * {@inheritDoc Stage.subStages}
-     *
-     * @category Running
-     */
-    abstract readonly subStages: T_SubStage[];
-    /**
-     * {@inheritDoc Stage.version}
-     *
-     * @category Project
-     */
-    get version(): SemVer;
-    /**
-     * If undefined, nothing is set.  Otherwise, a {@link SemVer} is created and
-     * the value of {@link AbstractStage.pkg}.version is updated.
-     */
-    protected set version(input: string | SemVer | undefined);
-    /**
-     * Builds a complete version of this class' args, falling back to defaults
-     * as needed.
-     *
-     * Uses {@link mergeArgs} recursively.
-     *
-     * @category Config
-     */
-    buildArgs(args?: Partial<T_Args>): T_Args;
-    /**
-     * {@inheritDoc Stage.args}
-     *
-     * @category Config
-     */
-    readonly args: T_Args;
-    /**
-     * {@inheritDoc Stage.ARGS_DEFAULT}
-     *
-     * @category Config
-     */
-    abstract get ARGS_DEFAULT(): T_Args;
+export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStage extends string> extends MinimumStage<T_Args, T_SubStage> implements Stage.Complete<T_Args, T_SubStage> {
     /**
      * @category Constructor
      *
@@ -161,53 +37,6 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @param version  Version object for the project’s version.
      */
     constructor(name: string, clr: MessageMaker.Colour, config: Config.Class, params: CLI.Params, args: Partial<T_Args>, pkg: PackageJson | undefined, version: SemVer | undefined);
-    /** {@inheritDoc Stage.isDraftVersion} */
-    get isDraftVersion(): boolean;
-    /**
-     * Whether the current run is the result of a watched change.
-     *
-     * @category Config
-     *
-     * @since 0.3.0-alpha.1
-     */
-    get isWatchedUpdate(): boolean;
-    /**
-     * Default scss options according to config & params.
-     *
-     * @category Sass
-     *
-     * @since 0.3.0-alpha.1
-     */
-    get sassOpts(): Stage.Compiler.Args.Sass;
-    /**
-     * Replaces placeholders in files as defined by {@link Config.replace}.
-     *
-     * @category Utilities
-     *
-     * @param globs     Where to find & replace placeholders.
-     * @param version   Which version of the replacements to run.
-     * @param level     Depth level for output to the console.
-     * @param ignore    Globs to ignore while replacing. Default {@link FileSystem.globs.SYSTEM}.
-     * @param docsMode  Whether to make the replacements in 'docs' mode (i.e.,
-     *                  assumes markdown in comments was converted to HTML).
-     *
-     * @return  Paths where placeholders were replaced.
-     */
-    replaceInFiles(globs: string[], version: "current" | "package", level: number, ignore?: string[], docsMode?: boolean): string[];
-    /**
-     * Alias for {@link internal.writeLog}.
-     *
-     * @category Errors
-     *
-     * @param msg       Log message to write.
-     * @param filename  File name for the log.
-     * @param subDir    Subdirectories used for the path to write the log file.
-     * @param date      Used for the timestamp.
-     *
-     * @return  If false, writing the log failed. Otherwise, this is the path to
-     *          the written log file.
-     */
-    writeLog(msg: string | string[] | MessageMaker.BulkMsgs, filename: string, subDir?: string[], date?: null | Date): string | false;
     /**
      * Takes an input tsconfig object and attempts to resolve and
      * include the values from any configs in its "extends".
@@ -215,21 +44,12 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @category Typescript
      *
      * @since 0.3.0-beta
+     * @since 0.3.0-beta.3 — Moved from {@link AbstractStage} to this class.
      */
     writeTsConfig(outputPath: string, level: number, tsconfig: Partial<TsConfig>, { appendToLib, errorIfNotFound, ...args }?: Partial<NodeFiles.WriteFileArgs & {
         appendToLib: boolean | 'if-exists';
         errorIfNotFound: boolean;
     }>): Promise<string | false>;
-    /**
-     * Takes completed arguments and runs sass functions with proper error
-     * handling.
-     *
-     * @since 0.3.0-beta
-     */
-    protected compileScss(paths: {
-        input: string;
-        output: string;
-    }[], logLevelBase: number, completeSassOpts: Stage.Compiler.Args.Sass, opts?: Partial<AbstractStage.compileScss.Opts>): Promise<string[]>;
     /**
      * {@inheritDoc Stage.isSubStageIncluded}
      *
@@ -241,92 +61,6 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
         checkIfSubStageIsMethod?: boolean;
         checkIfSubStageIsDefaultIncluded?: boolean;
     }): boolean;
-    /**
-     * {@inheritDoc Stage.getDistDir}
-     *
-     * @category Config
-     */
-    getDistDir(subDir?: Config.Paths.DistDirectory, ...subpaths: string[]): string;
-    /**
-     * {@inheritDoc Stage.getScriptsPath}
-     *
-     * @category Config
-     */
-    getScriptsPath(subDir?: "logs", ...subpaths: string[]): string;
-    getSrcDir(subDir?: undefined, ...subpaths: string[]): string;
-    getSrcDir(subDir: Config.Paths.SourceDirectory, ...subpaths: string[]): string[];
-    /**
-     * Alias for {@link errorHandler}.
-     *
-     * @category Errors
-     *
-     * @param error    Error to handle.
-     * @param level    Depth level for output to the console.
-     * @param args     Overrides for default options.
-     */
-    handleError(error: any, level: number, args?: Partial<AbstractError.Handler.Args>): void;
-    /**
-     * Alias for {@link internal.logError}.
-     *
-     * @category Errors
-     *
-     * @param logMsg  Message to prepend to the return for output to the console.
-     * @param error   Caught error to log.
-     * @param level   Depth level for output to the console.
-     * @param errMsg  See {@link logError.Args.errMsg}.
-     * @param date    Used for the timestamp.
-     */
-    logError(logMsg: string, error: unknown, level: number, errMsg?: string, date?: Date): MessageMaker.BulkMsgs;
-    /**
-     * Handles uncaught errors in
-     *
-     * @param error  To handle.
-     *
-     * @since 0.2.0-alpha
-     */
-    uncaughtErrorListener(error: unknown): void;
-    /**
-     * Handles errors thrown during sass compile.
-     *
-     * @category Sass
-     *
-     * @since 0.3.0-alpha.3
-     */
-    sassErrorHandler(error: any, level: number, opts: Stage.Compiler.Args.Sass, _args?: Partial<AbstractError.Handler.Args> & {
-        method?: 'error' | 'warn';
-    }): string[];
-    /**
-     * Runs a function, with parameters as applicable, and catches (& handles)
-     * anything thrown.
-     *
-     * For the asynchronous method, see {@link AbstractStage.atry}.
-     *
-     * Overloaded for better function param typing.
-     *
-     * @category Errors
-     *
-     * @experimental
-     */
-    readonly try: Stage.TryerFunction<'sync'>;
-    /**
-     * Runs a function (asynchronously), with parameters as applicable, and
-     * catches (& handles) anything thrown.
-     *
-     * For the synchronous method, see {@link AbstractStage.try}.
-     *
-     * Overloaded for better function param typing.
-     *
-     * @category Errors
-     *
-     * @experimental
-     */
-    readonly atry: Stage.TryerFunction<'async'>;
-    /**
-     * {@inheritDoc Stage.startEndNotice}
-     *
-     * @category Running
-     */
-    startEndNotice(which: "start" | "end" | null, watcherVersion?: boolean): void | Promise<void>;
     /**
      * Runs the entire stage (asynchronously).
      *
@@ -379,25 +113,6 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      */
     protected runCustomDirCopySubStage(subpath: string, _distDir?: string, logLevelBase?: number): Promise<void>;
     /**
-     * This runs a custom sub-stage that only copies a whole folder at the given
-     * subpath from the source to the dist directories.
-     *
-     * Deletes any existing, logs update messages, etc.
-     *
-     * @category Running
-     *
-     * @param subpath       The subdriectory, relative to src path.
-     * @param _distDir      Optionally force a diffrent output directory than the auto-generated one.
-     * @param logLevelBase  Base output level for log messages.
-     *
-     * @since 0.1.4-alpha
-     * @since 0.2.0-alpha.1 — Added logLevelBase param.
-     * @since 0.3.0-beta.2 — Renamed from runCustomDirCopySubStage to customCopySubstage.
-     *
-     * @experimental
-     */
-    protected customCopySubstage(subpath: string, _distDir?: string, logLevelBase?: number): Promise<void>;
-    /**
      * This runs a custom sub-stage that uses globs to find non-partial
      * scss/sass files and compile them at the given subpath from the source to
      * the dist directories.
@@ -423,28 +138,11 @@ export declare abstract class AbstractStage<T_Args extends Stage.Args, T_SubStag
      * @experimental
      */
     protected runCustomScssDirSubStage(subpath: string | string[], distDir?: string, opts?: Partial<AbstractStage.customScssSubstage.Opts>, logLevelBase?: number): Promise<string[]>;
-    /**
-     * This runs a custom sub-stage that uses globs to find non-partial
-     * scss/sass files and compile them at the given subpath from the source to
-     * the dist directories.
-     *
-     * Deletes any existing, logs update messages, etc.
-     *
-     * @category Running
-     *
-     * @since 0.1.4-alpha
-     * @since 0.2.0-alpha — Added `postCSS` param and PostCSS compatibility.
-     * @since 0.2.0-alpha.1 — Added `logLevelBase` param.
-     * @since 0.2.0-alpha.2 — Changed `postCSS` param to `options` object param. Added returning output css filepaths. Improved some issues with the async compiling and sub-file finding.
-     * @since 0.3.0-alpha.1 — Added `sassOpts` param and allowed `subpath` to be an array.
-     * @since 0.3.0-beta.2 — Changed `sassOpts` param to a property in `options`. Renamed from runCustomScssDirSubStage to customScssSubstage and switched from a method to an object returning dir and demoDir methods.
-     *
-     * @experimental
-     */
-    protected get customScssSubstage(): AbstractStage.customScssSubstage;
 }
 /**
  * Utilities for the {@link AbstractStage} class.
+ *
+ * @category Stages
  *
  * @since 0.2.0-alpha.2
  */

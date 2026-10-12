@@ -246,6 +246,7 @@ export class Stage_Compiler implements Stage.Compiler {
             'container-rule-prelude-list': true,
             'content-alt-text': { preserve: true },
             'contrast-color-function': { preserve: true },
+            'custom-functions': false,
             'custom-media-queries': false,
             'custom-properties': { preserve: true },
             'custom-selectors': false,
