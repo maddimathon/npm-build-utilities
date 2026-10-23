@@ -6,7 +6,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.3
+ * @maddimathon/build-utilities@0.3.0-beta.4
  * @license MIT
  */
 import type postcss from 'postcss';

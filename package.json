@@ -1,6 +1,6 @@
 {
     "name": "@maddimathon/build-utilities",
-    "version": "0.3.0-beta.3",
+    "version": "0.3.0-beta.4",
 
     "author": "Maddi Mathon (https://www.maddimathon.com/web)",
     "description": "Opinionated utilities for easy build systems in npm projects.",
@@ -165,7 +165,7 @@
         "glob": "~13.0.6",
         "luxon": "^3.7.2",
         "minimist": "~1.2.8",
-        "postcss": "^8.5.29",
+        "postcss": "^8.5.31",
         "postcss-preset-env": "^11.6.1",
         "prettier": "^3.9.10",
         "semver": "~7.8.5",

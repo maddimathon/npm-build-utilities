@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0-beta.4** — 2026-10-23
+
+Updated package publish action. Updated dependencies.
+
+
 ## **0.3.0-beta.3** — 2026-10-12
 
 Added more script-running options.
