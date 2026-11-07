@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.4
+ * @maddimathon/build-utilities@0.3.0
  * @license MIT
  */
 import { AbstractError } from './abstract/AbstractError.js';

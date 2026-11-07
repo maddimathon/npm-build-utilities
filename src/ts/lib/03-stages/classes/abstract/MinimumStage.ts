@@ -1197,9 +1197,16 @@ export abstract class MinimumStage<
 
         if ( !this.isWatchedUpdate && this.fs.exists( distDir ) ) {
             this.console.verbose( 'deleting any existing files...', 1 + logLevelBase );
-            this.fs.delete(
-                [ distDir + '/' + subpath ],
-                ( this.params.verbose ? 2 : 1 ) + logLevelBase,
+
+            const ___lvl = ( this.params.verbose ? 2 : 1 ) + logLevelBase;
+
+            await this.atry(
+                this.fs.delete,
+                ___lvl,
+                [
+                    [ distDir + '/' + subpath ],
+                    ___lvl,
+                ],
             );
         }
 
@@ -1218,7 +1225,7 @@ export abstract class MinimumStage<
         }
 
         this.console.verbose( 'copying files...', 1 + logLevelBase );
-        this.try(
+        await this.atry(
             this.fs.copy,
             ( this.params.verbose ? 2 : 1 ) + logLevelBase,
             [

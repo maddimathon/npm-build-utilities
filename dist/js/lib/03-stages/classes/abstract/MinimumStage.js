@@ -4,7 +4,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.4
+ * @maddimathon/build-utilities@0.3.0
  * @license MIT
  */
 import {
@@ -970,10 +970,11 @@ export class MinimumStage {
                 'deleting any existing files...',
                 1 + logLevelBase,
             );
-            this.fs.delete(
+            const ___lvl = (this.params.verbose ? 2 : 1) + logLevelBase;
+            await this.atry(this.fs.delete, ___lvl, [
                 [distDir + '/' + subpath],
-                (this.params.verbose ? 2 : 1) + logLevelBase,
-            );
+                ___lvl,
+            ]);
         }
         const srcDir = this.getSrcDir(undefined).replace(/\/+$/gi, '');
         // returns
@@ -997,17 +998,21 @@ export class MinimumStage {
             return;
         }
         this.console.verbose('copying files...', 1 + logLevelBase);
-        this.try(this.fs.copy, (this.params.verbose ? 2 : 1) + logLevelBase, [
-            subpath,
+        await this.atry(
+            this.fs.copy,
             (this.params.verbose ? 2 : 1) + logLevelBase,
-            distDir,
-            srcDir,
-            {
-                force: true,
-                rename: false,
-                recursive: true,
-            },
-        ]);
+            [
+                subpath,
+                (this.params.verbose ? 2 : 1) + logLevelBase,
+                distDir,
+                srcDir,
+                {
+                    force: true,
+                    rename: false,
+                    recursive: true,
+                },
+            ],
+        );
     }
     /**
      * This runs a custom sub-stage that uses globs to find non-partial

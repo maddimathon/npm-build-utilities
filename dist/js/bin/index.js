@@ -5,7 +5,7 @@
  * @packageDocumentation
  */
 /*!
- * @maddimathon/build-utilities@0.3.0-beta.4
+ * @maddimathon/build-utilities@0.3.0
  * @license MIT
  */
 import { Project } from '../lib/04-project/classes/Project.js';

@@ -19,6 +19,11 @@ and this project adheres to
 <!--CHANGELOG_NEW-->
 
 
+## **0.3.0** — 2026-11-06
+
+Updated dependencies and full release.
+
+
 ## **0.3.0-beta.4** — 2026-10-23
 
 Updated package publish action. Updated dependencies.
